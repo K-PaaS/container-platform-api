@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.common;
 
+import org.paasta.container.platform.api.adminToken.AdminToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,6 @@ public class RestTemplateService {
      * @param commonApiAuthorizationId       the common api authorization id
      * @param commonApiAuthorizationPassword the common api authorization password
      * @param propertyService                the property service
-//    *@param adminTokenService
      */
     @Autowired
     public RestTemplateService(RestTemplate restTemplate,
@@ -129,10 +129,21 @@ public class RestTemplateService {
     }
 
 
+    /**
+     * Authorization 값을 입력한다.
+     *
+     * @param reqApi the reqApi
+     */
     private void setApiUrlAuthorization(String reqApi) {
 
         String apiUrl = "";
         String authorization = "";
+
+        // CONTAINER PLATFORM MASTER API
+        if (Constants.TARGET_CP_MASTER_API.equals(reqApi)) {
+            apiUrl = propertyService.getCpMasterApiUrl();
+            authorization = "Bearer " + this.getAdminToken().getTokenValue();
+        }
 
         // COMMON API
         if (TARGET_COMMON_API.equals(reqApi)) {
@@ -144,6 +155,15 @@ public class RestTemplateService {
         this.baseUrl = apiUrl;
     }
 
-
+    /**
+     * Admin Token 상세 정보를 조회한다.
+     *
+     * @return the AdminToken
+     */
+    public AdminToken getAdminToken() {
+        this.setApiUrlAuthorization(TARGET_COMMON_API);
+        String reqUrl = Constants.URI_COMMON_API_ADMIN_TOKEN_DETAIL.replace("{tokenName:.+}",Constants.TOKEN_KEY);
+        return this.send(TARGET_COMMON_API, reqUrl, HttpMethod.GET, null, AdminToken.class);
+    }
 
 }
