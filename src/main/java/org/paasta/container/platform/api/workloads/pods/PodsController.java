@@ -33,8 +33,8 @@ public class PodsController {
      */
     @GetMapping
     @ResponseBody
-    public PodsList getPodList(@PathVariable(value = "namespace") String namespace) {
-        return podsService.getPodList(namespace);
+    public PodsList getPodsList(@PathVariable(value = "namespace") String namespace) {
+        return podsService.getPodsList(namespace);
     }
 
     /**
@@ -46,9 +46,9 @@ public class PodsController {
      */
     @GetMapping(value = "/resources/{selector:.+}")
     @ResponseBody
-    public PodsList getPodListBySelector(@PathVariable(value = "namespace") String namespace,
+    public PodsList getPodsListBySelector(@PathVariable(value = "namespace") String namespace,
                                                 @PathVariable(value = "selector") String selector) {
-        return podsService.getPodListWithLabelSelector(namespace, selector);
+        return podsService.getPodsListWithLabelSelector(namespace, selector);
     }
 
     /**
@@ -59,9 +59,9 @@ public class PodsController {
      * @return the pod list
      */
     @GetMapping(value = "/nodes/{nodeName:.+}")
-    public PodsList getPodListByNode(@PathVariable(value = "namespace") String namespace,
+    public PodsList getPodsListByNode(@PathVariable(value = "namespace") String namespace,
                                      @PathVariable(value = "nodeName") String nodeName) {
-        return podsService.getPodListByNode(namespace, nodeName);
+        return podsService.getPodsListByNode(namespace, nodeName);
     }
 
     /**
@@ -74,7 +74,7 @@ public class PodsController {
     @GetMapping(value = "/{podName:.+}")
     public Pods getPod(@PathVariable(value = "namespace") String namespace,
                        @PathVariable(value = "podName") String podName) {
-        return podsService.getPod(namespace, podName);
+        return podsService.getPods(namespace, podName);
     }
 
     /**
@@ -87,6 +87,6 @@ public class PodsController {
     @GetMapping(value = "/{podName:.+}/yaml")
     public Pods getPodYaml(@PathVariable(value = "namespace") String namespace,
                            @PathVariable(value = "podName") String podName) {
-        return podsService.getPodYaml(namespace, podName);
+        return podsService.getPodsYaml(namespace, podName);
     }
 }

@@ -46,7 +46,7 @@ public class PodsService {
      * @param namespace the namespace
      * @return the pod list
      */
-    PodsList getPodList(String namespace) {
+    PodsList getPodsList(String namespace) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
 
@@ -60,7 +60,7 @@ public class PodsService {
      * @param selector  the selector
      * @return the pod list
      */
-    PodsList getPodListWithLabelSelector(String namespace, String selector) {
+    PodsList getPodsListWithLabelSelector(String namespace, String selector) {
         String requestSelector = "?labelSelector=" + selector;
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
@@ -75,7 +75,7 @@ public class PodsService {
      * @param nodeName                the node name
      * @return the pod list
      */
-    PodsList getPodListByNode(String namespace, String nodeName) {
+    PodsList getPodsListByNode(String namespace, String nodeName) {
         String requestURL = propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace)
                 + "/?fieldSelector=spec.nodeName=" + nodeName;
 
@@ -91,7 +91,7 @@ public class PodsService {
      * @param podName   the pod's name
      * @return the pod
      */
-    Pods getPod(String namespace, String podName) {
+    Pods getPods(String namespace, String podName) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsGetUrl().replace("{namespace}", namespace).replace("{name}", podName),
                 HttpMethod.GET, null, Map.class);
@@ -106,7 +106,7 @@ public class PodsService {
      * @param podName   the pod's name
      * @return the pods
      */
-    Pods getPodYaml(String namespace, String podName) {
+    Pods getPodsYaml(String namespace, String podName) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsGetUrl().replace("{namespace}", namespace).replace("{name}", podName),
                 HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
