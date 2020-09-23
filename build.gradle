@@ -42,6 +42,7 @@ ext {
 	gsonVersion = '2.8.6'
 	lombokVersion = '1.18.12'
 	jacocoVersion = '0.8.5'
+	swaggerVersion = '2.9.2'
 }
 
 jar {
@@ -56,6 +57,12 @@ dependencies {
 	compile "com.google.code.gson:gson:${gsonVersion}"
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
 	annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+	compile "io.springfox:springfox-swagger2:${swaggerVersion}"
+	compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+
+	compile 'com.fasterxml.jackson.core:jackson-core'
+	compile 'com.fasterxml.jackson.core:jackson-databind'
+	compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
 
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 }
