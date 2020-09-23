@@ -15,4 +15,6 @@ public class AdminToken {
     private String tokenName;
     private String tokenValue;
     private String resultCode;
+    private int statusCode;
+    private String resultMessage;
 }
