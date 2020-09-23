@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.workloads.deployments;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Deployments List Model 클래스
@@ -14,6 +15,6 @@ import java.util.List;
 @Data
 public class DeploymentsList {
     private String resultCode;
-
+    private Map metadata;
     private List<Deployments> items;
 }

@@ -4,6 +4,7 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -44,11 +45,17 @@ public class DeploymentsService {
      * @param namespace the namespace
      * @return the deployments list
      */
-    public DeploymentsList getDeploymentsList(String namespace) {
+    public DeploymentsList getDeploymentsList(String namespace, int limit, String continueToken) {
+        String param = "";
+
+        if(continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsList()
-                        .replace("{namespace}", namespace)
-                        , HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+                , HttpMethod.GET, null, Map.class);
 
         return (DeploymentsList) commonService.setResultModel(commonService.setResultObject(responseMap, DeploymentsList.class), Constants.RESULT_STATUS_SUCCESS);
     }
@@ -65,7 +72,8 @@ public class DeploymentsService {
                 propertyService.getCpMasterApiListDeploymentsGet()
                         .replace("{namespace}", namespace)
                         .replace("{name}", deploymentName)
-                        , HttpMethod.GET, null, Map.class);
+                , HttpMethod.GET, null, Map.class);
+
 
         return (Deployments) commonService.setResultModel(commonService.setResultObject(responseMap, Deployments.class), Constants.RESULT_STATUS_SUCCESS);
     }
@@ -90,40 +98,54 @@ public class DeploymentsService {
         return (Deployments) commonService.setResultModel(commonService.setResultObject(resultMap, Deployments.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+
     /**
      * Deployments 를 생성한다.
      *
      * @param namespace       the namespace
-     * @param deployments     the deployments
-     * @param resultMap       the result map
-     * @return the deployments yaml
+     * @param yaml            the yaml
+     * @return return is succeeded
      */
-    public Map<?,?> createDeploymentsYaml(String namespace, Object deployments, HashMap resultMap) {
-        System.out.println("namespace:::::" + namespace );
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public Object createDeployments(String namespace, String yaml) {
+        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsCreate()
-                        .replace("{namespace}", namespace), HttpMethod.POST, deployments, String.class, Constants.ACCEPT_TYPE_YAML);
-        resultMap.put("sourceTypeYaml", resultString);
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
-        return resultMap;
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_DEPLOYMENTS);
     }
 
     /**
      * Deployments 를 삭제한다.
      *
-     * @param namespace       the namespace
+     * @param namespace        the namespace
      * @param name             the deployments name
-     * @param resultMap       the result map
-     * @return the deployments yaml
+     * @return the ResultStatus
      */
-    public Map<?,?> deleteDeploymentsYaml(String namespace, String name, HashMap resultMap) {
-        System.out.println("namespace:::::" + namespace );
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public ResultStatus deleteDeployments(String namespace, String name) {
+        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsDelete()
-                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, String.class, Constants.ACCEPT_TYPE_YAML);
-        resultMap.put("sourceTypeYaml", resultString);
+                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
 
-        return resultMap;
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_DEPLOYMENTS);
+    }
+
+
+    /**
+     * Deployments 를 수정한다.
+     *
+     * @param namespace     the namespace
+     * @param name          the deployments name
+     * @param yaml          the yaml
+     * @return the deployments
+     */
+    public ResultStatus updateDeployments(String namespace, String name, String yaml) {
+        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListDeploymentsUpdate()
+                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, ResultStatus.class);
+
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_DEPLOYMENTS_DETAIL.replace("{deploymentName:.+}", name));
     }
 
 }
