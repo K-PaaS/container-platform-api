@@ -33,6 +33,9 @@ public class PropertyService {
     @Value("${cpMaster.api.list.services.delete}")
     private String cpMasterApiListServicesDelete;
 
+    @Value("${cpMaster.api.list.services.update}")
+    private String cpMasterApiListServicesUpdate;
+
     @Value("${cpMaster.api.list.endpoints.list}")
     private String cpMasterApiListEndpointsListUrl;
 
@@ -45,6 +48,15 @@ public class PropertyService {
     @Value("${cpMaster.api.list.pods.get}")
     private String cpMasterApiListPodsGetUrl;
 
+    @Value("${cpMaster.api.list.pods.create}")
+    private String cpMasterApiListPodsCreate;
+
+    @Value("${cpMaster.api.list.pods.delete}")
+    private String cpMasterApiListPodsDelete;
+
+    @Value("${cpMaster.api.list.pods.update}")
+    private String cpMasterApiListPodsUpdate;
+
     @Value("${cpMaster.api.list.nodes.list}")
     private String cpMasterApiListNodesListUrl;
 
@@ -56,6 +68,15 @@ public class PropertyService {
 
     @Value("${cpMaster.api.list.replicaSets.get}")
     private String cpMasterApiListReplicaSetsGetUrl;
+
+    @Value("${cpMaster.api.list.replicaSets.delete}")
+    private String cpMasterApiListreplicaSetsDelete;
+
+    @Value("${cpMaster.api.list.replicaSets.create}")
+    private String cpMasterApiListreplicaSetsCreate;
+
+    @Value("${cpMaster.api.list.replicaSets.update}")
+    private String cpMasterApiListreplicaSetsUpdate;
 
     @Value("${cpMaster.api.list.persistentvolumes.list}")
     private String cpMasterApiListPersistentvolumesListUrl;
@@ -99,6 +120,9 @@ public class PropertyService {
     @Value("${cpMaster.api.list.deployments.delete}")
     private String cpMasterApiListDeploymentsDelete;
 
+    @Value("${cpMaster.api.list.deployments.update}")
+    private String cpMasterApiListDeploymentsUpdate;
+
     @Value("${cpMaster.api.list.roleBindings.list}")
     private String cpMasterApiListRoleBindingsListUrl;
 
@@ -137,4 +161,7 @@ public class PropertyService {
 
     @Value("${cpMaster.api.list.secrets.create}")
     private String cpMasterApiListSecretsCreateUrl;
+
+
+
 }

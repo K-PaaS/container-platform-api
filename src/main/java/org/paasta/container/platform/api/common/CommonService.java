@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.common;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * Common Service 클래스
@@ -41,9 +43,16 @@ public class CommonService {
     public Object setResultModel(Object reqObject, String resultCode) {
         try {
             Class<?> aClass = reqObject.getClass();
+            ObjectMapper oMapper = new ObjectMapper();
+            Map map = oMapper.convertValue(reqObject, Map.class);
 
             Method methodSetResultCode = aClass.getMethod("setResultCode", String.class);
-            methodSetResultCode.invoke(reqObject, resultCode);
+
+            if (Constants.RESULT_STATUS_FAIL.equals(map.get("resultCode"))) {
+                methodSetResultCode.invoke(reqObject, map.get("resultCode"));
+            } else {
+                methodSetResultCode.invoke(reqObject, resultCode);
+            }
 
         } catch (NoSuchMethodException e) {
             LOGGER.error("NoSuchMethodException :: {}", e);
@@ -56,6 +65,43 @@ public class CommonService {
         return reqObject;
     }
 
+    /**
+     * 생성/수정/삭제 후 페이지 이동을 위한 Sets result model
+     *
+     * @param reqObject
+     * @param resultCode
+     * @param nextActionUrl
+     * @return
+     */
+    public Object setResultModelWithNextUrl(Object reqObject, String resultCode, String nextActionUrl) {
+        try {
+            Class<?> aClass = reqObject.getClass();
+            ObjectMapper oMapper = new ObjectMapper();
+            Map map = oMapper.convertValue(reqObject, Map.class);
+
+            Method methodSetResultCode = aClass.getMethod("setResultCode", String.class);
+            Method methodSetNextActionUrl = aClass.getMethod("setNextActionUrl", String.class);
+
+            if (Constants.RESULT_STATUS_FAIL.equals(map.get("resultCode"))) {
+                methodSetResultCode.invoke(reqObject, map.get("resultCode"));
+            } else {
+                methodSetResultCode.invoke(reqObject, resultCode);
+            }
+
+            if(nextActionUrl != null) {
+                methodSetNextActionUrl.invoke(reqObject, nextActionUrl);
+            }
+
+        } catch (NoSuchMethodException e) {
+            LOGGER.error("NoSuchMethodException :: {}", e);
+        } catch (IllegalAccessException e1) {
+            LOGGER.error("IllegalAccessException :: {}", e1);
+        } catch (InvocationTargetException e2) {
+            LOGGER.error("InvocationTargetException :: {}", e2);
+        }
+
+        return reqObject;
+    }
 
     /**
      * Sets result object.

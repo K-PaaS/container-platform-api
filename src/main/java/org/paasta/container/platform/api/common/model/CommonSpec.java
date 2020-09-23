@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.common.model;
 
 import lombok.Data;
+import org.paasta.container.platform.api.workloads.pods.support.Volume;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,6 @@ public class CommonSpec {
     private List<CommonContainer> containers;
     private String podCIDR;
     private List<Map<String, Object>> taints;
-   // private List<Volume> volumes;
+    private List<Volume> volumes;
     private List<String> externalIPs;
 }
