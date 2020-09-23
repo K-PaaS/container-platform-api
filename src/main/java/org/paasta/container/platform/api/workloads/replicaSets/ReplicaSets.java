@@ -8,14 +8,15 @@ import org.paasta.container.platform.api.common.model.CommonStatus;
 /**
  * ReplicaSets Model 클래스
  *
- * @author hrjin
+ * @author jjy
  * @version 1.0
  * @since 2020.09.10
  */
 @Data
 public class ReplicaSets {
-
     private String resultCode;
+    private String nextActionUrl;
+
     private CommonMetaData metadata;
     private CommonSpec spec;
     private CommonStatus status;
