@@ -1,7 +1,14 @@
 package org.paasta.container.platform.api.workloads.pods;
 
+
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 /**
  * Pods Controller 클래스
@@ -11,9 +18,11 @@ import org.springframework.web.bind.annotation.*;
  * @since 2020.09.09
  */
 @RestController
-@RequestMapping(value = "/namespaces/{namespace:.+}/pods")
+@RequestMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/pods")
 public class PodsController {
     private final PodsService podsService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PodsController.class);
 
     /**
      * Instantiates a new Pods controller.
@@ -29,12 +38,13 @@ public class PodsController {
      * Pod 목록을 조회한다.
      *
      * @param namespace the namespace
-     * @return the pod list
+     * @return the pods list
      */
+
     @GetMapping
     @ResponseBody
-    public PodsList getPodsList(@PathVariable(value = "namespace") String namespace) {
-        return podsService.getPodsList(namespace);
+    public PodsList getPodsList(@PathVariable(value = "namespace") String namespace, @RequestParam(required = false, defaultValue = "0") int limit, @RequestParam(required = false, name = "continue") String continueToken) {
+        return podsService.getPodsList(namespace, limit, continueToken);
     }
 
     /**
@@ -46,9 +56,9 @@ public class PodsController {
      */
     @GetMapping(value = "/resources/{selector:.+}")
     @ResponseBody
-    public PodsList getPodsListBySelector(@PathVariable(value = "namespace") String namespace,
-                                                @PathVariable(value = "selector") String selector) {
-        return podsService.getPodsListWithLabelSelector(namespace, selector);
+    public PodsList getPodListBySelector(@PathVariable(value = "namespace") String namespace,
+                                         @PathVariable(value = "selector") String selector) {
+        return podsService.getPodListWithLabelSelector(namespace, selector);
     }
 
     /**
@@ -59,34 +69,85 @@ public class PodsController {
      * @return the pod list
      */
     @GetMapping(value = "/nodes/{nodeName:.+}")
-    public PodsList getPodsListByNode(@PathVariable(value = "namespace") String namespace,
+    public PodsList getPodListByNode(@PathVariable(value = "namespace") String namespace,
                                      @PathVariable(value = "nodeName") String nodeName) {
-        return podsService.getPodsListByNode(namespace, nodeName);
+        return podsService.getPodListByNode(namespace, nodeName);
     }
 
     /**
-     * Pod를 조회한다.
+     * Pod 상세정보를 조회한다.
      *
      * @param namespace the namespace
-     * @param podName   the pod's name
-     * @return the pod
-     */
-    @GetMapping(value = "/{podName:.+}")
-    public Pods getPod(@PathVariable(value = "namespace") String namespace,
-                       @PathVariable(value = "podName") String podName) {
-        return podsService.getPods(namespace, podName);
-    }
-
-    /**
-     * Pod의 YAML을 조회한다.
-     *
-     * @param namespace the namespace
-     * @param podName   the pod's name
+     * @param resourceName   the resource name
      * @return the pods
      */
-    @GetMapping(value = "/{podName:.+}/yaml")
-    public Pods getPodYaml(@PathVariable(value = "namespace") String namespace,
-                           @PathVariable(value = "podName") String podName) {
-        return podsService.getPodsYaml(namespace, podName);
+
+    @GetMapping(value = "/{resourceName:.+}")
+    public Pods getPods(@PathVariable(value = "namespace") String namespace,
+                        @PathVariable(value = "resourceName") String resourceName) {
+        return podsService.getPods(namespace, resourceName);
     }
+
+    /**
+     * Pods YAML을 조회한다.
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return the pods yaml
+     */
+    @GetMapping(value = "/{resourceName:.+}/yaml")
+    public Pods getPodsYaml(@PathVariable(value = "namespace") String namespace,
+                            @PathVariable(value = "resourceName") String resourceName) {
+        return podsService.getPodsYaml(namespace, resourceName, new HashMap<>());
+    }
+
+    /**
+     * Pods를 생성한다.
+     *
+     * @param namespace       the namespace
+     * @param yaml            the yaml
+     * @return return is succeeded
+     */
+    @PostMapping
+    public Object createPods(@PathVariable(value = "cluster") String cluster,
+                             @PathVariable(value = "namespace") String namespace,
+                             @RequestBody String yaml) throws Exception {
+        if(yaml.contains("---")) {
+            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+            return object;
+        }
+
+        return podsService.createPods(namespace, yaml);
+
+    }
+
+    /**
+     * Pods를 삭제한다.
+     *
+     * @param namespace        the namespace
+     * @param resourceName the resource name
+     * @return the ResultStatus
+     */
+    @DeleteMapping("/{resourceName:.+}")
+    public ResultStatus deletePods(@PathVariable(value = "namespace") String namespace,
+                                   @PathVariable(value = "resourceName") String resourceName){
+        return podsService.deletePods(namespace, resourceName, new HashMap<>());
+    }
+
+    /**
+     * Pods를 수정한다.
+     *
+     * @param namespace       the namespace
+     * @param resourceName    the resource name
+     * @return the pods
+     */
+    @PutMapping("/{resourceName:.+}")
+    public Object updatePods(@PathVariable(value = "cluster") String cluster,
+                             @PathVariable(value = "namespace") String namespace,
+                             @PathVariable(value ="resourceName") String resourceName,
+                             @RequestBody String yaml) {
+        return podsService.updatePods(namespace, resourceName, yaml);
+    }
+
+
 }

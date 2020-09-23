@@ -17,6 +17,7 @@ import java.util.Map;
 @Data
 public class Pods {
     private String resultCode;
+    private String nextActionUrl;
 
     private CommonMetaData metadata;
     private CommonSpec spec;

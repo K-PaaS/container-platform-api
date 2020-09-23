@@ -4,6 +4,10 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.customServices.CustomServices;
+import org.paasta.container.platform.api.workloads.deployments.Deployments;
+import org.paasta.container.platform.api.workloads.deployments.DeploymentsList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -25,7 +29,6 @@ public class PodsService {
     private final CommonService commonService;
     private final PropertyService propertyService;
 
-
     /**
      * Instantiates a new Pods service.
      *
@@ -44,13 +47,27 @@ public class PodsService {
      * Pod 목록을 조회한다.
      *
      * @param namespace the namespace
-     * @return the pod list
+     * @return the pods list
      */
-    PodsList getPodsList(String namespace) {
+    /*PodsList getPodList(String namespace) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
 
         return (PodsList) commonService.setResultModel(commonService.setResultObject(resultMap, PodsList.class), Constants.RESULT_STATUS_SUCCESS);
+    }*/
+    public PodsList getPodsList(String namespace, int limit, String continueToken) {
+        String param = "";
+
+        if(continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPodsListUrl()
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+                , HttpMethod.GET, null, Map.class);
+
+        return (PodsList) commonService.setResultModel(commonService.setResultObject(responseMap, PodsList.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -60,7 +77,7 @@ public class PodsService {
      * @param selector  the selector
      * @return the pod list
      */
-    PodsList getPodsListWithLabelSelector(String namespace, String selector) {
+    PodsList getPodListWithLabelSelector(String namespace, String selector) {
         String requestSelector = "?labelSelector=" + selector;
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
@@ -75,7 +92,7 @@ public class PodsService {
      * @param nodeName                the node name
      * @return the pod list
      */
-    PodsList getPodsListByNode(String namespace, String nodeName) {
+    PodsList getPodListByNode(String namespace, String nodeName) {
         String requestURL = propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace)
                 + "/?fieldSelector=spec.nodeName=" + nodeName;
 
@@ -85,35 +102,84 @@ public class PodsService {
     }
 
     /**
-     * Pod를 조회한다.
+     * Pods 상세 정보를 조회한다.
      *
      * @param namespace the namespace
-     * @param podName   the pod's name
-     * @return the pod
+     * @param podsName   the pods name
+     * @return the pods
      */
-    Pods getPods(String namespace, String podName) {
-        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPodsGetUrl().replace("{namespace}", namespace).replace("{name}", podName),
+    public Pods getPods(String namespace, String podsName) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPodsGetUrl().replace("{namespace}", namespace).replace("{name}", podsName),
                 HttpMethod.GET, null, Map.class);
+
+        return (Pods) commonService.setResultModel(commonService.setResultObject(responseMap, Pods.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * Pods의 YAML을 조회한다.
+     *
+     * @param namespace the namespace
+     * @param podName   the pods name
+     * @param resultMap  the result map
+     * @return the pods
+     */
+    public Pods getPodsYaml(String namespace, String podName, HashMap resultMap) {
+        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPodsGetUrl().replace("{namespace}", namespace).replace("{name}", podName),
+                HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+        //noinspection unchecked
+        resultMap.put("sourceTypeYaml", resultString);
 
         return (Pods) commonService.setResultModel(commonService.setResultObject(resultMap, Pods.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
-     * Pod의 YAML을 조회한다.
+     * Pods 를 생성한다.
      *
-     * @param namespace the namespace
-     * @param podName   the pod's name
+     * @param namespace       the namespace
+     * @param yaml            the yaml
+     * @return return is succeeded
+     */
+    public Object createPods(String namespace, String yaml) {
+        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPodsCreate()
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS);
+    }
+
+    /**
+     * Pods를 삭제한다.
+     *
+     * @param namespace        the namespace
+     * @param resourceName the service name
+     * @param resultMap the result map
+     * @return the ResultStatus
+     */
+    public ResultStatus deletePods(String namespace, String resourceName, HashMap resultMap) {
+        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPodsDelete()
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS);
+    }
+
+    /**
+     * Pods를 수정한다.
+     *
+     * @param namespace     the namespace
+     * @param name          the pods name
+     * @param yaml          the yaml
      * @return the pods
      */
-    Pods getPodsYaml(String namespace, String podName) {
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPodsGetUrl().replace("{namespace}", namespace).replace("{name}", podName),
-                HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
-        //noinspection unchecked
-        HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("sourceTypeYaml", resultString);
+    public Object updatePods(String namespace, String name, String yaml) {
+        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPodsUpdate()
+                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, Object.class);
 
-        return (Pods) commonService.setResultModel(commonService.setResultObject(resultMap, Pods.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS_DETAIL.replace("{podName:.+}", name));
     }
 }
