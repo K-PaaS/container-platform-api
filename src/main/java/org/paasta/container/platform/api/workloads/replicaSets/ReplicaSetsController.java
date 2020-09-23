@@ -1,20 +1,21 @@
 package org.paasta.container.platform.api.workloads.replicaSets;
 
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 /**
  * ReplicaSets Controller 클래스
  *
- * @author hrjin
+ * @author jjy
  * @version 1.0
  * @since 2020.09.10
  */
 @RestController
-@RequestMapping("/namespaces/{namespace:.+}/replicaSets")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/replicaSets")
 public class ReplicaSetsController {
 
     private final ReplicaSetsService replicaSetsService;
@@ -72,5 +73,59 @@ public class ReplicaSetsController {
     public ReplicaSetsList getReplicaSetsListLabelSelector(@PathVariable("namespace") String namespace, @PathVariable("selector") String selectors ) {
         return replicaSetsService.getReplicaSetsListLabelSelector(namespace, selectors);
     }
+
+
+
+
+    /**
+     * ReplicaSets 을 생성한다.
+     *
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
+     */
+    @PostMapping
+    public Object createReplicaSets(@PathVariable(value = "cluster") String cluster,
+                                    @PathVariable(value = "namespace") String namespace,
+                                    @RequestBody String yaml) throws Exception {
+        if(yaml.contains("---")) {
+            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+            return object;
+        }
+
+        return replicaSetsService.createReplicaSets(namespace, yaml);
+    }
+
+
+    /**
+     * ReplicaSets 을 삭제한다.
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return the ResultStatus
+     */
+    @DeleteMapping(value = "/{resourceName:.+}")
+    public ResultStatus deleteReplicaSets(@PathVariable("namespace") String namespace,
+                                          @PathVariable("resourceName") String resourceName) {
+        return replicaSetsService.deleteReplicaSets(namespace, resourceName, new HashMap<>());
+    }
+
+
+    /**
+     * ReplicaSets을 수정한다.
+     *
+     * @param namespace the namespace
+     * @param replicaSetName the replicaSets name
+     * @param yaml the yaml
+     * @return the replicaSets
+     */
+    @PutMapping(value = "/{replicaSetName:.+}")
+    public Object updateReplicaSets(@PathVariable(value = "cluster") String cluster,
+                                    @PathVariable(value = "namespace") String namespace,
+                                    @PathVariable(value = "replicaSetName") String replicaSetName,
+                                    @RequestBody String yaml) {
+        return replicaSetsService.updateReplicaSets(namespace, replicaSetName, yaml);
+    }
+
 
 }

@@ -1,9 +1,9 @@
 package org.paasta.container.platform.api.workloads.replicaSets;
 
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
+
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.customServices.CustomServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * ReplicaSets Service 클래스
  *
- * @author hrjin
+ * @author jjy
  * @version 1.0
  * @since 2020.09.10
  */
@@ -65,7 +65,7 @@ public class ReplicaSetsService {
                 propertyService.getCpMasterApiListReplicaSetsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", replicaSetsName)
-                        , HttpMethod.GET, null, Map.class);
+                , HttpMethod.GET, null, Map.class);
 
         return (ReplicaSets) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSets.class), Constants.RESULT_STATUS_SUCCESS);
     }
@@ -104,5 +104,55 @@ public class ReplicaSetsService {
                         .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
         return (ReplicaSetsList) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSetsList.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+    /**
+     * ReplicaSets을 생성한다.
+     *
+     * @param namespace       the namespace
+     * @param yaml            the yaml
+     * @return                 return is succeeded
+     */
+    public Object createReplicaSets(String namespace, String yaml) {
+        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListreplicaSetsCreate()
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+
+        return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ReplicaSets.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS);
+    }
+
+    /**
+     * ReplicaSets을 삭제한다.
+     *
+     * @param namespace        the namespace
+     * @param resourceName     the ReplicaSets name
+     * @return the ResultStatus
+     */
+    public ResultStatus deleteReplicaSets(String namespace, String resourceName, HashMap resultMap) {
+        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListreplicaSetsDelete()
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS);
+    }
+
+    /**
+     * ReplicaSets을 수정한다.
+     *
+     * @param namespace the namespace
+     * @param resourceName the ReplicaSets name
+     * @param yaml          the yaml
+     * @return the services
+     */
+    public Object updateReplicaSets(String namespace, String resourceName, String yaml) {
+        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListreplicaSetsUpdate()
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
+
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS_DETAIL.replace("{replicaSetName:.+}", resourceName));
     }
 }
