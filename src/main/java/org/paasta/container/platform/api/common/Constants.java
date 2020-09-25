@@ -17,11 +17,13 @@ public class Constants {
     public static final String RESULT_STATUS_FAIL = "FAIL";
 
     public static final String TARGET_CP_MASTER_API = "cpMasterApi";
+    public static final String TARGET_COMMON_API = "commonApi";
+
     public static final String ACCEPT_TYPE_YAML = "application/yaml";
 
     public static final String TOKEN_KEY = "cp_admin";
 
-    public static final String TARGET_COMMON_API = "commonApi";
+    public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
 
     public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";
 
