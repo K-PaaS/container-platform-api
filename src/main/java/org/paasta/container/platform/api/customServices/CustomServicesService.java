@@ -115,7 +115,7 @@ public class CustomServicesService {
                 propertyService.getCpMasterApiListServicesCreate()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
-        return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
+        return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_SERVICES);
     }
 
