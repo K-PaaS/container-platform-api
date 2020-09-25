@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
+ * User Controller 클래스
+ *
  * @author hrjin
  * @version 1.0
  * @since 2020.09.22

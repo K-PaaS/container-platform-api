@@ -15,6 +15,8 @@ import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_A
 import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
 
 /**
+ * User Service 클래스
+ *
  * @author hrjin
  * @version 1.0
  * @since 2020.09.22

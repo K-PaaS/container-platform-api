@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.users;
 import lombok.Data;
 
 /**
- *
+ * User Model 클래스
  *
  * @author hrjin
  * @version 1.0
