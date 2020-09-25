@@ -15,7 +15,7 @@ import java.util.HashMap;
  * @since 2020.09.10
  */
 @RestController
-@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/replicaSets")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/replicasets")
 public class ReplicaSetsController {
 
     private final ReplicaSetsService replicaSetsService;
@@ -26,7 +26,9 @@ public class ReplicaSetsController {
      * @param replicaSetsService the replicaSets service
      */
     @Autowired
-    public ReplicaSetsController(ReplicaSetsService replicaSetsService) { this.replicaSetsService = replicaSetsService;}
+    public ReplicaSetsController(ReplicaSetsService replicaSetsService) {
+        this.replicaSetsService = replicaSetsService;
+    }
 
     /**
      * ReplicaSets 목록을 조회한다.
@@ -107,7 +109,7 @@ public class ReplicaSetsController {
     @DeleteMapping(value = "/{resourceName:.+}")
     public ResultStatus deleteReplicaSets(@PathVariable("namespace") String namespace,
                                           @PathVariable("resourceName") String resourceName) {
-        return replicaSetsService.deleteReplicaSets(namespace, resourceName, new HashMap<>());
+        return replicaSetsService.deleteReplicaSets(namespace, resourceName);
     }
 
 
@@ -115,16 +117,16 @@ public class ReplicaSetsController {
      * ReplicaSets을 수정한다.
      *
      * @param namespace the namespace
-     * @param replicaSetName the replicaSets name
+     * @param resourceName the replicaSets name
      * @param yaml the yaml
      * @return the replicaSets
      */
-    @PutMapping(value = "/{replicaSetName:.+}")
+    @PutMapping(value = "/{resourceName:.+}")
     public Object updateReplicaSets(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
-                                    @PathVariable(value = "replicaSetName") String replicaSetName,
+                                    @PathVariable(value = "resourceName") String resourceName,
                                     @RequestBody String yaml) {
-        return replicaSetsService.updateReplicaSets(namespace, replicaSetName, yaml);
+        return replicaSetsService.updateReplicaSets(namespace, resourceName, yaml);
     }
 
 

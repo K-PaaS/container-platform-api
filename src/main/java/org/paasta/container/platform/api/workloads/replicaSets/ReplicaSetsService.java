@@ -47,7 +47,7 @@ public class ReplicaSetsService {
      */
     public ReplicaSetsList getReplicaSetsList(String namespace) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicaSetsListUrl()
+                propertyService.getCpMasterApiListReplicasetsListUrl()
                         .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
 
         return (ReplicaSetsList) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSetsList.class), Constants.RESULT_STATUS_SUCCESS);
@@ -62,7 +62,7 @@ public class ReplicaSetsService {
      */
     public ReplicaSets getReplicaSets(String namespace, String replicaSetsName) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicaSetsGetUrl()
+                propertyService.getCpMasterApiListReplicasetsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", replicaSetsName)
                 , HttpMethod.GET, null, Map.class);
@@ -79,7 +79,7 @@ public class ReplicaSetsService {
      */
     public ReplicaSets getReplicaSetsYaml(String namespace, String replicaSetsName) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicaSetsGetUrl()
+                propertyService.getCpMasterApiListReplicasetsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", replicaSetsName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
@@ -100,7 +100,7 @@ public class ReplicaSetsService {
     public ReplicaSetsList getReplicaSetsListLabelSelector(String namespace, String selectors) {
         String requestSelector = "?labelSelector=" + selectors;
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicaSetsListUrl()
+                propertyService.getCpMasterApiListReplicasetsListUrl()
                         .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
         return (ReplicaSetsList) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSetsList.class), Constants.RESULT_STATUS_SUCCESS);
@@ -108,7 +108,7 @@ public class ReplicaSetsService {
 
 
     /**
-     * ReplicaSets을 생성한다.
+     * ReplicaSets 생성한다.
      *
      * @param namespace       the namespace
      * @param yaml            the yaml
@@ -116,43 +116,43 @@ public class ReplicaSetsService {
      */
     public Object createReplicaSets(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListreplicaSetsCreate()
+                propertyService.getCpMasterApiListReplicasetsCreate()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
-        return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ReplicaSets.class),
+        return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS);
     }
 
     /**
-     * ReplicaSets을 삭제한다.
+     * ReplicaSets 삭제한다.
      *
      * @param namespace        the namespace
-     * @param resourceName     the ReplicaSets name
+     * @param name     the ReplicaSets name
      * @return the ResultStatus
      */
-    public ResultStatus deleteReplicaSets(String namespace, String resourceName, HashMap resultMap) {
+    public ResultStatus deleteReplicaSets(String namespace, String name) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListreplicaSetsDelete()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+                propertyService.getCpMasterApiListReplicasetsDelete()
+                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS);
     }
 
     /**
-     * ReplicaSets을 수정한다.
+     * ReplicaSets 수정한다.
      *
      * @param namespace the namespace
-     * @param resourceName the ReplicaSets name
+     * @param name the ReplicaSets name
      * @param yaml          the yaml
      * @return the services
      */
-    public Object updateReplicaSets(String namespace, String resourceName, String yaml) {
-        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListreplicaSetsUpdate()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
+    public ResultStatus updateReplicaSets(String namespace, String name, String yaml) {
+        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListReplicasetsUpdate()
+                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, ResultStatus.class);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS_DETAIL.replace("{replicaSetName:.+}", resourceName));
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS_DETAIL.replace("{replicaSetName:.+}", name));
     }
 }
