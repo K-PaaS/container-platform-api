@@ -68,8 +68,10 @@ public class MethodHandler {
             LOGGER.info("temp:::::::::" + temp);
             String kind = YamlUtil.parsingYaml(temp,"kind");
 
-            if(kind.equals(requestResource)) {
-                LOGGER.info("resource include:::::::::" + kind);
+            String resourceKind = YamlUtil.makeResourceNameYAML(kind);
+
+            if(resourceKind.equals(requestResource)) {
+                LOGGER.info("resource include:::::::::" + resourceKind);
                 isExistResource = true;
                 break;
             }
@@ -122,9 +124,11 @@ public class MethodHandler {
 
         String requestURI = request.getRequestURI();
         String requestResource = InspectionUtil.parsingRequestURI(requestURI)[5];
-        requestResource = InspectionUtil.makeResourceName(requestResource);
+        requestResource = InspectionUtil.makeResourceName(requestResource);//replicaset
 
-        String resourceKind = YamlUtil.parsingYaml(yaml, "kind");
+        String resourceKind = YamlUtil.parsingYaml(yaml, "kind");//ReplicaSet
+        resourceKind = YamlUtil.makeResourceNameYAML(resourceKind);//replicaset
+
         String updateYamlResourceName = YamlUtil.parsingYaml(yaml, "metadata");
 
         if(!requestResource.equals(resourceKind) ) {
@@ -139,6 +143,8 @@ public class MethodHandler {
             return  new ErrorMessage(Constants.RESULT_STATUS_FAIL,
                     "Resource name is invalid.", 400, "This is not an update yaml for the " + requestResource + " name '"+ resourceName + "'." );
         }
+
+        resourceKind = YamlUtil.parsingYaml(yaml, "kind");//
 
         Object dryRunResult = InspectionUtil.resourceDryRunCheck("Update", namespace, resourceKind, yaml, resourceName);
         ObjectMapper oMapper = new ObjectMapper();

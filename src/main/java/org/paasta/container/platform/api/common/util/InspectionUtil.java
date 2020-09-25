@@ -43,20 +43,23 @@ public class InspectionUtil {
      * @return
      */
     public static String makeMethodName(String fieldName, String suffix) {
-        return "getCpMasterApiList" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1) + "s" + suffix;
+        return "getCpMasterApiList" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1).toLowerCase() + "s" + suffix;
     }
 
 
     /**
      *
-     * yaml에서 쓰는 kind(Resource)에 맞게 이름 생성
-     * 예시) deployments -> Deployment
+     *  yaml Resource 값과 비교할 Resource 값 생성
+     * 예시) deployments -> deployment
      *
      * @param resourceName
      * @return
      */
-    public static String makeResourceName(String resourceName) {
+    /*public static String makeResourceName(String resourceName) {
         resourceName = resourceName.substring(0, 1).toUpperCase()+resourceName.substring(1).toLowerCase();
+        return resourceName.substring(0, resourceName.length()-1);
+    }*/
+    public static String makeResourceName(String resourceName) {
         return resourceName.substring(0, resourceName.length()-1);
     }
 

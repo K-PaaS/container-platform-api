@@ -63,20 +63,20 @@ public class PropertyService {
     @Value("${cpMaster.api.list.nodes.get}")
     private String cpMasterApiListNodesGetUrl;
 
-    @Value("${cpMaster.api.list.replicaSets.list}")
-    private String cpMasterApiListReplicaSetsListUrl;
+    @Value("${cpMaster.api.list.replicasets.list}")
+    private String cpMasterApiListReplicasetsListUrl;
 
-    @Value("${cpMaster.api.list.replicaSets.get}")
-    private String cpMasterApiListReplicaSetsGetUrl;
+    @Value("${cpMaster.api.list.replicasets.get}")
+    private String cpMasterApiListReplicasetsGetUrl;
 
-    @Value("${cpMaster.api.list.replicaSets.delete}")
-    private String cpMasterApiListreplicaSetsDelete;
+    @Value("${cpMaster.api.list.replicasets.delete}")
+    private String cpMasterApiListReplicasetsDelete;
 
-    @Value("${cpMaster.api.list.replicaSets.create}")
-    private String cpMasterApiListreplicaSetsCreate;
+    @Value("${cpMaster.api.list.replicasets.create}")
+    private String cpMasterApiListReplicasetsCreate;
 
-    @Value("${cpMaster.api.list.replicaSets.update}")
-    private String cpMasterApiListreplicaSetsUpdate;
+    @Value("${cpMaster.api.list.replicasets.update}")
+    private String cpMasterApiListReplicasetsUpdate;
 
     @Value("${cpMaster.api.list.persistentvolumes.list}")
     private String cpMasterApiListPersistentvolumesListUrl;

@@ -37,13 +37,24 @@ public class YamlUtil {
         return value;
     }
 
-
     /**
-     * 복합 yaml '---'로 나누어 list화
-     * trim 사용하여 공백 제거
-     * @param yaml
-     * @return
+     * url Resource 값과 비교할 yaml의 Resource 값 추출
+     *
+     * @param kind
+     * @return YamlKind
      */
+    public static String makeResourceNameYAML(String kind) {
+        String YamlKind =  kind.toLowerCase();
+        return YamlKind;
+    }
+
+
+   /**
+    * 복합 yaml '---'로 나누어 list화
+    * trim 사용하여 공백 제거
+    * @param yaml
+    * @return
+    */
     public static String[] splitYaml(String yaml) {
         String[] yamlArray = yaml.split("---");
         ArrayList<String> returnList = new ArrayList<String>();
