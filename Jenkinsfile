@@ -10,7 +10,6 @@ pipeline {
 			steps {
 				git branch: 'dev', credentialsId: '7f02bc4a-645f-48db-b3fe-343abb92ef03', url: 'https://github.com/PaaS-TA/paas-ta-container-platform-api'
 			}
-			}
 		}
 		stage('Environment') {
             parallel {
