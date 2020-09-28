@@ -94,7 +94,7 @@ public class InspectionUtil {
         LOGGER.info("Method Name >>> " + methodName);
 
         // 동적 K8s API Endpoint
-        Object recursiveObj = method.invoke(propertyService, null);
+        Object recursiveObj = method.invoke(propertyService);
         String finalUrl = recursiveObj.toString();
         LOGGER.info("K8s API Endpoint >>> " + finalUrl);
 
