@@ -12,6 +12,8 @@ import lombok.Data;
 
 @Data
 public class Users {
+    private String resultCode;
+    private String resultMessage;
 
     private long id;
     private String userId;
@@ -31,7 +33,5 @@ public class Users {
     private String userType;
     private String created;
     private String lastModified;
-
-    private String resultCode;
 
 }
