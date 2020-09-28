@@ -29,7 +29,6 @@ metadata:
     app: api
   namespace: default
 spec:
-  clusterIP: 10.96.106.151
   ports:
   - nodePort: 30334
     port: 3334
