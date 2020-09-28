@@ -25,6 +25,11 @@ pipeline {
                 }
             }
         }
+		stage('copy config') {
+			steps {
+				sh 'cp /var/lib/jenkins/workspace/config/api/application.yml src/main/resources/application.yml'
+			}
+		}
 		stage('Clean Build') {
             steps {
                 sh './gradlew clean'
