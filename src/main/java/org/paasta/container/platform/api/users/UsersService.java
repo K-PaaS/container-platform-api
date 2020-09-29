@@ -37,24 +37,27 @@ public class UsersService {
 
 
     public ResultStatus createUsers(Users users) {
-        // Todo (1) ::: service account 생성. 타겟은 temp-namespace
+        // (1) ::: service account 생성. 타겟은 temp-namespace
         String saYaml = "apiVersion: v1\n" +
                 "kind: ServiceAccount\n" +
                 "metadata:\n" +
                 " name: " + users.getUserId() + "\n" +
                 " namespace: " + Constants.DEFAULT_NAMESPACE_NAME;
-        ResultStatus saResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersCreateUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME), HttpMethod.POST, saYaml, ResultStatus.class);
+        Object saResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersCreateUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME), HttpMethod.POST, saYaml, Object.class);
 
-        // Todo (2) ::: service account 생성 완료 시 아래 Common API 호출 고고!!!
-        if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
-            return saResult;
+        ResultStatus rsK8s = (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(saResult, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);
+
+        // (2) ::: service account 생성 완료 시 아래 Common API 호출
+        if(Constants.RESULT_STATUS_FAIL.equals(rsK8s.getResultCode())) {
+            return rsK8s;
         }
 
         users.setCpNamespace(Constants.DEFAULT_NAMESPACE_NAME);
         users.setServiceAccountName(users.getUserId());
 
-        ResultStatus resultStatus = restTemplateService.send(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class);
-        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);
+        ResultStatus rsDb = restTemplateService.send(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class);
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);
     }
 
     public UsersList getUsersList() {

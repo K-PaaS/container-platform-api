@@ -135,30 +135,22 @@ public class RestTemplateService {
         } catch (HttpStatusCodeException exception) {
             LOGGER.info("HttpStatusCodeException API Call URL : {}, errorCode : {}, errorMessage : {}", reqUrl, exception.getRawStatusCode(), exception.getMessage());
 
-            ErrorMessage errorMessage = new ErrorMessage(Constants.RESULT_STATUS_FAIL, exception.getStatusText(), exception.getRawStatusCode(), exception.getMessage());
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map result = objectMapper.convertValue(errorMessage, Map.class);
+            for (CommonStatusCode code : CommonStatusCode.class.getEnumConstants()) {
+                if(code.getCode() == exception.getRawStatusCode()) {
+                    return (T) new ResultStatus(Constants.RESULT_STATUS_FAIL, exception.getStatusText(), code.getCode(), code.getMsg());
+                }
+            }
 
-            return (T) result;
+//            ErrorMessage errorMessage = new ErrorMessage(Constants.RESULT_STATUS_FAIL, exception.getStatusText(), exception.getRawStatusCode(), exception.getMessage());
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            Map result = objectMapper.convertValue(errorMessage, Map.class);
+//
+//            return (T) result;
         }
 
         if (resEntity.getBody() != null) {
             LOGGER.info("RESPONSE-TYPE: {}", resEntity.getBody().getClass());
-
-            Integer[] RESULT_STATUS_SUCCESS_CODE = {200, 201, 202};
-
-            List<Integer> intList = new ArrayList<>(RESULT_STATUS_SUCCESS_CODE.length);
-            for (int i : RESULT_STATUS_SUCCESS_CODE)
-            {
-                intList.add(i);
-            }
-
-            if (httpMethod == HttpMethod.PUT || httpMethod == HttpMethod.POST || httpMethod == HttpMethod.DELETE) {
-                if (Arrays.asList(RESULT_STATUS_SUCCESS_CODE).contains(resEntity.getStatusCode().value()) ) {
-                    ResultStatus resultStatus = new ResultStatus(Constants.RESULT_STATUS_SUCCESS, resEntity.getStatusCode().toString(), CommonStatusCode.OK.getCode(), CommonStatusCode.OK.getMsg());
-                    return (T) resultStatus;
-                }
-            }
+            return statusCodeDiscriminate(resEntity, httpMethod);
 
         } else {
             LOGGER.error("RESPONSE-TYPE: RESPONSE BODY IS NULL");
@@ -224,5 +216,45 @@ public class RestTemplateService {
      */
     public <T> T sendYaml(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType) {
         return send(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml");
+    }
+
+
+    /**
+     * Create/Update/Delete logic's status code discriminate
+     *
+     * @param res        the response
+     * @param httpMethod the http method
+     * @param <T> the T
+     * @return the T
+     */
+    public <T> T statusCodeDiscriminate(ResponseEntity<T> res, HttpMethod httpMethod) {
+        // 200, 201, 202일때 결과 코드 동일하게
+        Integer[] RESULT_STATUS_SUCCESS_CODE = {200, 201, 202};
+
+        ResultStatus resultStatus;
+
+        List<Integer> intList = new ArrayList<>(RESULT_STATUS_SUCCESS_CODE.length);
+        for (int i : RESULT_STATUS_SUCCESS_CODE)
+        {
+            intList.add(i);
+        }
+
+        // Rest 호출 시 에러가 났지만 에러 메세지를 보여주기 위해 200 OK로 리턴된 경우
+//        ObjectMapper oMapper = new ObjectMapper();
+//        Map map = oMapper.convertValue(res.getBody(), Map.class);
+//
+//        if(Constants.RESULT_STATUS_FAIL.equals(map.get("resultCode"))) {
+//            resultStatus = new ResultStatus(Constants.RESULT_STATUS_FAIL, map.get("resultMessage").toString(), CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(), CommonStatusCode.INTERNAL_SERVER_ERROR.getMsg());
+//            return (T) resultStatus;
+//        }
+
+        if (httpMethod == HttpMethod.PUT || httpMethod == HttpMethod.POST || httpMethod == HttpMethod.DELETE) {
+            if (Arrays.asList(RESULT_STATUS_SUCCESS_CODE).contains(res.getStatusCode().value()) ) {
+                resultStatus = new ResultStatus(Constants.RESULT_STATUS_SUCCESS, res.getStatusCode().toString(), CommonStatusCode.OK.getCode(), CommonStatusCode.OK.getMsg());
+                return (T) resultStatus;
+            }
+        }
+
+        return res.getBody();
     }
 }

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.InspectionUtil;
 import org.paasta.container.platform.api.common.util.YamlUtil;
-import org.paasta.container.platform.api.exception.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,8 +79,8 @@ public class MethodHandler {
 
         if(!isExistResource) {
             LOGGER.info("The corresponding resource does not exist:::::::::error");
-            return  new ErrorMessage(Constants.RESULT_STATUS_FAIL,
-                    "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist" );
+            //return  new ErrorMessage(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist" );
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist." );
         }
 
         for (String temp : yamlArray) {
@@ -90,11 +90,11 @@ public class MethodHandler {
 
             Object dryRunResult = InspectionUtil.resourceDryRunCheck("Create", namespace, resourceKind, temp, null);
             ObjectMapper oMapper = new ObjectMapper();
-            Map map = oMapper.convertValue(dryRunResult, Map.class);
+            ResultStatus createdRs = oMapper.convertValue(dryRunResult, ResultStatus.class);
 
-            if (Constants.RESULT_STATUS_FAIL.equals(map.get("resultCode"))) {
+            if (Constants.RESULT_STATUS_FAIL.equals(createdRs.getResultCode())) {
                 LOGGER.info("dryRun :: not valid yaml ");
-                return map;
+                return createdRs;
             }
 
         }
@@ -133,14 +133,15 @@ public class MethodHandler {
 
         if(!requestResource.equals(resourceKind) ) {
             LOGGER.info("The corresponding resource does not exist:::::::::error");
-            return  new ErrorMessage(Constants.RESULT_STATUS_FAIL,
-                    "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist." );
+            //return  new ErrorMessage(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist." );
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist." );
         }
 
 
         if(!resourceName.equals(updateYamlResourceName)) {
             LOGGER.info("Resource name is invalid:::::::::error");
-            return  new ErrorMessage(Constants.RESULT_STATUS_FAIL,
+            //return  new ErrorMessage(Constants.RESULT_STATUS_FAIL, "Resource name is invalid.", 400, "This is not an update yaml for the " + requestResource + " name '"+ resourceName + "'." );
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL,
                     "Resource name is invalid.", 400, "This is not an update yaml for the " + requestResource + " name '"+ resourceName + "'." );
         }
 
@@ -148,11 +149,11 @@ public class MethodHandler {
 
         Object dryRunResult = InspectionUtil.resourceDryRunCheck("Update", namespace, resourceKind, yaml, resourceName);
         ObjectMapper oMapper = new ObjectMapper();
-        Map map = oMapper.convertValue(dryRunResult, Map.class);
+        ResultStatus updatedRs = oMapper.convertValue(dryRunResult, ResultStatus.class);
 
-        if (Constants.RESULT_STATUS_FAIL.equals(map.get("resultCode"))) {
+        if (Constants.RESULT_STATUS_FAIL.equals(updatedRs.getResultCode())) {
             LOGGER.info("dryRun :: not valid yaml ");
-            return map;
+            return updatedRs;
         }
 
         return joinPoint.proceed(joinPoint.getArgs());
