@@ -150,7 +150,7 @@ public class RestTemplateService {
 
         if (resEntity.getBody() != null) {
             LOGGER.info("RESPONSE-TYPE: {}", resEntity.getBody().getClass());
-            return statusCodeDiscriminate(resEntity, httpMethod);
+            return statusCodeDiscriminate(reqApi, resEntity, httpMethod);
 
         } else {
             LOGGER.error("RESPONSE-TYPE: RESPONSE BODY IS NULL");
@@ -222,12 +222,13 @@ public class RestTemplateService {
     /**
      * Create/Update/Delete logic's status code discriminate
      *
-     * @param res        the response
-     * @param httpMethod the http method
-     * @param <T> the T
-     * @return the T
+     * @param reqApi      the reqApi
+     * @param res         the response
+     * @param httpMethod  the http method
+     * @param <T>         the T
+     * @return            the T
      */
-    public <T> T statusCodeDiscriminate(ResponseEntity<T> res, HttpMethod httpMethod) {
+    public <T> T statusCodeDiscriminate(String reqApi, ResponseEntity<T> res, HttpMethod httpMethod) {
         // 200, 201, 202일때 결과 코드 동일하게
         Integer[] RESULT_STATUS_SUCCESS_CODE = {200, 201, 202};
 
@@ -239,14 +240,17 @@ public class RestTemplateService {
             intList.add(i);
         }
 
-        // Rest 호출 시 에러가 났지만 에러 메세지를 보여주기 위해 200 OK로 리턴된 경우
-//        ObjectMapper oMapper = new ObjectMapper();
-//        Map map = oMapper.convertValue(res.getBody(), Map.class);
-//
-//        if(Constants.RESULT_STATUS_FAIL.equals(map.get("resultCode"))) {
-//            resultStatus = new ResultStatus(Constants.RESULT_STATUS_FAIL, map.get("resultMessage").toString(), CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(), CommonStatusCode.INTERNAL_SERVER_ERROR.getMsg());
-//            return (T) resultStatus;
-//        }
+        // Rest 호출 시 에러가 났지만 에러 메세지를 보여주기 위해 200 OK로 리턴된 경우 (Common API Error Object)
+        if(Constants.TARGET_COMMON_API.equals(reqApi)) {
+            ObjectMapper oMapper = new ObjectMapper();
+            Map map = oMapper.convertValue(res.getBody(), Map.class);
+
+            if(Constants.RESULT_STATUS_FAIL.equals(map.get("resultCode"))) {
+                resultStatus = new ResultStatus(Constants.RESULT_STATUS_FAIL, map.get("resultMessage").toString(), CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(), CommonStatusCode.INTERNAL_SERVER_ERROR.getMsg());
+                return (T) resultStatus;
+            }
+        }
+
 
         if (httpMethod == HttpMethod.PUT || httpMethod == HttpMethod.POST || httpMethod == HttpMethod.DELETE) {
             if (Arrays.asList(RESULT_STATUS_SUCCESS_CODE).contains(res.getStatusCode().value()) ) {
