@@ -14,6 +14,7 @@ public enum CommonStatusCode {
     FORBIDDEN(403, "페이지 접근 허용이 거부 되었습니다."),
     NOT_FOUND(404, "찾을 수 없습니다."),
     CONFLICT(409, "요청을 수행하는 중에 충돌이 발생하였습니다."),
+    UNPROCESSABLE_ENTITY(422, "문법 오류로 인하여 요청을 처리할 수 없습니다."),
     INTERNAL_SERVER_ERROR(500, "요청 사항을 수행 할 수 없습니다."),
     SERVICE_UNAVAILABLE(503, "서버가 요청을 처리할 준비가 되지 않았습니다."),
     MANDATORY(1000, "Required value."),
