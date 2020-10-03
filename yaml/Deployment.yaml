@@ -18,6 +18,7 @@ spec:
       containers:
       - name: api
         image: 15.164.129.57:5000/container-platform-api:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 3333
 ---
