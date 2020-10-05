@@ -17,6 +17,7 @@ import java.util.Map;
 @Data
 public class PersistentVolumeClaims {
     private String resultCode;
+    private String nextActionUrl;
 
     private CommonMetaData metadata;
     private PersistentVolumeClaimsSpec spec;

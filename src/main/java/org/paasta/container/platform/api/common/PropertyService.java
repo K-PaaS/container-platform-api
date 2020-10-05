@@ -84,11 +84,20 @@ public class PropertyService {
     @Value("${cpMaster.api.list.persistentvolumes.get}")
     private String cpMasterApiListPersistentvolumesGetUrl;
 
-    @Value("${cpMaster.api.list.persistentVolumeClaims.list}")
-    private String cpMasterApiListPersistentVolumeClaimsListUrl;
+    @Value("${cpMaster.api.list.persistentvolumeclaims.list}")
+    private String cpMasterApiListPersistentvolumeclaimsListUrl;
 
-    @Value("${cpMaster.api.list.persistentVolumeClaims.get}")
-    private String cpMasterApiListPersistentVolumeClaimsGetUrl;
+    @Value("${cpMaster.api.list.persistentvolumeclaims.get}")
+    private String cpMasterApiListPersistentvolumeclaimsGetUrl;
+
+    @Value("${cpMaster.api.list.persistentvolumeclaims.create}")
+    private String cpMasterApiListPersistentvolumeclaimsCreate;
+
+    @Value("${cpMaster.api.list.persistentvolumeclaims.delete}")
+    private String cpMasterApiListPersistentvolumeclaimsDelete;
+
+    @Value("${cpMaster.api.list.persistentvolumeclaims.update}")
+    private String cpMasterApiListPersistentvolumeclaimsUpdate;
 
     @Value("${cpMaster.api.list.events.list}")
     private String cpMasterApiListEventsListUrl;

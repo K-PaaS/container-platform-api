@@ -1,10 +1,9 @@
 package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -16,7 +15,7 @@ import java.util.HashMap;
  * @since 2020.09.18
  */
 @RestController
-@RequestMapping("/namespaces/{namespace:.+}/persistentVolumeClaims")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/persistentvolumeclaims")
 public class PersistentVolumeClaimsController {
     private final PersistentVolumeClaimsService persistentVolumeClaimsService;
 
@@ -64,4 +63,55 @@ public class PersistentVolumeClaimsController {
     public PersistentVolumeClaims getPersistentVolumeClaimsYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "persistentVolumeClaimName") String persistentVolumeClaimName) {
         return persistentVolumeClaimsService.getPersistentVolumeClaimsYaml(namespace, persistentVolumeClaimName, new HashMap<>());
     }
+
+    /**
+     * PersistentVolumeClaims 를 생성한다.
+     *
+     * @param namespace       the namespace
+     * @param yaml            the yaml
+     * @return                return is succeeded
+     */
+    @PostMapping
+    public Object createPersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
+                                 @PathVariable(value = "namespace") String namespace,
+                                 @RequestBody String yaml) throws Exception {
+        if(yaml.contains("---")) {
+            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+            return object;
+        }
+
+        return persistentVolumeClaimsService.createPersistentVolumeClaims(namespace, yaml);
+    }
+
+    /**
+     * PersistentVolumeClaims 를 삭제한다.
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return return is succeeded
+     */
+    @DeleteMapping("/{resourceName:.+}")
+    public ResultStatus deletePersistentVolumeClaims(@PathVariable(value = "namespace") String namespace,
+                                       @PathVariable(value = "resourceName") String resourceName) {
+
+        return persistentVolumeClaimsService.deletePersistentVolumeClaims(namespace, resourceName, new HashMap<>());
+    }
+
+    /**
+     * Services 를 수정한다.
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @param yaml the yaml
+     * @return the services
+     */
+    @PutMapping("/{resourceName:.+}")
+    public Object updatePersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
+                                 @PathVariable(value = "namespace") String namespace,
+                                 @PathVariable(value = "resourceName") String resourceName,
+                                 @RequestBody String yaml) {
+
+        return persistentVolumeClaimsService.updatePersistentVolumeClaims(namespace, resourceName, yaml);
+    }
+
 }
