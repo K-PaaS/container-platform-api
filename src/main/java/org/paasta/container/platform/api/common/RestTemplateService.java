@@ -1,11 +1,13 @@
 package org.paasta.container.platform.api.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.paasta.container.platform.api.adminToken.AdminToken;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.exception.CpCommonAPIException;
-import org.paasta.container.platform.api.exception.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,12 +142,6 @@ public class RestTemplateService {
                     return (T) new ResultStatus(Constants.RESULT_STATUS_FAIL, exception.getStatusText(), code.getCode(), code.getMsg());
                 }
             }
-
-//            ErrorMessage errorMessage = new ErrorMessage(Constants.RESULT_STATUS_FAIL, exception.getStatusText(), exception.getRawStatusCode(), exception.getMessage());
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            Map result = objectMapper.convertValue(errorMessage, Map.class);
-//
-//            return (T) result;
         }
 
         if (resEntity.getBody() != null) {
@@ -260,5 +256,25 @@ public class RestTemplateService {
         }
 
         return res.getBody();
+    }
+
+
+    /**
+     * service account의 secret 이름을 조회한다.
+     *
+     * @param namespace the namespace
+     * @param userName the user name
+     * @return the String
+     */
+    public String getSecretName(String namespace, String userName) {
+        String jsonObj = this.send(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersGetUrl().replace("{namespace}", namespace).replace("{name}", userName), HttpMethod.GET, null, String.class);
+        LOGGER.info("getToken jsonObj~~ {}",jsonObj);
+
+        JsonObject jsonObject = JsonParser.parseString(jsonObj).getAsJsonObject();
+        JsonElement element = jsonObject.getAsJsonObject().get("secrets");
+        element = element.getAsJsonArray().get(0);
+        String token = element.getAsJsonObject().get("name").toString();
+        token = token.replaceAll("\"", "");
+        return token;
     }
 }

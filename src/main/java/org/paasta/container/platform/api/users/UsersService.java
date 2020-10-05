@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.users;
 
+import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.slf4j.Logger;
@@ -31,13 +32,15 @@ public class UsersService {
     private final PropertyService propertyService;
     private final TemplateService templateService;
     private final RestTemplateService restTemplateService;
+    private final AccessTokenService accessTokenService;
 
     @Autowired
-    public UsersService(CommonService commonService, PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService) {
+    public UsersService(CommonService commonService, PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService, AccessTokenService accessTokenService) {
         this.commonService = commonService;
         this.propertyService = propertyService;
         this.templateService = templateService;
         this.restTemplateService = restTemplateService;
+        this.accessTokenService = accessTokenService;
     }
 
 
@@ -62,8 +65,12 @@ public class UsersService {
             return rsK8s;
         }
 
+        String saSecretName = restTemplateService.getSecretName(namespace, users.getUserId());
+
         users.setCpNamespace(Constants.DEFAULT_NAMESPACE_NAME);
         users.setServiceAccountName(users.getUserId());
+        users.setSaSecret(saSecretName);
+        users.setSaToken(accessTokenService.getSecret(namespace, saSecretName).getUserAccessToken());
 
         ResultStatus rsDb = restTemplateService.send(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class);
 
