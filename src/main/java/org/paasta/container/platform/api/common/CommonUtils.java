@@ -1,8 +1,12 @@
 package org.paasta.container.platform.api.common;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.users.Users;
+import org.springframework.util.StringUtils;
+
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Common utils 클래스
@@ -40,6 +44,38 @@ public class CommonUtils {
         }
 
         return resultString;
+    }
+
+    public static Object stringNullCheck(Object obj) {
+        List<String> checkParamList = new ArrayList<>();
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> map = objectMapper.convertValue(obj, Map.class);
+
+        for(String key : map.keySet()) {
+            if(!StringUtils.hasText(map.get(key))) {
+                checkParamList.add(key);
+            }
+        }
+
+        if(checkParamList.size() > 0) {
+            return ResultStatus.builder()
+                    .resultCode(Constants.RESULT_STATUS_FAIL)
+                    .resultMessage("Failed Sign Up.")
+                    .httpStatusCode(400)
+                    .detailMessage("Failed Sign Up. Re Confirm " + checkParamList.toString()).build();
+        }
+
+        return objectMapper.convertValue(map, Users.class);
+    }
+
+
+    public static Map yamlMatch(String username, String namespace) {
+        Map<String, Object> model = new HashMap<>();
+        model.put("userName", username);
+        model.put("spaceName", namespace);
+
+        return model;
     }
 
 }

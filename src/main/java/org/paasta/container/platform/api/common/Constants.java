@@ -24,6 +24,7 @@ public class Constants {
     public static final String TOKEN_KEY = "cp_admin";
 
     public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
+    public static final String DEFAULT_SUPER_ADMIN_NAMESPACE = "kube-system";
 
     public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";
 

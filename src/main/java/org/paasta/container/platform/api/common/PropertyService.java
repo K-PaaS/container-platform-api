@@ -162,6 +162,10 @@ public class PropertyService {
     @Value("${cpMaster.api.list.secrets.create}")
     private String cpMasterApiListSecretsCreateUrl;
 
+    @Value("${cpMaster.api.list.clusterRoleBindings.create}")
+    private String cpMasterApiListClusterRoleBindingsCreateUrl;
 
+    @Value("${cpMaster.api.list.clusterRoleBindings.delete}")
+    private String cpMasterApiListClusterRoleBindingsDeleteUrl;
 
 }

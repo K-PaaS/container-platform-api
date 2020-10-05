@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.common.model;
 
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -10,6 +11,7 @@ import lombok.Data;
  * @since 2020.08.28
  **/
 @Data
+@Builder
 public class ResultStatus {
     private String resultCode;
     private String resultMessage;

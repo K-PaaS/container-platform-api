@@ -1,9 +1,6 @@
 package org.paasta.container.platform.api.users;
 
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.paasta.container.platform.api.common.CommonUtils.yamlMatch;
 import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
 import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
 
@@ -30,12 +28,14 @@ public class UsersService {
 
     private final CommonService commonService;
     private final PropertyService propertyService;
+    private final TemplateService templateService;
     private final RestTemplateService restTemplateService;
 
     @Autowired
-    public UsersService(CommonService commonService, PropertyService propertyService, RestTemplateService restTemplateService) {
+    public UsersService(CommonService commonService, PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService) {
         this.commonService = commonService;
         this.propertyService = propertyService;
+        this.templateService = templateService;
         this.restTemplateService = restTemplateService;
     }
 
@@ -46,14 +46,12 @@ public class UsersService {
      * @param users  the users
      * @return       the result status
      */
-    public ResultStatus createUsers(Users users) {
+    public ResultStatus registerUser(Users users) {
+        String namespace = Constants.DEFAULT_NAMESPACE_NAME;
+
         // (1) ::: service account 생성. 타겟은 temp-namespace
-        String saYaml = "apiVersion: v1\n" +
-                "kind: ServiceAccount\n" +
-                "metadata:\n" +
-                " name: " + users.getUserId() + "\n" +
-                " namespace: " + Constants.DEFAULT_NAMESPACE_NAME;
-        Object saResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersCreateUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME), HttpMethod.POST, saYaml, Object.class);
+        String saYaml = templateService.convert("create_account.ftl", yamlMatch(users.getUserId(), namespace));
+        Object saResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, saYaml, Object.class);
 
         ResultStatus rsK8s = (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(saResult, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);

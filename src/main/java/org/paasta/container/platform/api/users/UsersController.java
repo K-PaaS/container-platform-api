@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.paasta.container.platform.api.common.CommonUtils.stringNullCheck;
+
 /**
  * User Controller 클래스
  *
@@ -18,18 +20,33 @@ import java.util.List;
 public class UsersController {
 
     private final UsersService usersService;
+    private final AdminUserService adminUserService;
 
     @Autowired
-    public UsersController(UsersService usersService) {
+    public UsersController(UsersService usersService, AdminUserService adminUserService) {
         this.usersService = usersService;
+        this.adminUserService = adminUserService;
     }
 
-    // 회원가입
-    // web user에서 api -> common-api 로 가야함...
-    // service account 만들고 성공하면 그 다음 DB 생성
+    // 사용자 회원가입
     @PostMapping
     public ResultStatus registerUsers(@RequestBody Users users) {
-        return usersService.createUsers(users);
+        return usersService.registerUser(users);
+    }
+
+
+
+    // 운영자 회원가입
+    @PostMapping(value = "/admin")
+    @ResponseBody
+    public ResultStatus registerAdminUser(@RequestBody Object adminUsers) {
+        Object obj = stringNullCheck(adminUsers);
+        if(obj instanceof ResultStatus) {
+            return (ResultStatus) obj;
+        }
+
+        Users users = (Users) obj;
+        return adminUserService.registerAdminUser(users);
     }
 
 //    @GetMapping
