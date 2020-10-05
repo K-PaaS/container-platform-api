@@ -9,6 +9,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.paasta.container.platform.api.common.CommonUtils.yamlMatch;
 import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
@@ -81,11 +82,11 @@ public class UsersService {
 
 
     /**
-     * 등록된 사용자 이름 목록
+     * 등록돼있는 사용자들의 이름 목록 조회
      *
-     * @return the List<String>
+     * @return the Map
      */
-    public List<String> getUsersNameList() {
-        return restTemplateService.send(TARGET_COMMON_API, "/users", HttpMethod.GET, null, List.class);
+    public Map<String, List> getUsersNameList() {
+        return restTemplateService.send(TARGET_COMMON_API, "/users", HttpMethod.GET, null, Map.class);
     }
 }
