@@ -153,6 +153,9 @@ public class PropertyService {
     @Value("${cpMaster.api.list.namespaces.create}")
     private String cpMasterApiListNamespaceCreateUrl;
 
+    @Value("${cpMaster.api.list.namespaces.delete}")
+    private String cpMasterApiListNamespaceDeleteUrl;
+
     @Value("${cpMaster.api.list.resourceQuotas.list}")
     private String cpMasterApiListResourceQuotasListUrl;
 
