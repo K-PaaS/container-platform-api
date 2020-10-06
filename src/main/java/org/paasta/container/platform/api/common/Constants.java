@@ -25,13 +25,16 @@ public class Constants {
 
     public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
 
-    public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";
-
     static final String STRING_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";
     static final String STRING_ORIGINAL_DATE_TYPE = "yyyy-MM-dd'T'HH:mm:ss'Z'";
     static final String STRING_TIME_ZONE_ID = "Asia/Seoul";
 
     static final String ACCEPT_TYPE_JSON = MediaType.APPLICATION_JSON_VALUE;
+
+    // COMMON API CALL URI
+    public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";
+    public static final String URI_COMMON_API_USERS_LIST = "/clusters/cp-cluster/namespaces/{namespace:.+}/users";
+    public static final String URI_COMMON_API_USERS_NAMES_LIST = "/clusters/cp-cluster/namespaces/{namespace:.+}/users/names";
 
     // NEXT ACTION MOVEMENT DASHBOARD URI
     public static final String URI_CLUSTER_NODES = "/container-platform/clusters/nodes";
