@@ -4,7 +4,10 @@ import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
@@ -39,14 +42,11 @@ public class SignUpController {
      */
     @PostMapping(value = "/signUp")
     public ResultStatus signUpUsers(@RequestBody Users users) {
-        List<String> list = getUsersNameList().get("users");
-        for (String name:list) {
-            if (name.equals(users.getUserId())) {
-                return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                        .resultMessage("The User ID is already exist.")
-                        .httpStatusCode(409)
-                        .detailMessage("User ID가 중복입니다.").build();
-            }
+        if(duplicatedUserIdCheck(users)) {
+            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                    .resultMessage("The User ID is already exist.")
+                    .httpStatusCode(409)
+                    .detailMessage("User ID가 중복입니다.").build();
         }
 
         return signUpUserService.signUpUsers(users);
@@ -67,6 +67,13 @@ public class SignUpController {
         }
 
         Users users = (Users) obj;
+        if(duplicatedUserIdCheck(users)) {
+            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                        .resultMessage("The User ID is already exist.")
+                        .httpStatusCode(409)
+                        .detailMessage("User ID가 중복입니다.").build();
+        }
+
         return signUpAdminService.signUpAdminUsers(users);
     }
 
@@ -78,5 +85,23 @@ public class SignUpController {
     @GetMapping(value = "/users/names")
     public Map<String, List<String>> getUsersNameList() {
         return signUpUserService.getUsersNameList();
+    }
+
+
+    /**
+     * User ID 중복 체크
+     *
+     * @param users
+     * @return
+     */
+    public Boolean duplicatedUserIdCheck(Users users) {
+        Boolean isDuplicated = false;
+        List<String> list = getUsersNameList().get("users");
+        for (String name:list) {
+            if (name.equals(users.getUserId())) {
+                isDuplicated = true;
+            }
+        }
+        return isDuplicated;
     }
 }

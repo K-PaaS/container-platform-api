@@ -24,6 +24,7 @@ public class Constants {
     public static final String TOKEN_KEY = "cp_admin";
 
     public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
+    public static final String DEFAULT_INIT_ROLE = "init-role";
 
     static final String STRING_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";
     static final String STRING_ORIGINAL_DATE_TYPE = "yyyy-MM-dd'T'HH:mm:ss'Z'";

@@ -92,6 +92,7 @@ public class SignUpAdminService {
         users.setServiceAccountName(username);
         users.setSaSecret(adminSaSecretName);
         users.setSaToken(accessTokenService.getSecret(namespace, adminSaSecretName).getUserAccessToken());
+        users.setUserType("CLUSTER_ADMIN");
 
         // (4) ::: service account 생성, cluster role binding 완료 시 아래 Common API 호출
         ResultStatus rsDb = restTemplateService.send(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class);
