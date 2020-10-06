@@ -1,8 +1,9 @@
-package org.paasta.container.platform.api.users;
+package org.paasta.container.platform.api.signUp;
 
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.users.Users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,9 @@ import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTE
  * @since 2020.09.22
  **/
 @Service
-public class AdminUserService {
+public class SignUpAdminService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AdminUserService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SignUpAdminService.class);
 
     private final PropertyService propertyService;
     private final TemplateService templateService;
@@ -35,7 +36,7 @@ public class AdminUserService {
     private final AccessTokenService accessTokenService;
 
     @Autowired
-    public AdminUserService(PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService) {
+    public SignUpAdminService(PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService) {
         this.propertyService = propertyService;
         this.templateService = templateService;
         this.restTemplateService = restTemplateService;
