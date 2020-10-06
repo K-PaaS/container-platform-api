@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
+import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
+
 /**
  * User Service 클래스
  *
@@ -51,4 +53,16 @@ public class UsersService {
     public Map<String, List> getUsersNameListByNamespace(String namespace) {
         return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES_LIST.replace("{namespace:.+}", namespace), HttpMethod.GET, null, Map.class);
     }
+
+
+    /**
+     * 사용자 상세 조회
+     *
+     * @return the Users
+     */
+    public Users getUsersDetails (String userId) {
+        return restTemplateService.send(TARGET_COMMON_API,
+                Constants.URI_COMMON_API_USER_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
+    }
+
 }
