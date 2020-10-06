@@ -51,7 +51,7 @@ public class SignUpUserService {
      * @param users  the users
      * @return       the result status
      */
-    public ResultStatus registerUser(Users users) {
+    public ResultStatus signUpUsers(Users users) {
         String namespace = Constants.DEFAULT_NAMESPACE_NAME;
 
         // (1) ::: service account 생성. 타겟은 temp-namespace
@@ -89,7 +89,7 @@ public class SignUpUserService {
      *
      * @return the Map
      */
-    public Map<String, List> getUsersNameList() {
+    public Map<String, List<String>> getUsersNameList() {
         return restTemplateService.send(TARGET_COMMON_API, "/users/names", HttpMethod.GET, null, Map.class);
     }
 }

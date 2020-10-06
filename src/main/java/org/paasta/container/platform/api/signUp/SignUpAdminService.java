@@ -44,7 +44,7 @@ public class SignUpAdminService {
         this.accessTokenService = accessTokenService;
     }
 
-    public ResultStatus registerAdminUser(Users users) {
+    public ResultStatus signUpAdminUsers(Users users) {
         String namespace = users.getCpNamespace();
         String username = users.getUserId();
 

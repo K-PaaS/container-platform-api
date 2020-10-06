@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.signUp;
 
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,6 @@ import static org.paasta.container.platform.api.common.CommonUtils.stringNullChe
  * @since 2020.09.22
  **/
 @RestController
-@RequestMapping(value = "/users")
 public class SignUpController {
 
     private final SignUpUserService signUpUserService;
@@ -37,9 +37,19 @@ public class SignUpController {
      * @param users the users
      * @return the ResultStatus
      */
-    @PostMapping
-    public ResultStatus registerUsers(@RequestBody Users users) {
-        return signUpUserService.registerUser(users);
+    @PostMapping(value = "/signUp")
+    public ResultStatus signUpUsers(@RequestBody Users users) {
+        List<String> list = getUsersNameList().get("users");
+        for (String name:list) {
+            if (name.equals(users.getUserId())) {
+                return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                        .resultMessage("The User ID is already exist.")
+                        .httpStatusCode(409)
+                        .detailMessage("User ID가 중복입니다.").build();
+            }
+        }
+
+        return signUpUserService.signUpUsers(users);
     }
 
 
@@ -49,16 +59,15 @@ public class SignUpController {
      * @param adminUsers the object
      * @return the ResultStatus
      */
-    @PostMapping(value = "/admin")
-    @ResponseBody
-    public ResultStatus registerAdminUser(@RequestBody Object adminUsers) {
+    @PostMapping(value = "/signUp/admin")
+    public ResultStatus signUpAdminUsers(@RequestBody Object adminUsers) {
         Object obj = stringNullCheck(adminUsers);
         if(obj instanceof ResultStatus) {
             return (ResultStatus) obj;
         }
 
         Users users = (Users) obj;
-        return signUpAdminService.registerAdminUser(users);
+        return signUpAdminService.signUpAdminUsers(users);
     }
 
     /**
@@ -66,8 +75,8 @@ public class SignUpController {
      *
      * @return the Map
      */
-    @GetMapping(value = "/names")
-    public Map<String, List> getUsersNameList() {
+    @GetMapping(value = "/users/names")
+    public Map<String, List<String>> getUsersNameList() {
         return signUpUserService.getUsersNameList();
     }
 }
