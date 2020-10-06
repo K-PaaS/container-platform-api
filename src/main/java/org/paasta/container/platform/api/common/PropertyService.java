@@ -21,6 +21,21 @@ public class PropertyService {
     @Value("${commonApi.url}")
     private String commonApiUrl;
 
+    @Value("${limitRange.cpu}")
+    private String limitRangeCpu;
+
+    @Value("${limitRange.memory}")
+    private String limitRangeMemory;
+
+    @Value("${resourceQuota.limits.cpu}")
+    private String resourceQuotaLimitsCpu;
+
+    @Value("${resourceQuota.limits.memory}")
+    private String resourceQuotaLimitsMemory;
+
+    @Value("${resourceQuota.requests.storage}")
+    private String resourceQuotaRequestsStorage;
+
     @Value("${cpMaster.api.list.services.list}")
     private String cpMasterApiListServicesListUrl;
 
@@ -168,6 +183,9 @@ public class PropertyService {
     @Value("${cpMaster.api.list.resourceQuotas.list}")
     private String cpMasterApiListResourceQuotasListUrl;
 
+    @Value("${cpMaster.api.list.resourceQuotas.create}")
+    private String cpMasterApiListResourceQuotasCreateUrl;
+
     @Value("${cpMaster.api.list.secrets.get}")
     private String cpMasterApiListSecretsGetUrl;
 
@@ -179,5 +197,8 @@ public class PropertyService {
 
     @Value("${cpMaster.api.list.clusterRoleBindings.delete}")
     private String cpMasterApiListClusterRoleBindingsDeleteUrl;
+
+    @Value("${cpMaster.api.list.limitRanges.create}")
+    private String cpMasterApiListLimitRangesCreateUrl;
 
 }
