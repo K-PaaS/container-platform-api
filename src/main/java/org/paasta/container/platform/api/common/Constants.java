@@ -25,6 +25,7 @@ public class Constants {
 
     public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
     public static final String DEFAULT_INIT_ROLE = "init-role";
+    public static final String DEFAULT_CLUSTER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name
 
     static final String STRING_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";
     static final String STRING_ORIGINAL_DATE_TYPE = "yyyy-MM-dd'T'HH:mm:ss'Z'";

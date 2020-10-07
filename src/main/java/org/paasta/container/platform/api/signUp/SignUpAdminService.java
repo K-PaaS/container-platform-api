@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.paasta.container.platform.api.common.CommonUtils.yamlMatch;
-import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
-import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
+import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
  * User Service 클래스
@@ -90,6 +89,7 @@ public class SignUpAdminService {
 
         users.setCpNamespace(namespace);
         users.setServiceAccountName(username);
+        users.setRoleSetCode(DEFAULT_CLUSTER_ADMIN_ROLE);
         users.setSaSecret(adminSaSecretName);
         users.setSaToken(accessTokenService.getSecret(namespace, adminSaSecretName).getUserAccessToken());
         users.setUserType("CLUSTER_ADMIN");
