@@ -44,24 +44,24 @@ public class PersistentVolumeClaimsController {
      * PersistentVolumeClaims 상세 정보를 조회한다.
      *
      * @param namespace the namespace
-     * @param persistentVolumeClaimName the PersistentVolumeClaims
+     * @param resourceName the PersistentVolumeClaims name
      * @return the PersistentVolumeClaims
      */
-    @GetMapping(value = "/{persistentVolumeClaimName:.+}")
-    public PersistentVolumeClaims getPersistentVolumeClaims(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "persistentVolumeClaimName") String persistentVolumeClaimName) {
-        return persistentVolumeClaimsService.getPersistentVolumeClaims(namespace, persistentVolumeClaimName);
+    @GetMapping(value = "/{resourceName:.+}")
+    public PersistentVolumeClaims getPersistentVolumeClaims(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+        return persistentVolumeClaimsService.getPersistentVolumeClaims(namespace, resourceName);
     }
 
     /**
      * PersistentVolumeClaims YAML 을 조회한다.
      *
      * @param namespace the namespace
-     * @param persistentVolumeClaimName the PersistentVolumeClaims
+     * @param resourceName the PersistentVolumeClaims name
      * @return the PersistentVolumeClaims
      */
-    @GetMapping(value = "/{persistentVolumeClaimName:.+}/yaml")
-    public PersistentVolumeClaims getPersistentVolumeClaimsYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "persistentVolumeClaimName") String persistentVolumeClaimName) {
-        return persistentVolumeClaimsService.getPersistentVolumeClaimsYaml(namespace, persistentVolumeClaimName, new HashMap<>());
+    @GetMapping(value = "/{resourceName:.+}/yaml")
+    public PersistentVolumeClaims getPersistentVolumeClaimsYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+        return persistentVolumeClaimsService.getPersistentVolumeClaimsYaml(namespace, resourceName, new HashMap<>());
     }
 
     /**
@@ -98,7 +98,7 @@ public class PersistentVolumeClaimsController {
     }
 
     /**
-     * Services 를 수정한다.
+     * PersistentVolumeClaims 를 수정한다.
      *
      * @param namespace the namespace
      * @param resourceName the resource name

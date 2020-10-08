@@ -60,6 +60,7 @@ public class Constants {
     public static final String URI_STORAGES = "/container-platform/storages";
     public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIM = "/container-platform/storages/persistentvolumeclaims";
     public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIM_DETAIL = "/container-platform/storages/persistentvolumeclaims/{persistentVolumeClaimName:.+}";
+    public static final String URI_STORAGES_DETAIL = "/container-platform/storages/{persistentVolumeClaimName:.+}";
 
     public static final String URI_USERS = "/container-platform/users";
 

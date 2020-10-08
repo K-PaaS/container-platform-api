@@ -62,14 +62,14 @@ public class PersistentVolumeClaimsService {
      * PersistentVolumeClaims 상세 정보를 조회한다.
      *
      * @param namespace                     the namespace
-     * @param persistentVolumeClaimName  the PersistentVolumeClaim name
+     * @param resourceName  the PersistentVolumeClaim name
      * @return the PersistentVolumeClaims
      */
-    public PersistentVolumeClaims getPersistentVolumeClaims(String namespace, String persistentVolumeClaimName) {
+    public PersistentVolumeClaims getPersistentVolumeClaims(String namespace, String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentvolumeclaimsGetUrl()
                         .replace("{namespace}", namespace)
-                        .replace("{name}", persistentVolumeClaimName)
+                        .replace("{name}", resourceName)
                 , HttpMethod.GET, null, Map.class);
 
         return (PersistentVolumeClaims) commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumeClaims.class), Constants.RESULT_STATUS_SUCCESS);
@@ -80,15 +80,15 @@ public class PersistentVolumeClaimsService {
      * PersistentVolumeClaims YAML 을 조회한다.
      *
      * @param namespace                    the namespace
-     * @param persistentVolumeClaimName the PersistentVolumeClaim name
+     * @param resourceName the PersistentVolumeClaim name
      * @param resultMap                    the result map
      * @return the PersistentVolumeClaims
      */
-    public PersistentVolumeClaims getPersistentVolumeClaimsYaml(String namespace, String persistentVolumeClaimName, HashMap resultMap) {
+    public PersistentVolumeClaims getPersistentVolumeClaimsYaml(String namespace, String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentvolumeclaimsGetUrl()
                         .replace("{namespace}", namespace)
-                        .replace("{name}", persistentVolumeClaimName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
         //noinspection unchecked
         resultMap.put("sourceTypeYaml", resultString);
@@ -109,14 +109,14 @@ public class PersistentVolumeClaimsService {
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
         return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUME_CLAIM);
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
     }
 
     /**
      * PersistentVolumeClaims를 삭제한다.
      *
      * @param namespace the namespace
-     * @param resourceName the service name
+     * @param resourceName the PersistentVolumeClaim name
      * @param resultMap the result map
      * @return the ResultStatus
      */
@@ -126,14 +126,14 @@ public class PersistentVolumeClaimsService {
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUME_CLAIM);
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
     }
 
     /**
      * PersistentVolumeClaims를  수정한다.
      *
      * @param namespace the namespace
-     * @param resourceName the service name
+     * @param resourceName the PersistentVolumeClaim name
      * @param yaml          the yaml
      * @return the services
      */
@@ -144,6 +144,6 @@ public class PersistentVolumeClaimsService {
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUME_CLAIM_DETAIL.replace("{serviceName:.+}", resourceName));
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{persistentVolumeClaimName:.+}", resourceName));
     }
 }
