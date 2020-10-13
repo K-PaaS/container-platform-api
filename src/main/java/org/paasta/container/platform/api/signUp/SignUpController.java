@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-import static org.paasta.container.platform.api.common.CommonUtils.stringNullCheck;
+import static org.paasta.container.platform.api.common.CommonUtils.*;
 
 /**
  * 회원가입 Controller 클래스
@@ -67,6 +67,17 @@ public class SignUpController {
         }
 
         Users users = (Users) obj;
+
+        // input parameter regex
+        if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
+            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                    .resultMessage("입력 값을 다시 확인해 주세요.")
+                    .httpStatusCode(400)
+                    .detailMessage(regexMatch(users)).build();
+        }
+
+
+        // id 중복 체크
         if(duplicatedUserIdCheck(users)) {
             return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
                         .resultMessage("The User ID is already exist.")

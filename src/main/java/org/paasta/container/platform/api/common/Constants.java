@@ -24,6 +24,7 @@ public class Constants {
     public static final String TOKEN_KEY = "cp_admin";
 
     public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
+    public static final String NOT_ASSIGNED_ROLE = "NOT_ASSIGNED_ROLE";
     public static final String DEFAULT_INIT_ROLE = "init-role";
     public static final String DEFAULT_CLUSTER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name
 

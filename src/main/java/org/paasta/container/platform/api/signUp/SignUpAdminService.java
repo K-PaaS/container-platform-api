@@ -50,7 +50,7 @@ public class SignUpAdminService {
         Map<String, Object> model1 = new HashMap();
         model1.put("spaceName", namespace);
 
-        // (1) ::: namespace 생성.
+        // (1) ::: namespace 생성 시 최저 사양의 resource quota, limit range 도 같이 생성
         String nsYaml = templateService.convert("create_namespace.ftl", model1);
         Object nameSpaceResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespaceCreateUrl(), HttpMethod.POST, nsYaml, Object.class);
 
@@ -60,6 +60,12 @@ public class SignUpAdminService {
         if(Constants.RESULT_STATUS_FAIL.equals(nsResult.getResultCode())) {
             return nsResult;
         }
+
+        // resource quota 생성
+        createResourceQuota();
+
+        // limit range 생성
+        createLimitRange();
 
         // (2) ::: service account 생성.
         String adminSaYaml = templateService.convert("create_account.ftl", yamlMatch(username, namespace));
@@ -106,5 +112,38 @@ public class SignUpAdminService {
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);
+    }
+
+    /**
+     *  namespace에 ResourceQuota를 할당한다.
+     *
+     */
+    public void createResourceQuota() {
+        LOGGER.info("Create Resource Quota...");
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("resource_quota_cpu", propertyService.getResourceQuotaLimitsCpu());
+        model.put("resource_quota_memory", propertyService.getResourceQuotaLimitsMemory());
+        model.put("resource_quota_disk", propertyService.getResourceQuotaRequestsStorage());
+        String resourceQuotaYaml = templateService.convert("create_resource_quota.ftl", model);
+
+        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListResourceQuotasCreateUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME), HttpMethod.POST, resourceQuotaYaml, Object.class);
+
+    }
+
+    /**
+     * namespace에 LimitRange를 할당한다.
+     *
+     */
+    public void createLimitRange() {
+        LOGGER.info("Create Limit Range...");
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("limit_range_cpu", propertyService.getLimitRangeCpu());
+        model.put("limit_range_memory", propertyService.getLimitRangeMemory());
+        String limitRangeYaml = templateService.convert("create_limit_range.ftl", model);
+
+        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListLimitRangesCreateUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME), HttpMethod.POST, limitRangeYaml, Object.class);
+
     }
 }
