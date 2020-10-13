@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.workloads.replicaSets;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * ReplicaSets Model 클래스
@@ -15,6 +16,7 @@ import java.util.List;
 public class ReplicaSetsList {
 
     private String resultCode;
+    private Map metadata;
     private List<ReplicaSets> items;
 
 }

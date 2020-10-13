@@ -37,9 +37,12 @@ public class ReplicaSetsController {
      * @return the replicaSets list
      */
     @GetMapping
-    public ReplicaSetsList getReplicaSetsList(@PathVariable("namespace") String namespace){
-        return replicaSetsService.getReplicaSetsList(namespace);
+    public ReplicaSetsList getReplicaSetsList(@PathVariable(value = "namespace") String namespace,
+                                              @RequestParam(required = false, defaultValue = "0") int limit,
+                                              @RequestParam(required = false, name = "continue") String continueToken){
+        return replicaSetsService.getReplicaSetsList(namespace, limit, continueToken);
     }
+
 
     /**
      * ReplicaSets 상세정보를 조회한다.

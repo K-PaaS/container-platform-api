@@ -45,13 +45,22 @@ public class ReplicaSetsService {
      * @param namespace the namespace
      * @return the replicaSets list
      */
-    public ReplicaSetsList getReplicaSetsList(String namespace) {
+    public ReplicaSetsList getReplicaSetsList(String namespace, int limit, String continueToken) {
+
+        String param = "";
+
+        if(continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListReplicasetsListUrl()
-                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+                ,HttpMethod.GET, null, Map.class);
 
         return (ReplicaSetsList) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSetsList.class), Constants.RESULT_STATUS_SUCCESS);
     }
+
 
     /**
      * ReplicaSets 상세 정보를 조회한다.

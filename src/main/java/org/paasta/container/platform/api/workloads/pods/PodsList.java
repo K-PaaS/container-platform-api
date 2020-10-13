@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Pods List Model 클래스
@@ -15,6 +16,6 @@ import java.util.List;
 @Data
 public class PodsList {
     private String resultCode;
-
-    private List<Pods> items = new ArrayList<>();
+    private Map metadata;
+    private List<Pods> items ;
 }
