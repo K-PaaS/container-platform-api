@@ -15,6 +15,8 @@ import java.util.List;
 @Data
 public class NodesList {
     private String resultCode;
-
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
     private List<Nodes> items = new ArrayList<>();
 }

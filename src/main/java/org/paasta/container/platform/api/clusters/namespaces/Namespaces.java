@@ -16,7 +16,9 @@ import org.paasta.container.platform.api.common.model.CommonStatus;
 public class Namespaces {
 
     private String resultCode;
-
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
     private String kind;
     private String apiVersion;
 

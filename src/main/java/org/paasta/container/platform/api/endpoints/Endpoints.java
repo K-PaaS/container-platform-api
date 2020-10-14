@@ -19,6 +19,10 @@ import java.util.List;
 public class Endpoints {
 
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
+
     private CommonMetaData metadata;
     private CommonSpec spec;
     private CommonStatus status;

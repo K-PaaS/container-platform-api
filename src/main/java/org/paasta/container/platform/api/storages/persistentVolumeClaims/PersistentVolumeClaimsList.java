@@ -14,5 +14,8 @@ import java.util.List;
 @Data
 public class PersistentVolumeClaimsList {
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
     private List<PersistentVolumeClaims> items;
 }

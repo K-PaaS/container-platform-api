@@ -15,6 +15,9 @@ import java.util.List;
 public class CustomServicesList {
 
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
     private List<CustomServices> items;
 
 }

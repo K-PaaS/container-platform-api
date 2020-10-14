@@ -14,7 +14,10 @@ import org.paasta.container.platform.api.managements.resourceQuotas.support.Reso
  */
 @Data
 public class ResourceQuotas {
-
+  private String resultCode;
+  private String resultMessage;
+  private Integer httpStatusCode;
+  private String detailMessage;
   private String apiVersion;
   private String kind;
   private CommonMetaData metadata;

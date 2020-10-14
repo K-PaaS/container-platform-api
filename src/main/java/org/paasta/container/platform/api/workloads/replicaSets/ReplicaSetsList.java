@@ -16,6 +16,10 @@ import java.util.Map;
 public class ReplicaSetsList {
 
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
+
     private Map metadata;
     private List<ReplicaSets> items;
 

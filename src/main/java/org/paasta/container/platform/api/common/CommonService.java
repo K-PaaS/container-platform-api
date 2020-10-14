@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,11 +48,17 @@ public class CommonService {
             Map map = oMapper.convertValue(reqObject, Map.class);
 
             Method methodSetResultCode = aClass.getMethod("setResultCode", String.class);
+            Method methodSetResultMessage = aClass.getMethod("setResultMessage", String.class);
+            Method methodSetHttpStatusCode = aClass.getMethod("setHttpStatusCode", Integer.class);
+            Method methodSetDetailMessage = aClass.getMethod("setDetailMessage", String.class);
 
             if (Constants.RESULT_STATUS_FAIL.equals(map.get("resultCode"))) {
                 methodSetResultCode.invoke(reqObject, map.get("resultCode"));
             } else {
                 methodSetResultCode.invoke(reqObject, resultCode);
+                methodSetResultMessage.invoke(reqObject, CommonStatusCode.OK.getMsg());
+                methodSetHttpStatusCode.invoke(reqObject, CommonStatusCode.OK.getCode());
+                methodSetDetailMessage.invoke(reqObject, CommonStatusCode.OK.getMsg());
             }
 
         } catch (NoSuchMethodException e) {

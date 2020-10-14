@@ -16,6 +16,9 @@ import org.paasta.container.platform.api.common.model.CommonStatus;
 public class CustomServices {
 
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
     private String nextActionUrl;
 
     private CommonMetaData metadata;

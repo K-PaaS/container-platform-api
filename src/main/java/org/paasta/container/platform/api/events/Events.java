@@ -16,6 +16,10 @@ import org.paasta.container.platform.api.common.model.CommonObjectReference;
 public class Events {
 
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
+
     private CommonMetaData metadata;
     //private String action;
     private int count;

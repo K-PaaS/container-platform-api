@@ -15,6 +15,9 @@ import java.util.List;
 public class ResourceQuotasList {
 
   private String resultCode;
+  private String resultMessage;
+  private Integer httpStatusCode;
+  private String detailMessage;
   private List<ResourceQuotas> items;
 
 }

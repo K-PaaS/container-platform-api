@@ -15,7 +15,9 @@ import org.paasta.container.platform.api.common.model.CommonSpec;
 @Data
 public class Nodes {
     private String resultCode;
-
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
     private CommonMetaData metadata;
     private CommonSpec spec;
     private NodesStatus status;
