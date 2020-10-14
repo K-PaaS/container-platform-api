@@ -88,7 +88,7 @@ public class MethodHandler {
             String resourceKind = YamlUtil.parsingYaml(temp, "kind");
             LOGGER.info("dryRun resourceKind :::::::::" + resourceKind);
 
-            Object dryRunResult = InspectionUtil.resourceDryRunCheck("Create", namespace, resourceKind, temp, null);
+            Object dryRunResult = InspectionUtil.resourceDryRunCheck("CreateUrl", namespace, resourceKind, temp, null);
             ObjectMapper oMapper = new ObjectMapper();
             ResultStatus createdRs = oMapper.convertValue(dryRunResult, ResultStatus.class);
 
@@ -147,7 +147,7 @@ public class MethodHandler {
 
         resourceKind = YamlUtil.parsingYaml(yaml, "kind");//
 
-        Object dryRunResult = InspectionUtil.resourceDryRunCheck("Update", namespace, resourceKind, yaml, resourceName);
+        Object dryRunResult = InspectionUtil.resourceDryRunCheck("UpdateUrl", namespace, resourceKind, yaml, resourceName);
         ObjectMapper oMapper = new ObjectMapper();
         ResultStatus updatedRs = oMapper.convertValue(dryRunResult, ResultStatus.class);
 

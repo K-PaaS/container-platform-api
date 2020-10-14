@@ -53,7 +53,7 @@ public class DeploymentsService {
         }
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListDeploymentsList()
+                propertyService.getCpMasterApiListDeploymentsListUrl()
                         .replace("{namespace}", namespace) + "?limit=" + limit + param
                 , HttpMethod.GET, null, Map.class);
 
@@ -69,7 +69,7 @@ public class DeploymentsService {
      */
     public Deployments getDeployments(String namespace, String deploymentName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListDeploymentsGet()
+                propertyService.getCpMasterApiListDeploymentsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", deploymentName)
                 , HttpMethod.GET, null, Map.class);
@@ -88,7 +88,7 @@ public class DeploymentsService {
      */
     public Object getDeploymentsAdmin(String namespace, String deploymentName) {
         Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListDeploymentsGet()
+                propertyService.getCpMasterApiListDeploymentsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", deploymentName)
                 , HttpMethod.GET, null, Map.class);
@@ -114,7 +114,7 @@ public class DeploymentsService {
      */
     public Deployments getDeploymentsYaml(String namespace, String deploymentName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListDeploymentsGet()
+                propertyService.getCpMasterApiListDeploymentsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", deploymentName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
@@ -134,7 +134,7 @@ public class DeploymentsService {
      */
     public Object createDeployments(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListDeploymentsCreate()
+                propertyService.getCpMasterApiListDeploymentsCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
@@ -150,7 +150,7 @@ public class DeploymentsService {
      */
     public ResultStatus deleteDeployments(String namespace, String name) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListDeploymentsDelete()
+                propertyService.getCpMasterApiListDeploymentsDeleteUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_DEPLOYMENTS);
@@ -167,7 +167,7 @@ public class DeploymentsService {
      */
     public ResultStatus updateDeployments(String namespace, String name, String yaml) {
         ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListDeploymentsUpdate()
+                propertyService.getCpMasterApiListDeploymentsUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),

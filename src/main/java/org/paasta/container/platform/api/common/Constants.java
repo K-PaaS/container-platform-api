@@ -66,32 +66,60 @@ public class Constants {
     public static final String URI_USERS = "/container-platform/users";
 
     public static final String URI_ROLES = "/container-platform/roles";
-    public static final String URI_ROLES_DETAIL = "/container-platform/roles/{roleName:.+}";
 
     /** 서비스 요청시 처리 메소드 kind 매핑 정보 */
-    public static final String RESOURCE_POD = "Pod";
+    public static final String RESOURCE_SERVICEACCOUNT = "ServiceAccount";
+    public static final String RESOURCE_ROLEBINDING = "RoleBinding";
+    public static final String RESOURCE_SECRET = "Secret";
+    public static final String RESOURCE_ENDPOINTS = "Endpoints";
+    public static final String RESOURCE_EVENTS = "Events";
+
+    //cluster
+    public static final String RESOURCE_NAMESPACE = "Namespace";
+    public static final String RESOURCE_NODE = "Node";
+
+    //workload
     public static final String RESOURCE_DEPLOYMENT = "Deployment";
+    public static final String RESOURCE_POD = "Pod";
+    public static final String RESOURCE_REPLICASET = "ReplicaSet";
+
+    //service
     public static final String RESOURCE_SERVICE = "Service";
+
+    //storage
+    public static final String RESOURCE_PERSISTENTVOLUME = "PersistentVolume";
+    public static final String RESOURCE_PERSISTENTVOLUMECLAIM = "PersistentVolumeClaim";
+    public static final String RESOURCE_STORAGECLASS = "StorageClass";
+
+    //management
+    public static final String RESOURCE_RESOURCEQUOTA = "ResourceQuota";
+    public static final String RESOURCE_LIMITRANGE = "LimitRange";
     public static final String RESOURCE_ROLE = "Role";
 
-
-    public static final List<String> RESOURCE_MAP = Collections.unmodifiableList(new ArrayList<String>(){
-        {
-            add(RESOURCE_POD);
-            add(RESOURCE_DEPLOYMENT);
-            add(RESOURCE_SERVICE);
-            add(RESOURCE_ROLE);
-        }
-    });
+//    public static final List<String> RESOURCE_MAP = Collections.unmodifiableList(new ArrayList<String>(){
+//        {
+//            add(RESOURCE_POD);
+//            add(RESOURCE_DEPLOYMENT);
+//            add(RESOURCE_SERVICE);
+//        }
+//    });
 
     /** 서비스 클래스의 Package */
     public static final String SERVICE_PACKAGE = "org.paasta.container.platform.api.";
 
     public static final Map<String, String> RESOURCE_SERVICE_MAP = Collections.unmodifiableMap(new HashMap<String, String>() {
         {
-            put(RESOURCE_POD, SERVICE_PACKAGE + "workloads.pods:PodsService");     // Pod 서비스
+            put(RESOURCE_ENDPOINTS, SERVICE_PACKAGE + "endpoints:EndpointsService");     // Endpoints 서비스
+            put(RESOURCE_EVENTS, SERVICE_PACKAGE + "events:EventsService");     // Endpoints 서비스
+            put(RESOURCE_NAMESPACE, SERVICE_PACKAGE + "clusters.namespaces:NamespacesService");     // Namespace 서비스
+            put(RESOURCE_NODE, SERVICE_PACKAGE + "clusters.nodes:NodesService");     // Node 서비스
             put(RESOURCE_DEPLOYMENT, SERVICE_PACKAGE + "workloads.deployments:DeploymentsService");     // Deployment 서비스
+            put(RESOURCE_POD, SERVICE_PACKAGE + "workloads.pods:PodsService");     // Pod 서비스
+            put(RESOURCE_REPLICASET, SERVICE_PACKAGE + "workloads.pods:ReplicaSetsService");     // ReplicaSet 서비스
             put(RESOURCE_SERVICE, SERVICE_PACKAGE + "customServices:CustomServicesService");     // Service 서비스
+            put(RESOURCE_PERSISTENTVOLUMECLAIM, SERVICE_PACKAGE + "storages.persistentVolumeClaims:PersistentVolumeClaimsService");     // PersistentVolumeClaim 서비스
+            put(RESOURCE_STORAGECLASS, SERVICE_PACKAGE + "storages.storageClasses:StorageClassesService");     // StorageClass 서비스
+            put(RESOURCE_RESOURCEQUOTA, SERVICE_PACKAGE + "managements.resourceQuotas:ResourceQuotasService");     // ResourceQuota 서비스
             put(RESOURCE_ROLE, SERVICE_PACKAGE + "roles:RolesService"); // Role 서비스
         }
 

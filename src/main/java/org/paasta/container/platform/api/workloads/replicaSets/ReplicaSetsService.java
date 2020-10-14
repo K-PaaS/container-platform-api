@@ -84,7 +84,7 @@ public class ReplicaSetsService {
      *
      * @param namespace   the namespace
      * @param replicaSetsName the ReplicaSets name
-     * @return the custom ReplicaSets yaml
+     * @return the ReplicaSets yaml
      */
     public ReplicaSets getReplicaSetsYaml(String namespace, String replicaSetsName) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -125,7 +125,7 @@ public class ReplicaSetsService {
      */
     public Object createReplicaSets(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsCreate()
+                propertyService.getCpMasterApiListReplicasetsCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
         return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
@@ -141,7 +141,7 @@ public class ReplicaSetsService {
      */
     public ResultStatus deleteReplicaSets(String namespace, String name) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsDelete()
+                propertyService.getCpMasterApiListReplicasetsDeleteUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
@@ -158,7 +158,7 @@ public class ReplicaSetsService {
      */
     public ResultStatus updateReplicaSets(String namespace, String name, String yaml) {
         ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsUpdate()
+                propertyService.getCpMasterApiListReplicasetsUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),

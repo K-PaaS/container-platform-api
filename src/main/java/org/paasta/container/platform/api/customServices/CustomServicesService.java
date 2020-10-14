@@ -112,7 +112,7 @@ public class CustomServicesService {
      */
     public Object createServices(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListServicesCreate()
+                propertyService.getCpMasterApiListServicesCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
         return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
@@ -132,7 +132,7 @@ public class CustomServicesService {
      */
     public ResultStatus deleteServices(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListServicesDelete()
+                propertyService.getCpMasterApiListServicesDeleteUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
@@ -150,7 +150,7 @@ public class CustomServicesService {
      */
     public Object updateServices(String namespace, String resourceName, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListServicesUpdate()
+                propertyService.getCpMasterApiListServicesUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),

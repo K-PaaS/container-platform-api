@@ -43,13 +43,13 @@ public class PropertyService {
     private String cpMasterApiListServicesGetUrl;
 
     @Value("${cpMaster.api.list.services.create}")
-    private String cpMasterApiListServicesCreate;
+    private String cpMasterApiListServicesCreateUrl;
 
     @Value("${cpMaster.api.list.services.delete}")
-    private String cpMasterApiListServicesDelete;
+    private String cpMasterApiListServicesDeleteUrl;
 
     @Value("${cpMaster.api.list.services.update}")
-    private String cpMasterApiListServicesUpdate;
+    private String cpMasterApiListServicesUpdateUrl;
 
     @Value("${cpMaster.api.list.endpoints.list}")
     private String cpMasterApiListEndpointsListUrl;
@@ -64,13 +64,13 @@ public class PropertyService {
     private String cpMasterApiListPodsGetUrl;
 
     @Value("${cpMaster.api.list.pods.create}")
-    private String cpMasterApiListPodsCreate;
+    private String cpMasterApiListPodsCreateUrl;
 
     @Value("${cpMaster.api.list.pods.delete}")
-    private String cpMasterApiListPodsDelete;
+    private String cpMasterApiListPodsDeleteUrl;
 
     @Value("${cpMaster.api.list.pods.update}")
-    private String cpMasterApiListPodsUpdate;
+    private String cpMasterApiListPodsUpdateUrl;
 
     @Value("${cpMaster.api.list.nodes.list}")
     private String cpMasterApiListNodesListUrl;
@@ -85,13 +85,13 @@ public class PropertyService {
     private String cpMasterApiListReplicasetsGetUrl;
 
     @Value("${cpMaster.api.list.replicasets.delete}")
-    private String cpMasterApiListReplicasetsDelete;
+    private String cpMasterApiListReplicasetsDeleteUrl;
 
     @Value("${cpMaster.api.list.replicasets.create}")
-    private String cpMasterApiListReplicasetsCreate;
+    private String cpMasterApiListReplicasetsCreateUrl;
 
     @Value("${cpMaster.api.list.replicasets.update}")
-    private String cpMasterApiListReplicasetsUpdate;
+    private String cpMasterApiListReplicasetsUpdateUrl;
 
     @Value("${cpMaster.api.list.persistentvolumes.list}")
     private String cpMasterApiListPersistentvolumesListUrl;
@@ -106,13 +106,13 @@ public class PropertyService {
     private String cpMasterApiListPersistentvolumeclaimsGetUrl;
 
     @Value("${cpMaster.api.list.persistentvolumeclaims.create}")
-    private String cpMasterApiListPersistentvolumeclaimsCreate;
+    private String cpMasterApiListPersistentvolumeclaimsCreateUrl;
 
     @Value("${cpMaster.api.list.persistentvolumeclaims.delete}")
-    private String cpMasterApiListPersistentvolumeclaimsDelete;
+    private String cpMasterApiListPersistentvolumeclaimsDeleteUrl;
 
     @Value("${cpMaster.api.list.persistentvolumeclaims.update}")
-    private String cpMasterApiListPersistentvolumeclaimsUpdate;
+    private String cpMasterApiListPersistentvolumeclaimsUpdateUrl;
 
     @Value("${cpMaster.api.list.storageclasses.list}")
     private String cpMasterApiListStorageclassesListUrl;
@@ -121,13 +121,13 @@ public class PropertyService {
     private String cpMasterApiListStorageclassesGetUrl;
 
     @Value("${cpMaster.api.list.storageclasses.create}")
-    private String cpMasterApiListStorageclassesCreate;
+    private String cpMasterApiListStorageclassesCreateUrl;
 
     @Value("${cpMaster.api.list.storageclasses.delete}")
-    private String cpMasterApiListStorageclassesDelete;
+    private String cpMasterApiListStorageclassesDeleteUrl;
 
     @Value("${cpMaster.api.list.storageclasses.update}")
-    private String cpMasterApiListStorageclassesUpdate;
+    private String cpMasterApiListStorageclassesUpdateUrl;
 
     @Value("${cpMaster.api.list.events.list}")
     private String cpMasterApiListEventsListUrl;
@@ -148,19 +148,19 @@ public class PropertyService {
     private String cpMasterApiListRolesUpdateUrl;
 
     @Value("${cpMaster.api.list.deployments.list}")
-    private String cpMasterApiListDeploymentsList;
+    private String cpMasterApiListDeploymentsListUrl;
 
     @Value("${cpMaster.api.list.deployments.get}")
-    private String cpMasterApiListDeploymentsGet;
+    private String cpMasterApiListDeploymentsGetUrl;
 
     @Value("${cpMaster.api.list.deployments.create}")
-    private String cpMasterApiListDeploymentsCreate;
+    private String cpMasterApiListDeploymentsCreateUrl;
 
     @Value("${cpMaster.api.list.deployments.delete}")
-    private String cpMasterApiListDeploymentsDelete;
+    private String cpMasterApiListDeploymentsDeleteUrl;
 
     @Value("${cpMaster.api.list.deployments.update}")
-    private String cpMasterApiListDeploymentsUpdate;
+    private String cpMasterApiListDeploymentsUpdateUrl;
 
     @Value("${cpMaster.api.list.roleBindings.list}")
     private String cpMasterApiListRoleBindingsListUrl;
@@ -186,6 +186,9 @@ public class PropertyService {
     @Value("${cpMaster.api.list.users.delete}")
     private String cpMasterApiListUsersDeleteUrl;
 
+    @Value("${cpMaster.api.list.namespaces.list}")
+    private String cpMasterApiListNamespaceListUrl;
+
     @Value("${cpMaster.api.list.namespaces.get}")
     private String cpMasterApiListNamespaceGetUrl;
 
@@ -194,6 +197,9 @@ public class PropertyService {
 
     @Value("${cpMaster.api.list.namespaces.delete}")
     private String cpMasterApiListNamespaceDeleteUrl;
+
+    @Value("${cpMaster.api.list.namespaces.update}")
+    private String cpMasterApiListNamespaceUpdateUrl;
 
     @Value("${cpMaster.api.list.resourceQuotas.list}")
     private String cpMasterApiListResourceQuotasListUrl;

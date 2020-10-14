@@ -105,7 +105,7 @@ public class StorageClassesController {
      * @param yaml the yaml
      * @return the services
      */
-    @PutMapping("/{resourceNmae:.+}")
+    @PutMapping("/{resourceName:.+}")
     public Object updateStorageClasses(@PathVariable(value =  "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
                                        @PathVariable(value = "resourceName") String resourceName,

@@ -143,7 +143,7 @@ public class PodsService {
      */
     public Object createPods(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPodsCreate()
+                propertyService.getCpMasterApiListPodsCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
@@ -160,7 +160,7 @@ public class PodsService {
      */
     public ResultStatus deletePods(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPodsDelete()
+                propertyService.getCpMasterApiListPodsDeleteUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS);
@@ -176,7 +176,7 @@ public class PodsService {
      */
     public Object updatePods(String namespace, String name, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPodsUpdate()
+                propertyService.getCpMasterApiListPodsUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
