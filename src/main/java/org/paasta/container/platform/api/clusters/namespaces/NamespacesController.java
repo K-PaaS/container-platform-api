@@ -13,7 +13,7 @@ import java.util.Map;
  * @since 2020.09.02
  */
 @RestController
-@RequestMapping("/namespaces")
+@RequestMapping("/clusters/{cluster:.+}/namespaces")
 public class NamespacesController {
 
     private final NamespacesService namespacesService;
