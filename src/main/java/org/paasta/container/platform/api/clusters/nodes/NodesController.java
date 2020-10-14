@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Nodes Controller 클래스
  *
- * @author hrjin
+ * @author jjy
  * @version 1.0
- * @since 2020.09.01
+ * @since 2020.10.14
  */
 @RestController
 @RequestMapping(value = "/nodes")
