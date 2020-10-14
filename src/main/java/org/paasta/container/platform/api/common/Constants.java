@@ -66,17 +66,21 @@ public class Constants {
     public static final String URI_USERS = "/container-platform/users";
 
     public static final String URI_ROLES = "/container-platform/roles";
+    public static final String URI_ROLES_DETAIL = "/container-platform/roles/{roleName:.+}";
 
     /** 서비스 요청시 처리 메소드 kind 매핑 정보 */
     public static final String RESOURCE_POD = "Pod";
     public static final String RESOURCE_DEPLOYMENT = "Deployment";
     public static final String RESOURCE_SERVICE = "Service";
+    public static final String RESOURCE_ROLE = "Role";
+
 
     public static final List<String> RESOURCE_MAP = Collections.unmodifiableList(new ArrayList<String>(){
         {
             add(RESOURCE_POD);
             add(RESOURCE_DEPLOYMENT);
             add(RESOURCE_SERVICE);
+            add(RESOURCE_ROLE);
         }
     });
 
@@ -88,6 +92,7 @@ public class Constants {
             put(RESOURCE_POD, SERVICE_PACKAGE + "workloads.pods:PodsService");     // Pod 서비스
             put(RESOURCE_DEPLOYMENT, SERVICE_PACKAGE + "workloads.deployments:DeploymentsService");     // Deployment 서비스
             put(RESOURCE_SERVICE, SERVICE_PACKAGE + "customServices:CustomServicesService");     // Service 서비스
+            put(RESOURCE_ROLE, SERVICE_PACKAGE + "roles:RolesService"); // Role 서비스
         }
 
     });
