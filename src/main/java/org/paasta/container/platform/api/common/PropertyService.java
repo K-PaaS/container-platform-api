@@ -114,6 +114,21 @@ public class PropertyService {
     @Value("${cpMaster.api.list.persistentvolumeclaims.update}")
     private String cpMasterApiListPersistentvolumeclaimsUpdate;
 
+    @Value("${cpMaster.api.list.storageclasses.list}")
+    private String cpMasterApiListStorageclassesListUrl;
+
+    @Value("${cpMaster.api.list.storageclasses.get}")
+    private String cpMasterApiListStorageclassesGetUrl;
+
+    @Value("${cpMaster.api.list.storageclasses.create}")
+    private String cpMasterApiListStorageclassesCreate;
+
+    @Value("${cpMaster.api.list.storageclasses.delete}")
+    private String cpMasterApiListStorageclassesDelete;
+
+    @Value("${cpMaster.api.list.storageclasses.update}")
+    private String cpMasterApiListStorageclassesUpdate;
+
     @Value("${cpMaster.api.list.events.list}")
     private String cpMasterApiListEventsListUrl;
 
