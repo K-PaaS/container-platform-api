@@ -61,7 +61,7 @@ public class DeploymentsService {
     }
 
     /**
-     * Deployments 상세 정보를 조회한다.
+     * Deployments 상세 정보를 조회한다. (User Portal)
      *
      * @param namespace       the namespace
      * @param deploymentName the deployments name
@@ -77,6 +77,32 @@ public class DeploymentsService {
 
         return (Deployments) commonService.setResultModel(commonService.setResultObject(responseMap, Deployments.class), Constants.RESULT_STATUS_SUCCESS);
     }
+
+
+    /**
+     * Deployments 상세 정보를 조회한다. (Admin Portal)
+     *
+     * @param namespace       the namespace
+     * @param deploymentName  the deployments Name
+     * @return                the Object
+     */
+    public Object getDeploymentsAdmin(String namespace, String deploymentName) {
+        Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListDeploymentsGet()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", deploymentName)
+                , HttpMethod.GET, null, Map.class);
+        HashMap responseMap;
+
+        try{
+            responseMap = (HashMap) obj;
+        } catch (Exception e) {
+            return obj;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, DeploymentsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
 
     /**
      * Deployments YAML을 조회한다.

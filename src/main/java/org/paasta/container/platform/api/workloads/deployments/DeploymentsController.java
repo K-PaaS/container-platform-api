@@ -51,7 +51,7 @@ public class DeploymentsController {
     }
 
     /**
-     * Deployments 상세정보를 조회한다.
+     * Deployments 상세 정보를 조회한다. (User Portal)
      *
      * @param namespace       the namespace
      * @param resourceName the resource name
@@ -68,6 +68,19 @@ public class DeploymentsController {
     @GetMapping(value = "/{resourceName:.+}")
     public Deployments getDeployments(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
         return deploymentsService.getDeployments(namespace, resourceName);
+    }
+
+
+    /**
+     * Deployments 상세 정보를 조회한다. (Admin Portal)
+     *
+     * @param namespace      the namespace
+     * @param resourceName   the resource name
+     * @return               the Object
+     */
+    @GetMapping(value = "/{resourceName:.+}/admin")
+    public Object getDeploymentsAdmin(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+        return deploymentsService.getDeploymentsAdmin(namespace, resourceName);
     }
 
     /**

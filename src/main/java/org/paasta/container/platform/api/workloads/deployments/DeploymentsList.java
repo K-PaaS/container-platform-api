@@ -15,6 +15,9 @@ import java.util.Map;
 @Data
 public class DeploymentsList {
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
     private Map metadata;
     private List<Deployments> items;
 }

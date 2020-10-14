@@ -129,6 +129,38 @@ public class RestTemplateService {
         }
 
         LOGGER.info("<T> T SEND :: REQUEST: {} BASE-URL: {}, CONTENT-TYPE: {}", httpMethod, reqUrl, reqHeaders.get(CONTENT_TYPE));
+        ResponseEntity<T> resEntity = restTemplate.exchange(baseUrl + reqUrl, httpMethod, reqEntity, responseType);
+
+        if (resEntity.getBody() != null) {
+            LOGGER.info("RESPONSE-TYPE: {}", resEntity.getBody().getClass());
+        } else {
+            LOGGER.error("RESPONSE-TYPE: RESPONSE BODY IS NULL");
+        }
+
+        return resEntity.getBody();
+    }
+
+    public <T> T sendAdmin(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType) {
+        return sendAdmin(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, MediaType.APPLICATION_JSON_VALUE);
+    }
+
+    public <T> T sendAdmin(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, String acceptType, String contentType) {
+
+        setApiUrlAuthorization(reqApi);
+
+        HttpHeaders reqHeaders = new HttpHeaders();
+        reqHeaders.add(AUTHORIZATION_HEADER_KEY, base64Authorization);
+        reqHeaders.add(CONTENT_TYPE, contentType);
+        reqHeaders.add("ACCEPT", acceptType);
+
+        HttpEntity<Object> reqEntity;
+        if (bodyObject == null) {
+            reqEntity = new HttpEntity<>(reqHeaders);
+        } else {
+            reqEntity = new HttpEntity<>(bodyObject, reqHeaders);
+        }
+
+        LOGGER.info("<T> T SEND :: REQUEST: {} BASE-URL: {}, CONTENT-TYPE: {}", httpMethod, reqUrl, reqHeaders.get(CONTENT_TYPE));
 
         ResponseEntity<T> resEntity = null;
 
@@ -154,7 +186,6 @@ public class RestTemplateService {
 
         return resEntity.getBody();
     }
-
 
     /**
      * Authorization 값을 입력한다.
@@ -211,7 +242,7 @@ public class RestTemplateService {
      * @return the t
      */
     public <T> T sendYaml(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType) {
-        return send(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml");
+        return sendAdmin(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml");
     }
 
 

@@ -17,6 +17,9 @@ import java.util.Map;
 @Data
 public class Deployments {
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
     private String nextActionUrl;
 
     private CommonMetaData metadata;
