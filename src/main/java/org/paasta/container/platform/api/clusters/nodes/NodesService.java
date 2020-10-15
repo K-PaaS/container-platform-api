@@ -43,27 +43,46 @@ public class NodesService {
     /**
      * Node 목록을 조회한다.
      *
-     * @return the node list
+     * @return the Nodes list
      */
     NodesList getNodesList() {
-        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNodesListUrl(), HttpMethod.GET, null, Map.class);
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListNodesListUrl(),
+                    HttpMethod.GET, null, Map.class);
 
-        return (NodesList) commonService.setResultModel(commonService.setResultObject(resultMap, NodesList.class), Constants.RESULT_STATUS_SUCCESS);
+        return (NodesList) commonService.setResultModel(commonService.setResultObject(responseMap, NodesList.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
     /**
-     * Node를 조회한다.
+     * Node 상세 정보를 조회한다.
      *
-     * @param nodeName the node name
-     * @return the node
+     * @param resourceName the Nodes name
+     * @return the Node
      */
-    Nodes getNodes(String nodeName) {
-        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNodesGetUrl().replace("{name}", nodeName), HttpMethod.GET, null, Map.class);
+    Nodes getNodes(String resourceName) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListNodesGetUrl()
+                        .replace("{name}", resourceName)
+                , HttpMethod.GET, null, Map.class);
+
+        return (Nodes) commonService.setResultModel(commonService.setResultObject(responseMap, Nodes.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * Node YAML 을 조회한다.
+     *
+     * @param resourceName the Nodes name
+     * @param resultMap                    the result map
+     * @return the Node
+     */
+    public Nodes getNodesYaml(String resourceName, HashMap resultMap) {
+        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListNodesGetUrl()
+                    .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+
+        resultMap.put("sourceTypeYaml", resultString);
 
         return (Nodes) commonService.setResultModel(commonService.setResultObject(resultMap, Nodes.class), Constants.RESULT_STATUS_SUCCESS);
     }
-
 }

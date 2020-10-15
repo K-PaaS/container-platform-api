@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+
 /**
  * Nodes Controller 클래스
  *
@@ -14,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020.10.14
  */
 @RestController
-@RequestMapping(value = "/nodes")
+@RequestMapping(value = "/clusters/{cluster:.+}/nodes")
 public class NodesController {
     private final NodesService nodesService;
 
     /**
      * Instantiates a new Nodes controller
      *
-     * @param nodesService the node service
+     * @param nodesService the Node service
      */
     @Autowired
     public NodesController(NodesService nodesService) {
@@ -31,7 +33,7 @@ public class NodesController {
     /**
      * Node 목록을 조회한다.
      *
-     * @return the node list
+     * @return the Nodes list
      */
     @GetMapping
     public NodesList getNodesList() {
@@ -40,13 +42,24 @@ public class NodesController {
 
 
     /**
-     * Node를 조회한다.
+     * Node 상세 정보를 조회한다.
      *
-     * @param nodeName the node name
-     * @return the node
+     * @param resourceName the Nodes name
+     * @return the Node
      */
-    @GetMapping(value = "/{nodeName:.+}")
-    public Nodes getNodes(@PathVariable(value = "nodeName") String nodeName) {
-        return nodesService.getNodes(nodeName);
+    @GetMapping(value = "/{resourceName:.+}")
+    public Nodes getNodes(@PathVariable(value = "resourceName") String resourceName) {
+        return nodesService.getNodes(resourceName);
+    }
+
+    /**
+     * Node YAML 을 조회한다.
+     *
+     * @param resourceName the Nodes name
+     * @return the Node
+     */
+    @GetMapping(value = "/{resourceName:.+}/yaml")
+    public Nodes getNodesYaml(@PathVariable(value = "resourceName") String resourceName){
+        return nodesService.getNodesYaml(resourceName, new HashMap<>());
     }
 }

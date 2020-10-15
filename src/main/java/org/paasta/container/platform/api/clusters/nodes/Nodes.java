@@ -5,6 +5,8 @@ import org.paasta.container.platform.api.clusters.nodes.support.NodesStatus;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 
+import java.util.Map;
+
 /**
  * Nodes Model 클래스
  *
@@ -18,7 +20,12 @@ public class Nodes {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
+    private String nextActionUrl;
+
     private CommonMetaData metadata;
     private CommonSpec spec;
     private NodesStatus status;
+
+    private Map<String, Object> source;
+    private String sourceTypeYaml;
 }
