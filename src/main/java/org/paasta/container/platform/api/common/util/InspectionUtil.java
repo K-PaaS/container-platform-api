@@ -43,7 +43,11 @@ public class InspectionUtil {
      * @return
      */
     public static String makeMethodName(String fieldName, String suffix) {
-        return "getCpMasterApiList" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1).toLowerCase() + "s" + suffix;
+        if(fieldName.equals("StorageClass")){
+            return "getCpMasterApiList" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1).toLowerCase() + "es" + suffix;
+        }else{
+            return "getCpMasterApiList" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1).toLowerCase() + "s" + suffix;
+        }
     }
 
 
@@ -60,7 +64,11 @@ public class InspectionUtil {
         return resourceName.substring(0, resourceName.length()-1);
     }*/
     public static String makeResourceName(String resourceName) {
-        return resourceName.substring(0, resourceName.length()-1);
+        if(resourceName.equals("storageclasses")){
+            return resourceName.substring(0, resourceName.length()-2); //storageclasses일 경우
+        }else{
+            return resourceName.substring(0, resourceName.length()-1);
+        }
     }
 
 
