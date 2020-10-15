@@ -33,12 +33,11 @@ public class NamespacesController {
     /**
      * Namespaces 목록을 조회한다.
      *
-     * @param namespace the namespace
      * @return the namespace list
      */
     @GetMapping
-    public NamespacesList getNamespacesList(@PathVariable(value = "namespace") String namespace, @RequestParam(required = false, defaultValue = "0") int limit, @RequestParam(required = false, name = "continue") String continueToken){
-        return namespacesService.getNamespacesList(namespace, limit, continueToken);
+    public NamespacesList getNamespacesList(@RequestParam(required = false, defaultValue = "0") int limit, @RequestParam(required = false, name = "continue") String continueToken){
+        return namespacesService.getNamespacesList(limit, continueToken);
     }
 
     /**
@@ -66,20 +65,18 @@ public class NamespacesController {
     /**
      * Namespaces 를 생성한다.
      *
-     * @param namespace the namespace
      * @param yaml the yaml
      * @return return is succeeded
      */
     @PostMapping
     public Object createNamespaces(@PathVariable(value = "cluster") String cluster,
-                                   @PathVariable(value = "namespace") String namespace,
                                    @RequestBody String yaml) throws Exception {
         if(yaml.contains("---")){
-            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+            Object object = ResourceExecuteManager.commonControllerExecute(null, yaml);
             return object;
         }
 
-        return namespacesService.createNamespaces(namespace, yaml);
+        return namespacesService.createNamespaces(yaml);
     }
 
     /**

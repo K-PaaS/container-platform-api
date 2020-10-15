@@ -62,10 +62,9 @@ public class NamespacesService {
     /**
      * NameSpace를 목록을 조회한다.
      *
-     * @param namespace the namespace
      * @return the namespaces list
      */
-    public NamespacesList getNamespacesList(String namespace, int limit, String continueToken) {
+    public NamespacesList getNamespacesList(int limit, String continueToken) {
         String param = "";
 
         if(continueToken != null){
@@ -73,8 +72,7 @@ public class NamespacesService {
         }
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                    propertyService.getCpMasterApiListNamespaceGetUrl()
-                        .replace("{namespace}", namespace) + "?limit" + limit + param
+                    propertyService.getCpMasterApiListNamespaceListUrl()
                 , HttpMethod.GET, null, Map.class);
 
         return (NamespacesList) commonService.setResultModel(commonService.setResultObject(responseMap, NamespacesList.class), Constants.RESULT_STATUS_SUCCESS);
@@ -100,14 +98,12 @@ public class NamespacesService {
     /**
      * NameSpace를 생성한다.
      *
-     * @param namespace       the namespace
      * @param yaml            the yaml
      * @return return is succeeded
      */
-    public Object createNamespaces(String namespace, String yaml) {
+    public Object createNamespaces(String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNamespaceCreateUrl()
-                        .replace("{namespace}",namespace), HttpMethod.POST, yaml, Object.class);
+                propertyService.getCpMasterApiListNamespaceCreateUrl(), HttpMethod.POST, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
@@ -122,10 +118,9 @@ public class NamespacesService {
     public ResultStatus deleteNamepspaces(String namespace) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespaceDeleteUrl()
-                        .replace("{namespace}", namespace), HttpMethod.DELETE, null, ResultStatus.class);
+                        .replace("{name}", namespace), HttpMethod.DELETE, null, ResultStatus.class);
 
-        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus,ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus,ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
     }
 
     /**
