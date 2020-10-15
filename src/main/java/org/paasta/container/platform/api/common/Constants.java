@@ -37,6 +37,7 @@ public class Constants {
     // COMMON API CALL URI
     public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";
     public static final String URI_COMMON_API_USER_DETAIL =  "/users/{userId:.+}";
+    public static final String URI_COMMON_API_USER_DETAIL_LOGIN =  "/users/login/{userId:.+}";
     public static final String URI_COMMON_API_USERS_LIST = "/clusters/cp-cluster/namespaces/{namespace:.+}/users";
     public static final String URI_COMMON_API_USERS_NAMES_LIST = "/clusters/cp-cluster/namespaces/{namespace:.+}/users/names";
 
