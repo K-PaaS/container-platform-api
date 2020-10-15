@@ -48,7 +48,7 @@ public class StorageClassesController {
      * @return the StorageClasses
      */
     @GetMapping(value = "/{resourceName:.+}")
-    public StorageClasses getStorageClasses(@PathVariable(value = "namesace") String namespace, @PathVariable(value = "resourceName") String resourceName){
+    public StorageClasses getStorageClasses(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName){
            return storageClassesService.getStorageClasses(namespace, resourceName);
     }
 

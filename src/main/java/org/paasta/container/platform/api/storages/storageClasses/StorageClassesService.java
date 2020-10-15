@@ -74,7 +74,7 @@ public class StorageClassesService {
                         .replace("{name}", resourceName)
                 , HttpMethod.GET, null, Map.class);
 
-        return (StorageClasses) commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumeClaims.class), Constants.RESULT_STATUS_SUCCESS);
+        return (StorageClasses) commonService.setResultModel(commonService.setResultObject(responseMap, StorageClasses.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -91,7 +91,7 @@ public class StorageClassesService {
                     .replace("{namespace}", namespace)
                     .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
-        resultMap.put("sourceTypYaml", resultString);
+        resultMap.put("sourceTypeYaml", resultString);
 
         return (StorageClasses) commonService.setResultModel(commonService.setResultObject(resultMap, StorageClasses.class), Constants.RESULT_STATUS_SUCCESS);
     }
