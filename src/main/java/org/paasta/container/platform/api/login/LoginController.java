@@ -1,7 +1,5 @@
 package org.paasta.container.platform.api.login;
 
-import com.google.gson.JsonArray;
-import net.minidev.json.JSONArray;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
@@ -9,12 +7,10 @@ import org.paasta.container.platform.api.users.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
