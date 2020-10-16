@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -43,9 +44,9 @@ public class InspectionUtil {
      * @return
      */
     public static String makeMethodName(String fieldName, String suffix) {
-        if(fieldName.equals("StorageClass")){
+        if (fieldName.endsWith("s")) {
             return "getCpMasterApiList" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1).toLowerCase() + "es" + suffix;
-        }else{
+        } else {
             return "getCpMasterApiList" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1).toLowerCase() + "s" + suffix;
         }
     }
@@ -59,14 +60,10 @@ public class InspectionUtil {
      * @param resourceName
      * @return
      */
-    /*public static String makeResourceName(String resourceName) {
-        resourceName = resourceName.substring(0, 1).toUpperCase()+resourceName.substring(1).toLowerCase();
-        return resourceName.substring(0, resourceName.length()-1);
-    }*/
     public static String makeResourceName(String resourceName) {
-        if(resourceName.equals("storageclasses")){
-            return resourceName.substring(0, resourceName.length()-2); //storageclasses일 경우
-        }else{
+        if (Arrays.stream(Constants.RESOURCE_SPELL_CASE).anyMatch(resourceName::equals)) {
+            return resourceName.substring(0, resourceName.length()-2);
+        } else {
             return resourceName.substring(0, resourceName.length()-1);
         }
     }
@@ -124,7 +121,7 @@ public class InspectionUtil {
         RestTemplateService restTemplateService = (RestTemplateService) getBean("restTemplateService");
         String finalUrl = verifyMethodCall(methodType, kind);
 
-        if(resourceName == null) {
+        if (resourceName == null) {
             return restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,  finalUrl.replace("{namespace}", namespace) + "?dryRun=All", HttpMethod.POST, yaml, Map.class);
         } else {
             return restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,  finalUrl.replace("{namespace}", namespace).replace("{name}", resourceName) + "?dryRun=All", HttpMethod.PUT, yaml, Map.class);
