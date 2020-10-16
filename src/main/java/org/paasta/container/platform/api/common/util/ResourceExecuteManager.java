@@ -58,12 +58,15 @@ public class ResourceExecuteManager {
 
         // 처리 메소드 정보
         Method paramMethod = targetObject.getClass().getDeclaredMethod(methodName, String.class, String.class);
-        if(paramMethod == null) {
+        if (paramMethod == null) {
             throw new ContainerPlatformException("처리할 메소드 (" + methodName + ") 가 존재 하지 않습니다.", "404");
         }
 
         LOGGER.info("method >>> " + paramMethod);
 
+        if(namespace == null || namespace.length() == 0) {
+            return paramMethod.invoke(targetObject, yaml);
+        }
         // 해당 메소드를 호출한다.
         return paramMethod.invoke(targetObject, namespace, yaml);
     }
