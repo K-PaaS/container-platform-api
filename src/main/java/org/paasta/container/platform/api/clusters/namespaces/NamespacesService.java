@@ -50,7 +50,7 @@ public class NamespacesService {
      */
     Namespaces getNamespaces(String namespace) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNamespaceGetUrl()
+                propertyService.getCpMasterApiListNamespacesGetUrl()
                         .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
 
         return (Namespaces) commonService.setResultModel(commonService.setResultObject(resultMap, Namespaces.class), Constants.RESULT_STATUS_SUCCESS);
@@ -72,7 +72,7 @@ public class NamespacesService {
         }
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                    propertyService.getCpMasterApiListNamespaceListUrl()
+                    propertyService.getCpMasterApiListNamespacesListUrl()
                 , HttpMethod.GET, null, Map.class);
 
         return (NamespacesList) commonService.setResultModel(commonService.setResultObject(responseMap, NamespacesList.class), Constants.RESULT_STATUS_SUCCESS);
@@ -86,7 +86,7 @@ public class NamespacesService {
      */
     public Namespaces getNamespacesYaml(String namespace) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNamespaceGetUrl()
+                propertyService.getCpMasterApiListNamespacesGetUrl()
                         .replace("{namespace}", namespace), HttpMethod.GET, null, String.class , Constants.ACCEPT_TYPE_YAML);
 
         HashMap<String,Object> resultMap = new HashMap<>();
@@ -103,7 +103,7 @@ public class NamespacesService {
      */
     public Object createNamespaces(String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNamespaceCreateUrl(), HttpMethod.POST, yaml, Object.class);
+                propertyService.getCpMasterApiListNamespacesCreateUrl(), HttpMethod.POST, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
@@ -117,7 +117,7 @@ public class NamespacesService {
      */
     public ResultStatus deleteNamepspaces(String namespace) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNamespaceDeleteUrl()
+                propertyService.getCpMasterApiListNamespacesDeleteUrl()
                         .replace("{name}", namespace), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus,ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
@@ -132,8 +132,8 @@ public class NamespacesService {
      */
     public ResultStatus updateNamespaces(String namespace, String yaml) {
         ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNamespaceUpdateUrl()
-                        .replace("{namespace}", namespace), HttpMethod.PUT, yaml, ResultStatus.class);
+                propertyService.getCpMasterApiListNamespacesUpdateUrl()
+                        .replace("{name}", namespace), HttpMethod.PUT, yaml, ResultStatus.class);
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
 
