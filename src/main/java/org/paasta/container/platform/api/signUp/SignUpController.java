@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.signUp;
 
+import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
@@ -40,6 +41,7 @@ public class SignUpController {
      * @param users the users
      * @return the ResultStatus
      */
+    @ApiOperation(value = "사용자 회원가입", httpMethod = "POST", hidden = true)
     @PostMapping(value = "/signUp")
     public ResultStatus signUpUsers(@RequestBody Users users) {
         if(duplicatedUserIdCheck(users)) {
@@ -59,6 +61,7 @@ public class SignUpController {
      * @param adminUsers the object
      * @return the ResultStatus
      */
+    @ApiOperation(value = "운영자 회원가입", httpMethod = "POST", hidden = true)
     @PostMapping(value = "/signUp/admin")
     public ResultStatus signUpAdminUsers(@RequestBody Object adminUsers) {
         Object obj = stringNullCheck(adminUsers);
