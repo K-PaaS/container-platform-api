@@ -108,8 +108,6 @@ public class Constants {
     public static final String RESOURCE_LIMITRANGE = "LimitRange";
     public static final String RESOURCE_ROLE = "Role";
 
-    //리소스 복수형이 -es로 끝나는 case(소문자 작성)
-    public static final String[] RESOURCE_SPELL_CASE = {"storageclasses"};
 
 //    public static final List<String> RESOURCE_MAP = Collections.unmodifiableList(new ArrayList<String>(){
 //        {

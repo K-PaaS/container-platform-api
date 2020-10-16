@@ -187,19 +187,19 @@ public class PropertyService {
     private String cpMasterApiListUsersDeleteUrl;
 
     @Value("${cpMaster.api.list.namespaces.list}")
-    private String cpMasterApiListNamespaceListUrl;
+    private String cpMasterApiListNamespacesListUrl;
 
     @Value("${cpMaster.api.list.namespaces.get}")
-    private String cpMasterApiListNamespaceGetUrl;
+    private String cpMasterApiListNamespacesGetUrl;
 
     @Value("${cpMaster.api.list.namespaces.create}")
-    private String cpMasterApiListNamespaceCreateUrl;
+    private String cpMasterApiListNamespacesCreateUrl;
 
     @Value("${cpMaster.api.list.namespaces.delete}")
-    private String cpMasterApiListNamespaceDeleteUrl;
+    private String cpMasterApiListNamespacesDeleteUrl;
 
     @Value("${cpMaster.api.list.namespaces.update}")
-    private String cpMasterApiListNamespaceUpdateUrl;
+    private String cpMasterApiListNamespacesUpdateUrl;
 
     @Value("${cpMaster.api.list.resourceQuotas.list}")
     private String cpMasterApiListResourceQuotasListUrl;
