@@ -52,7 +52,7 @@ public class SignUpAdminService {
 
         // (1) ::: namespace 생성 시 최저 사양의 resource quota, limit range 도 같이 생성
         String nsYaml = templateService.convert("create_namespace.ftl", model1);
-        Object nameSpaceResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespaceCreateUrl(), HttpMethod.POST, nsYaml, Object.class);
+        Object nameSpaceResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesCreateUrl(), HttpMethod.POST, nsYaml, Object.class);
 
         ResultStatus nsResult = (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(nameSpaceResult, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);
@@ -107,7 +107,7 @@ public class SignUpAdminService {
         // (5) ::: DB 커밋에 실패했을 경우 k8s 에 만들어진 namespace, cluster role binding 삭제
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespaceDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class);
             restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", "cluster-admin-" + username), HttpMethod.DELETE, null, Object.class);
         }
 
