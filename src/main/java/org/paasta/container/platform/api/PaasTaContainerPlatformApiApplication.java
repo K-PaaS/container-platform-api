@@ -44,12 +44,12 @@ public class PaasTaContainerPlatformApiApplication {
                     "kind: Namespace\n" +
                     "metadata:\n" +
                     "  name: " + namespace;
-            Object namespaces = restTemplateService.send(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespaceGetUrl().replace("{namespace}", namespace), HttpMethod.GET, null, Object.class);
+            Object namespaces = restTemplateService.send(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesGetUrl().replace("{namespace}", namespace), HttpMethod.GET, null, Object.class);
 
             if(namespaces instanceof ResultStatus) {
                 LOGGER.info("CREATE TEMP NAMESPACE AND INIT ROLE...");
                 // temp-namespace k8s에 생성
-                restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespaceCreateUrl(), HttpMethod.POST, namespaceYaml, Object.class);
+                restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesCreateUrl(), HttpMethod.POST, namespaceYaml, Object.class);
 
                 // init role 생성
                 Map<String, Object> map = new HashMap();
