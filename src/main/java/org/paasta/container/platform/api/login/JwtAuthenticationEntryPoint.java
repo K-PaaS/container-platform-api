@@ -46,7 +46,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         }
 
         ResultStatus resultStatus = new ResultStatus
-                (Constants.RESULT_STATUS_FAIL, "TOKEN_FAILED", CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(), detailMessage, "nexturl");
+                (Constants.RESULT_STATUS_FAIL, "TOKEN_FAILED", CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(), detailMessage);
 
         OutputStream out = response.getOutputStream();
 

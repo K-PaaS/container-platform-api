@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.login;
 
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 			return new User(user.getUserId(), user.getPassword(), roles);
 		}
-		throw new UsernameNotFoundException("This ID does not exist.");	}
+		throw new UsernameNotFoundException(Constants.NON_EXISTENT_ID);	}
 
 
 }

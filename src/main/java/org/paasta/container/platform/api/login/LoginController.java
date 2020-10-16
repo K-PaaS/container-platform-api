@@ -1,6 +1,8 @@
 package org.paasta.container.platform.api.login;
 
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
 import org.paasta.container.platform.api.users.UsersService;
@@ -43,10 +45,10 @@ public class LoginController {
                     authRequest.getUserId(), authRequest.getPassword()));
         } catch (Exception e) {
 
-            AuthenticationResponse authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_FAIL, "Login Failed.", 401,
-                    e.getMessage(), null, null, null, null);
+            ResultStatus resultStatus = new ResultStatus(Constants.RESULT_STATUS_FAIL, Constants.LOGIN_FAIL,
+                    CommonStatusCode.UNAUTHORIZED.getCode(), e.getMessage());
 
-            return authResponse;
+            return resultStatus;
         }
 
         //Generate token
@@ -63,8 +65,8 @@ public class LoginController {
             namespaceList.add(user.getCpNamespace());
         };
 
-        AuthenticationResponse authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, "Login Successful.", 200,
-                "Login Successful.", Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, namespaceList ) ;
+        AuthenticationResponse authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
+                Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, namespaceList ) ;
 
         return authResponse;
     }

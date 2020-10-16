@@ -25,6 +25,10 @@ public class AuthenticationResponse extends ResultStatus {
     private String token;
     private List namespace;
 
+    public AuthenticationResponse(String resultCode, String resultMessage, int httpStatusCode, String detailMessage) {
+        super(resultCode, resultMessage, httpStatusCode, detailMessage);
+    }
+
     public AuthenticationResponse(String resultCode, String resultMessage, int httpStatusCode, String detailMessage,
                                   String nextActionUrl, String userId, String token, List namespace) {
         super(resultCode, resultMessage, httpStatusCode, detailMessage, nextActionUrl);

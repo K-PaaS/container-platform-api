@@ -68,6 +68,17 @@ public class Constants {
 
     public static final String URI_ROLES = "/container-platform/roles";
 
+    //login
+    public static final String LOGIN_SUCCESS = "Login Successful.";
+    public static final String LOGIN_FAIL = "Login Failed.";
+    public static final String NON_EXISTENT_ID = "존재하지 않는 사용자 아이디입니다.";
+    public static final String UNAVAILABLE_ID = "해당 사용자 아이디는 사용할 수 없습니다.";
+    public static final String INVALID_PASSWORD = "비밀번호가 올바르지 않습니다.";
+    public static final String ID_REQUIRED = "사용자 아이디를 입력해주세요.";
+    public static final String PASSWORD_REQUIRED = "비밀번호를 입력해주세요.";
+    public static final String ID_PASSWORD_REQUIRED = "사용자 아이디와 비밀번호를 입력해주세요.";
+
+
     /** 서비스 요청시 처리 메소드 kind 매핑 정보 */
     public static final String RESOURCE_SERVICEACCOUNT = "ServiceAccount";
     public static final String RESOURCE_ROLEBINDING = "RoleBinding";
