@@ -46,17 +46,27 @@ public class PersistentVolumeClaimsService {
      * PersistentVolumeClaims 목록을 조회한다.
      *
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
      * @return the PersistentVolumeClaims List
      */
-    public PersistentVolumeClaimsList getPersistentVolumeClaimsList(String namespace) {
+    public PersistentVolumeClaimsList getPersistentVolumeClaimsList(String namespace,int limit, String continueToken) {
+
+        String param = "";
+
+        if(continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentvolumeclaimsListUrl()
-                        .replace("{namespace}", namespace)
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param
                 , HttpMethod.GET, null, Map.class);
 
         return (PersistentVolumeClaimsList) commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumeClaimsList.class), Constants.RESULT_STATUS_SUCCESS);
 
     }
+
 
     /**
      * PersistentVolumeClaims 상세 정보를 조회한다.

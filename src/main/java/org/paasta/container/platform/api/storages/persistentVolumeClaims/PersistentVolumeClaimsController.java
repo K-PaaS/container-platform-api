@@ -33,11 +33,15 @@ public class PersistentVolumeClaimsController {
      * PersistentVolumeClaims 목록을 조회한다.
      *
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
      * @return the PersistentVolumeClaims List
      */
     @GetMapping
-    public PersistentVolumeClaimsList getPersistentVolumeClaimsList(@PathVariable(value = "namespace") String namespace) {
-        return persistentVolumeClaimsService.getPersistentVolumeClaimsList(namespace);
+    public PersistentVolumeClaimsList getPersistentVolumeClaimsList(@PathVariable(value = "namespace") String namespace,
+                                                                    @RequestParam(required = false, defaultValue = "0") int limit,
+                                                                    @RequestParam(required = false, name = "continue") String continueToken) {
+        return persistentVolumeClaimsService.getPersistentVolumeClaimsList(namespace, limit, continueToken);
     }
 
     /**
