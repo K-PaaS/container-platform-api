@@ -115,7 +115,7 @@ public class NamespacesService {
      * @param namespace        the namespace
      * @return the ResultStatus
      */
-    public ResultStatus deleteNamepspaces(String namespace) {
+    public ResultStatus deleteNamespaces(String namespace) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesDeleteUrl()
                         .replace("{name}", namespace), HttpMethod.DELETE, null, ResultStatus.class);

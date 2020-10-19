@@ -87,7 +87,7 @@ public class NamespacesController {
      */
     @DeleteMapping(value = "/{namespace:.+}")
     public ResultStatus deleteNamespaces(@PathVariable("namespace") String namespace){
-        return namespacesService.deleteNamepspaces(namespace);
+        return namespacesService.deleteNamespaces(namespace);
     }
 
     /**
