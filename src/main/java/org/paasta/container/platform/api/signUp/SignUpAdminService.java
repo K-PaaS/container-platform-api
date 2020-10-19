@@ -4,6 +4,7 @@ import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +34,16 @@ public class SignUpAdminService {
     private final RestTemplateService restTemplateService;
     private final CommonService commonService;
     private final AccessTokenService accessTokenService;
+    private final UsersService usersService;
 
     @Autowired
-    public SignUpAdminService(PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService) {
+    public SignUpAdminService(PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService, UsersService usersService) {
         this.propertyService = propertyService;
         this.templateService = templateService;
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.accessTokenService = accessTokenService;
+        this.usersService = usersService;
     }
 
     public ResultStatus signUpAdminUsers(Users users) {
@@ -102,7 +105,7 @@ public class SignUpAdminService {
         users.setIsActive("Y");
 
         // (4) ::: service account 생성, cluster role binding 완료 시 아래 Common API 호출
-        ResultStatus rsDb = restTemplateService.send(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class);
+        ResultStatus rsDb = usersService.createUsers(users);
 
         // (5) ::: DB 커밋에 실패했을 경우 k8s 에 만들어진 namespace, cluster role binding 삭제
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {

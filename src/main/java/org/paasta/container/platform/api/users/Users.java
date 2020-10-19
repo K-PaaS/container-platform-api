@@ -2,6 +2,10 @@ package org.paasta.container.platform.api.users;
 
 import lombok.Data;
 
+import java.beans.Transient;
+import java.util.List;
+import java.util.Map;
+
 /**
  * User Model 클래스
  *
@@ -12,27 +16,37 @@ import lombok.Data;
 
 @Data
 public class Users {
-    private String resultCode;
-    private String resultMessage;
+    public String resultCode;
+    public String resultMessage;
+    public Integer httpStatusCode;
+    public String detailMessage;
 
-    private long id;
-    private String userId;
-    private String password;
-    private String email;
-    private String clusterName;
-    private String clusterApiUrl;
-    private String clusterServiceAccountName;
-    private String clusterToken;
-    private String cpNamespace;
-    private String cpAccountTokenName;
-    private String serviceAccountName;
-    private String saSecret;
-    private String saToken;
-    private String isActive;
-    private String roleSetCode;
-    private String description;
-    private String userType;
-    private String created;
-    private String lastModified;
+    public long id;
+    public String userId;
+    public String password;
+    public String email;
+    public String clusterName;
+    public String clusterApiUrl;
+    public String clusterServiceAccountName;
+    public String clusterToken;
+    public String cpNamespace;
+    public String cpAccountTokenName;
+    public String serviceAccountName;
+    public String saSecret;
+    public String saToken;
+    public String isActive;
+    public String roleSetCode;
+    public String description;
+    public String userType;
+    public String created;
+    public String lastModified;
 
+    // user 생성 시 multi namespaces, roles
+    private List<NamespaceRole> selectValues;
+
+    @Data
+    public static class NamespaceRole {
+        private String namespace;
+        private String role;
+    }
 }

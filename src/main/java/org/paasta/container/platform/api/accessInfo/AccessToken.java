@@ -12,6 +12,10 @@ import lombok.Data;
 @Data
 public class AccessToken {
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
+
     private String caCertToken;
     private String userAccessToken;
 }

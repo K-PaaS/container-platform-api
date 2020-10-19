@@ -11,10 +11,13 @@ import lombok.Data;
  */
 @Data
 public class AdminToken {
+    private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
 
     private String tokenName;
     private String tokenValue;
-    private String resultCode;
     private int statusCode;
-    private String resultMessage;
+
 }
