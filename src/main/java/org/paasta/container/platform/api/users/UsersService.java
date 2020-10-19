@@ -229,7 +229,7 @@ public class UsersService {
 
         // 새로운 것 기준
         for (UsersAdmin.UsersDetails details:usersDetails) {
-            // 기존 namepsace와 겹치는 namespace일 경우
+            // 기존 namespace와 겹치는 namespace일 경우
             if(newNsList.contains(details.getCpNamespace())) {
                 // role 까지 같은 지 확인
                 // 같으면 그대로, 다르면 기존 role binding 지운뒤 새롭게 role binding
@@ -237,18 +237,26 @@ public class UsersService {
                     String namespace = nsRole.getNamespace();
                     String role = nsRole.getRole();
 
-                    if(details.getCpNamespace().equalsIgnoreCase(nsRole.getNamespace()) && !details.getRoleSetCode().equalsIgnoreCase(nsRole.getRole())){
+                    // 기존 DB update
+                    Users updateUser = getUsers(namespace, users.getServiceAccountName());
+
+                    // role이 다를 경우
+                    if(details.getCpNamespace().equalsIgnoreCase(nsRole.getNamespace()) && !details.getRoleSetCode().equalsIgnoreCase(nsRole.getRole())) {
                         LOGGER.info("Same Namespace >> {}, Default Role >> {}, New Role >> {}", namespace, details.getRoleSetCode(), role);
                         restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + "-" + details.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class);
                         resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, role);
 
-                        // 기존 DB update
-                        Users updateUser = getUsers(namespace, users.getServiceAccountName());
+                        updateUser.setPassword(users.getPassword());
+                        updateUser.setEmail(users.getEmail());
                         updateUser.setRoleSetCode(role);
                         updateUser.setSaToken(accessTokenService.getSecret(namespace, updateUser.getSaSecret()).getUserAccessToken());
 
-                        rsDb = createUsers(updateUser);
+                    } else{  // namespace, role 모두 같을 경우
+                        updateUser.setPassword(users.getPassword());
+                        updateUser.setEmail(users.getEmail());
                     }
+
+                    rsDb = createUsers(updateUser);
                 }
 
             } else {
@@ -279,6 +287,7 @@ public class UsersService {
 
                 // DB 새로 insert
                 Users newUser = users;
+
                 newUser.setCpNamespace(namespaceRole.getNamespace());
                 newUser.setRoleSetCode(namespaceRole.getRole());
                 newUser.setIsActive("Y");
