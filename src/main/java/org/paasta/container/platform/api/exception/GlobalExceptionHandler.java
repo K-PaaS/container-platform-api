@@ -78,7 +78,7 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ResponseBody
     public ResponseEntity<ErrorMessage> nullException(NullPointerException ex) {
         logger.info("NullPointerException >>> " + ex);
-        return getErrorResponse(ex.toString(), HttpStatus.BAD_REQUEST);
+        return getErrorResponse(ex.toString(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({IndexOutOfBoundsException.class})

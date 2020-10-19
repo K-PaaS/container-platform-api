@@ -67,7 +67,7 @@ public class AccessTokenService {
         accessToken.setCaCertToken(caCertDecodeToken);
         accessToken.setUserAccessToken(userDecodeToken);
 
-        return (AccessToken) commonService.setResultModel(accessToken, Constants.RESULT_STATUS_SUCCESS);
+        return accessToken;
     }
 
 }

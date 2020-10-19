@@ -1,5 +1,8 @@
 package org.paasta.container.platform.api.users;
 
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +17,8 @@ import java.util.Map;
  * @since 2020.09.22
  **/
 @RestController
-@RequestMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users")
 public class UsersController {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
     private final UsersService usersService;
 
     @Autowired
@@ -26,14 +28,37 @@ public class UsersController {
 
 
     /**
-     * 각 namespace별 사용자 목록 조회
+     * Users 전체 목록 조회
+     *
+     * @return
+     */
+    @GetMapping(value = "/clusters/{cluster:.+}/users")
+    public UsersListAdmin getUsersList() {
+        return usersService.getUsersList();
+    }
+
+
+    /**
+     * 각 namespace별 Users 목록 조회
      *
      * @param namespace the namespace
      * @return the UsersList
      */
-    @GetMapping
-    public UsersList getUsersList(@PathVariable(value = "namespace") String namespace) {
-        return usersService.getUsersList(namespace);
+    @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users")
+    public UsersList getUsersListByNamespace(@PathVariable(value = "namespace") String namespace) {
+        return usersService.getUsersListByNamespace(namespace);
+    }
+
+
+    /**
+     * 하나의 Cluster 내 여러 Namespaces에 속한 User에 대한 상세 조회
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}")
+    public Object getUsersList(@PathVariable(value = "userId") String userId) throws Exception {
+        return usersService.getUsers(userId);
     }
 
 
@@ -42,8 +67,36 @@ public class UsersController {
      *
      * @return the Map
      */
-    @GetMapping(value = "/names")
+    @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/names")
     public Map<String, List> getUsersNameList(@PathVariable(value = "namespace") String namespace) {
         return usersService.getUsersNameListByNamespace(namespace);
     }
+
+
+    /**
+     * Users 생성 (Admin Portal)
+     * 복수 개의 namespace에 속할 수 있다.
+     *
+     * @param users
+     * @return
+     */
+    @PostMapping(value = "/clusters/{cluster:.+}/users")
+    public ResultStatus registerUsers(@RequestBody Users users) {
+        return usersService.registerUsers(users);
+    }
+
+
+    /**
+     * Users 수정 (Admin Portal)
+     * 복수 개의 namespace에 속할 수 있다.
+     *
+     * @param userId
+     * @param users
+     * @return
+     */
+    @PutMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}")
+    public ResultStatus modifyUsers(@PathVariable(value = "userId") String userId, @RequestBody Users users) throws Exception {
+        return usersService.modifyUsers(userId, users);
+    }
+
 }

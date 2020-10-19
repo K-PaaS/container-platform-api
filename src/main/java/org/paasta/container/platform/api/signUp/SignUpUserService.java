@@ -4,13 +4,13 @@ import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,14 +34,16 @@ public class SignUpUserService {
     private final TemplateService templateService;
     private final RestTemplateService restTemplateService;
     private final AccessTokenService accessTokenService;
+    private final UsersService usersService;
 
     @Autowired
-    public SignUpUserService(CommonService commonService, PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService, AccessTokenService accessTokenService) {
+    public SignUpUserService(CommonService commonService, PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService, AccessTokenService accessTokenService, UsersService usersService) {
         this.commonService = commonService;
         this.propertyService = propertyService;
         this.templateService = templateService;
         this.restTemplateService = restTemplateService;
         this.accessTokenService = accessTokenService;
+        this.usersService = usersService;
     }
 
 
@@ -76,7 +78,7 @@ public class SignUpUserService {
         users.setSaToken(accessTokenService.getSecret(namespace, saSecretName).getUserAccessToken());
         users.setUserType("USER");
 
-        ResultStatus rsDb = restTemplateService.send(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class);
+        ResultStatus rsDb = usersService.createUsers(users);
 
         // (3) ::: DB 커밋에 실패했을 경우 k8s 에 만들어진 service account 삭제
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {

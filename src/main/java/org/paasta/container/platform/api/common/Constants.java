@@ -23,6 +23,10 @@ public class Constants {
 
     public static final String TOKEN_KEY = "cp_admin";
 
+    public static final String AUTH_CLUSTER_ADMIN = "CLUSTER_ADMIN";
+    public static final String AUTH_NAMESPACE_ADMIN = "NAMESPACE_ADMIN";
+    public static final String AUTH_USER = "USER";
+
     public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
     public static final String NOT_ASSIGNED_ROLE = "NOT_ASSIGNED_ROLE";
     public static final String DEFAULT_INIT_ROLE = "init-role";
@@ -36,10 +40,13 @@ public class Constants {
 
     // COMMON API CALL URI
     public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";
-    public static final String URI_COMMON_API_USER_DETAIL =  "/users/{userId:.+}";
+    public static final String URI_COMMON_API_USERS = "/clusters/cp-cluster/namespaces/{namespace:.+}/users/{userId:.+}";
+    public static final String URI_COMMON_API_USERS_DETAIL =  "/users/{userId:.+}";
+    public static final String URI_COMMON_API_USERS_LIST =  "/users";
     public static final String URI_COMMON_API_USER_DETAIL_LOGIN =  "/users/login/{userId:.+}";
-    public static final String URI_COMMON_API_USERS_LIST = "/clusters/cp-cluster/namespaces/{namespace:.+}/users";
+    public static final String URI_COMMON_API_USERS_LIST_BY_NAMESPACE = "/clusters/cp-cluster/namespaces/{namespace:.+}/users";
     public static final String URI_COMMON_API_USERS_NAMES_LIST = "/clusters/cp-cluster/namespaces/{namespace:.+}/users/names";
+    public static final String URI_COMMON_API_USER_DELETE = "/users/";
 
     // NEXT ACTION MOVEMENT DASHBOARD URI
     public static final String URI_CLUSTER_NODES = "/container-platform/clusters/nodes";
@@ -65,6 +72,7 @@ public class Constants {
     public static final String URI_STORAGES_DETAIL = "/container-platform/storages/{persistentVolumeClaimName:.+}";
 
     public static final String URI_USERS = "/container-platform/users";
+    public static final String URI_USERS_DETAIL = "/container-platform/users/{userId:.+}";
 
     public static final String URI_ROLES = "/container-platform/roles";
 
