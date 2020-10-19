@@ -6,8 +6,11 @@ import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -144,5 +147,41 @@ public class CommonService {
      */
     private <T> T fromJson(String requestString, Class<T> requestClass) {
         return gson.fromJson(requestString, requestClass);
+    }
+
+    /**
+     * 서로 다른 객체를 매핑한다.
+     *
+     * @param instance
+     * @param targetClass
+     * @param <A>
+     * @param <B>
+     * @return
+     * @throws Exception
+     */
+    public static <A,B> B convert(A instance, Class<B> targetClass) throws Exception {
+        B target = targetClass.newInstance();
+
+        for (Field targetField : targetClass.getDeclaredFields()) {
+            Field[] instanceFields = instance.getClass().getDeclaredFields();
+
+            for (Field instanceField : instanceFields) {
+                if(targetField.getName().equals(instanceField.getName())) {
+                    targetField.set(target, instance.getClass().getDeclaredField(targetField.getName()).get(instance));
+                }
+            }
+        }
+        return target;
+    }
+
+
+    /**
+     * Token으로 Admin인지 판별
+     *
+     * @param user
+     * @return
+     */
+    public static boolean isAdminPortal(User user) {
+        return user.getAuthorities().contains(new SimpleGrantedAuthority(Constants.AUTH_CLUSTER_ADMIN));
     }
 }
