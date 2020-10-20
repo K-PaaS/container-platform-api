@@ -66,7 +66,15 @@ public class DeploymentsController {
             @ApiResponse(code = 200, message = "SUCCESS")
     })
     @GetMapping(value = "/{resourceName:.+}")
-    public Deployments getDeployments(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+    public Object getDeployments(@PathVariable(value = "namespace") String namespace
+            , @PathVariable(value = "resourceName") String resourceName
+            , @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        // For Admin
+        if(isAdmin) {
+            return deploymentsService.getDeploymentsAdmin(namespace, resourceName);
+        }
+
         return deploymentsService.getDeployments(namespace, resourceName);
     }
 
@@ -78,10 +86,10 @@ public class DeploymentsController {
      * @param resourceName   the resource name
      * @return               the Object
      */
-    @GetMapping(value = "/{resourceName:.+}/admin")
-    public Object getDeploymentsAdmin(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
-        return deploymentsService.getDeploymentsAdmin(namespace, resourceName);
-    }
+//    @GetMapping(value = "/{resourceName:.+}/admin")
+//    public Object getDeploymentsAdmin(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+//        return deploymentsService.getDeploymentsAdmin(namespace, resourceName);
+//    }
 
     /**
      * Deployments YAML을 조회한다.

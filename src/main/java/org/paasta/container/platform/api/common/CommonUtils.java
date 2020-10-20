@@ -109,4 +109,23 @@ public class CommonUtils {
         return defaultValue;
     }
 
+
+    /**
+     * Object List value modify
+     *
+     * @param obj    the obj
+     * @param index  the index
+     * @param newObj the newObj
+     * @return       the Object List
+     */
+    public static Object[] modifyValue(Object[] obj, int index, Object newObj) {
+        ArrayList<Object> list = new ArrayList<>(Arrays.asList(obj));
+        for(int i = 0; i < list.size(); i++) {
+            if(i == index) {
+                list.set(index, newObj);
+            }
+        }
+        return list.toArray();
+
+    }
 }

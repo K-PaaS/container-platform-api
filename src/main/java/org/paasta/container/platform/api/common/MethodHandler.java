@@ -11,10 +11,14 @@ import org.paasta.container.platform.api.common.util.YamlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * AOP - Common Create/Update resource
@@ -33,6 +37,51 @@ public class MethodHandler {
     @Autowired
     public MethodHandler(HttpServletRequest request) {
         this.request = request;
+    }
+
+
+    /**
+     * API URL 호출 시 로그인한 사용자 정보로 admin/user 판별
+     *
+     * true/false 를 argument 안에 파라미터로 넣어준다.
+     * isAdmin으로 판별해서 true면 admin 서비스 호출
+     *
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    @Around("execution(* org.paasta.container.platform.api..*Controller.*(..))" + "&& !@annotation(org.paasta.container.platform.api.config.NoAuth)")
+    public Object isAdminAspect(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object[] parameterValues = Arrays.asList(joinPoint.getArgs()).toArray();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<GrantedAuthority> list = (List<GrantedAuthority>) authentication.getAuthorities();
+        LOGGER.info("your authority >>> " + list.get(0).getAuthority());
+        String authority = list.get(0).getAuthority();
+
+        boolean isAdmin = false;
+
+        if(Constants.AUTH_CLUSTER_ADMIN.equals(authority)) {
+            isAdmin = true;
+        }
+
+        CodeSignature methodSignature = (CodeSignature) joinPoint.getSignature();
+        String[] sigParamNames = methodSignature.getParameterNames();
+
+        int index = 0;
+        for (String name:sigParamNames) {
+            LOGGER.info("index >>> {}, param name >>> {}", index, name);
+
+            if("isAdmin".equals(name)) {
+                LOGGER.info("success index :: {}, isAdmin :: {}", index, isAdmin);
+                break;
+            }
+
+            index++;
+        }
+
+        parameterValues = CommonUtils.modifyValue(parameterValues, index,  isAdmin);
+        return joinPoint.proceed(parameterValues);
     }
 
 
