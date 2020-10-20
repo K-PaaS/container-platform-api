@@ -49,6 +49,17 @@ public class UsersController {
         return usersService.getUsersListByNamespace(namespace);
     }
 
+    /**
+     * 각 namespace별 Users 상세 조회
+     *
+     * @param namespace the namespace
+     * @return the UsersList
+     */
+    @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/{userId:.+}")
+    public Users getUsersByNamespace(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "userId") String userId) {
+        return usersService.getUsers(namespace, userId);
+    }
+
 
     /**
      * 하나의 Cluster 내 여러 Namespaces에 속한 User에 대한 상세 조회
