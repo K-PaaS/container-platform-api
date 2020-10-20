@@ -99,6 +99,15 @@ public class PropertyService {
     @Value("${cpMaster.api.list.persistentvolumes.get}")
     private String cpMasterApiListPersistentvolumesGetUrl;
 
+    @Value("${cpMaster.api.list.persistentvolumes.create}")
+    private String cpMasterApiListPersistentvolumesCreateUrl;
+
+    @Value("${cpMaster.api.list.persistentvolumes.delete}")
+    private String cpMasterApiListPersistentvolumesDeleteUrl;
+
+    @Value("${cpMaster.api.list.persistentvolumes.update}")
+    private String cpMasterApiListPersistentvolumesUpdateUrl;
+
     @Value("${cpMaster.api.list.persistentvolumeclaims.list}")
     private String cpMasterApiListPersistentvolumeclaimsListUrl;
 
