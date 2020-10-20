@@ -55,7 +55,7 @@ public class MethodHandler {
         String[] sigParamNames = methodSignature.getParameterNames();
 
         // yaml 의 위치 파악
-        for (int i=0; i < sigParamNames.length; i++) {
+        for (int i = 0; i < sigParamNames.length; i++) {
             if ("yaml".equals(sigParamNames[i])) {
                 yaml = Arrays.asList(parameterValues).get(i).toString();
                 LOGGER.info("yaml >>> " + yaml);
@@ -81,14 +81,25 @@ public class MethodHandler {
 
         LOGGER.info("requestResource for create:::::::::" + requestResource);
 
-
         String[] yamlArray = YamlUtil.splitYaml(yaml);
-        boolean  isExistResource = false;
+        boolean isExistResource = false;
+
+        for (String temp : yamlArray) {
+            LOGGER.info("temp:::::::::" + temp);
+            String name = YamlUtil.parsingYaml(temp, "metadata");
+
+            if (name.startsWith("kube") || namespace.startsWith("kube")) {
+                LOGGER.info("The prefix 'kube-' is not allowed.':::::::::error");
+                return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The prefix 'kube-' is not allowed.", 400, "The prefix 'kube-' is not allowed.");
+            } else {
+                break;
+            }
+        }
 
 
         for (String temp : yamlArray) {
             LOGGER.info("temp:::::::::" + temp);
-            String kind = YamlUtil.parsingYaml(temp,"kind");
+            String kind = YamlUtil.parsingYaml(temp, "kind");
 
             String resourceKind = YamlUtil.makeResourceNameYAML(kind);
 
@@ -102,7 +113,7 @@ public class MethodHandler {
         if (!isExistResource) {
             LOGGER.info("The corresponding resource does not exist:::::::::error");
             //return  new ErrorMessage(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist" );
-            return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist." );
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '" + requestResource + "' does not exist.");
         }
 
         for (String temp : yamlArray) {
@@ -110,14 +121,14 @@ public class MethodHandler {
             String resourceKind = YamlUtil.parsingYaml(temp, "kind");
             LOGGER.info("dryRun resourceKind :::::::::" + resourceKind);
 
-                Object dryRunResult = InspectionUtil.resourceDryRunCheck("CreateUrl", namespace, resourceKind, temp, null);
-                ObjectMapper oMapper = new ObjectMapper();
-                ResultStatus createdRs = oMapper.convertValue(dryRunResult, ResultStatus.class);
+            Object dryRunResult = InspectionUtil.resourceDryRunCheck("CreateUrl", namespace, resourceKind, temp, null);
+            ObjectMapper oMapper = new ObjectMapper();
+            ResultStatus createdRs = oMapper.convertValue(dryRunResult, ResultStatus.class);
 
-                if (Constants.RESULT_STATUS_FAIL.equals(createdRs.getResultCode())) {
-                    LOGGER.info("dryRun :: not valid yaml ");
-                    return createdRs;
-                }
+            if (Constants.RESULT_STATUS_FAIL.equals(createdRs.getResultCode())) {
+                LOGGER.info("dryRun :: not valid yaml ");
+                return createdRs;
+            }
 
         }
 
@@ -161,7 +172,6 @@ public class MethodHandler {
             }
         }
 
-
         LOGGER.info("namespace >> {}, resourceName >> {}", namespace, resourceName);
 
         String requestResource;
@@ -184,7 +194,7 @@ public class MethodHandler {
         if (!requestResource.equals(resourceKind) ) {
             LOGGER.info("The corresponding resource does not exist:::::::::error");
             //return  new ErrorMessage(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist." );
-            return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist." );
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+ requestResource +"' does not exist." );
         }
 
 
