@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-import static org.paasta.container.platform.api.common.CommonUtils.*;
+import static org.paasta.container.platform.api.common.CommonUtils.regexMatch;
+import static org.paasta.container.platform.api.common.CommonUtils.stringNullCheck;
 
 /**
  * 회원가입 Controller 클래스
@@ -39,36 +40,14 @@ public class SignUpController {
     /**
      * 사용자 회원가입
      *
-     * @param users the users
+     * @param requestUsers the requestUsers
      * @return the ResultStatus
      */
     @NoAuth
-    @ApiOperation(value = "사용자 회원가입", httpMethod = "POST", hidden = true)
+    @ApiOperation(value = "회원가입", httpMethod = "POST", hidden = true)
     @PostMapping(value = "/signUp")
-    public ResultStatus signUpUsers(@RequestBody Users users) {
-        if(duplicatedUserIdCheck(users)) {
-            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                    .resultMessage("The User ID is already exist.")
-                    .httpStatusCode(409)
-                    .detailMessage("User ID가 중복입니다.").build();
-        }
-
-        return signUpUserService.signUpUsers(users);
-    }
-
-
-    /**
-     * todo ::: token으로 운영자/사용자 분기 타서 회원가입 URL 하나로 통일...
-     * 운영자 회원가입
-     *
-     * @param adminUsers the object
-     * @return the ResultStatus
-     */
-    @NoAuth
-    @ApiOperation(value = "운영자 회원가입", httpMethod = "POST", hidden = true)
-    @PostMapping(value = "/signUp/admin")
-    public ResultStatus signUpAdminUsers(@RequestBody Object adminUsers) {
-        Object obj = stringNullCheck(adminUsers);
+    public ResultStatus signUpUsers(@RequestBody Object requestUsers) {
+        Object obj = stringNullCheck(requestUsers);
         if(obj instanceof ResultStatus) {
             return (ResultStatus) obj;
         }
@@ -87,13 +66,19 @@ public class SignUpController {
         // id 중복 체크
         if(duplicatedUserIdCheck(users)) {
             return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                        .resultMessage("The User ID is already exist.")
-                        .httpStatusCode(409)
-                        .detailMessage("User ID가 중복입니다.").build();
+                    .resultMessage("The User ID is already exist.")
+                    .httpStatusCode(409)
+                    .detailMessage("User ID가 중복입니다.").build();
         }
 
-        return signUpAdminService.signUpAdminUsers(users);
+        // Admin을 판별할 수 있는 cluster token이 있는 경우
+        if(!users.getClusterToken().isEmpty()) {
+            return signUpAdminService.signUpAdminUsers(users);
+        }
+
+        return signUpUserService.signUpUsers(users);
     }
+
 
     /**
      * 등록돼있는 사용자들의 이름 목록 조회

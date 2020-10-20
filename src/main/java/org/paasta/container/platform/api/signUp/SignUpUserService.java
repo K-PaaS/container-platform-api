@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 
-import static org.paasta.container.platform.api.common.CommonUtils.yamlMatch;
 import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
@@ -31,19 +30,19 @@ public class SignUpUserService {
 
     private final CommonService commonService;
     private final PropertyService propertyService;
-    private final TemplateService templateService;
     private final RestTemplateService restTemplateService;
     private final AccessTokenService accessTokenService;
     private final UsersService usersService;
+    private final ResourceYamlService resourceYamlService;
 
     @Autowired
-    public SignUpUserService(CommonService commonService, PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService, AccessTokenService accessTokenService, UsersService usersService) {
+    public SignUpUserService(CommonService commonService, PropertyService propertyService, RestTemplateService restTemplateService, AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService) {
         this.commonService = commonService;
         this.propertyService = propertyService;
-        this.templateService = templateService;
         this.restTemplateService = restTemplateService;
         this.accessTokenService = accessTokenService;
         this.usersService = usersService;
+        this.resourceYamlService = resourceYamlService;
     }
 
 
@@ -58,11 +57,7 @@ public class SignUpUserService {
         String username = users.getUserId();
 
         // (1) ::: service account 생성. 타겟은 temp-namespace.
-        String saYaml = templateService.convert("create_account.ftl", yamlMatch(username, namespace));
-        Object saResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, saYaml, Object.class);
-
-        ResultStatus rsK8s = (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(saResult, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, "/");
+        ResultStatus rsK8s = resourceYamlService.createServiceAccount(username, namespace);
 
         // (2) ::: service account 생성 완료 시 아래 Common API 호출
         if(Constants.RESULT_STATUS_FAIL.equals(rsK8s.getResultCode())) {
