@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.login;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.config.NoAuth;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
 import org.paasta.container.platform.api.users.UsersService;
@@ -37,6 +38,7 @@ public class LoginController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @NoAuth
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public Object generateToken(@RequestBody AuthenticationRequest authRequest) {

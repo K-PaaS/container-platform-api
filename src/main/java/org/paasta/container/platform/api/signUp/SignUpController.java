@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.signUp;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.config.NoAuth;
 import org.paasta.container.platform.api.users.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,6 +42,7 @@ public class SignUpController {
      * @param users the users
      * @return the ResultStatus
      */
+    @NoAuth
     @ApiOperation(value = "사용자 회원가입", httpMethod = "POST", hidden = true)
     @PostMapping(value = "/signUp")
     public ResultStatus signUpUsers(@RequestBody Users users) {
@@ -56,11 +58,13 @@ public class SignUpController {
 
 
     /**
+     * todo ::: token으로 운영자/사용자 분기 타서 회원가입 URL 하나로 통일...
      * 운영자 회원가입
      *
      * @param adminUsers the object
      * @return the ResultStatus
      */
+    @NoAuth
     @ApiOperation(value = "운영자 회원가입", httpMethod = "POST", hidden = true)
     @PostMapping(value = "/signUp/admin")
     public ResultStatus signUpAdminUsers(@RequestBody Object adminUsers) {
