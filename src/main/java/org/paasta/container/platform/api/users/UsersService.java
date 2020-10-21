@@ -251,7 +251,7 @@ public class UsersService {
                         updateUser.setRoleSetCode(role);
                         updateUser.setSaToken(accessTokenService.getSecret(namespace, updateUser.getSaSecret()).getUserAccessToken());
 
-                    } else{  // namespace, role 모두 같을 경우
+                    } else if(details.getCpNamespace().equalsIgnoreCase(nsRole.getNamespace()) && details.getRoleSetCode().equalsIgnoreCase(nsRole.getRole())){  // namespace, role 모두 같을 경우
                         updateUser.setPassword(users.getPassword());
                         updateUser.setEmail(users.getEmail());
                     }
@@ -323,10 +323,24 @@ public class UsersService {
         // DB delete
         ResultStatus rsDb = (ResultStatus) restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DELETE + users.getId(), HttpMethod.DELETE, null, Object.class);
 
-        if(RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
-            return rsDb;
-        }
-
         return rsDb;
+    }
+
+
+    /**
+     * 사용자 삭제 (All Namespaces)
+     *
+     * @param userId   the user id
+     * @return         the ResultStatus
+     */
+    public ResultStatus deleteUsersByAllNamespaces(String userId) {
+        UsersList users = getUsersDetails(userId);
+
+        ResultStatus rs = new ResultStatus();
+        for(Users user:users.getItems()) {
+            rs = deleteUsers(user);
+        }
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rs, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS);
     }
 }

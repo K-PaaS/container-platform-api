@@ -110,4 +110,15 @@ public class UsersController {
         return usersService.modifyUsers(userId, users);
     }
 
+
+    /**
+     * 사용자 삭제 (All Namespaces)
+     *
+     * @param userId   the user id
+     * @return         ResultStatus
+     */
+    @DeleteMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}")
+    public ResultStatus deleteUsers(@PathVariable(value = "userId") String userId) {
+        return usersService.deleteUsersByAllNamespaces(userId);
+    }
 }
