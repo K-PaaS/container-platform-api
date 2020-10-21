@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.users;
 
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.paasta.container.platform.api.common.CommonUtils.regexMatch;
 
 /**
  * User Controller 클래스
@@ -98,15 +101,30 @@ public class UsersController {
 
 
     /**
-     * Users 수정 (Admin Portal)
-     * 복수 개의 namespace에 속할 수 있다.
+     * Users 수정
      *
      * @param userId
      * @param users
      * @return
      */
     @PutMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}")
-    public ResultStatus modifyUsers(@PathVariable(value = "userId") String userId, @RequestBody Users users) throws Exception {
+    public Object modifyUsers(@PathVariable(value = "userId") String userId
+            , @RequestBody Users users
+            , @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
+
+        // input parameter regex
+        if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
+            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                    .resultMessage("입력 값을 다시 확인해 주세요.")
+                    .httpStatusCode(400)
+                    .detailMessage(regexMatch(users)).build();
+        }
+
+        // For Admin
+        if(isAdmin) {
+            return usersService.modifyUsersAdmin(userId, users);
+        }
+
         return usersService.modifyUsers(userId, users);
     }
 

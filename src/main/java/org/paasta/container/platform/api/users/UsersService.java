@@ -214,7 +214,7 @@ public class UsersService {
      * @param users
      * @return
      */
-    public ResultStatus modifyUsers(String userId, Users users) throws Exception {
+    public ResultStatus modifyUsersAdmin(String userId, Users users) throws Exception {
         ResultStatus rsDb = new ResultStatus();
 
         List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsers(users.getServiceAccountName())).getUsersDetail();
@@ -324,6 +324,19 @@ public class UsersService {
         ResultStatus rsDb = (ResultStatus) restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DELETE + users.getId(), HttpMethod.DELETE, null, Object.class);
 
         return rsDb;
+    }
+
+
+    /**
+     * Users 수정
+     *
+     * @param user
+     * @return
+     */
+    public ResultStatus modifyUsers(String userId, Users user) {
+        ResultStatus users = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.PUT, user, ResultStatus.class);
+
+        return users;
     }
 
 
