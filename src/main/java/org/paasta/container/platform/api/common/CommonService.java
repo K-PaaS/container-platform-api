@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.jayway.jsonpath.JsonPath;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,10 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Common Service 클래스
@@ -183,5 +187,35 @@ public class CommonService {
      */
     public static boolean isAdminPortal(User user) {
         return user.getAuthorities().contains(new SimpleGrantedAuthority(Constants.AUTH_CLUSTER_ADMIN));
+    }
+
+
+
+    /**
+     * JsonPath를 통해 문자열 필터 처리
+     *
+     * @param responseMap
+     * @param searchParam
+     * @return
+     */
+    public HashMap searchKeywordForResourceName(HashMap responseMap, String searchParam) {
+        List filterResourceItemList = JsonPath.parse(responseMap).read("$..items[?(@.metadata.name =~ /.*" + searchParam + ".*/i)]");
+        responseMap.put("items", filterResourceItemList);
+        return responseMap;
+    }
+
+
+    /**
+     * offset & limit을 통한 리스트 가공 처리
+     *
+     * @param itemList
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public <T> List<T> listProcessingforLimit(List<T> itemList, Integer offset, Integer limit) {
+        if (offset<0) throw new IllegalArgumentException("Offset must be >=0 but was "+offset+"!");
+        List returnList = itemList.stream().skip(offset*limit).limit(limit).collect(Collectors.toList());
+        return returnList;
     }
 }

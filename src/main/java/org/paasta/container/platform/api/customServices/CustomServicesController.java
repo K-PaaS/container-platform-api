@@ -46,9 +46,10 @@ public class CustomServicesController {
     @GetMapping
     public CustomServicesList getCustomServicesList(@PathVariable(value = "namespace") String namespace,
                                                     @RequestParam(required = false, defaultValue = "0") int limit,
-                                                    @RequestParam(required = false, name = "continue") String continueToken)   {
+                                                    @RequestParam(required = false, defaultValue = "0") int offset,
+                                                    @RequestParam(required = false, name = "searchParam") String searchParam)  {
 
-        return customServicesService.getCustomServicesList(namespace, limit, continueToken);
+        return customServicesService.getCustomServicesList(namespace, limit, offset, searchParam);
     }
 
 
