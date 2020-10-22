@@ -68,9 +68,9 @@ public class CommonUtils {
         if(checkParamList.size() > 0) {
             return ResultStatus.builder()
                     .resultCode(Constants.RESULT_STATUS_FAIL)
-                    .resultMessage("Failed Sign Up.")
+                    .resultMessage("회원가입에 실패했습니다.")
                     .httpStatusCode(400)
-                    .detailMessage("Failed Sign Up. Re Confirm " + checkParamList.toString()).build();
+                    .detailMessage("회원가입에 실패했습니다. " + checkParamList.toString() + " 항목을 다시 확인해주세요.").build();
         }
 
         return objectMapper.convertValue(map, Users.class);
