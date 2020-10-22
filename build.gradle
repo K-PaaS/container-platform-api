@@ -68,6 +68,7 @@ dependencies {
 	compile 'com.fasterxml.jackson.core:jackson-core'
 	compile 'com.fasterxml.jackson.core:jackson-databind'
 	compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
 	testCompile "org.springframework.boot:spring-boot-starter-test"
 }
