@@ -50,10 +50,10 @@ public class UsersService {
     /**
      * Users 전체 목록 조회
      *
-     * @return
+     * @return the UsersListAdmin
      */
-    public UsersListAdmin getUsersList() {
-        UsersListAdmin rsDb = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST, HttpMethod.GET, null, UsersListAdmin.class);
+    public UsersListAdmin getUsersAll(String namespace) {
+        UsersListAdmin rsDb = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST + "?namespace=" + namespace, HttpMethod.GET, null, UsersListAdmin.class);
         return (UsersListAdmin) commonService.setResultModel(commonService.setResultObject(rsDb, UsersListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
