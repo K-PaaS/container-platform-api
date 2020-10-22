@@ -11,11 +11,11 @@ import java.util.Map;
 public class YamlUtil {
 
     /**
-     * keyword 'kind'로 yaml의 Resource 값 구하기
+     * keyword로 yaml의 Resource 값 구하기
      *
      * @param yaml
      * @param keyword
-     * @return
+     * @return String
      */
     public static String parsingYaml(String yaml, String keyword) {
         String value = null;
@@ -36,6 +36,31 @@ public class YamlUtil {
 
         return value;
     }
+
+    /**
+     * keyword로 yaml의 Resource 값 구하기
+     *
+     * @param yaml
+     * @param keyword
+     * @return Map
+     */
+    public static Map parsingYamlMap(String yaml, String keyword) {
+        Map value = null;
+        try {
+            Yaml y = new Yaml();
+            Map<String,Object> yamlMap = y.load(yaml);
+
+            if("metadata".equals(keyword)) {
+                value = (Map) yamlMap.get(keyword);
+            }
+
+        } catch (ClassCastException e) {
+            throw new ContainerPlatformException(Constants.RESULT_STATUS_FAIL, CommonStatusCode.INVALID_FORMAT.getMsg(), CommonStatusCode.INVALID_FORMAT.getCode(), CommonStatusCode.INVALID_FORMAT.getMsg());
+        }
+
+        return value;
+    }
+
 
     /**
      * url Resource 값과 비교할 yaml의 Resource 값 추출
