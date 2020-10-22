@@ -45,8 +45,8 @@ pipeline {
 		stage('Building image') {
 			steps{
 				script {
-					dockerImage = docker.build REGISTRY_URL+"/"+IMAGE_NAME+":latest"
-					dockerVersionedImage = docker.build REGISTRY_URL+"/"+IMAGE_NAME+":$BUILD_NUMBER"
+					dockerImage = docker.build REGISTRY_DOCKER_URL+"/"+IMAGE_NAME+":latest"
+					dockerVersionedImage = docker.build REGISTRY_DOCKER_URL+"/"+IMAGE_NAME+":$BUILD_NUMBER"
 					harborImage = docker.build REGISTRY_HARBOR_URL+"/"+PROJECT_NAME+"/"+IMAGE_NAME+":latest"
                     harborVersionedImage = docker.build REGISTRY_HARBOR_URL+"/"+PROJECT_NAME+"/"+IMAGE_NAME+":$BUILD_NUMBER"
 				}
@@ -55,7 +55,7 @@ pipeline {
 		stage('Deploy Image') {
 			steps{
 				script {
-					docker.withRegistry("http://"+REGISTRY_URL) 
+					docker.withRegistry("http://"+REGISTRY_DOCKER_URL)
 					{
 						dockerImage.push()
 						dockerVersionedImage.push()
