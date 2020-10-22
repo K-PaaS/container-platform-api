@@ -21,7 +21,8 @@ public class NamespacesController {
     private final NamespacesService namespacesService;
 
     /**
-     * Instantiates a Namespaces controller
+     * Instantiates a new Namespaces controller
+     *
      * @param namespacesService the namespaces service
      */
     @Autowired
@@ -31,9 +32,9 @@ public class NamespacesController {
 
 
     /**
-     * Namespaces 목록을 조회한다.
+     * Namespaces 목록 조회(Get Namespaces list)
      *
-     * @return the namespace list
+     * @return the namespaces list
      */
     @GetMapping
     public NamespacesList getNamespacesList(@RequestParam(required = false, defaultValue = "0") int limit, @RequestParam(required = false, name = "continue") String continueToken){
@@ -41,7 +42,7 @@ public class NamespacesController {
     }
 
     /**
-     * Namespaces 상세정보를 조회한다.
+     * Namespaces 상세 조회(Get Namespaces detail)
      *
      * @param namespace the namespaces
      * @return the namespaces
@@ -52,7 +53,7 @@ public class NamespacesController {
     }
 
     /**
-     * Namespaces YAML을 조회한다.
+     * Namespaces YAML 조회(Get Namespaces yaml)
      *
      * @param namespace the namespace
      * @return the namespaces yaml
@@ -63,7 +64,7 @@ public class NamespacesController {
     }
 
     /**
-     * Namespaces 를 생성한다.
+     * Namespaces 생성(Create Namespaces)
      *
      * @param yaml the yaml
      * @return return is succeeded
@@ -80,10 +81,10 @@ public class NamespacesController {
     }
 
     /**
-     * Namespaces 를 삭제한다.
+     * Namespaces 삭제(Delete Namespaces)
      *
      * @param namespace the namespace
-     * @return the ResultStatus
+     * @return return is succeeded
      */
     @DeleteMapping(value = "/{namespace:.+}")
     public ResultStatus deleteNamespaces(@PathVariable("namespace") String namespace){
@@ -91,11 +92,11 @@ public class NamespacesController {
     }
 
     /**
-     * Namespaces 를 수정한다.
+     * Namespaces 수정(Update Namespaces)
      *
      * @param namespace the namespace
      * @param yaml the yaml
-     * @return the replicaSets
+     * @return return is succeeded
      */
     @PutMapping(value = "/{namespace:.+}")
     public Object updateNamespaces(@PathVariable(value = "cluster") String cluster,

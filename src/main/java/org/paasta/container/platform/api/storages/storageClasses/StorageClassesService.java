@@ -32,7 +32,7 @@ public class StorageClassesService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new deployments service.
+     * Instantiates a new StorageClasses service
      *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
@@ -46,10 +46,10 @@ public class StorageClassesService {
     }
 
     /**
-     * StorageClasses 목록을 조회한다.
+     * StorageClasses 목록 조회(Get StorageClasses list)
      *
      * @param namespace the namespace
-     * @return the StorageClasses List
+     * @return the storageClasses list
      */
     public StorageClassesList getStorageClassesList(String namespace) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -61,15 +61,15 @@ public class StorageClassesService {
     }
 
     /**
-     * StorageClasses 상세 정보를 조회한다.
+     * StorageClasses 상세 조회(Get StorageClasses detail)
      *
      * @param namespace    the namespace
-     * @param resourceName the StorageClasses name
-     * @return the StorageClasses
+     * @param resourceName the resource name
+     * @return the storageClasses
      */
     public StorageClasses getStorageClasses(String namespace, String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListStorageclassesGetUrl()
+                propertyService.getCpMasterApiListStorageClassesGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
                 , HttpMethod.GET, null, Map.class);
@@ -78,16 +78,16 @@ public class StorageClassesService {
     }
 
     /**
-     * StorageClasses YAML 을 조회한다.
+     * StorageClasses YAML 조회(Get StorageClasses yaml)
      *
-     * @param namespace                    the namespace
-     * @param resourceName the StorageClasses name
-     * @param resultMap                    the result map
-     * @return the StorageClasses
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @param resultMap the result map
+     * @return the storageClasses yaml
      */
     public StorageClasses getStorageClassesYaml(String namespace, String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListStorageclassesGetUrl()
+                propertyService.getCpMasterApiListStorageClassesGetUrl()
                     .replace("{namespace}", namespace)
                     .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
@@ -97,15 +97,15 @@ public class StorageClassesService {
     }
 
     /**
-     * StorageClasses 를 생성한다.
+     * StorageClasses 생성(Create StorageClasses)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
-     * @return                 return is succeeded
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public Object createStorageClasses(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListStorageclassesCreateUrl()
+                propertyService.getCpMasterApiListStorageClassesCreateUrl()
                     .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
@@ -113,16 +113,16 @@ public class StorageClassesService {
     }
 
     /**
-     * StorageClasses 를 삭제한다.
+     * StorageClasses 삭제(Delete StorageClasses)
      *
      * @param namespace the namespace
-     * @param resourceName the StorageClasses name
+     * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the ResultStatus
+     * @return the resultStatus
      */
     public ResultStatus deleteStorageClasses(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListStorageclassesDeleteUrl()
+                propertyService.getCpMasterApiListStorageClassesDeleteUrl()
                     .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
@@ -130,16 +130,16 @@ public class StorageClassesService {
     }
 
     /**
-     * StorageClasses 를 수정한다.
+     * StorageClasses 수정(Update StorageClasses)
      *
      * @param namespace the namespace
-     * @param resourceName the StorageClasses name
-     * @param yaml          the yaml
-     * @return the services
+     * @param resourceName the resource name
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public Object updateStorageClasses(String namespace, String resourceName, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListStorageclassesUpdateUrl()
+                propertyService.getCpMasterApiListStorageClassesUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);

@@ -15,13 +15,13 @@ import java.util.HashMap;
  * @since 2020.09.10
  */
 @RestController
-@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/replicasets")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/replicaSets")
 public class ReplicaSetsController {
 
     private final ReplicaSetsService replicaSetsService;
 
     /**
-     * Instantiates a new ReplicaSets controller.
+     * Instantiates a new ReplicaSets controller
      *
      * @param replicaSetsService the replicaSets service
      */
@@ -31,7 +31,7 @@ public class ReplicaSetsController {
     }
 
     /**
-     * ReplicaSets 목록을 조회한다.
+     * ReplicaSets 목록 조회(Get ReplicaSets list)
      *
      * @param namespace the namespace
      * @return the replicaSets list
@@ -45,31 +45,32 @@ public class ReplicaSetsController {
 
 
     /**
-     * ReplicaSets 상세정보를 조회한다.
+     * ReplicaSets 상세 조회(Get ReplicaSets detail)
      *
      * @param namespace the namespace
-     * @param replicaSetName the replicaSets name
+     * @param resourceName the resource name
      * @return the replicaSets
      */
-    @GetMapping(value = "/{replicaSetName:.+}")
-    public ReplicaSets getReplicaSets(@PathVariable("namespace") String namespace, @PathVariable("replicaSetName") String replicaSetName) {
-        return replicaSetsService.getReplicaSets(namespace, replicaSetName);
+    @GetMapping(value = "/{resourceName:.+}")
+    public ReplicaSets getReplicaSets(@PathVariable("namespace") String namespace, @PathVariable("resourceName") String resourceName) {
+        return replicaSetsService.getReplicaSets(namespace, resourceName);
     }
 
     /**
-     * ReplicaSets YAML을 조회한다.
+     * ReplicaSets YAML 조회(Get ReplicaSets yaml)
      *
      * @param namespace the namespace
-     * @param replicaSetName the replicaSets name
+     * @param resourceName the resource name
      * @return the replicaSets yaml
      */
-    @GetMapping(value = "/{replicaSetName:.+}/yaml")
-    public ReplicaSets getReplicaSetsYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "replicaSetName") String replicaSetName) {
-        return replicaSetsService.getReplicaSetsYaml(namespace, replicaSetName);
+    @GetMapping(value = "/{resourceName:.+}/yaml")
+    public ReplicaSets getReplicaSetsYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+        return replicaSetsService.getReplicaSetsYaml(namespace, resourceName);
     }
 
     /**
-     * ReplicaSets 목록을 조회한다.(Label Selector)
+     * ReplicaSets 목록 조회(Get ReplicaSets selector)
+     *
      * @param namespace namespace
      * @param selectors selectors
      * @return the replicaSets list
@@ -80,10 +81,8 @@ public class ReplicaSetsController {
     }
 
 
-
-
     /**
-     * ReplicaSets 을 생성한다.
+     * ReplicaSets 생성(Create ReplicaSets)
      *
      * @param namespace the namespace
      * @param yaml the yaml
@@ -103,11 +102,11 @@ public class ReplicaSetsController {
 
 
     /**
-     * ReplicaSets 을 삭제한다.
+     * ReplicaSets 삭제(Delete ReplicaSets)
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the ResultStatus
+     * @return return is succeeded
      */
     @DeleteMapping(value = "/{resourceName:.+}")
     public ResultStatus deleteReplicaSets(@PathVariable("namespace") String namespace,
@@ -117,12 +116,12 @@ public class ReplicaSetsController {
 
 
     /**
-     * ReplicaSets을 수정한다.
+     * ReplicaSets 수정(Update ReplicaSets)
      *
      * @param namespace the namespace
-     * @param resourceName the replicaSets name
+     * @param resourceName the resource name
      * @param yaml the yaml
-     * @return the replicaSets
+     * @return return is succeeded
      */
     @PutMapping(value = "/{resourceName:.+}")
     public Object updateReplicaSets(@PathVariable(value = "cluster") String cluster,

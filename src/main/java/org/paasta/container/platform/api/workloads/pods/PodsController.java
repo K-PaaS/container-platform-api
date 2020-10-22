@@ -25,9 +25,9 @@ public class PodsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PodsController.class);
 
     /**
-     * Instantiates a new Pods controller.
+     * Instantiates a new Pods controller
      *
-     * @param podsService the pod service
+     * @param podsService the pods service
      */
     @Autowired
     public PodsController(PodsService podsService) {
@@ -35,7 +35,7 @@ public class PodsController {
     }
 
     /**
-     * Pod 목록을 조회한다.
+     * Pods 목록 조회(Get Pods list)
      *
      * @param namespace the namespace
      * @return the pods list
@@ -48,11 +48,11 @@ public class PodsController {
     }
 
     /**
-     * Selector를 이용해 Pod 목록을 조회한다. (특정 네임스페이스)
+     * Pods 목록 조회(Get Pods selector)
      *
      * @param namespace the namespace
      * @param selector  the selector
-     * @return the pod list
+     * @return the pods list
      */
     @GetMapping(value = "/resources/{selector:.+}")
     @ResponseBody
@@ -62,11 +62,11 @@ public class PodsController {
     }
 
     /**
-     * Node 이름을 이용해 Pod 목록를 조회한다. (특정 네임스페이스)
+     * Pods 목록 조회(Get Pods node)
      *
      * @param namespace the namespace
      * @param nodeName  the node name
-     * @return the pod list
+     * @return the pods list
      */
     @GetMapping(value = "/nodes/{nodeName:.+}")
     public PodsList getPodListByNode(@PathVariable(value = "namespace") String namespace,
@@ -75,10 +75,10 @@ public class PodsController {
     }
 
     /**
-     * Pod 상세정보를 조회한다.
+     * Pods 상세 조회(Get Pods detail)
      *
      * @param namespace the namespace
-     * @param resourceName   the resource name
+     * @param resourceName the resource name
      * @return the pods
      */
 
@@ -89,7 +89,7 @@ public class PodsController {
     }
 
     /**
-     * Pods YAML을 조회한다.
+     * Pods YAML 조회(Get Pods yaml)
      *
      * @param namespace the namespace
      * @param resourceName the resource name
@@ -102,10 +102,10 @@ public class PodsController {
     }
 
     /**
-     * Pods를 생성한다.
+     * Pods 생성(Create Pods)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
+     * @param namespace the namespace
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @PostMapping
@@ -122,11 +122,11 @@ public class PodsController {
     }
 
     /**
-     * Pods를 삭제한다.
+     * Pods 삭제(Delete Pods)
      *
-     * @param namespace        the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the ResultStatus
+     * @return the resultStatus
      */
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deletePods(@PathVariable(value = "namespace") String namespace,
@@ -135,11 +135,11 @@ public class PodsController {
     }
 
     /**
-     * Pods를 수정한다.
+     * Pods 수정(Update Pods)
      *
-     * @param namespace       the namespace
-     * @param resourceName    the resource name
-     * @return the pods
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
     public Object updatePods(@PathVariable(value = "cluster") String cluster,

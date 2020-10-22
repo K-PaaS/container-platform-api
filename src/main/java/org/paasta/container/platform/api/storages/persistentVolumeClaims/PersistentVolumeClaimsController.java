@@ -15,12 +15,12 @@ import java.util.HashMap;
  * @since 2020.09.18
  */
 @RestController
-@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/persistentvolumeclaims")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/persistentVolumeClaims")
 public class PersistentVolumeClaimsController {
     private final PersistentVolumeClaimsService persistentVolumeClaimsService;
 
     /**
-     * Instantiates a new persistentVolumeClaims controller.
+     * Instantiates a new PersistentVolumeClaims controller
      *
      * @param persistentVolumeClaimsService the persistentVolumeClaims service
      */
@@ -30,12 +30,12 @@ public class PersistentVolumeClaimsController {
     }
 
     /**
-     * PersistentVolumeClaims 목록을 조회한다.
+     * PersistentVolumeClaims 목록 조회(Get PersistentVolumeClaims list)
      *
      * @param namespace the namespace
      * @param limit the limit
      * @param continueToken the continueToken
-     * @return the PersistentVolumeClaims List
+     * @return the persistentVolumeClaims list
      */
     @GetMapping
     public PersistentVolumeClaimsList getPersistentVolumeClaimsList(@PathVariable(value = "namespace") String namespace,
@@ -45,11 +45,11 @@ public class PersistentVolumeClaimsController {
     }
 
     /**
-     * PersistentVolumeClaims 상세 정보를 조회한다.
+     * PersistentVolumeClaims 상세 조회(Get PersistentVolumeClaims detail)
      *
      * @param namespace the namespace
-     * @param resourceName the PersistentVolumeClaims name
-     * @return the PersistentVolumeClaims
+     * @param resourceName the resource name
+     * @return the persistentVolumeClaims
      */
     @GetMapping(value = "/{resourceName:.+}")
     public PersistentVolumeClaims getPersistentVolumeClaims(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
@@ -57,11 +57,11 @@ public class PersistentVolumeClaimsController {
     }
 
     /**
-     * PersistentVolumeClaims YAML 을 조회한다.
+     * PersistentVolumeClaims YAML 조회(Get PersistentVolumeClaims yaml)
      *
      * @param namespace the namespace
-     * @param resourceName the PersistentVolumeClaims name
-     * @return the PersistentVolumeClaims
+     * @param resourceName the resource name
+     * @return the persistentVolumeClaims yaml
      */
     @GetMapping(value = "/{resourceName:.+}/yaml")
     public PersistentVolumeClaims getPersistentVolumeClaimsYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
@@ -69,11 +69,11 @@ public class PersistentVolumeClaimsController {
     }
 
     /**
-     * PersistentVolumeClaims 를 생성한다.
+     * PersistentVolumeClaims 생성(Create PersistentVolumeClaims)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
-     * @return                return is succeeded
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     @PostMapping
     public Object createPersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
@@ -88,7 +88,7 @@ public class PersistentVolumeClaimsController {
     }
 
     /**
-     * PersistentVolumeClaims 를 삭제한다.
+     * PersistentVolumeClaims 삭제(Delete PersistentVolumeClaims)
      *
      * @param namespace the namespace
      * @param resourceName the resource name
@@ -102,12 +102,12 @@ public class PersistentVolumeClaimsController {
     }
 
     /**
-     * PersistentVolumeClaims 를 수정한다.
+     * PersistentVolumeClaims 수정(Update PersistentVolumeClaims)
      *
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param yaml the yaml
-     * @return the services
+     * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
     public Object updatePersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,

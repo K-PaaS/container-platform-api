@@ -43,10 +43,10 @@ public class NamespacesService {
     }
 
     /**
-     * Namespaces 상세정보를 조회한다.
+     * Namespaces 상세 조회(Get Namespaces detail)
      *
      * @param namespace the namespaces
-     * @return Namespaces the namespaces
+     * @return the namespaces
      */
     Namespaces getNamespaces(String namespace) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -60,7 +60,7 @@ public class NamespacesService {
 
 
     /**
-     * NameSpace를 목록을 조회한다.
+     * NameSpaces 목록 조회(Get NameSpaces list)
      *
      * @return the namespaces list
      */
@@ -79,10 +79,10 @@ public class NamespacesService {
     }
 
     /**
-     * NameSpace YAML을 조회한다.
+     * NameSpaces YAML 조회(Get NameSpaces yaml)
      *
-     * @param namespace   the namespace
-     * @return the NameSpace yaml
+     * @param namespace the namespace
+     * @return the namespaces yaml
      */
     public Namespaces getNamespacesYaml(String namespace) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -96,9 +96,9 @@ public class NamespacesService {
     }
 
     /**
-     * NameSpace를 생성한다.
+     * NameSpace 생성(Create NameSpaces)
      *
-     * @param yaml            the yaml
+     * @param yaml the yaml
      * @return return is succeeded
      */
     public Object createNamespaces(String yaml) {
@@ -110,10 +110,10 @@ public class NamespacesService {
     }
 
     /**
-     * NameSpace를 삭제한다.
+     * NameSpaces 삭제(Delete NameSpaces)
      *
-     * @param namespace        the namespace
-     * @return the ResultStatus
+     * @param namespace the namespace
+     * @return the resultStatus
      */
     public ResultStatus deleteNamespaces(String namespace) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -124,11 +124,11 @@ public class NamespacesService {
     }
 
     /**
-     * NameSpace를 수정한다.
+     * NameSpaces 수정(Update NameSpaces)
      *
      * @param namespace the namespace
-     * @param yaml          the yaml
-     * @return the services
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public ResultStatus updateNamespaces(String namespace, String yaml) {
         ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,

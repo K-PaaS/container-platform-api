@@ -21,9 +21,9 @@ public class NodesController {
     private final NodesService nodesService;
 
     /**
-     * Instantiates a new Nodes controller
+     * Instantiates a new Nodes controller.
      *
-     * @param nodesService the Node service
+     * @param nodesService the node service
      */
     @Autowired
     public NodesController(NodesService nodesService) {
@@ -31,9 +31,9 @@ public class NodesController {
     }
 
     /**
-     * Node 목록을 조회한다.
+     * Nodes 목록 조회(Get Nodes list)
      *
-     * @return the Nodes list
+     * @return the nodes list
      */
     @GetMapping
     public NodesList getNodesList() {
@@ -42,10 +42,10 @@ public class NodesController {
 
 
     /**
-     * Node 상세 정보를 조회한다.
+     * Nodes 상세 조회(Get Nodes detail)
      *
-     * @param resourceName the Nodes name
-     * @return the Node
+     * @param resourceName the resource name
+     * @return the nodes
      */
     @GetMapping(value = "/{resourceName:.+}")
     public Nodes getNodes(@PathVariable(value = "resourceName") String resourceName) {
@@ -53,10 +53,10 @@ public class NodesController {
     }
 
     /**
-     * Node YAML 을 조회한다.
+     * Nodes YAML 조회(Get Nodes yaml)
      *
-     * @param resourceName the Nodes name
-     * @return the Node
+     * @param resourceName the resource name
+     * @return the nodes yaml
      */
     @GetMapping(value = "/{resourceName:.+}/yaml")
     public Nodes getNodesYaml(@PathVariable(value = "resourceName") String resourceName){

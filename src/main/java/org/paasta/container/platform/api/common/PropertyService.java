@@ -78,65 +78,65 @@ public class PropertyService {
     @Value("${cpMaster.api.list.nodes.get}")
     private String cpMasterApiListNodesGetUrl;
 
-    @Value("${cpMaster.api.list.replicasets.list}")
-    private String cpMasterApiListReplicasetsListUrl;
+    @Value("${cpMaster.api.list.replicaSets.list}")
+    private String cpMasterApiListReplicaSetsListUrl;
 
-    @Value("${cpMaster.api.list.replicasets.get}")
-    private String cpMasterApiListReplicasetsGetUrl;
+    @Value("${cpMaster.api.list.replicaSets.get}")
+    private String cpMasterApiListReplicaSetsGetUrl;
 
-    @Value("${cpMaster.api.list.replicasets.delete}")
-    private String cpMasterApiListReplicasetsDeleteUrl;
+    @Value("${cpMaster.api.list.replicaSets.delete}")
+    private String cpMasterApiListReplicaSetsDeleteUrl;
 
-    @Value("${cpMaster.api.list.replicasets.create}")
-    private String cpMasterApiListReplicasetsCreateUrl;
+    @Value("${cpMaster.api.list.replicaSets.create}")
+    private String cpMasterApiListReplicaSetsCreateUrl;
 
-    @Value("${cpMaster.api.list.replicasets.update}")
-    private String cpMasterApiListReplicasetsUpdateUrl;
+    @Value("${cpMaster.api.list.replicaSets.update}")
+    private String cpMasterApiListReplicaSetsUpdateUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumes.list}")
-    private String cpMasterApiListPersistentvolumesListUrl;
+    @Value("${cpMaster.api.list.persistentVolumes.list}")
+    private String cpMasterApiListPersistentVolumesListUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumes.get}")
-    private String cpMasterApiListPersistentvolumesGetUrl;
+    @Value("${cpMaster.api.list.persistentVolumes.get}")
+    private String cpMasterApiListPersistentVolumesGetUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumes.create}")
-    private String cpMasterApiListPersistentvolumesCreateUrl;
+    @Value("${cpMaster.api.list.persistentVolumes.create}")
+    private String cpMasterApiListPersistentVolumesCreateUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumes.delete}")
-    private String cpMasterApiListPersistentvolumesDeleteUrl;
+    @Value("${cpMaster.api.list.persistentVolumes.delete}")
+    private String cpMasterApiListPersistentVolumesDeleteUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumes.update}")
-    private String cpMasterApiListPersistentvolumesUpdateUrl;
+    @Value("${cpMaster.api.list.persistentVolumes.update}")
+    private String cpMasterApiListPersistentVolumesUpdateUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumeclaims.list}")
-    private String cpMasterApiListPersistentvolumeclaimsListUrl;
+    @Value("${cpMaster.api.list.persistentVolumeClaims.list}")
+    private String cpMasterApiListPersistentVolumeClaimsListUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumeclaims.get}")
-    private String cpMasterApiListPersistentvolumeclaimsGetUrl;
+    @Value("${cpMaster.api.list.persistentVolumeClaims.get}")
+    private String cpMasterApiListPersistentVolumeClaimsGetUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumeclaims.create}")
-    private String cpMasterApiListPersistentvolumeclaimsCreateUrl;
+    @Value("${cpMaster.api.list.persistentVolumeClaims.create}")
+    private String cpMasterApiListPersistentVolumeClaimsCreateUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumeclaims.delete}")
-    private String cpMasterApiListPersistentvolumeclaimsDeleteUrl;
+    @Value("${cpMaster.api.list.persistentVolumeClaims.delete}")
+    private String cpMasterApiListPersistentVolumeClaimsDeleteUrl;
 
-    @Value("${cpMaster.api.list.persistentvolumeclaims.update}")
-    private String cpMasterApiListPersistentvolumeclaimsUpdateUrl;
+    @Value("${cpMaster.api.list.persistentVolumeClaims.update}")
+    private String cpMasterApiListPersistentVolumeClaimsUpdateUrl;
 
-    @Value("${cpMaster.api.list.storageclasses.list}")
-    private String cpMasterApiListStorageclassesListUrl;
+    @Value("${cpMaster.api.list.storageClasses.list}")
+    private String cpMasterApiListStorageClassesListUrl;
 
-    @Value("${cpMaster.api.list.storageclasses.get}")
-    private String cpMasterApiListStorageclassesGetUrl;
+    @Value("${cpMaster.api.list.storageClasses.get}")
+    private String cpMasterApiListStorageClassesGetUrl;
 
-    @Value("${cpMaster.api.list.storageclasses.create}")
-    private String cpMasterApiListStorageclassesCreateUrl;
+    @Value("${cpMaster.api.list.storageClasses.create}")
+    private String cpMasterApiListStorageClassesCreateUrl;
 
-    @Value("${cpMaster.api.list.storageclasses.delete}")
-    private String cpMasterApiListStorageclassesDeleteUrl;
+    @Value("${cpMaster.api.list.storageClasses.delete}")
+    private String cpMasterApiListStorageClassesDeleteUrl;
 
-    @Value("${cpMaster.api.list.storageclasses.update}")
-    private String cpMasterApiListStorageclassesUpdateUrl;
+    @Value("${cpMaster.api.list.storageClasses.update}")
+    private String cpMasterApiListStorageClassesUpdateUrl;
 
     @Value("${cpMaster.api.list.events.list}")
     private String cpMasterApiListEventsListUrl;

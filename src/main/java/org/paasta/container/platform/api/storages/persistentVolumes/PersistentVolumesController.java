@@ -18,12 +18,12 @@ import java.util.HashMap;
  * @since 2020.10.19
  */
 @RestController
-@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/persistentvolumes")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/persistentVolumes")
 public class PersistentVolumesController {
     private final PersistentVolumesService persistentVolumesService;
 
     /**
-     * Instantiates a new persistentVolumes controller.
+     * Instantiates a new persistentVolumes controller
      *
      * @param persistentVolumesService the persistentVolumes service
      */
@@ -38,7 +38,7 @@ public class PersistentVolumesController {
      * @param namespace the namespace
      * @param limit the limit
      * @param continueToken the continueToken
-     * @return the PersistentVolumes List
+     * @return the persistentVolumes List
      */
     @GetMapping
     public PersistentVolumesList getPersistentVolumesList(@PathVariable(value = "namespace") String namespace,
@@ -52,8 +52,8 @@ public class PersistentVolumesController {
      * PersistentVolumes 상세 조회(Get PersistentVolumes detail)
      *
      * @param namespace the namespace
-     * @param resourceName the PersistentVolumes name
-     * @return the PersistentVolumes
+     * @param resourceName the resource name
+     * @return the persistentVolumes
      */
     @GetMapping(value = "/{resourceName:.+}")
     public PersistentVolumes getPersistentVolumes(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
@@ -64,8 +64,8 @@ public class PersistentVolumesController {
      * PersistentVolumes YAML 조회(Get PersistentVolumes yaml)
      *
      * @param namespace the namespace
-     * @param resourceName the PersistentVolumes name
-     * @return the PersistentVolumes
+     * @param resourceName the resource name
+     * @return the persistentVolumes
      */
     @GetMapping(value = "{resourceName:.+}/yaml")
     public PersistentVolumes getPersistentVolumesYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
@@ -110,7 +110,7 @@ public class PersistentVolumesController {
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param yaml the yaml
-     * @return the services
+     * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
     public Object updatePersistentVolumes(@PathVariable(value = "cluster") String cluster,

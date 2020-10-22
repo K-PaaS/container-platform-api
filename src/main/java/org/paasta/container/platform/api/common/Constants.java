@@ -60,15 +60,15 @@ public class Constants {
     public static final String URI_WORKLOAD_DEPLOYMENTS_DETAIL = "/container-platform/workloads/deployments/{deploymentName:.+}";
     public static final String URI_WORKLOAD_PODS = "/container-platform/workloads/pods";
     public static final String URI_WORKLOAD_PODS_DETAIL = "/container-platform/workloads/pods/{podName:.+}";
-    public static final String URI_WORKLOAD_REPLICA_SETS = "/container-platform/workloads/replicasets";
-    public static final String URI_WORKLOAD_REPLICA_SETS_DETAIL = "/container-platform/workloads/replicasets/{replicaSetName:.+}";
+    public static final String URI_WORKLOAD_REPLICA_SETS = "/container-platform/workloads/replicaSets";
+    public static final String URI_WORKLOAD_REPLICA_SETS_DETAIL = "/container-platform/workloads/replicaSets/{replicaSetName:.+}";
 
     public static final String URI_SERVICES = "/container-platform/services";
     public static final String URI_SERVICES_DETAIL = "/container-platform/services/{serviceName:.+}";
 
     public static final String URI_STORAGES = "/container-platform/storages";
-    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIM = "/container-platform/storages/persistentvolumeclaims";
-    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIM_DETAIL = "/container-platform/storages/persistentvolumeclaims/{persistentVolumeClaimName:.+}";
+    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIM = "/container-platform/storages/persistentVolumeClaims";
+    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIM_DETAIL = "/container-platform/storages/persistentVolumeClaims/{persistentVolumeClaimName:.+}";
     public static final String URI_STORAGES_DETAIL = "/container-platform/storages/{persistentVolumeClaimName:.+}";
 
     public static final String URI_USERS = "/container-platform/users";

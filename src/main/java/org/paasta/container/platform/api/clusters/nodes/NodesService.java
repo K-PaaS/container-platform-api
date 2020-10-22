@@ -41,9 +41,9 @@ public class NodesService {
 
 
     /**
-     * Node 목록을 조회한다.
+     * Nodes 목록 조회(Get Nodes list)
      *
-     * @return the Nodes list
+     * @return the nodes list
      */
     NodesList getNodesList() {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -55,10 +55,10 @@ public class NodesService {
 
 
     /**
-     * Node 상세 정보를 조회한다.
+     * Nodes 상세 조회(Get Nodes detail)
      *
-     * @param resourceName the Nodes name
-     * @return the Node
+     * @param resourceName the resource name
+     * @return the nodes
      */
     Nodes getNodes(String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -70,11 +70,11 @@ public class NodesService {
     }
 
     /**
-     * Node YAML 을 조회한다.
+     * Nodes YAML 조회(Get Nodes yaml)
      *
-     * @param resourceName the Nodes name
-     * @param resultMap                    the result map
-     * @return the Node
+     * @param resourceName the resource name
+     * @param resultMap the result map
+     * @return the nodes yaml
      */
     public Nodes getNodesYaml(String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
