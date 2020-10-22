@@ -30,7 +30,7 @@ public class PodsService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new Pods service.
+     * Instantiates a new Pods service
      *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
@@ -44,7 +44,7 @@ public class PodsService {
     }
 
     /**
-     * Pod 목록을 조회한다.
+     * Pods 목록 조회(Get Pods list)
      *
      * @param namespace the namespace
      * @return the pods list
@@ -71,11 +71,11 @@ public class PodsService {
     }
 
     /**
-     * Selector를 이용해 Pod 목록을 조회한다.
+     * Pods 목록 조회(Get Pods selector)
      *
      * @param namespace the namespace
      * @param selector  the selector
-     * @return the pod list
+     * @return the pods list
      */
     PodsList getPodListWithLabelSelector(String namespace, String selector) {
         String requestSelector = "?labelSelector=" + selector;
@@ -86,11 +86,11 @@ public class PodsService {
     }
 
     /**
-     * Node 이름을 이용해 Pod 목록을 조회한다.
+     * Pods 목록 조회(Get Pods node)
      *
-     * @param namespace               the namespace
-     * @param nodeName                the node name
-     * @return the pod list
+     * @param namespace the namespace
+     * @param nodeName the node name
+     * @return the pods list
      */
     PodsList getPodListByNode(String namespace, String nodeName) {
         String requestURL = propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace)
@@ -102,10 +102,10 @@ public class PodsService {
     }
 
     /**
-     * Pods 상세 정보를 조회한다.
+     * Pods 상세 조회(Get Pods detail)
      *
      * @param namespace the namespace
-     * @param podsName   the pods name
+     * @param podsName the pods name
      * @return the pods
      */
     public Pods getPods(String namespace, String podsName) {
@@ -117,12 +117,12 @@ public class PodsService {
     }
 
     /**
-     * Pods의 YAML을 조회한다.
+     * Pods YAML 조회(Get Pods yaml)
      *
      * @param namespace the namespace
      * @param podName   the pods name
      * @param resultMap  the result map
-     * @return the pods
+     * @return the pods yaml
      */
     public Pods getPodsYaml(String namespace, String podName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -135,10 +135,10 @@ public class PodsService {
     }
 
     /**
-     * Pods 를 생성한다.
+     * Pods 생성(Create Pods)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
+     * @param namespace the namespace
+     * @param yaml the yaml
      * @return return is succeeded
      */
     public Object createPods(String namespace, String yaml) {
@@ -151,12 +151,12 @@ public class PodsService {
     }
 
     /**
-     * Pods를 삭제한다.
+     * Pods 삭제(Delete Pods)
      *
-     * @param namespace        the namespace
-     * @param resourceName the service name
+     * @param namespace the namespace
+     * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the ResultStatus
+     * @return the resultStatus
      */
     public ResultStatus deletePods(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -167,12 +167,12 @@ public class PodsService {
     }
 
     /**
-     * Pods를 수정한다.
+     * Pods 수정(Update Pods)
      *
-     * @param namespace     the namespace
-     * @param name          the pods name
-     * @param yaml          the yaml
-     * @return the pods
+     * @param namespace the namespace
+     * @param name the pods name
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public Object updatePods(String namespace, String name, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,

@@ -46,7 +46,7 @@ public class PersistentVolumesService {
      * @param namespace the namespace
      * @param limit the limit
      * @param continueToken the continueToken
-     * @return the PersistentVolumes List
+     * @return the persistentVolumes List
      */
     public PersistentVolumesList getPersistentVolumesList(String namespace, int limit, String continueToken) {
 
@@ -56,7 +56,7 @@ public class PersistentVolumesService {
         }
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentvolumesListUrl()
+                propertyService.getCpMasterApiListPersistentVolumesListUrl()
                     .replace("{namespace}", namespace) + "?limit" + limit + param
                 , HttpMethod.GET, null, Map.class);
 
@@ -67,12 +67,12 @@ public class PersistentVolumesService {
      * PersistentVolumes 상세 조회(Get PersistentVolumes detail)
      *
      * @param namespace the namespace
-     * @param resourceName the PersistentVolumes name
-     * @return the PersistentVolumes
+     * @param resourceName the resource name
+     * @return the persistentVolumes
      */
     public PersistentVolumes getPersistentVolumes(String namespace, String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentvolumesGetUrl()
+                propertyService.getCpMasterApiListPersistentVolumesGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
                 , HttpMethod.GET, null, Map.class);
@@ -84,13 +84,13 @@ public class PersistentVolumesService {
      * PersistentVolumes YAML 조회(Get PersistentVolumes yaml)
      *
      * @param namespace the namespace
-     * @param resourceName the PersistentVolume name
+     * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the PersistentVolumes
+     * @return the persistentVolumes
      */
     public PersistentVolumes getPersistentVolumesYaml(String namespace, String resourceName, HashMap resultMap) {
         String resulString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentvolumesGetUrl()
+                propertyService.getCpMasterApiListPersistentVolumesGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
@@ -109,7 +109,7 @@ public class PersistentVolumesService {
      */
     public Object createPersistentVolumes(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentvolumesCreateUrl()
+                propertyService.getCpMasterApiListPersistentVolumesCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
@@ -120,13 +120,13 @@ public class PersistentVolumesService {
      * PersistentVolumes 삭제(Delete PersistentVolumes)
      *
      * @param namespace the namespace
-     * @param resourceName the PersistentVolumes name
+     * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the ResultStatus
+     * @return the resultStatus
      */
     public ResultStatus deletePersistentVolumes(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentvolumesDeleteUrl()
+                propertyService.getCpMasterApiListPersistentVolumesDeleteUrl()
                         .replace("{namesapce}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
@@ -137,13 +137,13 @@ public class PersistentVolumesService {
      * PersistentVolumes 수정(Update PersistentVolumes)
      *
      * @param namespace the namespace
-     * @param resourceName the PersistentVolumes name
+     * @param resourceName the resource name
      * @param yaml the yaml
-     * @return the services
+     * @return return is succeeded
      */
     public Object updatePersistentVolumes(String namespace, String resourceName, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentvolumesUpdateUrl()
+                propertyService.getCpMasterApiListPersistentVolumesUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),

@@ -15,12 +15,12 @@ import java.util.HashMap;
  * @since 2020.10.13
  */
 @RestController
-@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/storageclasses")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/storageClasses")
 public class StorageClassesController {
     private StorageClassesService storageClassesService;
 
     /**
-     * Instantiates a new persistentVolumeClaims controller.
+     * Instantiates a new StorageClasses controller
      *
      * @param storageClassesService the storageClasses service
      */
@@ -30,10 +30,10 @@ public class StorageClassesController {
     }
 
     /**
-     * StorageClasses 목록을 조회한다.
+     * StorageClasses 목록 조회(Get StorageClasses list)
      *
      * @param namespace the namespace
-     * @return the StorageClasses List
+     * @return the storageClasses list
      */
     @GetMapping
     public StorageClassesList getStorageClassesList(@PathVariable(value = "namespace") String namespace){
@@ -41,11 +41,11 @@ public class StorageClassesController {
     }
 
     /**
-     * StorageClasses 상세 정보를 조회한다.
+     * StorageClasses 상세 조회(Get StorageClasses detail)
      *
      * @param namespace the namespace
-     * @param resourceName the StorageClasses name
-     * @return the StorageClasses
+     * @param resourceName the resource name
+     * @return the storageClasses
      */
     @GetMapping(value = "/{resourceName:.+}")
     public StorageClasses getStorageClasses(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName){
@@ -53,11 +53,11 @@ public class StorageClassesController {
     }
 
     /**
-     * StorageClasses YAML 을 조회한다.
+     * StorageClasses YAML 조회(Get StorageClasses yaml)
      *
      * @param namespace the namespace
-     * @param resourceName the StorageClasses name
-     * @return the StorageClasses
+     * @param resourceName the resource name
+     * @return the storageClasses yaml
      */
     @GetMapping(value = "/{resourceName:.+}/yaml")
     public StorageClasses getStorageClassesYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName){
@@ -65,11 +65,11 @@ public class StorageClassesController {
     }
 
     /**
-     * StorageClasses 를 생성한다.
+     * StorageClasses 생성(Create StorageClasses)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
-     * @return                return is succeeded
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     @PostMapping
     public Object createStorageClasses(@PathVariable(value = "cluster") String cluster,
@@ -84,7 +84,7 @@ public class StorageClassesController {
     }
 
     /**
-     * StorageClasses 를 삭제한다.
+     * StorageClasses 삭제(Delete StorageClasses)
      *
      * @param namespace the namespace
      * @param resourceName the resource name
@@ -98,12 +98,12 @@ public class StorageClassesController {
     }
 
     /**
-     * StorageClasses 를 수정한다.
+     * StorageClasses 수정(Update StorageClasses)
      *
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param yaml the yaml
-     * @return the services
+     * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
     public Object updateStorageClasses(@PathVariable(value =  "cluster") String cluster,

@@ -26,7 +26,7 @@ public class ReplicaSetsService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new ReplicaSet service.
+     * Instantiates a new ReplicaSet service
      *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
@@ -40,7 +40,7 @@ public class ReplicaSetsService {
     }
 
     /**
-     * ReplicaSets 목록을 조회한다.
+     * ReplicaSets 목록 조회(Get ReplicaSets list)
      *
      * @param namespace the namespace
      * @return the replicaSets list
@@ -54,7 +54,7 @@ public class ReplicaSetsService {
         }
 
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsListUrl()
+                propertyService.getCpMasterApiListReplicaSetsListUrl()
                         .replace("{namespace}", namespace) + "?limit=" + limit + param
                 ,HttpMethod.GET, null, Map.class);
 
@@ -63,15 +63,15 @@ public class ReplicaSetsService {
 
 
     /**
-     * ReplicaSets 상세 정보를 조회한다.
+     * ReplicaSets 상세 조회(Get ReplicaSets detail)
      *
-     * @param namespace       the namespace
+     * @param namespace the namespace
      * @param replicaSetsName the replicaSets name
-     * @return the custom services
+     * @return the replicaSets
      */
     public ReplicaSets getReplicaSets(String namespace, String replicaSetsName) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsGetUrl()
+                propertyService.getCpMasterApiListReplicaSetsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", replicaSetsName)
                 , HttpMethod.GET, null, Map.class);
@@ -80,15 +80,15 @@ public class ReplicaSetsService {
     }
 
     /**
-     * ReplicaSets YAML을 조회한다.
+     * ReplicaSets YAML 조회(Get ReplicaSets yaml)
      *
-     * @param namespace   the namespace
-     * @param replicaSetsName the ReplicaSets name
-     * @return the ReplicaSets yaml
+     * @param namespace the namespace
+     * @param replicaSetsName the replicaSets name
+     * @return the replicaSets yaml
      */
     public ReplicaSets getReplicaSetsYaml(String namespace, String replicaSetsName) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsGetUrl()
+                propertyService.getCpMasterApiListReplicaSetsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", replicaSetsName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
@@ -100,7 +100,7 @@ public class ReplicaSetsService {
     }
 
     /**
-     * ReplicaSets 목록을 조회한다. (Label Selector)
+     * ReplicaSets 목록 조회(Get ReplicaSets Selector)
      *
      * @param namespace the namespace
      * @param selectors the selectors
@@ -109,7 +109,7 @@ public class ReplicaSetsService {
     public ReplicaSetsList getReplicaSetsListLabelSelector(String namespace, String selectors) {
         String requestSelector = "?labelSelector=" + selectors;
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsListUrl()
+                propertyService.getCpMasterApiListReplicaSetsListUrl()
                         .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
         return (ReplicaSetsList) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSetsList.class), Constants.RESULT_STATUS_SUCCESS);
@@ -117,15 +117,15 @@ public class ReplicaSetsService {
 
 
     /**
-     * ReplicaSets 생성한다.
+     * ReplicaSets 생성(Create ReplicaSets)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
-     * @return                 return is succeeded
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public Object createReplicaSets(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsCreateUrl()
+                propertyService.getCpMasterApiListReplicaSetsCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
         return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
@@ -133,15 +133,15 @@ public class ReplicaSetsService {
     }
 
     /**
-     * ReplicaSets 삭제한다.
+     * ReplicaSets 삭제(Delete ReplicaSets)
      *
-     * @param namespace        the namespace
-     * @param name     the ReplicaSets name
-     * @return the ResultStatus
+     * @param namespace the namespace
+     * @param name the replicaSets name
+     * @return the resultStatus
      */
     public ResultStatus deleteReplicaSets(String namespace, String name) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsDeleteUrl()
+                propertyService.getCpMasterApiListReplicaSetsDeleteUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
@@ -149,16 +149,16 @@ public class ReplicaSetsService {
     }
 
     /**
-     * ReplicaSets 수정한다.
+     * ReplicaSets 수정(Update ReplicaSets)
      *
      * @param namespace the namespace
-     * @param name the ReplicaSets name
-     * @param yaml          the yaml
-     * @return the services
+     * @param name the replicaSets name
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public ResultStatus updateReplicaSets(String namespace, String name, String yaml) {
         ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicasetsUpdateUrl()
+                propertyService.getCpMasterApiListReplicaSetsUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
