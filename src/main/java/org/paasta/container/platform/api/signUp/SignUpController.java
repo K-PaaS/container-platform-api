@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.signUp;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
@@ -47,12 +48,10 @@ public class SignUpController {
     @ApiOperation(value = "회원가입", httpMethod = "POST", hidden = true)
     @PostMapping(value = "/signUp")
     public ResultStatus signUpUsers(@RequestBody Object requestUsers) {
-        Object obj = stringNullCheck(requestUsers);
-        if(obj instanceof ResultStatus) {
-            return (ResultStatus) obj;
-        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> map = objectMapper.convertValue(requestUsers, Map.class);
 
-        Users users = (Users) obj;
+        Users users = objectMapper.convertValue(map, Users.class);
 
         // input parameter regex
         if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
@@ -72,7 +71,12 @@ public class SignUpController {
         }
 
         // Admin을 판별할 수 있는 cluster token이 있는 경우
-        if(!users.getClusterToken().isEmpty()) {
+        if(users.getClusterToken() != null) {
+            Object obj = stringNullCheck(requestUsers);
+            if(obj instanceof ResultStatus) {
+                return (ResultStatus) obj;
+            }
+
             return signUpAdminService.signUpAdminUsers(users);
         }
 

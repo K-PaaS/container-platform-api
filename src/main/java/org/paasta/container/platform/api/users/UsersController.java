@@ -33,11 +33,11 @@ public class UsersController {
     /**
      * Users 전체 목록 조회
      *
-     * @return
+     * @return the UsersListAdmin
      */
     @GetMapping(value = "/clusters/{cluster:.+}/users")
-    public UsersListAdmin getUsersList() {
-        return usersService.getUsersList();
+    public UsersListAdmin getUsersList(@RequestParam(name = "namespace") String namespace) {
+        return usersService.getUsersAll(namespace);
     }
 
 
@@ -71,7 +71,7 @@ public class UsersController {
      * @return
      */
     @GetMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}")
-    public Object getUsersList(@PathVariable(value = "userId") String userId) throws Exception {
+    public Object getUsers(@PathVariable(value = "userId") String userId) throws Exception {
         return usersService.getUsers(userId);
     }
 
