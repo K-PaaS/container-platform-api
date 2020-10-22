@@ -23,7 +23,7 @@ public class YamlUtil {
             Yaml y = new Yaml();
             Map<String,Object> yamlMap = y.load(yaml);
 
-            if("kind".equals(keyword)) {
+            if ("kind".equals(keyword)) {
                 value = (String) yamlMap.get(keyword);
             } else if("metadata".equals(keyword)) {
                 Map a = (Map) yamlMap.get(keyword);
@@ -50,7 +50,7 @@ public class YamlUtil {
             Yaml y = new Yaml();
             Map<String,Object> yamlMap = y.load(yaml);
 
-            if("metadata".equals(keyword)) {
+            if ("metadata".equals(keyword)) {
                 value = (Map) yamlMap.get(keyword);
             }
 
@@ -61,7 +61,6 @@ public class YamlUtil {
         return value;
     }
 
-
     /**
      * url Resource 값과 비교할 yaml의 Resource 값 추출
      *
@@ -70,9 +69,9 @@ public class YamlUtil {
      */
     public static String makeResourceNameYAML(String kind) {
         String YamlKind =  kind.toLowerCase();
+
         return YamlKind;
     }
-
 
    /**
     * 복합 yaml '---'로 나누어 list화
@@ -92,6 +91,4 @@ public class YamlUtil {
         }
          return returnList.toArray(new String[returnList.size()]);
     }
-
-
 }
