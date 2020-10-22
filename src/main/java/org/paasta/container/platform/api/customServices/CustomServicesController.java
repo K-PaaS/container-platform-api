@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 
 /**
- * Custom Services Controller 클래스
+ * CustomServices Controller 클래스
  *
  * @author kjhoon
  * @version 1.0
@@ -23,9 +23,9 @@ public class CustomServicesController {
     private final CustomServicesService customServicesService;
 
     /**
-     * Instantiates a new Custom services controller.
+     * Instantiates a new CustomServices controller
      *
-     * @param customServicesService the custom services service
+     * @param customServicesService the customServices service
      */
     @Autowired
     public CustomServicesController(CustomServicesService customServicesService) {
@@ -34,76 +34,68 @@ public class CustomServicesController {
 
 
     /**
-     * Services 목록을 조회한다.
+     * Services 목록 조회(Get Services list)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
-     * @return the custom services list
+     * @return the services list
      */
-    @ApiOperation(value="Services 목록 조회", nickname="getCustomServicesList")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
-    })
     @GetMapping
-    public CustomServicesList getCustomServicesList(@PathVariable(value = "namespace") String namespace,
+    public CustomServicesList getCustomServicesList(@PathVariable(value = "cluster") String cluster,
+                                                    @PathVariable(value = "namespace") String namespace,
                                                     @RequestParam(required = false, defaultValue = "0") int limit,
-                                                    @RequestParam(required = false, defaultValue = "0") int offset,
-                                                    @RequestParam(required = false, name = "searchParam") String searchParam)  {
+                                                    @RequestParam(required = false, name = "continue") String continueToken) {
 
-        return customServicesService.getCustomServicesList(namespace, limit, offset, searchParam);
+        return customServicesService.getCustomServicesList(namespace, limit, continueToken);
     }
 
 
     /**
-     * Services 상세 정보를 조회한다.
+     * Services 상세 조회(Get Services detail)
      *
-     * @param namespace   the namespace
-     * @param resourceName the service name
-     * @return the custom services
+     * @param cluster the cluster
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return the services
      */
-    @ApiOperation(value="Services 상세 조회", nickname="getCustomServices")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "service 명", required = true, dataType = "string", paramType = "path")
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
-    })
     @GetMapping(value = "/{resourceName:.+}")
-    public CustomServices getCustomServices(@PathVariable(value = "namespace") String namespace,
+    public CustomServices getCustomServices(@PathVariable(value = "cluster") String cluster,
+                                            @PathVariable(value = "namespace") String namespace,
                                             @PathVariable(value = "resourceName") String resourceName) {
         return customServicesService.getCustomServices(namespace, resourceName);
     }
 
 
     /**
-     * Services YAML을 조회한다.
+     * Services YAML 조회(Get Services yaml)
      *
-     * @param namespace   the namespace
-     * @param resourceName the service name
-     * @return the custom services yaml
+     * @param cluster the cluster
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return the services yaml
      */
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public CustomServices getCustomServicesYaml(@PathVariable(value = "namespace") String namespace,
+    public CustomServices getCustomServicesYaml(@PathVariable(value = "cluster") String cluster,
+                                                @PathVariable(value = "namespace") String namespace,
                                                 @PathVariable(value = "resourceName") String resourceName) {
 
         return customServicesService.getCustomServicesYaml(namespace, resourceName, new HashMap<>());
     }
 
 
-
-
     /**
-     * Services 를 생성한다.
+     * Services 생성(Create Services)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
-     * @return                return is succeeded
+     * @param cluster the cluster
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     @PostMapping
     public Object createServices(@PathVariable(value = "cluster") String cluster,
                                  @PathVariable(value = "namespace") String namespace,
                                  @RequestBody String yaml) throws Exception {
-        if(yaml.contains("---")) {
+        if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
         }
@@ -113,14 +105,16 @@ public class CustomServicesController {
 
 
     /**
-     * Services 를 삭제한다.
+     * Services 삭제(Delete Services)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @return return is succeeded
      */
     @DeleteMapping("/{resourceName:.+}")
-    public ResultStatus deleteServices(@PathVariable(value = "namespace") String namespace,
+    public ResultStatus deleteServices(@PathVariable(value = "cluster") String cluster,
+                                       @PathVariable(value = "namespace") String namespace,
                                        @PathVariable(value = "resourceName") String resourceName) {
 
         return customServicesService.deleteServices(namespace, resourceName, new HashMap<>());
@@ -128,12 +122,13 @@ public class CustomServicesController {
 
 
     /**
-     * Services 를 수정한다.
+     * Services 수정(Update Services)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param yaml the yaml
-     * @return the services
+     * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
     public Object updateServices(@PathVariable(value = "cluster") String cluster,
@@ -145,6 +140,20 @@ public class CustomServicesController {
     }
 
 
+    /**
+     * Services 목록 조회 페이징 테스트 (Get Services list paging test)
+     *
+     * @param cluster the cluster
+     * @param namespace the namespace
+     * @return the services list
+     */
+    @GetMapping("/test")
+    public CustomServicesList getCustomServicesListTest(@PathVariable(value = "cluster") String cluster,
+                                                    @PathVariable(value = "namespace") String namespace,
+                                                    @RequestParam(required = false, defaultValue = "0") int limit,
+                                                    @RequestParam(required = false, defaultValue = "0") int offset,
+                                                    @RequestParam(required = false, name = "searchParam") String searchParam) {
 
-
+        return customServicesService.getCustomServicesListTest(namespace, limit, offset, searchParam);
+    }
 }

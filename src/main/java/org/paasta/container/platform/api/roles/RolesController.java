@@ -25,9 +25,9 @@ public class RolesController {
     private final RolesService rolesService;
 
     /**
-     * Instantiates a new role services controller.
+     * Instantiates a new Roles controller
      *
-     * @param rolesService the roles services service
+     * @param rolesService the roles service
      */
     @Autowired
     public RolesController(RolesService rolesService) {
@@ -36,78 +36,70 @@ public class RolesController {
 
 
     /**
-     * Roles 목록을 조회한다.
+     * Roles 목록 조회(Get Roles list)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @return the roles list
      */
-    @ApiOperation(value="Roles 목록 조회", nickname="getRolesList")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
-    })
     @GetMapping
-    public RolesList getRolesList(@PathVariable(value = "namespace") String namespace,
+    public RolesList getRolesList(@PathVariable(value = "cluster") String cluster,
+                                  @PathVariable(value = "namespace") String namespace,
                                   @RequestParam(required = false, defaultValue = "0") int limit,
-                                  @RequestParam(required = false, name = "continue") String continueToken)   {
+                                  @RequestParam(required = false, name = "continue") String continueToken) {
 
         return rolesService.getRolesList(namespace, limit, continueToken);
     }
 
 
-
     /**
-     * Roles 상세 정보를 조회한다.
+     * Roles 상세 조회(Get Roles detail)
      *
-     * @param namespace   the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return the roles
      */
-    @ApiOperation(value="Roles 상세 조회", nickname="getRoles")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "role 명", required = true, dataType = "string", paramType = "path")
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
-    })
     @GetMapping(value = "/{resourceName:.+}")
-    public Roles getRoles(@PathVariable(value = "namespace") String namespace,
+    public Roles getRoles(@PathVariable(value = "cluster") String cluster,
+                          @PathVariable(value = "namespace") String namespace,
                           @PathVariable(value = "resourceName") String resourceName) {
 
-       return rolesService.getRoles(namespace, resourceName);
+        return rolesService.getRoles(namespace, resourceName);
     }
 
 
     /**
-     * Roles YAML을 조회한다.
+     * Roles YAML 조회(Get Roles yaml)
      *
-     * @param namespace   the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return the roles yaml
      */
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Roles getRolesYaml(@PathVariable(value = "namespace") String namespace,
+    public Roles getRolesYaml(@PathVariable(value = "cluster") String cluster,
+                              @PathVariable(value = "namespace") String namespace,
                               @PathVariable(value = "resourceName") String resourceName) {
 
         return rolesService.getRolesYaml(namespace, resourceName, new HashMap<>());
     }
 
 
-
-
     /**
-     * Roles 를 생성한다.
+     * Roles 생성(Create Roles)
      *
-     * @param namespace  the namespace
-     * @param yaml  the yaml
-     * @return  return is succeeded
+     * @param cluster the cluster
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     @PostMapping
     public Object createRoles(@PathVariable(value = "cluster") String cluster,
                               @PathVariable(value = "namespace") String namespace,
                               @RequestBody String yaml) throws Exception {
 
-        if(yaml.contains("---")) {
+        if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
         }
@@ -117,14 +109,16 @@ public class RolesController {
 
 
     /**
-     * Roles 를 삭제한다.
+     * Roles 삭제(Delete Roles)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @return return is succeeded
      */
     @DeleteMapping("/{resourceName:.+}")
-    public ResultStatus deleteRoles(@PathVariable(value = "namespace") String namespace,
+    public ResultStatus deleteRoles(@PathVariable(value = "cluster") String cluster,
+                                    @PathVariable(value = "namespace") String namespace,
                                     @PathVariable(value = "resourceName") String resourceName) {
 
         return rolesService.deleteRoles(namespace, resourceName, new HashMap<>());
@@ -132,12 +126,13 @@ public class RolesController {
 
 
     /**
-     * Role 를 수정한다.
+     * Roles 수정(Update Roles)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param yaml the yaml
-     * @return the roles
+     * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
     public Object updateRoles(@PathVariable(value = "cluster") String cluster,
@@ -147,7 +142,5 @@ public class RolesController {
 
         return rolesService.updateRoles(namespace, resourceName, yaml);
     }
-
-
 
 }

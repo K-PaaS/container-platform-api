@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.customServices;
 
-import com.jayway.jsonpath.JsonPath;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
@@ -14,7 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Custom Services Service 클래스
+ * CustomServices Service 클래스
  *
  * @author kjhoon
  * @version 1.0
@@ -28,7 +27,7 @@ public class CustomServicesService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new Custom services service.
+     * Instantiates a new CustomServices service
      *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
@@ -43,44 +42,34 @@ public class CustomServicesService {
 
 
     /**
-     * Services 목록을 조회한다.
+     * Services 목록 조회(Get Services list)
      *
      * @param namespace the namespace
-     * @return the custom services list
+     * @return the services list
      */
-    public CustomServicesList getCustomServicesList(String namespace, int limit, int offset, String searchParam) {
+    public CustomServicesList getCustomServicesList(String namespace, int limit, String continueToken) {
+        String param = "";
 
-        List<CustomServices> itemList = new ArrayList<>();
+        if(continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListServicesListUrl()
-                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+                , HttpMethod.GET, null, Map.class);
 
-        //  JsonPath filter processing if there is a search keyword
-        if (searchParam != null) {
-            responseMap = commonService.searchKeywordForResourceName(responseMap, searchParam);
-        }
-
-        CustomServicesList customServicesList = commonService.setResultObject(responseMap, CustomServicesList.class);
-
-        // Sort by resource name
-        itemList = customServicesList.getItems().stream().sorted(Comparator.comparing(x -> x.getMetadata().getName())).collect(Collectors.toList());
-
-        //Truncate the list if there is a limit value
-        if(limit > 0) {
-            customServicesList.setItems(commonService.listProcessingforLimit(itemList, offset, limit));
-        }
-
-        return (CustomServicesList) commonService.setResultModel(customServicesList, Constants.RESULT_STATUS_SUCCESS);
+        return (CustomServicesList) commonService.setResultModel(commonService.setResultObject(responseMap, CustomServicesList.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
 
     /**
-     * Services 상세 정보를 조회한다.
+     * Services 상세 조회(Get Services detail)
      *
-     * @param namespace   the namespace
-     * @param resourceName the service name
-     * @return the custom services
+     * @param namespace    the namespace
+     * @param resourceName the resource name
+     * @return the services
      */
     public CustomServices getCustomServices(String namespace, String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -94,12 +83,12 @@ public class CustomServicesService {
 
 
     /**
-     * Services YAML을 조회한다.
+     * Services YAML 조회(Get Services yaml)
      *
-     * @param namespace   the namespace
-     * @param resourceName the service name
-     * @param resultMap   the result map
-     * @return the custom services yaml
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @param resultMap the result map
+     * @return the services yaml
      */
     public CustomServices getCustomServicesYaml(String namespace, String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -116,11 +105,11 @@ public class CustomServicesService {
 
 
     /**
-     * Services를 생성한다.
+     * Services 생성(Create Services)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
-     * @return                 return is succeeded
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public Object createServices(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
@@ -135,12 +124,12 @@ public class CustomServicesService {
 
 
     /**
-     * Services를 삭제한다.
+     * Services 삭제(Delete Services)
      *
      * @param namespace the namespace
-     * @param resourceName the service name
+     * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the ResultStatus
+     * @return the resultStatus
      */
     public ResultStatus deleteServices(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -152,13 +141,14 @@ public class CustomServicesService {
     }
 
 
+
     /**
-     * Services를 수정한다.
+     * Services 수정(Update Services)
      *
      * @param namespace the namespace
-     * @param resourceName the service name
-     * @param yaml          the yaml
-     * @return the services
+     * @param resourceName the resource name
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public Object updateServices(String namespace, String resourceName, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
@@ -167,6 +157,36 @@ public class CustomServicesService {
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_SERVICES_DETAIL.replace("{serviceName:.+}", resourceName));
+    }
+
+
+    /**
+     * Services 목록 조회 페이징 테스트 (Get Services list paging test)
+     *
+     * @param namespace the namespace
+     * @return the services list
+     */
+    public CustomServicesList getCustomServicesListTest(String namespace, int limit, int offset, String searchParam) {
+
+        List<CustomServices> itemList = new ArrayList<>();
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListServicesListUrl()
+                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
+
+        //  JsonPath filter processing if there is a search keyword
+        if (searchParam != null) {
+            responseMap = commonService.searchKeywordForResourceName(responseMap, searchParam);
+        }
+
+        CustomServicesList customServicesList = commonService.setResultObject(responseMap, CustomServicesList.class);
+
+        // Sort by resource name
+        itemList = customServicesList.getItems().stream().sorted(Comparator.comparing(x -> x.getMetadata().getName())).collect(Collectors.toList());
+        //Truncate the list if there is a limit value
+        if(limit > 0) {
+            customServicesList.setItems(commonService.listProcessingforLimit(itemList, offset, limit));
+        }
+        return (CustomServicesList) commonService.setResultModel(customServicesList, Constants.RESULT_STATUS_SUCCESS);
     }
 
 }

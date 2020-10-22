@@ -6,7 +6,7 @@ import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
 
 /**
- * Custom Services Model 클래스
+ * CustomServices Model 클래스
  *
  * @author kjhoon
  * @version 1.0

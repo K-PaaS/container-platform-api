@@ -38,6 +38,12 @@ public class LoginController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    /**
+     * 사용자 로그인(User login)
+     *
+     * @param authRequest the AuthenticationRequest
+     * @return return is succeeded
+     */
     @NoAuth
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody

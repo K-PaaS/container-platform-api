@@ -27,7 +27,7 @@ public class RolesService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new Custom Roles service.
+     * Instantiates a new Roles service
      *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
@@ -40,9 +40,8 @@ public class RolesService {
         this.propertyService = propertyService;
     }
 
-
     /**
-     * Roles 목록을 조회한다.
+     * Roles 목록 조회(Get Roles list)
      *
      * @param namespace the namespace
      * @return the roles list
@@ -50,7 +49,7 @@ public class RolesService {
     public RolesList getRolesList(String namespace, int limit, String continueToken) {
         String param = "";
 
-        if(continueToken != null) {
+        if (continueToken != null) {
             param = "&continue=" + continueToken;
         }
 
@@ -64,9 +63,9 @@ public class RolesService {
 
 
     /**
-     * Roles 상세 정보를 조회한다.
+     * Roles 상세 조회(Get Roles detail)
      *
-     * @param namespace   the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the roles
      */
@@ -75,18 +74,18 @@ public class RolesService {
                 propertyService.getCpMasterApiListRolesGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
-                        , HttpMethod.GET, null, Map.class);
+                , HttpMethod.GET, null, Map.class);
 
         return (Roles) commonService.setResultModel(commonService.setResultObject(responseMap, Roles.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
     /**
-     * Roles YAML을 조회한다.
+     * Roles YAML 조회(Get Roles yaml)
      *
-     * @param namespace   the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @param resultMap   the result map
+     * @param resultMap the result map
      * @return the roles yaml
      */
     public Roles getRolesYaml(String namespace, String resourceName, HashMap resultMap) {
@@ -101,28 +100,25 @@ public class RolesService {
     }
 
 
-
     /**
-     * Roles를 생성한다.
+     * Roles 생성(Create Roles)
      *
-     * @param namespace  the namespace
-     * @param yaml  the yaml
-     * @return  return is succeeded
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public Object createRoles(String namespace, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListRolesCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
-        return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_ROLES);
     }
 
 
-
-
     /**
-     * Roles를 삭제한다.
+     * Roles 삭제(Delete Roles)
      *
      * @param namespace the namespace
      * @param resourceName the resource name
@@ -134,7 +130,7 @@ public class RolesService {
                 propertyService.getCpMasterApiListRolesDeleteUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
-                        ,HttpMethod.DELETE, null, ResultStatus.class);
+                , HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_ROLES);
@@ -142,12 +138,12 @@ public class RolesService {
 
 
     /**
-     * Roles를 수정한다.
+     * Roles 수정(Update Roles)
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @param yaml  the yaml
-     * @return the roles
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public Object updateRoles(String namespace, String resourceName, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,

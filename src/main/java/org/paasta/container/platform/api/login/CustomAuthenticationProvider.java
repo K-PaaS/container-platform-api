@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.login;
 
-import org.apache.tomcat.util.bcel.Const;
 import org.paasta.container.platform.api.common.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
