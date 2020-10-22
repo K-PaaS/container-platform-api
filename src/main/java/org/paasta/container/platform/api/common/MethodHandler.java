@@ -74,7 +74,7 @@ public class MethodHandler {
         for (String name:sigParamNames) {
             LOGGER.info("index >>> {}, param name >>> {}", index, name);
 
-            if("isAdmin".equals(name)) {
+            if ("isAdmin".equals(name)) {
                 LOGGER.info("success index :: {}, isAdmin :: {}", index, isAdmin);
                 break;
             }
@@ -82,7 +82,7 @@ public class MethodHandler {
             index++;
         }
 
-        parameterValues = CommonUtils.modifyValue(parameterValues, index,  isAdmin);
+        parameterValues = CommonUtils.modifyValue(parameterValues, index, isAdmin);
         return joinPoint.proceed(parameterValues);
     }
 
@@ -120,9 +120,10 @@ public class MethodHandler {
 
         String requestResource;
         String requestURI = request.getRequestURI();
+
         LOGGER.info("requestURI :::::::::" + requestURI);
 
-        if (namespace == null || namespace.length() == 0) {
+        if (StringUtils.isEmpty(namespace)) {
             requestResource = InspectionUtil.parsingRequestURI(requestURI)[3];
         } else {
             requestResource = InspectionUtil.parsingRequestURI(requestURI)[5];
@@ -147,14 +148,14 @@ public class MethodHandler {
                 createYamlResourceNamespace = null;
             }
 
-            if (createYamlResourceName != null && createYamlResourceNamespace != null) {
+            if (StringUtils.isNotEmpty(createYamlResourceName) && StringUtils.isNotEmpty(createYamlResourceNamespace)) {
                 if (createYamlResourceName.startsWith("kube") || createYamlResourceNamespace.startsWith("kube")) {
                     LOGGER.info("The prefix 'kube-' is not allowed.':::::::::error");
                     return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The prefix 'kube-' is not allowed.", 400, "The prefix 'kube-' is not allowed.");
                 } else {
                     break;
                 }
-            } else if (createYamlResourceName != null && createYamlResourceNamespace == null) {
+            } else if (StringUtils.isNotEmpty(createYamlResourceName) && StringUtils.isEmpty(createYamlResourceNamespace)) {
                 if (createYamlResourceName.startsWith("kube")) {
                     LOGGER.info("The prefix 'kube-' is not allowed.':::::::::error");
                     return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The prefix 'kube-' is not allowed.", 400, "The prefix 'kube-' is not allowed.");
@@ -245,7 +246,7 @@ public class MethodHandler {
         String requestResource;
         String requestURI = request.getRequestURI();
 
-        if (resourceName == null || resourceName.length() == 0) {
+        if (StringUtils.isEmpty(resourceName)) {
             requestResource = InspectionUtil.parsingRequestURI(requestURI)[3];
             resourceName = namespace;
         } else {
@@ -265,21 +266,20 @@ public class MethodHandler {
             String updateYamlResourceName = YamlMetadata.get("name").toString();
             String updateYamlResourceNamespace;
 
-
             if (YamlMetadata.get("namespace") != null) {
                 updateYamlResourceNamespace = YamlMetadata.get("namespace").toString();
             } else {
                 updateYamlResourceNamespace = null;
             }
 
-            if (updateYamlResourceName != null && updateYamlResourceNamespace != null) {
+            if (StringUtils.isNotEmpty(updateYamlResourceName) && StringUtils.isNotEmpty(updateYamlResourceNamespace)) {
                 if (updateYamlResourceName.startsWith("kube") || updateYamlResourceNamespace.startsWith("kube")) {
                     LOGGER.info("The prefix 'kube-' is not allowed.':::::::::error");
                     return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The prefix 'kube-' is not allowed.", 400, "The prefix 'kube-' is not allowed.");
                 } else {
                     break;
                 }
-            } else if (updateYamlResourceName != null && updateYamlResourceNamespace == null) {
+            } else if (StringUtils.isNotEmpty(updateYamlResourceName) && StringUtils.isEmpty(updateYamlResourceNamespace)) {
                 if (updateYamlResourceName.startsWith("kube")) {
                     LOGGER.info("The prefix 'kube-' is not allowed.':::::::::error");
                     return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The prefix 'kube-' is not allowed.", 400, "The prefix 'kube-' is not allowed.");
@@ -296,7 +296,6 @@ public class MethodHandler {
             //return  new ErrorMessage(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist." );
             return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+ requestResource +"' does not exist." );
         }
-
 
         if (!resourceName.equals(updateYamlResourceName)) {
             LOGGER.info("Resource name is invalid:::::::::error");
