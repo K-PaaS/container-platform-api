@@ -1,8 +1,10 @@
 pipeline {
 	environment {
 		IMAGE_NAME = "container-platform-api"
-		REGISTRY_CREDENTIAL = ''
-		REGISTRY_URL = "15.164.129.57:5000"
+		REGISTRY_HARBOR_CREDENTIAL = 'harbor-credential'
+        REGISTRY_DOCKER_URL = "15.164.129.57:5000"
+        REGISTRY_HARBOR_URL = "15.164.129.57:8090"
+        PROJECT_NAME = "container-platform"
 	}
 	agent any
 	stages {
@@ -45,6 +47,8 @@ pipeline {
 				script {
 					dockerImage = docker.build REGISTRY_URL+"/"+IMAGE_NAME+":latest"
 					dockerVersionedImage = docker.build REGISTRY_URL+"/"+IMAGE_NAME+":$BUILD_NUMBER"
+					harborImage = docker.build REGISTRY_HARBOR_URL+"/"+PROJECT_NAME+"/"+IMAGE_NAME+":latest"
+                    harborVersionedImage = docker.build REGISTRY_HARBOR_URL+"/"+PROJECT_NAME+"/"+IMAGE_NAME+":$BUILD_NUMBER"
 				}
 			}
 		}
@@ -56,6 +60,11 @@ pipeline {
 						dockerImage.push()
 						dockerVersionedImage.push()
 					}
+					docker.withRegistry("http://"+REGISTRY_HARBOR_URL, REGISTRY_HARBOR_CREDENTIAL)
+                    {
+                        harborImage.push()
+                        harborVersionedImage.push()
+                    }
 				}
 			}
 		}
@@ -70,11 +79,15 @@ pipeline {
 		}
 		stage('Remove Unused docker image') {
 			steps{
-				echo "REGISTRY_URL: $REGISTRY_URL"
-				echo "IMAGE_NAME: $IMAGE_NAME"
-				echo "BUILD_NUMBER: $BUILD_NUMBER"
-				sh "docker rmi $REGISTRY_URL/$IMAGE_NAME:latest"
-				sh "docker rmi $REGISTRY_URL/$IMAGE_NAME:$BUILD_NUMBER"
+				echo "REGISTRY_DOCKER_URL: $REGISTRY_DOCKER_URL"
+                echo "REGISTRY_HARBOR_URL: $REGISTRY_HARBOR_URL"
+                echo "PROJECT_NAME: $PROJECT_NAME"
+                echo "IMAGE_NAME: $IMAGE_NAME"
+                echo "BUILD_NUMBER: $BUILD_NUMBER"
+                sh "docker rmi $REGISTRY_DOCKER_URL/$IMAGE_NAME:latest"
+                sh "docker rmi $REGISTRY_DOCKER_URL/$IMAGE_NAME:$BUILD_NUMBER"
+                sh "docker rmi $REGISTRY_HARBOR_URL/$PROJECT_NAME/$IMAGE_NAME:latest"
+                sh "docker rmi $REGISTRY_HARBOR_URL/$PROJECT_NAME/$IMAGE_NAME:$BUILD_NUMBER"
 			}
 		}
 	}
