@@ -8,14 +8,21 @@ import org.yaml.snakeyaml.Yaml;
 import java.util.ArrayList;
 import java.util.Map;
 
+/**
+ * Yaml Util 클래스
+ *
+ * @author hrjin
+ * @version 1.0
+ * @since 2020.09.21
+ **/
 public class YamlUtil {
 
     /**
-     * keyword로 yaml의 Resource 값 구하기
+     * YAML의 Resource 값 조회(Get YAML's resource)
      *
-     * @param yaml
-     * @param keyword
-     * @return String
+     * @param yaml the yaml
+     * @param keyword the keyword
+     * @return the string
      */
     public static String parsingYaml(String yaml, String keyword) {
         String value = null;
@@ -37,12 +44,13 @@ public class YamlUtil {
         return value;
     }
 
+
     /**
-     * keyword로 yaml의 Resource 값 구하기
+     * YAML Resource 값 조회(Get YAML resource value)
      *
-     * @param yaml
-     * @param keyword
-     * @return Map
+     * @param yaml the yaml
+     * @param keyword the keyword
+     * @return the map
      */
     public static Map parsingYamlMap(String yaml, String keyword) {
         Map value = null;
@@ -61,11 +69,12 @@ public class YamlUtil {
         return value;
     }
 
+
     /**
-     * url Resource 값과 비교할 yaml의 Resource 값 추출
+     * URL Resource 값과 비교할 YAML Resource 값 조회(Get YAML's resource to compare URL Resource)
      *
-     * @param kind
-     * @return YamlKind
+     * @param kind the kind
+     * @return the string
      */
     public static String makeResourceNameYAML(String kind) {
         String YamlKind =  kind.toLowerCase();
@@ -73,11 +82,12 @@ public class YamlUtil {
         return YamlKind;
     }
 
+
    /**
-    * 복합 yaml '---'로 나누어 list화
-    * trim 사용하여 공백 제거
-    * @param yaml
-    * @return
+    * 복합 yaml List로 조회(Get list of multiple YAML)
+    *
+    * @param yaml the yaml
+    * @return the string[]
     */
     public static String[] splitYaml(String yaml) {
         String[] yamlArray = yaml.split("---");

@@ -28,7 +28,7 @@ public class AspectService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AspectService.class);
 
     /**
-     * On before log service access.
+     * Service 클래스 접근 전 로그(On before log service access)
      *
      * @param joinPoint the join point
      */
@@ -39,7 +39,7 @@ public class AspectService {
 
 
     /**
-     * On before log controller access.
+     * Controller 클래스 접근 전 로그(On before log controller access)
      *
      * @param joinPoint the join point
      */

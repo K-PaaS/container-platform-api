@@ -4,10 +4,8 @@ package org.paasta.container.platform.api.storages.persistentVolumes;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
-import javax.websocket.server.PathParam;
 import java.util.HashMap;
 
 /**
@@ -41,7 +39,8 @@ public class PersistentVolumesController {
      * @return the persistentVolumes List
      */
     @GetMapping
-    public PersistentVolumesList getPersistentVolumesList(@PathVariable(value = "namespace") String namespace,
+    public PersistentVolumesList getPersistentVolumesList(@PathVariable(value = "cluster") String cluster,
+                                                          @PathVariable(value = "namespace") String namespace,
                                                           @RequestParam(required = false, defaultValue = "0") int limit,
                                                           @RequestParam(required = false, name = "continue") String continueToken) {
         return persistentVolumesService.getPersistentVolumesList(namespace, limit, continueToken);
@@ -56,7 +55,9 @@ public class PersistentVolumesController {
      * @return the persistentVolumes
      */
     @GetMapping(value = "/{resourceName:.+}")
-    public PersistentVolumes getPersistentVolumes(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+    public PersistentVolumes getPersistentVolumes(@PathVariable(value = "cluster") String cluster,
+                                                  @PathVariable(value = "namespace") String namespace,
+                                                  @PathVariable(value = "resourceName") String resourceName) {
         return persistentVolumesService.getPersistentVolumes(namespace, resourceName);
     }
 
@@ -68,7 +69,9 @@ public class PersistentVolumesController {
      * @return the persistentVolumes
      */
     @GetMapping(value = "{resourceName:.+}/yaml")
-    public PersistentVolumes getPersistentVolumesYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+    public PersistentVolumes getPersistentVolumesYaml(@PathVariable(value = "cluster") String cluster,
+                                                      @PathVariable(value = "namespace") String namespace,
+                                                      @PathVariable(value = "resourceName") String resourceName) {
         return persistentVolumesService.getPersistentVolumesYaml(namespace, resourceName, new HashMap<>());
     }
 
@@ -99,7 +102,8 @@ public class PersistentVolumesController {
      * @return return is succeeded
      */
     @DeleteMapping("/{resourceName:.+}")
-    public ResultStatus deletePersistentVolumes(@PathVariable(value = "namespace") String namespace,
+    public ResultStatus deletePersistentVolumes(@PathVariable(value = "cluster") String cluster,
+                                                @PathVariable(value = "namespace") String namespace,
                                                 @PathVariable(value = "resourceName") String resourceName) {
         return persistentVolumesService.deletePersistentVolumes(namespace, resourceName, new HashMap<>());
     }

@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
- * User Service 클래스
+ * SignUpUser Service 클래스
  *
  * @author hrjin
  * @version 1.0
@@ -35,6 +35,16 @@ public class SignUpUserService {
     private final UsersService usersService;
     private final ResourceYamlService resourceYamlService;
 
+    /**
+     * Instantiates a new SignUpUserService service
+     *
+     * @param commonService the common service
+     * @param propertyService the property service
+     * @param restTemplateService the rest template service
+     * @param accessTokenService the access token service
+     * @param usersService the users service
+     * @param resourceYamlService the resource yaml service
+     */
     @Autowired
     public SignUpUserService(CommonService commonService, PropertyService propertyService, RestTemplateService restTemplateService, AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService) {
         this.commonService = commonService;
@@ -47,19 +57,18 @@ public class SignUpUserService {
 
 
     /**
-     * 사용자를 등록한다. (회원가입)
+     * 회원가입(Sign Up)
      *
-     * @param users  the users
-     * @return       the result status
+     * @param users the users
+     * @return the resultStatus
      */
     public ResultStatus signUpUsers(Users users) {
         String namespace = Constants.DEFAULT_NAMESPACE_NAME;
         String username = users.getUserId();
 
-        // (1) ::: service account 생성. 타겟은 temp-namespace.
+        // default namespace
         ResultStatus rsK8s = resourceYamlService.createServiceAccount(username, namespace);
 
-        // (2) ::: service account 생성 완료 시 아래 Common API 호출
         if(Constants.RESULT_STATUS_FAIL.equals(rsK8s.getResultCode())) {
             return rsK8s;
         }
@@ -70,12 +79,11 @@ public class SignUpUserService {
         users.setServiceAccountName(username);
         users.setRoleSetCode(NOT_ASSIGNED_ROLE);
         users.setSaSecret(saSecretName);
-        users.setSaToken(accessTokenService.getSecret(namespace, saSecretName).getUserAccessToken());
+        users.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
         users.setUserType("USER");
 
         ResultStatus rsDb = usersService.createUsers(users);
 
-        // (3) ::: DB 커밋에 실패했을 경우 k8s 에 만들어진 service account 삭제
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
             restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME).replace("{name}", users.getUserId()), HttpMethod.DELETE, null, Object.class);
@@ -85,7 +93,7 @@ public class SignUpUserService {
     }
 
     /**
-     * 등록돼있는 사용자들의 이름 목록 조회
+     * Users 이름 목록 조회(Get Users names list)
      *
      * @return the Map
      */

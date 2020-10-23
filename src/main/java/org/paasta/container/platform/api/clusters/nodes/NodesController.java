@@ -48,7 +48,8 @@ public class NodesController {
      * @return the nodes
      */
     @GetMapping(value = "/{resourceName:.+}")
-    public Nodes getNodes(@PathVariable(value = "resourceName") String resourceName) {
+    public Nodes getNodes(@PathVariable(value = "cluster") String cluster,
+                          @PathVariable(value = "resourceName") String resourceName) {
         return nodesService.getNodes(resourceName);
     }
 
@@ -59,7 +60,8 @@ public class NodesController {
      * @return the nodes yaml
      */
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Nodes getNodesYaml(@PathVariable(value = "resourceName") String resourceName){
+    public Nodes getNodesYaml(@PathVariable(value = "cluster") String cluster,
+                              @PathVariable(value = "resourceName") String resourceName){
         return nodesService.getNodesYaml(resourceName, new HashMap<>());
     }
 }

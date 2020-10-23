@@ -14,9 +14,11 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
+ * Inspection Util 클래스
+ *
  * @author hrjin
  * @version 1.0
- * @since 2020-08-26
+ * @since 2020.08.26
  **/
 public class InspectionUtil {
 
@@ -24,10 +26,10 @@ public class InspectionUtil {
 
 
     /**
-     * Bean을 찾아서 주입
+     * Bean 주입(Inject Bean)
      *
-     * @param bean
-     * @return
+     * @param bean the bean
+     * @return the object
      */
     public static Object getBean(String bean) {
         ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
@@ -37,11 +39,11 @@ public class InspectionUtil {
 
 
     /**
-     * 필드 명으로 propertyService의 create, update 메소드 명 생성
+     * PropertyService의 create, update 메소드 명 생성(Make method name with field name)
      *
-     * @param fieldName
-     * @param suffix
-     * @return
+     * @param fieldName the field name
+     * @param suffix the suffix
+     * @return the string
      */
     public static String makeMethodName(String fieldName, String suffix) {
         if (fieldName.endsWith("s")) {
@@ -53,12 +55,11 @@ public class InspectionUtil {
 
 
     /**
+     * Resource명 생성(Make resource name)
+     * ex) deployments -> deployment
      *
-     *  yaml Resource 값과 비교할 Resource 값 생성
-     * 예시) deployments -> deployment
-     *
-     * @param resourceName
-     * @return
+     * @param resourceName the resource name
+     * @return the string
      */
     public static String makeResourceName(String resourceName) {
         if (resourceName.endsWith("ses")) {
@@ -70,7 +71,11 @@ public class InspectionUtil {
 
 
     /**
-     * requestURI 파싱  /namespaces/cp-namespace/deployments    , /namespaces/cp-namespace/deployments/deploymentsName
+     * requestURI 파싱(Parsing requestURI)
+     * ex) /namespaces/cp-namespace/deployments, /namespaces/cp-namespace/deployments/deploymentsName
+     *
+     * @param requestURI the request uri
+     * @return the string[]
      */
     public static String[] parsingRequestURI(String requestURI) {
 
@@ -81,11 +86,11 @@ public class InspectionUtil {
 
 
     /**
-     * dryRun 체크를 위한 동적 API URL Call 메서드 조회
+     * dryRun 체크를 위한 동적 API URL Call 메서드 조회(Get Automatically API URL for dryRun check)
      *
-     * @param methodType
-     * @param kind
-     * @return
+     * @param methodType the method type
+     * @param kind the kind
+     * @return the string
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException
@@ -107,12 +112,12 @@ public class InspectionUtil {
     }
 
     /**
-     * dryRun 체크 (create/update)
+     * CREATE/UPDATE dryRun 체크(DryRun check)
      *
-     * @param namespace
-     * @param kind
-     * @param yaml
-     * @return
+     * @param namespace the namespace
+     * @param kind the kind
+     * @param yaml the yaml
+     * @return the object
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException

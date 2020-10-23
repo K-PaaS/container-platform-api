@@ -5,8 +5,6 @@ import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 /**
  * Namespaces Controller 클래스
  *
@@ -37,7 +35,9 @@ public class NamespacesController {
      * @return the namespaces list
      */
     @GetMapping
-    public NamespacesList getNamespacesList(@RequestParam(required = false, defaultValue = "0") int limit, @RequestParam(required = false, name = "continue") String continueToken){
+    public NamespacesList getNamespacesList(@PathVariable(value = "cluster") String cluster,
+                                            @RequestParam(required = false, defaultValue = "0") int limit,
+                                            @RequestParam(required = false, name = "continue") String continueToken){
         return namespacesService.getNamespacesList(limit, continueToken);
     }
 
@@ -48,7 +48,8 @@ public class NamespacesController {
      * @return the namespaces
      */
     @GetMapping("/{namespace:.+}")
-    public Namespaces getNamespaces(@PathVariable("namespace") String namespace) {
+    public Namespaces getNamespaces(@PathVariable(value = "cluster") String cluster,
+                                    @PathVariable("namespace") String namespace) {
         return namespacesService.getNamespaces(namespace);
     }
 
@@ -59,7 +60,8 @@ public class NamespacesController {
      * @return the namespaces yaml
      */
     @GetMapping(value = "/{namespace:.+}/yaml")
-    public Namespaces getNamespacesYaml(@PathVariable(value = "namespace") String namespace){
+    public Namespaces getNamespacesYaml(@PathVariable(value = "cluster") String cluster,
+                                        @PathVariable(value = "namespace") String namespace){
         return namespacesService.getNamespacesYaml(namespace);
     }
 
@@ -87,7 +89,8 @@ public class NamespacesController {
      * @return return is succeeded
      */
     @DeleteMapping(value = "/{namespace:.+}")
-    public ResultStatus deleteNamespaces(@PathVariable("namespace") String namespace){
+    public ResultStatus deleteNamespaces(@PathVariable(value = "cluster") String cluster,
+                                         @PathVariable("namespace") String namespace){
         return namespacesService.deleteNamespaces(namespace);
     }
 

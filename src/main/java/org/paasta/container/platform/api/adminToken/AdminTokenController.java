@@ -28,7 +28,7 @@ public class AdminTokenController {
     }
 
     /**
-     * Admin Token 상세 정보를 조회한다.
+     * AdminToken 상세 조회(Get AdminToken detail)
      *
      * @return the AdminToken
      */
