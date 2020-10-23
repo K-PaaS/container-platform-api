@@ -1,5 +1,7 @@
 package org.paasta.container.platform.api.common;
 
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.http.MediaType;
 
 import java.util.*;
@@ -77,6 +79,10 @@ public class Constants {
 
     public static final String URI_ROLES = "/container-platform/roles";
 
+    public static final String URI_LIMITRANGES = "/container-platform";
+    public static final String URI_LIMITRANGES_DETAIL = "/container-platform/{limitRangeName:.+}";
+
+
     //login
     public static final String LOGIN_SUCCESS = "Login Successful.";
     public static final String LOGIN_FAIL = "Login Failed.";
@@ -146,6 +152,9 @@ public class Constants {
         }
 
     });
+
+    public static final ResultStatus FORBIDDEN_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.FORBIDDEN.getMsg(),
+            CommonStatusCode.FORBIDDEN.getCode(),CommonStatusCode.FORBIDDEN.getMsg(), null );
 
     public Constants() {
         throw new IllegalStateException();

@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.common.model;
 
 import lombok.Data;
+import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangeItem;
 import org.paasta.container.platform.api.workloads.pods.support.Volume;
 
 import java.util.List;
@@ -46,4 +47,5 @@ public class CommonSpec {
     private List<Map<String, Object>> taints;
     private List<Volume> volumes;
     private List<String> externalIPs;
+    private List<LimitRangeItem> limits;
 }
