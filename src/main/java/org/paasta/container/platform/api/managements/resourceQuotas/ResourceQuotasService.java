@@ -4,6 +4,7 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class ResourceQuotasService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new Namespace service
+     * Instantiates a new ResourceQuotas service
      *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
@@ -40,16 +41,110 @@ public class ResourceQuotasService {
     }
 
     /**
-     * ResourceQuota 목록을 조회한다.
+     * ResourceQuotas 목록 조회(Get ResourceQuotas list)
      *
-     * @param namespace the namespaces
-     * @return ResourceQuotaList the ResourceQuotaList
+     * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @return the resourceQuotas list
      */
-    ResourceQuotasList getResourceQuotasList(String namespace) {
-        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListResourceQuotasListUrl()
-                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
+    public ResourceQuotasList getResourceQuotasList(String namespace,  int limit, String continueToken) {
 
-        return (ResourceQuotasList) commonService.setResultModel(commonService.setResultObject(resultMap, ResourceQuotasList.class), Constants.RESULT_STATUS_SUCCESS);
+        String param = "";
+        if(continueToken != null){
+            param = "&continue=" + continueToken;
+        }
+
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListResourceQuotasListUrl()
+                        .replace("{namespace}", namespace) + "?limit" + limit + param,
+                HttpMethod.GET, null, Map.class);
+
+        return (ResourceQuotasList) commonService.setResultModel(commonService.setResultObject(responseMap, ResourceQuotasList.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * ResourceQuotas 상세 조회(Get ResourceQuotas detail)
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return the resourceQuotas detail
+     */
+    public ResourceQuotas getResourceQuotas(String namespace, String resourceName) {
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListResourceQuotasGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", resourceName)
+                , HttpMethod.GET, null, Map.class);
+
+        return (ResourceQuotas) commonService.setResultModel(commonService.setResultObject(responseMap, ResourceQuotas.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * ResourceQuotas YAML 조회(Get ResourceQuotas yaml)
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return the resourceQuotas yaml
+     */
+    public ResourceQuotas getResourceQuotasYaml(String namespace, String resourceName, HashMap resultMap) {
+        String resulString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListResourceQuotasGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+
+        //noinspection unchecked
+        resultMap.put("sourceTypeYaml", resulString);
+
+        return (ResourceQuotas) commonService.setResultModel(commonService.setResultObject(resultMap, ResourceQuotas.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * ResourceQuotas 생성(Create ResourceQuotas)
+     *
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return return is succeeded
+     */
+    public Object createResourceQuotas(String namespace, String yaml) {
+        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListResourceQuotasCreateUrl()
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+
+        return commonService.setResultModel(commonService.setResultObject(map, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * ResourceQuotas 삭제(Delete ResourceQuotas)
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @param resultMap the result map
+     * @return the return is succeeded
+     */
+    public ResultStatus deleteResourceQuotas(String namespace, String resourceName, HashMap resultMap) {
+        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListResourceQuotasDeleteUrl()
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+
+        return (ResultStatus) commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * ResourceQuotas 수정(Update ResourceQuotas)
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @param yaml the yaml
+     * @return return is succeeded
+     */
+    public Object updateResourceQuotas(String namespace, String resourceName, String yaml) {
+        Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPersistentVolumesUpdateUrl()
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
+
+        return commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS);
     }
 }
