@@ -73,6 +73,7 @@ public class Constants {
 
     public static final String URI_USERS = "/container-platform/users";
     public static final String URI_USERS_DETAIL = "/container-platform/users/{userId:.+}";
+    public static final String URI_USERS_CONFIG = "/container-platform/users/config";
 
     public static final String URI_ROLES = "/container-platform/roles";
 

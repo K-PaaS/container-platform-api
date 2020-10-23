@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 /**
- * 넘어오는 Resource의 생성/수정 메소드를 호출하는 클래스
+ * Resource 생성/수정 메소드 호출 클래스
  *
  * @author hrjin
  * @version 1.0
@@ -21,10 +21,10 @@ public class ResourceExecuteManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceExecuteManager.class);
 
     /**
-     * make create Method
+     * Service 클래스의 Method 명 생성(Create service class's method name)
      *
-     * @param kind
-     * @return
+     * @param kind the kind
+     * @return the string
      */
     public static String makeServiceMethodName(String kind) {
         return "create" + kind + "s";
@@ -32,19 +32,18 @@ public class ResourceExecuteManager {
 
 
     /**
-     * 넘어오는 Resource에 따라 각 Resource를 수행하는 메서드 호출
+     * Resource 값에 따라 각 Resource를 수행하는 메서드 호출(Call method according to resource value)
      *
-     * @param namespace
-     * @param kind
-     * @param yaml
-     * @return
+     * @param namespace the namespace
+     * @param kind the kind
+     * @param yaml the yaml
+     * @return the object
      * @throws Exception
      */
     public static Object execServiceMethod(String namespace, String kind, String yaml) throws Exception {
 
-        // 해당 전문의 서비스 처리 method 정보 조회
+        // get method info for processing the service class
         String [] arrMethodInfo = Constants.RESOURCE_SERVICE_MAP.get(kind).split(":");
-        String methodClassPackage = arrMethodInfo[0].trim();
         String methodClassName = arrMethodInfo[1].trim();
         String methodName = makeServiceMethodName(kind);
 
@@ -53,30 +52,26 @@ public class ResourceExecuteManager {
 
         String injectBeanName = methodClassName.substring(0,1).toLowerCase() + methodClassName.substring(1);
 
-        // 처리 메소드가 있는 서비스 클래스의 인스턴스
         Object targetObject = InspectionUtil.getBean(injectBeanName);
 
-        // 처리 메소드 정보
         Method paramMethod = targetObject.getClass().getDeclaredMethod(methodName, String.class, String.class);
         if (paramMethod == null) {
             throw new ContainerPlatformException("처리할 메소드 (" + methodName + ") 가 존재 하지 않습니다.", "404");
         }
 
-        LOGGER.info("method >>> " + paramMethod);
-
         if(namespace == null || namespace.length() == 0) {
             return paramMethod.invoke(targetObject, yaml);
         }
-        // 해당 메소드를 호출한다.
+
         return paramMethod.invoke(targetObject, namespace, yaml);
     }
 
     /**
-     * multi yaml일 때 Controller에서 yaml 순서대로 Resource 생성
+     * multi yaml 순서대로 Resource 생성(Create Resource in order)
      *
-     * @param namespace
-     * @param yaml
-     * @return
+     * @param namespace the namespace
+     * @param yaml the yaml
+     * @return the object
      * @throws Exception
      */
     public static Object commonControllerExecute(String namespace, String yaml) throws Exception {
@@ -85,7 +80,6 @@ public class ResourceExecuteManager {
         multiYaml = YamlUtil.splitYaml(yaml);
         Object object = null;
 
-        //  우선 순위에 있는 kind 처리 loop
         for (String temp : multiYaml) {
             String kind = YamlUtil.parsingYaml(temp,"kind");
             object = execServiceMethod(namespace, kind, temp);

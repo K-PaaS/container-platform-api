@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,12 +34,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 		this.usersService = usersService;
 	}
 
+	@Autowired
+	private HttpServletRequest request;
 
 	@Override
 	public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
 		List<SimpleGrantedAuthority> roles = null;
+		String isAdmin = null ;
+		isAdmin =  request.getParameter("isAdmin");
 
-         Users user = usersService.getUsersDetailsForLogin(userId);
+		if(isAdmin == null) { isAdmin = "false" ; }
+
+		Users user = usersService.getUsersDetailsForLogin(userId, isAdmin);
      	if (user != null) {
 			roles = Arrays.asList(new SimpleGrantedAuthority(user.getUserType()));
 

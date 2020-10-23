@@ -130,6 +130,19 @@ public class UsersController {
 
 
     /**
+     * 사용자 권한 설정
+     *
+     * @param namespace the namespace
+     * @param users the users
+     * @return the resultStatus
+     */
+    @PutMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users")
+    public ResultStatus modifyUsersConfig(@PathVariable(value = "namespace") String namespace, @RequestBody List<Users> users) {
+        return usersService.modifyUsersConfig(namespace, users);
+    }
+
+
+    /**
      * 사용자 삭제 (All Namespaces)
      *
      * @param userId   the user id

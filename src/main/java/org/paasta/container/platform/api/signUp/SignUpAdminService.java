@@ -15,7 +15,7 @@ import static org.paasta.container.platform.api.common.Constants.DEFAULT_CLUSTER
 import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
 
 /**
- * User Service 클래스
+ * SignUpAdmin Service 클래스
  *
  * @author hrjin
  * @version 1.0
@@ -33,6 +33,16 @@ public class SignUpAdminService {
     private final UsersService usersService;
     private final ResourceYamlService resourceYamlService;
 
+    /**
+     * Instantiates a new SignUpAdminService service
+     *
+     * @param propertyService the property service
+     * @param restTemplateService the rest template service
+     * @param commonService the common service
+     * @param accessTokenService the access token service
+     * @param usersService the users service
+     * @param resourceYamlService the resource yaml service
+     */
     @Autowired
     public SignUpAdminService(PropertyService propertyService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService) {
         this.propertyService = propertyService;
@@ -43,30 +53,33 @@ public class SignUpAdminService {
         this.resourceYamlService = resourceYamlService;
     }
 
+
+    /**
+     * 운영자 회원가입(Sign Up Admin)
+     *
+     * @param users the user
+     * @return the resultStatus
+     */
     public ResultStatus signUpAdminUsers(Users users) {
         String namespace = users.getCpNamespace();
         String username = users.getUserId();
 
-        // (1) ::: namespace 생성 시 최저 사양의 resource quota, limit range 도 같이 생성
+        // create row spec resource quota, limit range
         ResultStatus nsResult = resourceYamlService.createNamespace(namespace);
 
         if(Constants.RESULT_STATUS_FAIL.equals(nsResult.getResultCode())) {
             return nsResult;
         }
 
-        // resource quota 생성
         resourceYamlService.createResourceQuota();
-        // limit range 생성
         resourceYamlService.createLimitRange();
 
-        // (2) ::: service account 생성.
         ResultStatus saResult = resourceYamlService.createServiceAccount(username, namespace);
 
         if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
             return saResult;
         }
 
-        // (3) ::: cluster role binding
         ResultStatus rbResult = resourceYamlService.createRoleBinding(username, namespace, null);
 
         if(Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
@@ -81,14 +94,12 @@ public class SignUpAdminService {
         users.setServiceAccountName(username);
         users.setRoleSetCode(DEFAULT_CLUSTER_ADMIN_ROLE);
         users.setSaSecret(adminSaSecretName);
-        users.setSaToken(accessTokenService.getSecret(namespace, adminSaSecretName).getUserAccessToken());
+        users.setSaToken(accessTokenService.getSecrets(namespace, adminSaSecretName).getUserAccessToken());
         users.setUserType("CLUSTER_ADMIN");
         users.setIsActive("Y");
 
-        // (4) ::: service account 생성, cluster role binding 완료 시 아래 Common API 호출
         ResultStatus rsDb = usersService.createUsers(users);
 
-        // (5) ::: DB 커밋에 실패했을 경우 k8s 에 만들어진 namespace, cluster role binding 삭제
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
             restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class);

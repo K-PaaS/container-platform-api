@@ -122,8 +122,10 @@ public class UsersService {
      *
      * @return the Users
      */
-    public Users getUsersDetailsForLogin (String userId) {
-        return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DETAIL_LOGIN.replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
+    public Users getUsersDetailsForLogin (String userId, String isAdmin) {
+        return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DETAIL_LOGIN.replace("{userId:.+}", userId)
+                        + "?isAdmin=" + isAdmin
+                , HttpMethod.GET, null, Users.class);
     }
 
 
@@ -189,7 +191,7 @@ public class UsersService {
             users.setServiceAccountName(userName);
             users.setRoleSetCode(role);
             users.setSaSecret(adminSaSecretName);
-            users.setSaToken(accessTokenService.getSecret(namespace, adminSaSecretName).getUserAccessToken());
+            users.setSaToken(accessTokenService.getSecrets(namespace, adminSaSecretName).getUserAccessToken());
             users.setIsActive("Y");
 
             // DB에 저장
@@ -249,7 +251,7 @@ public class UsersService {
                         updateUser.setPassword(users.getPassword());
                         updateUser.setEmail(users.getEmail());
                         updateUser.setRoleSetCode(role);
-                        updateUser.setSaToken(accessTokenService.getSecret(namespace, updateUser.getSaSecret()).getUserAccessToken());
+                        updateUser.setSaToken(accessTokenService.getSecrets(namespace, updateUser.getSaSecret()).getUserAccessToken());
 
                     } else if(details.getCpNamespace().equalsIgnoreCase(nsRole.getNamespace()) && details.getRoleSetCode().equalsIgnoreCase(nsRole.getRole())){  // namespace, role 모두 같을 경우
                         updateUser.setPassword(users.getPassword());
@@ -292,7 +294,7 @@ public class UsersService {
                 newUser.setRoleSetCode(namespaceRole.getRole());
                 newUser.setIsActive("Y");
                 newUser.setSaSecret(saSecretName);
-                newUser.setSaToken(accessTokenService.getSecret(newNamespace, saSecretName).getUserAccessToken());
+                newUser.setSaToken(accessTokenService.getSecrets(newNamespace, saSecretName).getUserAccessToken());
                 newUser.setUserType("USER");
 
                 rsDb = createUsers(newUser);
@@ -334,9 +336,7 @@ public class UsersService {
      * @return
      */
     public ResultStatus modifyUsers(String userId, Users user) {
-        ResultStatus users = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.PUT, user, ResultStatus.class);
-
-        return users;
+        return restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.PUT, user, ResultStatus.class);
     }
 
 
@@ -356,4 +356,73 @@ public class UsersService {
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rs, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS);
     }
+
+
+    /**
+     * 사용자 권한 설정
+     *
+     * @param namespace the namespace
+     * @param users the users
+     * @return the resultStatus
+     */
+    public ResultStatus modifyUsersConfig(String namespace, List<Users> users) {
+        ResultStatus rsDb = null;
+
+        List<Users> defaultUserList = getUsersListByNamespace(namespace).getItems();
+
+        List<String> defaultUserNameList = defaultUserList.stream().map(Users::getServiceAccountName).collect(Collectors.toList());
+        List<String> newUserNameList = users.stream().map(Users::getServiceAccountName).collect(Collectors.toList());
+
+        ArrayList<String> toBeDelete = (ArrayList<String>) defaultUserNameList.stream().filter(x-> !newUserNameList.contains(x)).collect(Collectors.toList());
+        ArrayList<String> toBeAdd = (ArrayList<String>) newUserNameList.stream().filter(x-> !defaultUserNameList.contains(x)).collect(Collectors.toList());
+
+        for (Users value : defaultUserList) {
+            for (String s : toBeDelete) {
+                if (s.equals(value.getServiceAccountName())) {
+                    String saName = value.getServiceAccountName();
+                    String roleName = value.getRoleSetCode();
+
+                    LOGGER.info("Delete >>> sa :: {}, role :: {}", saName, roleName);
+
+                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class);
+                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + "-" + roleName + "-binding"), HttpMethod.DELETE, null, Object.class);
+
+                    rsDb = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{namespace:.+}", namespace).replace("{userId:.+}", saName), HttpMethod.DELETE, null, ResultStatus.class);
+                }
+            }
+        }
+
+        for (Users user : users) {
+            for (String s : toBeAdd) {
+                if (s.equals(user.getServiceAccountName())) {
+                    String saName = user.getServiceAccountName();
+                    String roleName = user.getRoleSetCode();
+
+                    LOGGER.info("Add >>> sa :: {}, role :: {}", saName, roleName);
+
+                    resourceYamlService.createServiceAccount(saName, namespace);
+                    resourceYamlService.createRoleBinding(saName, namespace, roleName);
+
+                    UsersList usersList = getUsersDetails(saName);
+
+                    Users newUser = usersList.getItems().get(0);
+                    String saSecretName = restTemplateService.getSecretName(namespace, saName);
+
+                    newUser.setCpNamespace(namespace);
+                    newUser.setRoleSetCode(roleName);
+                    newUser.setSaSecret(saSecretName);
+                    newUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
+                    newUser.setIsActive("Y");
+                    newUser.setUserType("USER");
+
+                    rsDb = createUsers(newUser);
+                }
+            }
+        }
+
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS_CONFIG);
+    }
+
+
 }
