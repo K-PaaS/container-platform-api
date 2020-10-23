@@ -213,8 +213,17 @@ public class PropertyService {
     @Value("${cpMaster.api.list.resourceQuotas.list}")
     private String cpMasterApiListResourceQuotasListUrl;
 
+    @Value("${cpMaster.api.list.resourceQuotas.get}")
+    private String cpMasterApiListResourceQuotasGetUrl;
+
     @Value("${cpMaster.api.list.resourceQuotas.create}")
     private String cpMasterApiListResourceQuotasCreateUrl;
+
+    @Value("${cpMaster.api.list.resourceQuotas.delete}")
+    private String cpMasterApiListResourceQuotasDeleteUrl;
+
+    @Value("${cpMaster.api.list.resourceQuotas.update}")
+    private String cpMasterApiListResourceQuotasUpdateUrl;
 
     @Value("${cpMaster.api.list.secrets.get}")
     private String cpMasterApiListSecretsGetUrl;
