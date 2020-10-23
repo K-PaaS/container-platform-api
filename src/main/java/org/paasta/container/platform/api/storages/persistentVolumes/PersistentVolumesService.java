@@ -142,11 +142,11 @@ public class PersistentVolumesService {
      * @return return is succeeded
      */
     public Object updatePersistentVolumes(String namespace, String resourceName, String yaml) {
-        Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, PersistentVolumes.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{persistentVolumeName:.+}", resourceName));
     }
 }

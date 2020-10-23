@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.customServices.CustomServices;
+import org.paasta.container.platform.api.storages.persistentVolumes.PersistentVolumes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -149,11 +150,11 @@ public class PersistentVolumeClaimsService {
      */
 
     public Object updatePersistentVolumeClaims(String namespace, String resourceName, String yaml) {
-        Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumeClaimsUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, PersistentVolumes.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{persistentVolumeClaimName:.+}", resourceName));
     }
 }

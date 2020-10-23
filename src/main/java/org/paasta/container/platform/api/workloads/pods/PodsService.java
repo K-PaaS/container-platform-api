@@ -175,11 +175,11 @@ public class PodsService {
      * @return return is succeeded
      */
     public Object updatePods(String namespace, String name, String yaml) {
-        Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, Object.class);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS_DETAIL.replace("{podName:.+}", name));
     }
 }
