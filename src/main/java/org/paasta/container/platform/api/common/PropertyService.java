@@ -239,5 +239,17 @@ public class PropertyService {
 
     @Value("${cpMaster.api.list.limitRanges.create}")
     private String cpMasterApiListLimitRangesCreateUrl;
+    
+    @Value("${cpMaster.api.list.limitRanges.list}")
+    private String cpMasterApiListLimitRangesListUrl;
+
+    @Value("${cpMaster.api.list.limitRanges.get}")
+    private String cpMasterApiListLimitRangesGetUrl;
+
+    @Value("${cpMaster.api.list.limitRanges.delete}")
+    private String cpMasterApiListLimitRangesDeleteUrl;
+
+    @Value("${cpMaster.api.list.limitRanges.update}")
+    private String cpMasterApiListLimitRangesUpdateUrl;
 
 }
