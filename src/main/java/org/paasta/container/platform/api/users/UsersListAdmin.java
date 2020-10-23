@@ -26,6 +26,7 @@ public class UsersListAdmin {
         private String serviceAccountName;
         private String cpNamespace;
         private String roleSetCode;
+        private String userType;
         private String created;
     }
 }
