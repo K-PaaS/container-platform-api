@@ -380,6 +380,37 @@ public class UsersService {
         ArrayList<String> toBeAdd = (ArrayList<String>) newUserNameList.stream().filter(x-> !defaultUserNameList.contains(x)).collect(Collectors.toList());
 
         for (Users value : defaultUserList) {
+            for(Users u:users) {
+                String sa = u.getServiceAccountName();
+                String role = u.getRoleSetCode();
+
+                if(value.getServiceAccountName().equals(sa)) {
+                    if(!value.getRoleSetCode().equals(role)) {
+                        LOGGER.info("Update >>> sa :: {}, role :: {}", sa, role);
+
+                        Users updatedUser = getUsers(namespace, sa);
+
+                        // remove default roleBinding, add new roleBinding
+                        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", sa + "-" + value.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class);
+                        if(!Constants.NOT_ASSIGNED_ROLE.equals(role)) {
+                            resourceYamlService.createRoleBinding(sa, namespace, role);
+                            String saSecretName = restTemplateService.getSecretName(namespace, sa);
+                            updatedUser.setSaSecret(saSecretName);
+                            updatedUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
+                        } else {
+                            updatedUser.setSaSecret(Constants.NOT_ASSIGNED_ROLE);
+                            updatedUser.setSaToken(Constants.NOT_ASSIGNED_ROLE);
+                        }
+
+                        updatedUser.setRoleSetCode(role);
+                        rsDb = createUsers(updatedUser);
+                    }
+                }
+            }
+
+        }
+
+        for (Users value : defaultUserList) {
             for (String s : toBeDelete) {
                 if (s.equals(value.getServiceAccountName())) {
                     String saName = value.getServiceAccountName();
@@ -410,7 +441,7 @@ public class UsersService {
 
                     Users newUser = usersList.getItems().get(0);
                     String saSecretName = restTemplateService.getSecretName(namespace, saName);
-
+                    newUser.setId(0);
                     newUser.setCpNamespace(namespace);
                     newUser.setRoleSetCode(roleName);
                     newUser.setSaSecret(saSecretName);
@@ -422,6 +453,7 @@ public class UsersService {
                 }
             }
         }
+
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS_CONFIG);
