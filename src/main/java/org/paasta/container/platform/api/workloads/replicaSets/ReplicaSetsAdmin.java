@@ -1,18 +1,20 @@
-package org.paasta.container.platform.api.customServices;
+package org.paasta.container.platform.api.workloads.replicaSets;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
 
 /**
- * CustomServices Admin Model 클래스
+ * ReplicaSets List Admin Model 클래스
  *
- * @author kjhoon
+ * @author jjy
  * @version 1.0
  * @since 2020.09.10
  */
-public class CustomServicesAdmin {
+@Data
+public class ReplicaSetsAdmin {
 
     private String resultCode;
     private String resultMessage;
@@ -21,16 +23,13 @@ public class CustomServicesAdmin {
 
     private String name;
     private String uid;
+    private String namespaces;
     private Object labels;
     private Object annotations;
     private String creationTimestamp;
-    private String namespaces;
-    private String type;
-    private String clusterIP;
-    private String sessionAffinity;
     private Object selector;
+    private String image;
     private String sourceTypeYaml;
-
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -38,7 +37,6 @@ public class CustomServicesAdmin {
     private CommonSpec spec;
     @JsonIgnore
     private CommonStatus status;
-
 
     public String getResultCode() {
         return resultCode;
@@ -72,86 +70,68 @@ public class CustomServicesAdmin {
         this.detailMessage = detailMessage;
     }
 
-
-    // services
-    public Object getLabels() {
-        return metadata.getLabels();
-    }
-
-    public void setLabels(Object labels) {
-        this.labels = labels;
-    }
-
     public String getName() {
-        return metadata.getName();
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getNamespaces() {
-        return metadata.getNamespace();
-    }
-
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
-    }
-
-    public Object getAnnotations() {
-        return metadata.getAnnotations();
-    }
-
-    public void setAnnotations(Object annotations) {
-        this.annotations = annotations;
-    }
-
     public String getUid() {
-        return metadata.getUid();
+        return uid;
     }
 
     public void setUid(String uid) {
         this.uid = uid;
     }
 
+    public String getNamespaces() {
+        return namespaces;
+    }
+
+    public void setNamespaces(String namesapce) {
+        this.namespaces = namesapce;
+    }
+
+    public Object getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Object labels) {
+        this.labels = labels;
+    }
+
+    public Object getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Object annotations) {
+        this.annotations = annotations;
+    }
+
     public String getCreationTimestamp() {
-        return metadata.getCreationTimestamp();
+        return creationTimestamp;
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
     }
 
-    public String getType() {
-        return spec.getType();
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getClusterIP() {
-        return spec.getClusterIP();
-    }
-
-    public void setClusterIP(String clusterIP) {
-        this.clusterIP = clusterIP;
-    }
-
-    public String getSessionAffinity() {
-        return spec.getSessionAffinity();
-    }
-
-    public void setSessionAffinity(String sessionAffinity) {
-        this.sessionAffinity = sessionAffinity;
-    }
-
     public Object getSelector() {
-        return spec.getSelector();
+        return selector;
     }
 
     public void setSelector(Object selector) {
         this.selector = selector;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getSourceTypeYaml() {
@@ -185,6 +165,4 @@ public class CustomServicesAdmin {
     public void setStatus(CommonStatus status) {
         this.status = status;
     }
-
-
 }

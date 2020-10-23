@@ -18,6 +18,7 @@ public class ResourceQuotas {
   private String resultMessage;
   private Integer httpStatusCode;
   private String detailMessage;
+  private String nextActionUrl;
   private String apiVersion;
   private String kind;
   private CommonMetaData metadata;

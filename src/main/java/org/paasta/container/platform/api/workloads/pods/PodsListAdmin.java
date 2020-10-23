@@ -1,4 +1,4 @@
-package org.paasta.container.platform.api.customServices;
+package org.paasta.container.platform.api.workloads.pods;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -10,29 +10,28 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CustomServices List Admin Model 클래스
+ * Pods List Model 클래스
  *
- * @author kjh
+ * @author hrjin
  * @version 1.0
- * @since 2020.09.10
+ * @since 2020.09.09
  */
 @Data
-public class CustomServicesListAdmin {
-
+public class PodsListAdmin {
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
+
     private Map metadata;
-    private List<CustomServicesListAdminItem> items;
+    private List<PodsListAdminList> items ;
 }
 
-class CustomServicesListAdminItem {
-
+class PodsListAdminList {
     private String name;
     private String namespaces;
-    private String type;
-    private String clusterIP;
+    private String nodes;
+    private String restarts;
     private String creationTimestamp;
 
     @JsonIgnore
@@ -43,7 +42,7 @@ class CustomServicesListAdminItem {
     private CommonStatus status;
 
     public String getName() {
-        return metadata.getName();
+        return name;
     }
 
     public void setName(String name) {
@@ -51,31 +50,31 @@ class CustomServicesListAdminItem {
     }
 
     public String getNamespaces() {
-        return metadata.getNamespace();
+        return namespaces;
     }
 
     public void setNamespaces(String namespaces) {
         this.namespaces = namespaces;
     }
 
-    public String getType() {
-        return spec.getType();
+    public String getNodes() {
+        return nodes;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setNodes(String nodes) {
+        this.nodes = nodes;
     }
 
-    public String getClusterIP() {
-        return spec.getClusterIP();
+    public String getRestarts() {
+        return restarts;
     }
 
-    public void setClusterIP(String clusterIP) {
-        this.clusterIP = clusterIP;
+    public void setRestarts(String restarts) {
+        this.restarts = restarts;
     }
 
     public String getCreationTimestamp() {
-        return metadata.getCreationTimestamp();
+        return creationTimestamp;
     }
 
     public void setCreationTimestamp(String creationTimestamp) {

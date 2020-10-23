@@ -1,19 +1,24 @@
-package org.paasta.container.platform.api.customServices;
+package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
+import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsSpec;
+import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsStatus;
+
+import java.util.Map;
 
 /**
- * CustomServices Admin Model 클래스
+ * PersistentVolumeClaims Model 클래스
  *
- * @author kjhoon
+ * @author hrjin
  * @version 1.0
- * @since 2020.09.10
+ * @since 2020.09.18
  */
-public class CustomServicesAdmin {
-
+@Data
+public class PersistentVolumeClaimsAdmin {
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
@@ -21,16 +26,18 @@ public class CustomServicesAdmin {
 
     private String name;
     private String uid;
+    private String namespaces;
     private Object labels;
     private Object annotations;
     private String creationTimestamp;
-    private String namespaces;
-    private String type;
-    private String clusterIP;
-    private String sessionAffinity;
-    private Object selector;
-    private String sourceTypeYaml;
 
+    //private String status;
+    private String storageClasses;
+    private String capacity;
+    private String accessMode;
+
+    //private Map<String, Object> source;
+    private String sourceTypeYaml;
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -38,7 +45,6 @@ public class CustomServicesAdmin {
     private CommonSpec spec;
     @JsonIgnore
     private CommonStatus status;
-
 
     public String getResultCode() {
         return resultCode;
@@ -72,86 +78,76 @@ public class CustomServicesAdmin {
         this.detailMessage = detailMessage;
     }
 
-
-    // services
-    public Object getLabels() {
-        return metadata.getLabels();
-    }
-
-    public void setLabels(Object labels) {
-        this.labels = labels;
-    }
-
     public String getName() {
-        return metadata.getName();
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getNamespaces() {
-        return metadata.getNamespace();
-    }
-
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
-    }
-
-    public Object getAnnotations() {
-        return metadata.getAnnotations();
-    }
-
-    public void setAnnotations(Object annotations) {
-        this.annotations = annotations;
-    }
-
     public String getUid() {
-        return metadata.getUid();
+        return uid;
     }
 
     public void setUid(String uid) {
         this.uid = uid;
     }
 
+    public String getNamespaces() {
+        return namespaces;
+    }
+
+    public void setNamespaces(String namespaces) {
+        this.namespaces = namespaces;
+    }
+
+    public Object getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Object labels) {
+        this.labels = labels;
+    }
+
+    public Object getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Object annotations) {
+        this.annotations = annotations;
+    }
+
     public String getCreationTimestamp() {
-        return metadata.getCreationTimestamp();
+        return creationTimestamp;
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
     }
 
-    public String getType() {
-        return spec.getType();
+    public String getStorageClasses() {
+        return storageClasses;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setStorageClasses(String storageClasses) {
+        this.storageClasses = storageClasses;
     }
 
-    public String getClusterIP() {
-        return spec.getClusterIP();
+    public String getCapacity() {
+        return capacity;
     }
 
-    public void setClusterIP(String clusterIP) {
-        this.clusterIP = clusterIP;
+    public void setCapacity(String capacity) {
+        this.capacity = capacity;
     }
 
-    public String getSessionAffinity() {
-        return spec.getSessionAffinity();
+    public String getAccessMode() {
+        return accessMode;
     }
 
-    public void setSessionAffinity(String sessionAffinity) {
-        this.sessionAffinity = sessionAffinity;
-    }
-
-    public Object getSelector() {
-        return spec.getSelector();
-    }
-
-    public void setSelector(Object selector) {
-        this.selector = selector;
+    public void setAccessMode(String accessMode) {
+        this.accessMode = accessMode;
     }
 
     public String getSourceTypeYaml() {
@@ -185,6 +181,4 @@ public class CustomServicesAdmin {
     public void setStatus(CommonStatus status) {
         this.status = status;
     }
-
-
 }

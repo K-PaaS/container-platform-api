@@ -1,4 +1,4 @@
-package org.paasta.container.platform.api.customServices;
+package org.paasta.container.platform.api.storages.storageClasses;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -10,29 +10,26 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CustomServices List Admin Model 클래스
+ * StorageClasses List Model 클래스
  *
- * @author kjh
+ * @author jjy
  * @version 1.0
- * @since 2020.09.10
+ * @since 2020.10.13
  */
 @Data
-public class CustomServicesListAdmin {
-
+public class StorageClassesListAdmin {
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
     private Map metadata;
-    private List<CustomServicesListAdminItem> items;
+    private List<StorageClassesListAdminItem> items;
 }
 
-class CustomServicesListAdminItem {
-
+class StorageClassesListAdminItem {
     private String name;
-    private String namespaces;
-    private String type;
-    private String clusterIP;
+    private String provider;
+    private Object parameters;
     private String creationTimestamp;
 
     @JsonIgnore
@@ -43,39 +40,31 @@ class CustomServicesListAdminItem {
     private CommonStatus status;
 
     public String getName() {
-        return metadata.getName();
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getNamespaces() {
-        return metadata.getNamespace();
+    public String getProvider() {
+        return provider;
     }
 
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 
-    public String getType() {
-        return spec.getType();
+    public Object getParameters() {
+        return parameters;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getClusterIP() {
-        return spec.getClusterIP();
-    }
-
-    public void setClusterIP(String clusterIP) {
-        this.clusterIP = clusterIP;
+    public void setParameters(Object parameters) {
+        this.parameters = parameters;
     }
 
     public String getCreationTimestamp() {
-        return metadata.getCreationTimestamp();
+        return creationTimestamp;
     }
 
     public void setCreationTimestamp(String creationTimestamp) {

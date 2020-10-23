@@ -1,36 +1,41 @@
-package org.paasta.container.platform.api.customServices;
+package org.paasta.container.platform.api.clusters.namespaces;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
 
+import java.util.Map;
+
 /**
- * CustomServices Admin Model 클래스
+ * Namespace Model 클래스
  *
- * @author kjhoon
+ * @author hrjin
  * @version 1.0
- * @since 2020.09.10
+ * @since 2020.09.02
  */
-public class CustomServicesAdmin {
+@Data
+public class NamespacesAdmin {
 
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
 
+    private String kind;
+    private String apiVersion;
+
     private String name;
     private String uid;
     private Object labels;
     private Object annotations;
+    //status?
     private String creationTimestamp;
-    private String namespaces;
-    private String type;
-    private String clusterIP;
-    private String sessionAffinity;
-    private Object selector;
-    private String sourceTypeYaml;
 
+
+    //private Map<String, Object> source;
+    private String sourceTypeYaml;
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -38,7 +43,6 @@ public class CustomServicesAdmin {
     private CommonSpec spec;
     @JsonIgnore
     private CommonStatus status;
-
 
     public String getResultCode() {
         return resultCode;
@@ -72,86 +76,60 @@ public class CustomServicesAdmin {
         this.detailMessage = detailMessage;
     }
 
-
-    // services
-    public Object getLabels() {
-        return metadata.getLabels();
+    public String getKind() {
+        return kind;
     }
 
-    public void setLabels(Object labels) {
-        this.labels = labels;
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
     }
 
     public String getName() {
-        return metadata.getName();
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getNamespaces() {
-        return metadata.getNamespace();
-    }
-
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
-    }
-
-    public Object getAnnotations() {
-        return metadata.getAnnotations();
-    }
-
-    public void setAnnotations(Object annotations) {
-        this.annotations = annotations;
-    }
-
     public String getUid() {
-        return metadata.getUid();
+        return uid;
     }
 
     public void setUid(String uid) {
         this.uid = uid;
     }
 
+    public Object getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Object labels) {
+        this.labels = labels;
+    }
+
+    public Object getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Object annotations) {
+        this.annotations = annotations;
+    }
+
     public String getCreationTimestamp() {
-        return metadata.getCreationTimestamp();
+        return creationTimestamp;
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
-    }
-
-    public String getType() {
-        return spec.getType();
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getClusterIP() {
-        return spec.getClusterIP();
-    }
-
-    public void setClusterIP(String clusterIP) {
-        this.clusterIP = clusterIP;
-    }
-
-    public String getSessionAffinity() {
-        return spec.getSessionAffinity();
-    }
-
-    public void setSessionAffinity(String sessionAffinity) {
-        this.sessionAffinity = sessionAffinity;
-    }
-
-    public Object getSelector() {
-        return spec.getSelector();
-    }
-
-    public void setSelector(Object selector) {
-        this.selector = selector;
     }
 
     public String getSourceTypeYaml() {
@@ -185,6 +163,4 @@ public class CustomServicesAdmin {
     public void setStatus(CommonStatus status) {
         this.status = status;
     }
-
-
 }

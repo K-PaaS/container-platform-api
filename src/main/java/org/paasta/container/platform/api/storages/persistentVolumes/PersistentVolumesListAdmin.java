@@ -1,4 +1,4 @@
-package org.paasta.container.platform.api.customServices;
+package org.paasta.container.platform.api.storages.persistentVolumes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -10,29 +10,28 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CustomServices List Admin Model 클래스
+ * PersistentVolumes List Model 클래스
  *
- * @author kjh
+ * @author jjy
  * @version 1.0
- * @since 2020.09.10
+ * @since 2020.10.19
  */
 @Data
-public class CustomServicesListAdmin {
-
+public class PersistentVolumesListAdmin {
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
     private Map metadata;
-    private List<CustomServicesListAdminItem> items;
+    private List<PersistentVolumesListAdminItem> items;
 }
 
-class CustomServicesListAdminItem {
-
+class PersistentVolumesListAdminItem {
     private String name;
-    private String namespaces;
-    private String type;
-    private String clusterIP;
+    private String capacity;
+    private String accessMode;
+    //private String status;
+    private String claim;
     private String creationTimestamp;
 
     @JsonIgnore
@@ -43,39 +42,39 @@ class CustomServicesListAdminItem {
     private CommonStatus status;
 
     public String getName() {
-        return metadata.getName();
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getNamespaces() {
-        return metadata.getNamespace();
+    public String getCapacity() {
+        return capacity;
     }
 
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
+    public void setCapacity(String capacity) {
+        this.capacity = capacity;
     }
 
-    public String getType() {
-        return spec.getType();
+    public String getAccessMode() {
+        return accessMode;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setAccessMode(String accessMode) {
+        this.accessMode = accessMode;
     }
 
-    public String getClusterIP() {
-        return spec.getClusterIP();
+    public String getClaim() {
+        return claim;
     }
 
-    public void setClusterIP(String clusterIP) {
-        this.clusterIP = clusterIP;
+    public void setClaim(String claim) {
+        this.claim = claim;
     }
 
     public String getCreationTimestamp() {
-        return metadata.getCreationTimestamp();
+        return creationTimestamp;
     }
 
     public void setCreationTimestamp(String creationTimestamp) {

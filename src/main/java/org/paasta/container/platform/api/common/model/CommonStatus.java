@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.common.model;
 
 import lombok.Data;
+import org.paasta.container.platform.api.workloads.pods.support.ContainerStatusesItem;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class CommonStatus {
     private int readyReplicas;
     private int replicas;
     private String phase;
-    private List containerStatuses;
+    private List<ContainerStatusesItem> containerStatuses;
     private List<CommonCondition> conditions;
     private String podIP;
     private String qosClass;

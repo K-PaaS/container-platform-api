@@ -1,4 +1,4 @@
-package org.paasta.container.platform.api.customServices;
+package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -10,29 +10,30 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CustomServices List Admin Model 클래스
+ * PersistentVolumeClaims List Model 클래스
  *
- * @author kjh
+ * @author hrjin
  * @version 1.0
- * @since 2020.09.10
+ * @since 2020.09.18
  */
 @Data
-public class CustomServicesListAdmin {
-
+public class PersistentVolumeClaimsListAdmin {
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
     private Map metadata;
-    private List<CustomServicesListAdminItem> items;
+    private List<PersistentVolumeClaimsListAdminItem> items;
+
 }
 
-class CustomServicesListAdminItem {
+class PersistentVolumeClaimsListAdminItem {
 
     private String name;
     private String namespaces;
-    private String type;
-    private String clusterIP;
+    //status?
+    private String volume;
+    private String capacity;
     private String creationTimestamp;
 
     @JsonIgnore
@@ -43,7 +44,7 @@ class CustomServicesListAdminItem {
     private CommonStatus status;
 
     public String getName() {
-        return metadata.getName();
+        return name;
     }
 
     public void setName(String name) {
@@ -51,31 +52,31 @@ class CustomServicesListAdminItem {
     }
 
     public String getNamespaces() {
-        return metadata.getNamespace();
+        return namespaces;
     }
 
     public void setNamespaces(String namespaces) {
         this.namespaces = namespaces;
     }
 
-    public String getType() {
-        return spec.getType();
+    public String getVolume() {
+        return volume;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setVolume(String volume) {
+        this.volume = volume;
     }
 
-    public String getClusterIP() {
-        return spec.getClusterIP();
+    public String getCapacity() {
+        return capacity;
     }
 
-    public void setClusterIP(String clusterIP) {
-        this.clusterIP = clusterIP;
+    public void setCapacity(String capacity) {
+        this.capacity = capacity;
     }
 
     public String getCreationTimestamp() {
-        return metadata.getCreationTimestamp();
+        return creationTimestamp;
     }
 
     public void setCreationTimestamp(String creationTimestamp) {

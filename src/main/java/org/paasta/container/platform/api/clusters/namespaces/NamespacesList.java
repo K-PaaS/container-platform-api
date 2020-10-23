@@ -14,6 +14,9 @@ import java.util.Map;
 @Data
 public class NamespacesList {
     private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
     private Map metadata;
     private List<Namespaces> items;
 }

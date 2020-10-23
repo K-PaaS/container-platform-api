@@ -2,8 +2,10 @@ package org.paasta.container.platform.api.storages.storageClasses;
 
 import lombok.Data;
 import org.paasta.container.platform.api.storages.persistentVolumeClaims.PersistentVolumeClaims;
+import org.paasta.container.platform.api.storages.persistentVolumes.PersistentVolumes;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * StorageClasses List Model 클래스
@@ -15,5 +17,9 @@ import java.util.List;
 @Data
 public class StorageClassesList {
     private String resultCode;
-    private List<PersistentVolumeClaims> items;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
+    private Map metadata;
+    private List<StorageClasses> items;
 }

@@ -1,4 +1,4 @@
-package org.paasta.container.platform.api.customServices;
+package org.paasta.container.platform.api.workloads.deployments;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -10,29 +10,27 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CustomServices List Admin Model 클래스
+ * Deployments List Model 클래스
  *
- * @author kjh
+ * @author hrjin
  * @version 1.0
- * @since 2020.09.10
+ * @since 2020.09.08
  */
 @Data
-public class CustomServicesListAdmin {
-
+public class DeploymentsListAdmin {
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
     private Map metadata;
-    private List<CustomServicesListAdminItem> items;
+    private List<Deployments> items;
 }
 
-class CustomServicesListAdminItem {
-
+class DeploymentsListAdminItem {
     private String name;
     private String namespaces;
-    private String type;
-    private String clusterIP;
+    private String pods;
+    private String images;
     private String creationTimestamp;
 
     @JsonIgnore
@@ -43,7 +41,7 @@ class CustomServicesListAdminItem {
     private CommonStatus status;
 
     public String getName() {
-        return metadata.getName();
+        return name;
     }
 
     public void setName(String name) {
@@ -51,31 +49,31 @@ class CustomServicesListAdminItem {
     }
 
     public String getNamespaces() {
-        return metadata.getNamespace();
+        return namespaces;
     }
 
     public void setNamespaces(String namespaces) {
         this.namespaces = namespaces;
     }
 
-    public String getType() {
-        return spec.getType();
+    public String getPods() {
+        return pods;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setPods(String pods) {
+        this.pods = pods;
     }
 
-    public String getClusterIP() {
-        return spec.getClusterIP();
+    public String getImages() {
+        return images;
     }
 
-    public void setClusterIP(String clusterIP) {
-        this.clusterIP = clusterIP;
+    public void setImages(String images) {
+        this.images = images;
     }
 
     public String getCreationTimestamp() {
-        return metadata.getCreationTimestamp();
+        return creationTimestamp;
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
