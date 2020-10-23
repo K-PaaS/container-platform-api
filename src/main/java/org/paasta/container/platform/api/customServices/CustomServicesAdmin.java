@@ -24,7 +24,7 @@ public class CustomServicesAdmin {
     private Object labels;
     private Object annotations;
     private String creationTimestamp;
-    private String namespaces;
+    private String namespace;
     private String type;
     private String clusterIP;
     private String sessionAffinity;
@@ -90,12 +90,12 @@ public class CustomServicesAdmin {
         this.name = name;
     }
 
-    public String getNamespaces() {
+    public String getNamespace() {
         return metadata.getNamespace();
     }
 
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public Object getAnnotations() {

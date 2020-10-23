@@ -28,7 +28,7 @@ public class DeploymentsListAdmin {
 
 class DeploymentsListAdminItem {
     private String name;
-    private String namespaces;
+    private String namespace;
     private String pods;
     private String images;
     private String creationTimestamp;
@@ -48,12 +48,12 @@ class DeploymentsListAdminItem {
         this.name = name;
     }
 
-    public String getNamespaces() {
-        return namespaces;
+    public String getNamespace() {
+        return namespace;
     }
 
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public String getPods() {

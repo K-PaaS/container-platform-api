@@ -30,8 +30,8 @@ public class PersistentVolumeClaimsListAdmin {
 class PersistentVolumeClaimsListAdminItem {
 
     private String name;
-    private String namespaces;
-    //status?
+    private String namespace;
+    private String status;
     private String volume;
     private String capacity;
     private String creationTimestamp;
@@ -41,7 +41,7 @@ class PersistentVolumeClaimsListAdminItem {
     @JsonIgnore
     private CommonSpec spec;
     @JsonIgnore
-    private CommonStatus status;
+    private CommonStatus commonStatus;
 
     public String getName() {
         return name;
@@ -51,12 +51,20 @@ class PersistentVolumeClaimsListAdminItem {
         this.name = name;
     }
 
-    public String getNamespaces() {
-        return namespaces;
+    public String getNamespace() {
+        return namespace;
     }
 
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public String getStatus() {
+        return status = commonStatus.getPhase();
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getVolume() {
@@ -99,11 +107,11 @@ class PersistentVolumeClaimsListAdminItem {
         this.spec = spec;
     }
 
-    public CommonStatus getStatus() {
-        return status;
+    public CommonStatus getCommonStatus() {
+        return commonStatus;
     }
 
-    public void setStatus(CommonStatus status) {
-        this.status = status;
+    public void setCommonStatus(CommonStatus status) {
+        this.commonStatus = commonStatus;
     }
 }

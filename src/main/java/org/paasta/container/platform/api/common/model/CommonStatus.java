@@ -1,7 +1,6 @@
 package org.paasta.container.platform.api.common.model;
 
 import lombok.Data;
-import org.paasta.container.platform.api.workloads.pods.support.ContainerStatusesItem;
 
 import java.util.List;
 

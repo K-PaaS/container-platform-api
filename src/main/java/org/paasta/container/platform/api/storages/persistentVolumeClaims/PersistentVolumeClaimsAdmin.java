@@ -5,10 +5,6 @@ import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsSpec;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsStatus;
-
-import java.util.Map;
 
 /**
  * PersistentVolumeClaims Model 클래스
@@ -26,7 +22,7 @@ public class PersistentVolumeClaimsAdmin {
 
     private String name;
     private String uid;
-    private String namespaces;
+    private String namespace;
     private Object labels;
     private Object annotations;
     private String creationTimestamp;
@@ -94,12 +90,12 @@ public class PersistentVolumeClaimsAdmin {
         this.uid = uid;
     }
 
-    public String getNamespaces() {
-        return namespaces;
+    public String getNamespace() {
+        return namespace;
     }
 
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public Object getLabels() {

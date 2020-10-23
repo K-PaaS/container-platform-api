@@ -23,7 +23,7 @@ public class ReplicaSetsAdmin {
 
     private String name;
     private String uid;
-    private String namespaces;
+    private String namespace;
     private Object labels;
     private Object annotations;
     private String creationTimestamp;
@@ -86,12 +86,12 @@ public class ReplicaSetsAdmin {
         this.uid = uid;
     }
 
-    public String getNamespaces() {
-        return namespaces;
+    public String getNamespace() {
+        return namespace;
     }
 
-    public void setNamespaces(String namesapce) {
-        this.namespaces = namesapce;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public Object getLabels() {

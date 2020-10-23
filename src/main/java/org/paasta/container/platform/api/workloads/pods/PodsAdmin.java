@@ -24,7 +24,7 @@ public class PodsAdmin {
 
     private String name;
     private String uid;
-    private String namespaces;
+    private String namespace;
     private Object labels;
     private Object annotations;
     private String creationTimestamp;
@@ -93,12 +93,12 @@ public class PodsAdmin {
         this.uid = uid;
     }
 
-    public String getNamespaces() {
-        return namespaces;
+    public String getNamespace() {
+        return namespace;
     }
 
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public Object getLabels() {

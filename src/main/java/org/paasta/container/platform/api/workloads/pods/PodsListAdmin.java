@@ -29,7 +29,7 @@ public class PodsListAdmin {
 
 class PodsListAdminList {
     private String name;
-    private String namespaces;
+    private String namespace;
     private String nodes;
     private String restarts;
     private String creationTimestamp;
@@ -49,12 +49,12 @@ class PodsListAdminList {
         this.name = name;
     }
 
-    public String getNamespaces() {
-        return namespaces;
+    public String getNamespace() {
+        return namespace;
     }
 
-    public void setNamespaces(String namespaces) {
-        this.namespaces = namespaces;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public String getNodes() {
