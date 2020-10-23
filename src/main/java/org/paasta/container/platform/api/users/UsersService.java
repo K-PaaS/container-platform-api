@@ -122,8 +122,10 @@ public class UsersService {
      *
      * @return the Users
      */
-    public Users getUsersDetailsForLogin (String userId) {
-        return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DETAIL_LOGIN.replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
+    public Users getUsersDetailsForLogin (String userId, String isAdmin) {
+        return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DETAIL_LOGIN.replace("{userId:.+}", userId)
+                        + "?isAdmin=" + isAdmin
+                , HttpMethod.GET, null, Users.class);
     }
 
 
