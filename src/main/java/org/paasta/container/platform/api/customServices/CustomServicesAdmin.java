@@ -19,16 +19,20 @@ public class CustomServicesAdmin {
     private Integer httpStatusCode;
     private String detailMessage;
 
+    //Details
     private String name;
     private String uid;
+    private String namespace;
     private Object labels;
     private Object annotations;
     private String creationTimestamp;
-    private String namespace;
+
+    //Resource Info
     private String type;
     private String clusterIP;
     private String sessionAffinity;
     private Object selector;
+
     private String sourceTypeYaml;
 
 
@@ -72,22 +76,20 @@ public class CustomServicesAdmin {
         this.detailMessage = detailMessage;
     }
 
-
-    // services
-    public Object getLabels() {
-        return metadata.getLabels();
-    }
-
-    public void setLabels(Object labels) {
-        this.labels = labels;
-    }
-
     public String getName() {
         return metadata.getName();
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUid() {
+        return metadata.getUid();
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getNamespace() {
@@ -98,20 +100,20 @@ public class CustomServicesAdmin {
         this.namespace = namespace;
     }
 
+    public Object getLabels() {
+        return metadata.getLabels();
+    }
+
+    public void setLabels(Object labels) {
+        this.labels = labels;
+    }
+
     public Object getAnnotations() {
         return metadata.getAnnotations();
     }
 
     public void setAnnotations(Object annotations) {
         this.annotations = annotations;
-    }
-
-    public String getUid() {
-        return metadata.getUid();
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
     }
 
     public String getCreationTimestamp() {
@@ -185,6 +187,4 @@ public class CustomServicesAdmin {
     public void setStatus(CommonStatus status) {
         this.status = status;
     }
-
-
 }

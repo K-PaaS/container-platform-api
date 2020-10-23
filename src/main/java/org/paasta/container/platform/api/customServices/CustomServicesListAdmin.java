@@ -70,17 +70,13 @@ class CustomServicesListAdminItem {
         return spec.getClusterIP();
     }
 
-    public void setClusterIP(String clusterIP) {
-        this.clusterIP = clusterIP;
-    }
+    public void setClusterIP(String clusterIP) { this.clusterIP = clusterIP; }
 
     public String getCreationTimestamp() {
         return metadata.getCreationTimestamp();
     }
 
-    public void setCreationTimestamp(String creationTimestamp) {
-        this.creationTimestamp = creationTimestamp;
-    }
+    public void setCreationTimestamp(String creationTimestamp) { this.creationTimestamp = creationTimestamp; }
 
     public CommonMetaData getMetadata() {
         return metadata;

@@ -189,4 +189,63 @@ public class CustomServicesService {
         return (CustomServicesList) commonService.setResultModel(customServicesList, Constants.RESULT_STATUS_SUCCESS);
     }
 
+
+    //methods for administrators
+
+    /**
+     * Services Admin 목록 조회(Get Services Admin list)
+     *
+     * @param namespace the namespace
+     * @return the services admin list
+     */
+    public Object getCustomServicesListAdmin(String namespace, int limit, String continueToken) {
+        String param = "";
+        HashMap responseMap = null;
+
+        if(continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
+         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListServicesListUrl()
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+                , HttpMethod.GET, null, Map.class);
+
+        try{
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, CustomServicesListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+    /**
+     * Services Admin 상세 조회(Get Services Admin detail)
+     *
+     * @param namespace    the namespace
+     * @param resourceName the resource name
+     * @return the services admin
+     */
+    public Object getCustomServicesAdmin(String namespace, String resourceName) {
+
+        HashMap responseMap = null;
+
+        Object response  = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListServicesGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", resourceName)
+                , HttpMethod.GET, null, Map.class);
+
+        try{
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, CustomServicesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
 }
