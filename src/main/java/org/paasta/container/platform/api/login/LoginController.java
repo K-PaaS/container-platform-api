@@ -47,7 +47,8 @@ public class LoginController {
     @NoAuth
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
-    public Object generateToken(@RequestBody AuthenticationRequest authRequest) {
+    public Object generateToken(@RequestBody AuthenticationRequest authRequest,
+                                @RequestParam(required = true, name = "isAdmin", defaultValue = "false") String isAdmin) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authRequest.getUserId(), authRequest.getPassword()));
