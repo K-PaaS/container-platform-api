@@ -26,7 +26,7 @@ public class DeploymentsService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new deployments service.
+     * Instantiates a new Deployments service
      *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
@@ -40,7 +40,7 @@ public class DeploymentsService {
     }
 
     /**
-     * Deployments 목록을 조회한다.
+     * Deployments 목록 조회(Get Deployments list)
      *
      * @param namespace the namespace
      * @return the deployments list
@@ -61,11 +61,12 @@ public class DeploymentsService {
     }
 
     /**
-     * Deployments 상세 정보를 조회한다. (User Portal)
+     * Deployments 상세 조회(Get Deployments detail)
+     * (User Portal)
      *
-     * @param namespace       the namespace
+     * @param namespace the namespace
      * @param deploymentName the deployments name
-     * @return the deployments
+     * @return the deployments detail
      */
     public Deployments getDeployments(String namespace, String deploymentName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -80,11 +81,12 @@ public class DeploymentsService {
 
 
     /**
-     * Deployments 상세 정보를 조회한다. (Admin Portal)
+     * Deployments 상세 조회(Get Deployments detail)
+     * (Admin Portal)
      *
-     * @param namespace       the namespace
-     * @param deploymentName  the deployments Name
-     * @return                the Object
+     * @param namespace the namespace
+     * @param deploymentName  the deployments name
+     * @return the deployments detail
      */
     public Object getDeploymentsAdmin(String namespace, String deploymentName) {
         Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
@@ -105,11 +107,11 @@ public class DeploymentsService {
 
 
     /**
-     * Deployments YAML을 조회한다.
+     * Deployments YAML 조회(Get Deployments yaml)
      *
-     * @param namespace       the namespace
+     * @param namespace the namespace
      * @param deploymentName the deployments name
-     * @param resultMap       the result map
+     * @param resultMap the result map
      * @return the deployments yaml
      */
     public Deployments getDeploymentsYaml(String namespace, String deploymentName, HashMap resultMap) {
@@ -126,10 +128,10 @@ public class DeploymentsService {
 
 
     /**
-     * Deployments 를 생성한다.
+     * Deployments 생성(Create Deployments)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
+     * @param namespace the namespace
+     * @param yaml the yaml
      * @return return is succeeded
      */
     public Object createDeployments(String namespace, String yaml) {
@@ -142,11 +144,11 @@ public class DeploymentsService {
     }
 
     /**
-     * Deployments 를 삭제한다.
+     * Deployments 삭제(Delete Deployments)
      *
-     * @param namespace        the namespace
-     * @param name             the deployments name
-     * @return the ResultStatus
+     * @param namespace the namespace
+     * @param name the deployments name
+     * @return return is succeeded
      */
     public ResultStatus deleteDeployments(String namespace, String name) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -158,12 +160,12 @@ public class DeploymentsService {
 
 
     /**
-     * Deployments 를 수정한다.
+     * Deployments 수정(Update Deployments)
      *
-     * @param namespace     the namespace
-     * @param name          the deployments name
-     * @param yaml          the yaml
-     * @return the deployments
+     * @param namespace the namespace
+     * @param name the deployments name
+     * @param yaml the yaml
+     * @return return is succeeded
      */
     public ResultStatus updateDeployments(String namespace, String name, String yaml) {
         ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,

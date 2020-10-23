@@ -46,7 +46,7 @@ public class RestTemplateService {
     private String baseUrl;
 
     /**
-     * Instantiates a new Rest template service.
+     * Instantiates a new Rest template service
      * @param restTemplate                   the rest template
      * @param commonApiAuthorizationId       the common api authorization id
      * @param commonApiAuthorizationPassword the common api authorization password
@@ -67,7 +67,7 @@ public class RestTemplateService {
 
 
     /**
-     * Send t.
+     * Send t
      *
      * @param <T>          the type parameter
      * @param reqApi       the req api
@@ -83,7 +83,7 @@ public class RestTemplateService {
 
 
     /**
-     * Send t.
+     * Send t
      *
      * @param <T>          the type parameter
      * @param reqApi       the req api
@@ -100,7 +100,7 @@ public class RestTemplateService {
 
 
     /**
-     * Send t.
+     * Send t
      *
      * @param <T>          the type parameter
      * @param reqApi       the req api
@@ -188,7 +188,7 @@ public class RestTemplateService {
     }
 
     /**
-     * Authorization 값을 입력한다.
+     * Authorization 값을 입력
      *
      * @param reqApi the reqApi
      */
@@ -214,7 +214,7 @@ public class RestTemplateService {
     }
 
     /**
-     * Admin Token 상세 정보를 조회한다.
+     * Admin Token 상세 정보를 조회
      *
      * @return the AdminToken
      */
@@ -291,7 +291,7 @@ public class RestTemplateService {
 
 
     /**
-     * service account의 secret 이름을 조회한다.
+     * service account의 secret 이름을 조회
      *
      * @param namespace the namespace
      * @param userName the user name

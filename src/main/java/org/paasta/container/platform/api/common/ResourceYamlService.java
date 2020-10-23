@@ -121,7 +121,7 @@ public class ResourceYamlService {
 
 
     /**
-     *  namespace에 ResourceQuota를 할당한다.
+     *  namespace에 ResourceQuota를 할당
      *
      */
     public void createResourceQuota() {
@@ -139,7 +139,7 @@ public class ResourceYamlService {
 
 
     /**
-     * namespace에 LimitRange를 할당한다.
+     * namespace에 LimitRange를 할당
      *
      */
     public void createLimitRange() {

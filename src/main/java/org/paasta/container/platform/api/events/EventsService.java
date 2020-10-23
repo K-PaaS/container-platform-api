@@ -26,7 +26,7 @@ public class EventsService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new Events service.
+     * Instantiates a new Events service
      *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
@@ -40,9 +40,9 @@ public class EventsService {
     }
 
     /**
-     * Events 목록을 조회한다.
+     * Events 목록 조회(Get Events list)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceUid the resourceUid
      * @return the events list
      */
@@ -62,9 +62,9 @@ public class EventsService {
     }
 
     /**
-     * Events 목록을 조회한다.(for namespace)
+     * Events 목록 조회(Get Events namespace)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @return the events list
      */
     EventsList getNamespaceEventsList(String namespace) {

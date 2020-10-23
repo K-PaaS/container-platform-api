@@ -30,7 +30,7 @@ public class AdminTokenController {
     /**
      * AdminToken 상세 조회(Get AdminToken detail)
      *
-     * @return the AdminToken
+     * @return the adminToken detail
      */
     @GetMapping(value = "/adminToken")
     public AdminToken getAdminToken(){

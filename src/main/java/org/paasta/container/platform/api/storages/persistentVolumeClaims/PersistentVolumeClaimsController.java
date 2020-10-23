@@ -49,7 +49,7 @@ public class PersistentVolumeClaimsController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the persistentVolumeClaims
+     * @return the persistentVolumeClaims detail
      */
     @GetMapping(value = "/{resourceName:.+}")
     public PersistentVolumeClaims getPersistentVolumeClaims(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {

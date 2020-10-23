@@ -31,7 +31,7 @@ public class UsersController {
 
 
     /**
-     * Users 전체 목록 조회
+     * Users 전체 목록 조회(Get Users list)
      *
      * @return the UsersListAdmin
      */
@@ -42,7 +42,7 @@ public class UsersController {
 
 
     /**
-     * 각 namespace별 Users 목록 조회
+     * 각 namespace별 Users 목록 조회(Get Users namespace list)
      *
      * @param namespace the namespace
      * @return the UsersList
@@ -53,7 +53,7 @@ public class UsersController {
     }
 
     /**
-     * 각 namespace별 Users 상세 조회
+     * 각 namespace별 Users 상세 조회(Get Users namespace detail)
      *
      * @param namespace the namespace
      * @return the UsersList
@@ -65,7 +65,7 @@ public class UsersController {
 
 
     /**
-     * 하나의 Cluster 내 여러 Namespaces에 속한 User에 대한 상세 조회
+     * 하나의 Cluster 내 여러 namespace에 속한 User에 대한 상세 조회(Get Users cluster namespace)
      *
      * @param userId
      * @return
@@ -77,7 +77,7 @@ public class UsersController {
 
 
     /**
-     * 각 namespace별 등록돼있는 사용자들의 이름 목록 조회
+     * 각 namespace별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
      *
      * @return the Map
      */
@@ -88,8 +88,9 @@ public class UsersController {
 
 
     /**
-     * Users 생성 (Admin Portal)
-     * 복수 개의 namespace에 속할 수 있다.
+     * Users 생성 (Create Users)
+     * (Admin Portal)
+     * 복수 개의 namespace에 속할 수 있음
      *
      * @param users
      * @return
@@ -101,7 +102,7 @@ public class UsersController {
 
 
     /**
-     * Users 수정
+     * Users 수정(Update Users)
      *
      * @param userId
      * @param users
@@ -130,7 +131,7 @@ public class UsersController {
 
 
     /**
-     * 사용자 권한 설정
+     * Users 권한 설정(Set Users authority)
      *
      * @param namespace the namespace
      * @param users the users
@@ -143,7 +144,8 @@ public class UsersController {
 
 
     /**
-     * 사용자 삭제 (All Namespaces)
+     * Users 삭제(Delete Users)
+     * (All Namespaces)
      *
      * @param userId   the user id
      * @return         ResultStatus

@@ -58,7 +58,7 @@ public class NodesService {
      * Nodes 상세 조회(Get Nodes detail)
      *
      * @param resourceName the resource name
-     * @return the nodes
+     * @return the nodes detail
      */
     Nodes getNodes(String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,

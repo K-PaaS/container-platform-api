@@ -65,7 +65,7 @@ public class RolesService {
     /**
      * Roles 상세 조회(Get Roles detail)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return the roles
      */
@@ -123,7 +123,7 @@ public class RolesService {
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the resultStatus
+     * @return return is succeeded
      */
     public ResultStatus deleteRoles(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,

@@ -67,7 +67,7 @@ public class ReplicaSetsService {
      *
      * @param namespace the namespace
      * @param replicaSetsName the replicaSets name
-     * @return the replicaSets
+     * @return the replicaSets detail
      */
     public ReplicaSets getReplicaSets(String namespace, String replicaSetsName) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -137,7 +137,7 @@ public class ReplicaSetsService {
      *
      * @param namespace the namespace
      * @param name the replicaSets name
-     * @return the resultStatus
+     * @return return is succeeded
      */
     public ResultStatus deleteReplicaSets(String namespace, String name) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,

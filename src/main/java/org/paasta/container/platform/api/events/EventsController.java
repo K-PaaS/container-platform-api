@@ -17,7 +17,7 @@ public class EventsController {
     private final EventsService eventsService;
 
     /**
-     * Instantiates a new Events controller.
+     * Instantiates a new Events controller
      *
      * @param eventsService the events service
      */
@@ -28,7 +28,7 @@ public class EventsController {
 
 
     /**
-     * Events 목록을 조회한다.
+     * Events 목록 조회(Get Events list)
      *
      * @param namespace    the namespace
      * @param resourceUid the resourceUid
@@ -40,7 +40,7 @@ public class EventsController {
     }
 
     /**
-     * Events 목록을 조회한다.(for namespace)
+     * Events 목록 조회(Get Events namespace)
      *
      * @param namespace    the namespace
      * @return the events list

@@ -63,9 +63,9 @@ public class StorageClassesService {
     /**
      * StorageClasses 상세 조회(Get StorageClasses detail)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the storageClasses
+     * @return the storageClasses detail
      */
     public StorageClasses getStorageClasses(String namespace, String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -118,7 +118,7 @@ public class StorageClassesService {
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the resultStatus
+     * @return return is succeeded
      */
     public ResultStatus deleteStorageClasses(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -138,10 +138,10 @@ public class StorageClassesService {
      * @return return is succeeded
      */
     public Object updateStorageClasses(String namespace, String resourceName, String yaml) {
-        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+        Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListStorageClassesUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
     }
 }

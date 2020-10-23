@@ -67,9 +67,9 @@ public class CustomServicesService {
     /**
      * Services 상세 조회(Get Services detail)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the services
+     * @return the services detail
      */
     public CustomServices getCustomServices(String namespace, String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -129,7 +129,7 @@ public class CustomServicesService {
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the resultStatus
+     * @return return is succeeded
      */
     public ResultStatus deleteServices(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,

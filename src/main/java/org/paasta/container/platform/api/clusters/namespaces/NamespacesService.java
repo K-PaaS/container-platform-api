@@ -46,7 +46,7 @@ public class NamespacesService {
      * Namespaces 상세 조회(Get Namespaces detail)
      *
      * @param namespace the namespaces
-     * @return the namespaces
+     * @return the namespaces detail
      */
     Namespaces getNamespaces(String namespace) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -113,7 +113,7 @@ public class NamespacesService {
      * NameSpaces 삭제(Delete NameSpaces)
      *
      * @param namespace the namespace
-     * @return the resultStatus
+     * @return return is succeeded
      */
     public ResultStatus deleteNamespaces(String namespace) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,

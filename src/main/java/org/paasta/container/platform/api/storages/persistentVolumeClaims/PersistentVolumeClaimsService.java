@@ -48,7 +48,7 @@ public class PersistentVolumeClaimsService {
      * @param namespace the namespace
      * @param limit the limit
      * @param continueToken the continueToken
-     * @return the persistentVolumeClaims List
+     * @return the persistentVolumeClaims list
      */
     public PersistentVolumeClaimsList getPersistentVolumeClaimsList(String namespace,int limit, String continueToken) {
 
@@ -73,7 +73,7 @@ public class PersistentVolumeClaimsService {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the persistentVolumeClaims
+     * @return the persistentVolumeClaims detail
      */
     public PersistentVolumeClaims getPersistentVolumeClaims(String namespace, String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -128,7 +128,7 @@ public class PersistentVolumeClaimsService {
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the resultStatus
+     * @return return is succeeded
      */
     public ResultStatus deletePersistentVolumeClaims(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -149,11 +149,11 @@ public class PersistentVolumeClaimsService {
      */
 
     public Object updatePersistentVolumeClaims(String namespace, String resourceName, String yaml) {
-        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+        Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumeClaimsUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{persistentVolumeClaimName:.+}", resourceName));
     }
 }

@@ -45,7 +45,7 @@ public class NamespacesController {
      * Namespaces 상세 조회(Get Namespaces detail)
      *
      * @param namespace the namespaces
-     * @return the namespaces
+     * @return the namespaces detail
      */
     @GetMapping("/{namespace:.+}")
     public Namespaces getNamespaces(@PathVariable(value = "cluster") String cluster,

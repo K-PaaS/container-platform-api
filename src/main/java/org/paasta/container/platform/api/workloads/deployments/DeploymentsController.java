@@ -27,7 +27,7 @@ public class DeploymentsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentsController.class);
 
     /**
-     * Instantiates a new deployments controller.
+     * Instantiates a new Deployments controller
      * @param deploymentsService the deployments service
      */
     @Autowired
@@ -36,7 +36,7 @@ public class DeploymentsController {
     }
 
     /**
-     * Deployments 목록을 조회한다.
+     * Deployments 목록 조회(Get Deployments list)
      *
      * @param namespace the namespace
      * @return the deployments list
@@ -51,11 +51,12 @@ public class DeploymentsController {
     }
 
     /**
-     * Deployments 상세 정보를 조회한다. (User Portal)
+     * Deployments 상세 조회(Get Deployments detail)
+     * (User Portal)
      *
-     * @param namespace       the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the deployments
+     * @return the deployments detail
      */
     @ApiOperation(value="Deployments 상세 조회", nickname="getDeployment")
     @ApiImplicitParams({
@@ -80,9 +81,10 @@ public class DeploymentsController {
 
 
     /**
-     * Deployments 상세 정보를 조회한다. (Admin Portal)
+     * Deployments 상세 조회(Get Deployments detail)
+     * (Admin Portal)
      *
-     * @param namespace      the namespace
+     * @param namespace the namespace
      * @param resourceName   the resource name
      * @return               the Object
      */
@@ -92,9 +94,9 @@ public class DeploymentsController {
 //    }
 
     /**
-     * Deployments YAML을 조회한다.
+     * Deployments YAML 조회(Get Deployments yaml)
      *
-     * @param namespace       the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return the deployments yaml
      */
@@ -104,10 +106,10 @@ public class DeploymentsController {
     }
 
     /**
-     * Deployments를 생성한다.
+     * Deployments 생성(Create Deployments)
      *
-     * @param namespace       the namespace
-     * @param yaml            the yaml
+     * @param namespace the namespace
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @PostMapping
@@ -124,11 +126,11 @@ public class DeploymentsController {
     }
 
     /**
-     * Deployments를 삭제한다.
+     * Deployments 삭제(Delete Deployments)
      *
-     * @param namespace        the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the ResultStatus
+     * @return return is succeeded
      */
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deleteDeployments(@PathVariable(value = "namespace") String namespace,
@@ -137,11 +139,11 @@ public class DeploymentsController {
     }
 
     /**
-     * Deployments를 수정한다.
+     * Deployments 수정(Update Deployments)
      *
-     * @param namespace       the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the deployments
+     * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
     public ResultStatus updateDeployments(@PathVariable(value = "cluster") String cluster,

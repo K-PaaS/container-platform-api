@@ -26,7 +26,7 @@ public class EndpointsService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new Endpoints service.
+     * Instantiates a new Endpoints service
      *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
@@ -41,7 +41,7 @@ public class EndpointsService {
 
 
     /**
-     * Endpoints 목록을 조회한다.
+     * Endpoints 목록 조회(Get Endpoints list)
      *
      * @param namespace the namespace
      * @return the endpoints list
@@ -56,11 +56,11 @@ public class EndpointsService {
 
 
     /**
-     * Endpoints 상세 정보를 조회한다.
+     * Endpoints 상세 조회(Get Endpoints detail)
      *
      * @param namespace   the namespace
      * @param serviceName the service name
-     * @return the endpoints
+     * @return the endpoints detail
      */
     Endpoints getEndpoints(String namespace, String serviceName) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,

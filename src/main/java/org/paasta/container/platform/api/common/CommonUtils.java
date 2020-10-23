@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class CommonUtils {
 
     /**
-     * Timestamp Timezone 을 변경하여 재설정한다.
+     * Timestamp Timezone 을 변경하여 재설정
      *
      * @param requestTimestamp the request timestamp
      * @return the string

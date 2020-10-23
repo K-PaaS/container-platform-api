@@ -56,7 +56,7 @@ public class CustomServicesController {
      * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the services
+     * @return the services detail
      */
     @GetMapping(value = "/{resourceName:.+}")
     public CustomServices getCustomServices(@PathVariable(value = "cluster") String cluster,

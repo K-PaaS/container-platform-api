@@ -33,7 +33,7 @@ public class CommonService {
     private final Gson gson;
 
     /**
-     * Instantiates a new Common service.
+     * Instantiates a new Common service
      *
      * @param gson the gson
      */
@@ -42,7 +42,7 @@ public class CommonService {
 
 
     /**
-     * Sets result model.
+     * Sets result model
      *
      * @param reqObject  the req object
      * @param resultCode the result code
@@ -118,7 +118,7 @@ public class CommonService {
     }
 
     /**
-     * Sets result object.
+     * Sets result object
      *
      * @param <T>           the type parameter
      * @param requestObject the request object
@@ -131,7 +131,7 @@ public class CommonService {
 
 
     /**
-     * To json string.
+     * To json string
      *
      * @param requestObject the request object
      * @return the string
@@ -142,7 +142,7 @@ public class CommonService {
 
 
     /**
-     * From json t.
+     * From json t
      *
      * @param <T>           the type parameter
      * @param requestString the request string
@@ -154,7 +154,7 @@ public class CommonService {
     }
 
     /**
-     * 서로 다른 객체를 매핑한다.
+     * 서로 다른 객체를 매핑
      *
      * @param instance
      * @param targetClass

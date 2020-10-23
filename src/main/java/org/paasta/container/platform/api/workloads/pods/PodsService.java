@@ -106,7 +106,7 @@ public class PodsService {
      *
      * @param namespace the namespace
      * @param podsName the pods name
-     * @return the pods
+     * @return the pods detail
      */
     public Pods getPods(String namespace, String podsName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -120,8 +120,8 @@ public class PodsService {
      * Pods YAML 조회(Get Pods yaml)
      *
      * @param namespace the namespace
-     * @param podName   the pods name
-     * @param resultMap  the result map
+     * @param podName the pods name
+     * @param resultMap the result map
      * @return the pods yaml
      */
     public Pods getPodsYaml(String namespace, String podName, HashMap resultMap) {
@@ -156,7 +156,7 @@ public class PodsService {
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param resultMap the result map
-     * @return the resultStatus
+     * @return return is succeeded
      */
     public ResultStatus deletePods(String namespace, String resourceName, HashMap resultMap) {
         ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -175,11 +175,11 @@ public class PodsService {
      * @return return is succeeded
      */
     public Object updatePods(String namespace, String name, String yaml) {
-        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+        Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, Object.class);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS_DETAIL.replace("{podName:.+}", name));
     }
 }

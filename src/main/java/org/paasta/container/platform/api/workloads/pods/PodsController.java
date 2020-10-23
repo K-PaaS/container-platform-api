@@ -79,7 +79,7 @@ public class PodsController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the pods
+     * @return the pods detail
      */
 
     @GetMapping(value = "/{resourceName:.+}")
@@ -126,7 +126,7 @@ public class PodsController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the resultStatus
+     * @return return is succeeded
      */
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deletePods(@PathVariable(value = "namespace") String namespace,

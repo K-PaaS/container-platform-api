@@ -20,7 +20,7 @@ public class EndpointsController {
     private final EndpointsService endpointsService;
 
     /**
-     * Instantiates a new Endpoints controller.
+     * Instantiates a new Endpoints controller
      *
      * @param endpointsService the endpoints service
      */
@@ -29,7 +29,7 @@ public class EndpointsController {
 
 
     /**
-     * Endpoints 목록을 조회한다.
+     * Endpoints 목록 조회(Get Endpoints list)
      *
      * @param namespace the namespace
      * @return the endpoints list
@@ -41,11 +41,11 @@ public class EndpointsController {
 
 
     /**
-     * Endpoints 상세 정보를 조회한다.
+     * Endpoints 상세 조회(Get Endpoints detail)
      *
      * @param namespace   the namespace
      * @param serviceName the service name
-     * @return the endpoints
+     * @return the endpoints detail
      */
     @GetMapping(value = "/{serviceName:.+}")
     public Endpoints getEndpoints(@PathVariable("namespace") String namespace, @PathVariable("serviceName") String serviceName) {

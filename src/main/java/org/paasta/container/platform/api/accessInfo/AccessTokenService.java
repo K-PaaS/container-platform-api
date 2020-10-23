@@ -24,7 +24,7 @@ public class AccessTokenService {
     private final PropertyService propertyService;
 
     /**
-     * Instantiates a new accessToken service
+     * Instantiates a new AccessToken service
      * @param restTemplateService the rest template service
      * @param propertyService     the property service
      */
@@ -37,9 +37,9 @@ public class AccessTokenService {
     /**
      * Secrets 상세 조회(Get Secrets detail)
      *
-     * @param namespace       the namespace
+     * @param namespace the namespace
      * @param accessTokenName the accessTokenName
-     * @return the AccessToken
+     * @return the accessToken
      */
     public AccessToken getSecrets(String namespace, String accessTokenName) {
         String caCertToken;

@@ -48,7 +48,7 @@ public class UsersService {
 
 
     /**
-     * Users 전체 목록 조회
+     * Users 전체 목록 조회(Get Users list)
      *
      * @return the UsersListAdmin
      */
@@ -59,7 +59,7 @@ public class UsersService {
 
 
     /**
-     * 각 namespace별 Users 목록 조회
+     * 각 namespace별 Users 목록 조회(Get Users namespace list)
      *
      * @param namespace the namespace
      * @return the UsersList
@@ -70,7 +70,7 @@ public class UsersService {
 
 
     /**
-     * 하나의 Cluster 내 여러 Namespaces에 속한 User에 대한 상세 조회
+     * 하나의 Cluster 내 여러 namespaces에 속한 User에 대한 상세 조회(Get Users cluster namespace)
      *
      * @param userId
      * @return
@@ -108,7 +108,7 @@ public class UsersService {
 
 
     /**
-     * 각 namespace별 등록돼있는 사용자들의 이름 목록 조회
+     * 각 namespace별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
      *
      * @return the Map
      */
@@ -118,7 +118,7 @@ public class UsersService {
 
 
     /**
-     * 사용자 로그인을 위한 상세 조회
+     * Users 로그인을 위한 상세 조회(Get Users login)
      *
      * @return the Users
      */
@@ -130,9 +130,9 @@ public class UsersService {
 
 
     /**
-     * 사용자 상세 조회
+     * Users 상세 조회(Get Users detail
      *
-     * @return the Users
+     * @return the Users detail
      */
     public UsersList getUsersDetails (String userId) {
         return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
@@ -140,7 +140,7 @@ public class UsersService {
 
 
     /**
-     * namespace와 userId로 사용자 단 건 상세 조회
+     * namespace와 userId로 사용자 단 건 상세 조회(Get Users userId namespace)
      *
      * @param namespace
      * @param userId
@@ -152,7 +152,7 @@ public class UsersService {
 
 
     /**
-     * 사용자 DB 저장
+     * 사용자 DB 저장(Save Users DB)
      *
      * @param users
      * @return
@@ -162,7 +162,8 @@ public class UsersService {
     }
 
     /**
-     * 사용자 생성 (운영자 portal)
+     * 사용자 생성(Create Users)
+     * (Admin Portal)
      *
      * @param users
      * @return
@@ -210,7 +211,8 @@ public class UsersService {
 
 
     /**
-     * Users 수정 (Admin Portal)
+     * Users 수정(Update Users)
+     * (Admin Portal)
      *
      * @param userId
      * @param users
@@ -307,7 +309,7 @@ public class UsersService {
 
 
     /**
-     * 사용자 삭제
+     * Users 삭제(Delete Users)
      *
      * @param users
      */
@@ -330,7 +332,7 @@ public class UsersService {
 
 
     /**
-     * Users 수정
+     * Users 수정(Update Users)
      *
      * @param user
      * @return
@@ -341,7 +343,8 @@ public class UsersService {
 
 
     /**
-     * 사용자 삭제 (All Namespaces)
+     * Users 삭제(Delete Users)
+     * (All Namespaces)
      *
      * @param userId   the user id
      * @return         the ResultStatus
@@ -359,7 +362,7 @@ public class UsersService {
 
 
     /**
-     * 사용자 권한 설정
+     * Users 권한 설정(Set Users authority)
      *
      * @param namespace the namespace
      * @param users the users

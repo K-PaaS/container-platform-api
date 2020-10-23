@@ -45,7 +45,7 @@ public class MethodHandler {
     /**
      * API URL 호출 시 로그인한 사용자 정보로 admin/user 판별
      *
-     * true/false 를 argument 안에 파라미터로 넣어준다.
+     * true/false 를 argument 안에 파라미터로 넣어줌
      * isAdmin으로 판별해서 true면 admin 서비스 호출
      *
      * @param joinPoint

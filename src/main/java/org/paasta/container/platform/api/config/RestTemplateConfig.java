@@ -27,7 +27,7 @@ import java.security.cert.X509Certificate;
 public class RestTemplateConfig {
 
     /**
-     * Rest template rest template.
+     * Rest template rest template
      *
      * @return the rest template
      * @throws KeyStoreException        the key store exception

@@ -21,9 +21,9 @@ public class NodesController {
     private final NodesService nodesService;
 
     /**
-     * Instantiates a new Nodes controller.
+     * Instantiates a new Nodes controller
      *
-     * @param nodesService the node service
+     * @param nodesService the nodes service
      */
     @Autowired
     public NodesController(NodesService nodesService) {
@@ -45,7 +45,7 @@ public class NodesController {
      * Nodes 상세 조회(Get Nodes detail)
      *
      * @param resourceName the resource name
-     * @return the nodes
+     * @return the nodes detail
      */
     @GetMapping(value = "/{resourceName:.+}")
     public Nodes getNodes(@PathVariable(value = "cluster") String cluster,

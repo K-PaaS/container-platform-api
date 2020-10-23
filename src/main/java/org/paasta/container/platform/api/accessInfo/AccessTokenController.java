@@ -20,7 +20,7 @@ public class AccessTokenController {
     private final AccessTokenService accessTokenService;
 
     /**
-     * Instantiates a new accessToken controller
+     * Instantiates a new AccessToken controller
      *
      * @param accessTokenService the accessToken service
      */
@@ -32,7 +32,7 @@ public class AccessTokenController {
     /**
      * Secrets 상세 조회(Get Secrets detail)
      *
-     * @param namespace       the namespace
+     * @param namespace the namespace
      * @param accessTokenName the accessTokenName
      * @return the AccessToken
      */

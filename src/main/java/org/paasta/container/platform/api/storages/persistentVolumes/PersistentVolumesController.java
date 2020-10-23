@@ -21,7 +21,7 @@ public class PersistentVolumesController {
     private final PersistentVolumesService persistentVolumesService;
 
     /**
-     * Instantiates a new persistentVolumes controller
+     * Instantiates a new PersistentVolumes controller
      *
      * @param persistentVolumesService the persistentVolumes service
      */
@@ -36,7 +36,7 @@ public class PersistentVolumesController {
      * @param namespace the namespace
      * @param limit the limit
      * @param continueToken the continueToken
-     * @return the persistentVolumes List
+     * @return the persistentVolumes list
      */
     @GetMapping
     public PersistentVolumesList getPersistentVolumesList(@PathVariable(value = "cluster") String cluster,
@@ -52,7 +52,7 @@ public class PersistentVolumesController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the persistentVolumes
+     * @return the persistentVolumes detail
      */
     @GetMapping(value = "/{resourceName:.+}")
     public PersistentVolumes getPersistentVolumes(@PathVariable(value = "cluster") String cluster,
@@ -66,7 +66,7 @@ public class PersistentVolumesController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the persistentVolumes
+     * @return the persistentVolumes yaml
      */
     @GetMapping(value = "{resourceName:.+}/yaml")
     public PersistentVolumes getPersistentVolumesYaml(@PathVariable(value = "cluster") String cluster,

@@ -49,7 +49,7 @@ public class ReplicaSetsController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the replicaSets
+     * @return the replicaSets detail
      */
     @GetMapping(value = "/{resourceName:.+}")
     public ReplicaSets getReplicaSets(@PathVariable("namespace") String namespace, @PathVariable("resourceName") String resourceName) {
