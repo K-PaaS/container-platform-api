@@ -15,7 +15,7 @@ import static org.paasta.container.platform.api.common.Constants.DEFAULT_CLUSTER
 import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
 
 /**
- * SignUpAdmin Service 클래스
+ * Sign Up Admin Service 클래스
  *
  * @author hrjin
  * @version 1.0

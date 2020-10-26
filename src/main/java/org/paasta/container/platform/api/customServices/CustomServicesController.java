@@ -36,7 +36,7 @@ public class CustomServicesController {
     /**
      * Services 목록 조회(Get Services list)
      *
-     * @param cluster   the cluster
+     * @param cluster the cluster
      * @param namespace the namespace
      * @return the services list
      */
@@ -58,9 +58,10 @@ public class CustomServicesController {
     /**
      * Services 상세 조회(Get Services detail)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the services detail
      */
     @GetMapping(value = "/{resourceName:.+}")
@@ -80,8 +81,8 @@ public class CustomServicesController {
     /**
      * Services YAML 조회(Get Services yaml)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return the services yaml
      */
@@ -97,9 +98,9 @@ public class CustomServicesController {
     /**
      * Services 생성(Create Services)
      *
-     * @param cluster   the cluster
+     * @param cluster the cluster
      * @param namespace the namespace
-     * @param yaml      the yaml
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @PostMapping
@@ -118,8 +119,8 @@ public class CustomServicesController {
     /**
      * Services 삭제(Delete Services)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return return is succeeded
      */
@@ -135,10 +136,10 @@ public class CustomServicesController {
     /**
      * Services 수정(Update Services)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @param yaml         the yaml
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
@@ -154,8 +155,11 @@ public class CustomServicesController {
     /**
      * Services 목록 조회 페이징 테스트 (Get Services list paging test)
      *
-     * @param cluster   the cluster
+     * @param cluster the cluster
      * @param namespace the namespace
+     * @param limit the limit
+     * @param offset the offset
+     * @param searchParam the searchParam
      * @return the services list
      */
     @GetMapping("/test")

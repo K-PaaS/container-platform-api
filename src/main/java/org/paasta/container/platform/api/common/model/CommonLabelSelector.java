@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Map;
 
 /**
- * CommonLabelSelector Model 클래스
+ * Common Label Selector Model 클래스
  *
  * @author hrjin
  * @version 1.0

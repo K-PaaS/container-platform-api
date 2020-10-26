@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.accessInfo;
 import lombok.Data;
 
 /**
- * AccessToken Model 클래스
+ * Access Token Model 클래스
  *
  * @author hrjin
  * @version 1.0

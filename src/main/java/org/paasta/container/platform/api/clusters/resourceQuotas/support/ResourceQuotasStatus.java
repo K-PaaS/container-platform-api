@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Map;
 
 /**
- * ResourceQuotaStatus Model 클래스
+ * ResourceQuotas Status Model 클래스
  *
  * @author hrjin
  * @version 1.0

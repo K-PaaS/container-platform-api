@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
- * SignUpUser Service 클래스
+ * Sign Up User Service 클래스
  *
  * @author hrjin
  * @version 1.0

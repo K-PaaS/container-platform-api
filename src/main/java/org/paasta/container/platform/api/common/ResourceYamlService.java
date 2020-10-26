@@ -14,7 +14,7 @@ import static org.paasta.container.platform.api.common.CommonUtils.yamlMatch;
 import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
 
 /**
- * setting된 yaml file로 k8s 호출
+ * Resource Yaml Service 클래스
  *
  * @author hrjin
  * @version 1.0

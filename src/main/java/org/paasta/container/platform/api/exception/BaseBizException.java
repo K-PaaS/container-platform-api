@@ -1,4 +1,12 @@
 package org.paasta.container.platform.api.exception;
+
+/**
+ * Base Biz Exception Model 클래스
+ *
+ * @author hrjin
+ * @version 1.0
+ * @since 2020-08-24
+ **/
 public class BaseBizException extends RuntimeException {
 
 	private static final long serialVersionUID = 1032826776466587212L;

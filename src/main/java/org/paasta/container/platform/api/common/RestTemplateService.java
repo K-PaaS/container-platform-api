@@ -27,7 +27,7 @@ import java.util.Map;
 import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
 
 /**
- * RestTemplate Service 클래스
+ * Rest Template Service 클래스
  *
  * @author hrjin
  * @version 1.0

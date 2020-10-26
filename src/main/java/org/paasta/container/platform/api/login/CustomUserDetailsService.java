@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Custom UserDetails Service 클래스
+ * Custom User Details Service 클래스
  *
  * @author kjhoon
  * @version 1.0

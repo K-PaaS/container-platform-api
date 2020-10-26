@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
- * ApplicationContextProvider 클래스
+ * Application Context Provider 클래스
  *
  * @author hrjin
  * @version 1.0

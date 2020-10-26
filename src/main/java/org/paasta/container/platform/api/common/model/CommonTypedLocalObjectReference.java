@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.common.model;
 import lombok.Data;
 
 /**
- * TypedLocalObjectReference Model 클래스
+ * Common Typed Local Object Reference Model 클래스
  *
  * @author hrjin
  * @version 1.0

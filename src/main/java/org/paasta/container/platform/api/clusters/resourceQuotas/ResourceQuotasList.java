@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * ResourceQuotaList Model 클래스
+ * ResourceQuotas List Model 클래스
  *
  * @author hrjin
  * @version 1.0

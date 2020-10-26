@@ -20,7 +20,7 @@ import static org.paasta.container.platform.api.common.CommonUtils.regexMatch;
 import static org.paasta.container.platform.api.common.CommonUtils.stringNullCheck;
 
 /**
- * SignUp Controller 클래스
+ * Sign Up Controller 클래스
  *
  * @author hrjin
  * @version 1.0

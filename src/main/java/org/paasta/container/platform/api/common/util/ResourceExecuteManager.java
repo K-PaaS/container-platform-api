@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 
 /**
- * Resource 생성/수정 메소드 호출 클래스
+ * Resource Execute Manager 클래스
  *
  * @author hrjin
  * @version 1.0

@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.common.model;
 import lombok.Data;
 
 /**
- * CommonPodTemplateSpec Model 클래스
+ * Common Pod Template Spec Model 클래스
  *
  * @author hrjin
  * @version 1.0

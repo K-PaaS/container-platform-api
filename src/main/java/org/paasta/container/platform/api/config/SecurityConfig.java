@@ -22,6 +22,13 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
+/**
+ * Security Config 클래스
+ *
+ * @author hrjin
+ * @version 1.0
+ * @since 2020-08-20
+ **/
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter{

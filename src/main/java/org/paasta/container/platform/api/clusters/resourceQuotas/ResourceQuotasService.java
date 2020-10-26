@@ -52,7 +52,7 @@ public class ResourceQuotasService {
     public ResourceQuotasList getResourceQuotasList(String namespace, int limit, String continueToken) {
 
         String param = "";
-        if(continueToken != null){
+        if(continueToken != null) {
             param = "&continue=" + continueToken;
         }
 
@@ -129,7 +129,7 @@ public class ResourceQuotasService {
 
         HashMap responseMap;
 
-        try{
+        try {
             responseMap = (HashMap) obj;
         } catch (Exception e) {
             return obj;
@@ -143,6 +143,7 @@ public class ResourceQuotasService {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param resultMap the resultMap
      * @return the resourceQuotas yaml
      */
     public ResourceQuotas getResourceQuotasYaml(String namespace, String resourceName, HashMap resultMap) {

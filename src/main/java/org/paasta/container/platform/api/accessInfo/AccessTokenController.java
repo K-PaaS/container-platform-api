@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * AccessToken Controller 클래스
+ * Access Token Controller 클래스
  *
  * @author hrjin
  * @version 1.0

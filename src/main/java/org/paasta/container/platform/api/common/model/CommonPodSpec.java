@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * CommonPodSpec Model 클래스
+ * Common Pod Spec Model 클래스
  *
  * @author hrjin
  * @version 1.0

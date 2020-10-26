@@ -33,9 +33,12 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas 목록 조회(Get ResourceQuotas list)
      *
-     * @param namespace the namespaces
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param limit the limit
      * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
      * @return the resourceQuotas list
      */
     @GetMapping
@@ -55,8 +58,10 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas 상세 조회(Get ResourceQuotas detail)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the resourceQuotas detail
      */
     @GetMapping(value = "/{resourceName:.+}")
@@ -75,7 +80,7 @@ public class ResourceQuotasController {
 
     /**
      * ResourceQuotas YAML 조회(Get ResourceQuotas yaml)
-     *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @return the resourceQuotas yaml
@@ -90,6 +95,7 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas 생성(Create ResourceQuotas)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param yaml the yaml
      * @return return is succeeded
@@ -98,7 +104,7 @@ public class ResourceQuotasController {
     public Object createResourceQuotas(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @RequestBody String yaml) throws Exception{
-        if(yaml.contains("---")) {
+        if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
         }
@@ -109,6 +115,7 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas 삭제(Delete ResourceQuotas)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @return return is succeeded
@@ -123,6 +130,7 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas 수정(Update ResourceQuotas)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param yaml the yaml

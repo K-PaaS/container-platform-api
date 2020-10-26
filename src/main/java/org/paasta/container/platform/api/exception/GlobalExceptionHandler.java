@@ -16,6 +16,13 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Iterator;
 
+/**
+ * GlobalException Handler 클래스
+ *
+ * @author hrjin
+ * @version 1.0
+ * @since 2020.08.25
+ **/
 @RestControllerAdvice
 public class GlobalExceptionHandler extends RuntimeException {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);

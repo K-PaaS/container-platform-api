@@ -141,6 +141,9 @@ public class PropertyService {
     @Value("${cpMaster.api.list.events.list}")
     private String cpMasterApiListEventsListUrl;
 
+    @Value("${cpMaster.api.list.events.get}")
+    private String cpMasterApiListEventsGetUrl;
+
     @Value("${cpMaster.api.list.roles.list}")
     private String cpMasterApiListRolesListUrl;
 

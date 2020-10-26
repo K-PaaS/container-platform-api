@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Common utils 클래스
+ * Common Utils 클래스
  *
  * @author hrjin
  * @version 1.0

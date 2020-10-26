@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * AccessToken Service 클래스
+ * Access Token Service 클래스
  *
  * @author hrjin
  * @version 1.0

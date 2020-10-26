@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * CommonContainer Model 클래스
+ * Common Container Model 클래스
  *
  * @author hrjin
  * @version 1.0

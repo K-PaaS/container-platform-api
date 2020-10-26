@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * ResultStatus model 클래스
+ * Result Status model 클래스
  *
  * @author hrjin
  * @version 1.0

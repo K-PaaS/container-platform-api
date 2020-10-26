@@ -4,7 +4,7 @@ import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 
 /**
- * Secrets model 클래스
+ * Secrets Model 클래스
  *
  * @author hrjin
  * @version 1.0

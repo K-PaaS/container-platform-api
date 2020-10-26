@@ -17,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 
 /**
- * RestTemplate config 클래스
+ * Rest Template Config 클래스
  *
  * @author hrjin
  * @version 1.0

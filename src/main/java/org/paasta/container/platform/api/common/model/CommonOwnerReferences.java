@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.common.model;
 import lombok.Data;
 
 /**
- * Common CommonOwnerReferences Model 클래스
+ * Common Owner References Model 클래스
  *
  * @author hrjin
  * @version 1.0

@@ -45,12 +45,14 @@ public class CustomServicesService {
      * Services 목록 조회(Get Services list)
      *
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
      * @return the services list
      */
     public CustomServicesList getCustomServicesList(String namespace, int limit, String continueToken) {
         String param = "";
 
-        if(continueToken != null) {
+        if (continueToken != null) {
             param = "&continue=" + continueToken;
         }
 
@@ -164,6 +166,9 @@ public class CustomServicesService {
      * Services 목록 조회 페이징 테스트 (Get Services list paging test)
      *
      * @param namespace the namespace
+     * @param limit the limit
+     * @param offset the offset
+     * @param searchParam the searchParam
      * @return the services list
      */
     public CustomServicesList getCustomServicesListTest(String namespace, int limit, int offset, String searchParam) {
@@ -183,7 +188,7 @@ public class CustomServicesService {
         // Sort by resource name
         itemList = customServicesList.getItems().stream().sorted(Comparator.comparing(x -> x.getMetadata().getName())).collect(Collectors.toList());
         //Truncate the list if there is a limit value
-        if(limit > 0) {
+        if (limit > 0) {
             customServicesList.setItems(commonService.listProcessingforLimit(itemList, offset, limit));
         }
         return (CustomServicesList) commonService.setResultModel(customServicesList, Constants.RESULT_STATUS_SUCCESS);
@@ -202,7 +207,7 @@ public class CustomServicesService {
         String param = "";
         HashMap responseMap = null;
 
-        if(continueToken != null) {
+        if (continueToken != null) {
             param = "&continue=" + continueToken;
         }
 
@@ -211,7 +216,7 @@ public class CustomServicesService {
                         .replace("{namespace}", namespace) + "?limit=" + limit + param
                 , HttpMethod.GET, null, Map.class);
 
-        try{
+        try {
             responseMap = (HashMap) response;
         } catch (Exception e) {
             return response;
@@ -224,7 +229,7 @@ public class CustomServicesService {
     /**
      * Services Admin 상세 조회(Get Services Admin detail)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return the services admin
      */
@@ -238,7 +243,7 @@ public class CustomServicesService {
                         .replace("{name}", resourceName)
                 , HttpMethod.GET, null, Map.class);
 
-        try{
+        try {
             responseMap = (HashMap) response;
         } catch (Exception e) {
             return response;

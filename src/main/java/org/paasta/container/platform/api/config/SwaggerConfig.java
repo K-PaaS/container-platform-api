@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Swagger Config
+ * Swagger Config 클래스
  *
  * @author hrjin
  * @version 1.0

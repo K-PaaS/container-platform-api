@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * Common Subsets Model 클래스
+ * Common Subset Model 클래스
  *
  * @author hrjin
  * @version 1.0

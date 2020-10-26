@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ResourceQuotaSpec Model 클래스
+ * ResourceQuotas Spec Model 클래스
  *
  * @author hrjin
  * @version 1.0
