@@ -2,7 +2,8 @@ package org.paasta.container.platform.api.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.jayway.jsonpath.JsonPath;
+import lombok.SneakyThrows;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,7 +39,9 @@ public class CommonService {
      * @param gson the gson
      */
     @Autowired
-    public CommonService(Gson gson) {this.gson = gson;}
+    public CommonService(Gson gson) {
+        this.gson = gson;
+    }
 
 
     /**
@@ -102,7 +105,7 @@ public class CommonService {
                 methodSetResultCode.invoke(reqObject, resultCode);
             }
 
-            if(nextActionUrl != null) {
+            if (nextActionUrl != null) {
                 methodSetNextActionUrl.invoke(reqObject, nextActionUrl);
             }
 
@@ -163,14 +166,14 @@ public class CommonService {
      * @return
      * @throws Exception
      */
-    public static <A,B> B convert(A instance, Class<B> targetClass) throws Exception {
+    public static <A, B> B convert(A instance, Class<B> targetClass) throws Exception {
         B target = targetClass.newInstance();
 
         for (Field targetField : targetClass.getDeclaredFields()) {
             Field[] instanceFields = instance.getClass().getDeclaredFields();
 
             for (Field instanceField : instanceFields) {
-                if(targetField.getName().equals(instanceField.getName())) {
+                if (targetField.getName().equals(instanceField.getName())) {
                     targetField.set(target, instance.getClass().getDeclaredField(targetField.getName()).get(instance));
                 }
             }
@@ -192,16 +195,87 @@ public class CommonService {
 
 
     /**
-     * JsonPath를 통해 문자열 필터 처리
+     * 필드를 조회하고, 그 값을 반환 처리
      *
-     * @param responseMap
-     * @param searchParam
+     * @param fieldName
+     * @param obj
      * @return
      */
-    public HashMap searchKeywordForResourceName(HashMap responseMap, String searchParam) {
-        List filterResourceItemList = JsonPath.parse(responseMap).read("$..items[?(@.metadata.name =~ /.*" + searchParam + ".*/i)]");
-        responseMap.put("items", filterResourceItemList);
-        return responseMap;
+    @SneakyThrows
+    public <T> T getField(String fieldName, Object obj) {
+        Field field = obj.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        Object result = field.get(obj);
+        field.setAccessible(false);
+        return (T) result;
+    }
+
+    /**
+     * 필드를 조회하고, 그 값을 저장 처리
+     *
+     * @param fieldName
+     * @param obj
+     * @return
+     */
+    @SneakyThrows
+    public Object setField(String fieldName, Object obj, Object value) {
+        Field field = obj.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(obj, value);
+        field.setAccessible(false);
+        return obj;
+    }
+
+
+    /**
+     * 리소스 명 기준, 키워드가 포함된 리스트 반환 처리
+     *
+     * @param commonList
+     * @param keyword
+     * @return
+     */
+    public <T> List<T> searchKeywordForResourceName(List<T> commonList, String keyword) {
+        List filterList = commonList.stream()
+                .filter(x -> this.<String>getField("name", getField("metadata", x)).matches("(?i).*" + keyword + ".*"))
+                .collect(Collectors.toList());
+
+        return filterList;
+    }
+
+
+    /**
+     * 리소스 생성날짜 또는 이름으로 리스트 정렬 처리
+     *
+     * @param commonList
+     * @param orderBy
+     * @param order
+     * @return
+     */
+    public <T> List<T> sortingListByCondition(List<T> commonList, String orderBy, String order) {
+
+        List sortList = null;
+
+        orderBy = orderBy.toLowerCase();
+        order = order.toLowerCase();
+
+        if (orderBy.equals("name")) {
+            //리소스명 기준
+            if (order.equals("asc")) {
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField("name", getField("metadata", x)))).collect(Collectors.toList());
+            } else {
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField("name", getField("metadata", x))).reversed()).collect(Collectors.toList());
+            }
+        } else {
+            if (order.equals("asc")) {
+                // 생성날짜 기준
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField("creationTimestamp", getField("metadata", x)))).collect(Collectors.toList());
+            } else {
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField("creationTimestamp", getField("metadata", x))).reversed()).collect(Collectors.toList());
+            }
+        }
+
+
+        return sortList;
     }
 
 
@@ -213,9 +287,72 @@ public class CommonService {
      * @param limit
      * @return
      */
-    public <T> List<T> listProcessingforLimit(List<T> itemList, Integer offset, Integer limit) {
-        if (offset<0) throw new IllegalArgumentException("Offset must be >=0 but was "+offset+"!");
-        List returnList = itemList.stream().skip(offset*limit).limit(limit).collect(Collectors.toList());
+    public <T> List<T> subListforLimit(List<T> itemList, int offset, int limit) {
+        List returnList = itemList;
+        if (limit < 0 || limit > 50) {
+            throw new IllegalArgumentException("Limits can only be between 0 and 50.");
+        }
+        if (offset < 0) {
+            throw new IllegalArgumentException("Offset must be >=0 but was " + offset + "!");
+        }
+
+        if (limit > 0) {
+            returnList = itemList.stream().skip(offset * limit).limit(limit).collect(Collectors.toList());
+        }
         return returnList;
     }
+
+    /**
+     * commonItemMetaData 객체 생성
+     *
+     * @param itemList
+     * @param offset
+     * @param limit
+     * @return
+     */
+    public CommonItemMetaData setItemsCount(List itemList, int offset, int limit) {
+        CommonItemMetaData commonItemMetaData = new CommonItemMetaData(0, 0);
+        int allItemCount = itemList.size();
+        int remainingItemCount = allItemCount - ((offset + 1) * limit);
+
+        if (remainingItemCount < 0) {
+            remainingItemCount = 0;
+        }
+
+        commonItemMetaData.setAllItemCount(allItemCount);
+        commonItemMetaData.setRemainingItemCount(remainingItemCount);
+
+        return commonItemMetaData;
+    }
+
+    public Object resourceListProcessing(Object resourceList, int offset, int limit, String orderBy, String order, String searchName) {
+
+        Object resourceReturnList = null;
+
+        List resourceItemList = getField("items", resourceList);
+
+        if (searchName != null) {
+            searchName = searchName.trim();
+        }
+
+        // 1. 키워드 match에 따른 리스트 필터 처리
+        if (searchName != null || searchName.length() > 0) {
+            resourceItemList = searchKeywordForResourceName(resourceItemList, searchName);
+        }
+
+        // 2. 조건에 따른 리스트 정렬 처리
+        resourceItemList = sortingListByCondition(resourceItemList, orderBy, order);
+
+        // 3. commonItemMetaData 추가 처리
+        CommonItemMetaData commonItemMetaData = setItemsCount(resourceItemList, offset, limit);
+        resourceReturnList = setField("itemMetaData", resourceList, commonItemMetaData);
+
+        // 4. offset, limit에 따른 리스트 subLIst 처리
+        resourceItemList = subListforLimit(resourceItemList, offset, limit);
+        resourceReturnList = setField("items", resourceReturnList, resourceItemList);
+
+
+        return resourceReturnList;
+    }
+
 }

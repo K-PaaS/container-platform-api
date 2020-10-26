@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.workloads.deployments;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
@@ -24,6 +25,7 @@ public class DeploymentsListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
+    private CommonItemMetaData itemMetaData;
     private List<DeploymentsListAdminItem> items;
 }
 

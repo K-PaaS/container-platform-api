@@ -43,46 +43,27 @@ public class DeploymentsService {
      * Deployments 목록 조회(Get Deployments list)
      *
      * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
      * @return the deployments list
      */
-    public DeploymentsList getDeploymentsList(String namespace, int limit, String continueToken) {
-        String param = "";
-
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
+    public DeploymentsList getDeploymentsList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsListUrl()
-                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+                        .replace("{namespace}", namespace)
                 , HttpMethod.GET, null, Map.class);
 
-        return (DeploymentsList) commonService.setResultModel(commonService.setResultObject(responseMap, DeploymentsList.class), Constants.RESULT_STATUS_SUCCESS);
+        DeploymentsList deploymentsList = commonService.setResultObject(responseMap, DeploymentsList.class);
+        deploymentsList = (DeploymentsList) commonService.resourceListProcessing(deploymentsList, offset, limit, orderBy, order, searchName);
+        return (DeploymentsList) commonService.setResultModel(deploymentsList, Constants.RESULT_STATUS_SUCCESS);
     }
 
-    /**
-     * Deployments 목록 조회(Get Deployments list)
-     *(Admin Portal)
-     *
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
-     * @param searchParam the searchParam
-     * @return the deployments list
-     */
-    public Object getDeploymentsListAdmin(String namespace, int limit, String continueToken, String searchParam) {
-        String param = "";
-        HashMap responseMap = null;
 
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
+    public Object getDeploymentsListAdmin(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
+        HashMap responseMap = null;
 
         Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsListUrl()
-                        .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
@@ -90,14 +71,17 @@ public class DeploymentsService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, DeploymentsListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        DeploymentsListAdmin deploymentsListAdmin = commonService.setResultObject(responseMap, DeploymentsListAdmin.class);
+        deploymentsListAdmin = (DeploymentsListAdmin) commonService.resourceListProcessing(deploymentsListAdmin, offset, limit, orderBy, order, searchName);
+
+        return commonService.setResultModel(deploymentsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
      * Deployments 상세 조회(Get Deployments detail)
      * (User Portal)
      *
-     * @param namespace the namespace
+     * @param namespace      the namespace
      * @param deploymentName the deployments name
      * @return the deployments detail
      */
@@ -117,7 +101,7 @@ public class DeploymentsService {
      * Deployments 상세 조회(Get Deployments detail)
      * (Admin Portal)
      *
-     * @param namespace the namespace
+     * @param namespace      the namespace
      * @param deploymentName the deployments name
      * @return the deployments detail
      */
@@ -142,9 +126,9 @@ public class DeploymentsService {
     /**
      * Deployments YAML 조회(Get Deployments yaml)
      *
-     * @param namespace the namespace
+     * @param namespace      the namespace
      * @param deploymentName the deployments name
-     * @param resultMap the result map
+     * @param resultMap      the result map
      * @return the deployments yaml
      */
     public Deployments getDeploymentsYaml(String namespace, String deploymentName, HashMap resultMap) {
@@ -164,7 +148,7 @@ public class DeploymentsService {
      * Deployments 생성(Create Deployments)
      *
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     public Object createDeployments(String namespace, String yaml) {
@@ -180,7 +164,7 @@ public class DeploymentsService {
      * Deployments 삭제(Delete Deployments)
      *
      * @param namespace the namespace
-     * @param name the deployments name
+     * @param name      the deployments name
      * @return return is succeeded
      */
     public ResultStatus deleteDeployments(String namespace, String name) {
@@ -196,8 +180,8 @@ public class DeploymentsService {
      * Deployments 수정(Update Deployments)
      *
      * @param namespace the namespace
-     * @param name the deployments name
-     * @param yaml the yaml
+     * @param name      the deployments name
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     public ResultStatus updateDeployments(String namespace, String name, String yaml) {
