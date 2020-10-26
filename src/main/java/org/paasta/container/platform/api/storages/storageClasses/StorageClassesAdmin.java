@@ -11,7 +11,7 @@ import org.paasta.container.platform.api.storages.persistentVolumeClaims.support
 import java.util.Map;
 
 /**
- * StorageClasses Model 클래스
+ * StorageClasses Admin Model 클래스
  *
  * @author jjy
  * @version 1.0

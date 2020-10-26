@@ -32,11 +32,24 @@ public class StorageClassesController {
     /**
      * StorageClasses 목록 조회(Get StorageClasses list)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
      * @return the storageClasses list
      */
     @GetMapping
-    public StorageClassesList getStorageClassesList(@PathVariable(value = "namespace") String namespace){
+    public Object getStorageClassesList(@PathVariable(value = "cluster") String cluster,
+                                                    @PathVariable(value = "namespace") String namespace,
+                                                    @RequestParam(required = false, defaultValue = "0") int limit,
+                                                    @RequestParam(required = false, name = "continue") String continueToken,
+                                                    @RequestParam(required = false) String searchParam,
+                                                    @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return storageClassesService.getStorageClassesListAdmin(namespace, limit, continueToken, searchParam);
+        }
         return storageClassesService.getStorageClassesList(namespace);
     }
 
@@ -45,11 +58,20 @@ public class StorageClassesController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the storageClasses detail
      */
     @GetMapping(value = "/{resourceName:.+}")
-    public StorageClasses getStorageClasses(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName){
-           return storageClassesService.getStorageClasses(namespace, resourceName);
+    public Object getStorageClasses(@PathVariable(value = "namespace") String namespace
+            , @PathVariable(value = "resourceName") String resourceName
+            , @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        // For Admin
+        if (isAdmin) {
+            return storageClassesService.getStorageClassesAdmin(namespace, resourceName);
+        }
+
+        return storageClassesService.getStorageClasses(namespace, resourceName);
     }
 
     /**
@@ -67,6 +89,7 @@ public class StorageClassesController {
     /**
      * StorageClasses 생성(Create StorageClasses)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param yaml the yaml
      * @return return is succeeded
@@ -75,7 +98,7 @@ public class StorageClassesController {
     public Object createStorageClasses(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
                                        @RequestBody String yaml) throws Exception {
-        if(yaml.contains("---")) {
+        if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
         }
@@ -100,6 +123,7 @@ public class StorageClassesController {
     /**
      * StorageClasses 수정(Update StorageClasses)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param yaml the yaml
