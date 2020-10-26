@@ -46,7 +46,16 @@ public class DeploymentsController {
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping
-    public DeploymentsList getDeploymentsList(@PathVariable(value = "namespace") String namespace, @RequestParam(required = false, defaultValue = "0") int limit, @RequestParam(required = false, name = "continue") String continueToken) {
+    public Object getDeploymentsList(@PathVariable(value = "cluster") String cluster,
+                                              @PathVariable(value = "namespace") String namespace,
+                                              @RequestParam(required = false, defaultValue = "0") int limit,
+                                              @RequestParam(required = false, name = "continue") String continueToken,
+                                              @RequestParam(required = false) String searchParam,
+                                              @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return deploymentsService.getDeploymentsListAdmin(namespace, limit, continueToken, searchParam);
+        }
+
         return deploymentsService.getDeploymentsList(namespace, limit, continueToken);
     }
 

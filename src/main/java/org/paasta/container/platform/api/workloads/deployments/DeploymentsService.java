@@ -60,6 +60,27 @@ public class DeploymentsService {
         return (DeploymentsList) commonService.setResultModel(commonService.setResultObject(responseMap, DeploymentsList.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+    public Object getDeploymentsListAdmin(String namespace, int limit, String continueToken, String searchParam) {
+        String param = "";
+        HashMap responseMap = null;
+
+        if (continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
+        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListDeploymentsListUrl()
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, DeploymentsListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
     /**
      * Deployments 상세 조회(Get Deployments detail)
      * (User Portal)

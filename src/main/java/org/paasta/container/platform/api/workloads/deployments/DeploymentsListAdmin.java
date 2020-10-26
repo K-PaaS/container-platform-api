@@ -5,12 +5,14 @@ import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
+import org.paasta.container.platform.api.workloads.deployments.support.DeploymentsSpec;
+import org.paasta.container.platform.api.workloads.deployments.support.DeploymentsStatus;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Deployments List Model 클래스
+ * Deployments List Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0
@@ -22,26 +24,26 @@ public class DeploymentsListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-    private Map metadata;
-    private List<Deployments> items;
+    private List<DeploymentsListAdminItem> items;
 }
 
 class DeploymentsListAdminItem {
     private String name;
     private String namespace;
-    private String pods;
+    private int runningPods;
+    private int totalPods;
     private String images;
     private String creationTimestamp;
 
     @JsonIgnore
     private CommonMetaData metadata;
     @JsonIgnore
-    private CommonSpec spec;
+    private DeploymentsSpec spec;
     @JsonIgnore
-    private CommonStatus status;
+    private DeploymentsStatus status;
 
     public String getName() {
-        return name;
+        return name = metadata.getName();
     }
 
     public void setName(String name) {
@@ -49,23 +51,31 @@ class DeploymentsListAdminItem {
     }
 
     public String getNamespace() {
-        return namespace;
+        return namespace = metadata.getNamespace();
     }
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
 
-    public String getPods() {
-        return pods;
+    public int getRunningPods() {
+        return runningPods = status.getAvailableReplicas();
     }
 
-    public void setPods(String pods) {
-        this.pods = pods;
+    public void setRunningPods(int runningPods) {
+        this.runningPods = runningPods;
+    }
+
+    public int getTotalPods() {
+        return totalPods = status.getReplicas();
+    }
+
+    public void setTotalPods(int totalPods) {
+        this.totalPods = totalPods;
     }
 
     public String getImages() {
-        return images;
+        return images = spec.getTemplate().getSpec().getContainers().get(0).getImage();
     }
 
     public void setImages(String images) {
@@ -73,7 +83,7 @@ class DeploymentsListAdminItem {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return creationTimestamp = metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
@@ -88,19 +98,19 @@ class DeploymentsListAdminItem {
         this.metadata = metadata;
     }
 
-    public CommonSpec getSpec() {
+    public DeploymentsSpec getSpec() {
         return spec;
     }
 
-    public void setSpec(CommonSpec spec) {
+    public void setSpec(DeploymentsSpec spec) {
         this.spec = spec;
     }
 
-    public CommonStatus getStatus() {
+    public DeploymentsStatus getStatus() {
         return status;
     }
 
-    public void setStatus(CommonStatus status) {
+    public void setStatus(DeploymentsStatus status) {
         this.status = status;
     }
 }
