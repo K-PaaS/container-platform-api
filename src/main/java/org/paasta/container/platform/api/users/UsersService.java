@@ -130,7 +130,7 @@ public class UsersService {
 
 
     /**
-     * Users 상세 조회(Get Users detail
+     * Users 상세 조회(Get Users detail)
      *
      * @return the Users detail
      */
@@ -147,7 +147,8 @@ public class UsersService {
      * @return
      */
     public Users getUsers(String namespace, String userId) {
-        return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{namespace:.+}", namespace).replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
+        Users users = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{namespace:.+}", namespace).replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
+        return (Users) commonService.setResultModel(users, Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -392,25 +393,14 @@ public class UsersService {
 
                         // remove default roleBinding, add new roleBinding
                         restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", sa + "-" + value.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class);
-                        if(!Constants.NOT_ASSIGNED_ROLE.equals(role)) {
-                            resourceYamlService.createRoleBinding(sa, namespace, role);
-                            String saSecretName = restTemplateService.getSecretName(namespace, sa);
-                            updatedUser.setSaSecret(saSecretName);
-                            updatedUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
-                        } else {
-                            updatedUser.setSaSecret(Constants.NOT_ASSIGNED_ROLE);
-                            updatedUser.setSaToken(Constants.NOT_ASSIGNED_ROLE);
-                        }
 
+                        updateSetRoleUser(namespace, sa, role, updatedUser);
                         updatedUser.setRoleSetCode(role);
                         rsDb = createUsers(updatedUser);
                     }
                 }
             }
 
-        }
-
-        for (Users value : defaultUserList) {
             for (String s : toBeDelete) {
                 if (s.equals(value.getServiceAccountName())) {
                     String saName = value.getServiceAccountName();
@@ -434,18 +424,15 @@ public class UsersService {
 
                     LOGGER.info("Add >>> sa :: {}, role :: {}", saName, roleName);
 
-                    resourceYamlService.createServiceAccount(saName, namespace);
-                    resourceYamlService.createRoleBinding(saName, namespace, roleName);
-
                     UsersList usersList = getUsersDetails(saName);
-
                     Users newUser = usersList.getItems().get(0);
-                    String saSecretName = restTemplateService.getSecretName(namespace, saName);
+
+                    resourceYamlService.createServiceAccount(saName, namespace);
+
+                    updateSetRoleUser(namespace, saName, roleName, newUser);
                     newUser.setId(0);
                     newUser.setCpNamespace(namespace);
                     newUser.setRoleSetCode(roleName);
-                    newUser.setSaSecret(saSecretName);
-                    newUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
                     newUser.setIsActive("Y");
                     newUser.setUserType("USER");
 
@@ -460,4 +447,24 @@ public class UsersService {
     }
 
 
+    /**
+     * Role에 따른 사용자 권한 설정(Setting Role to User)
+     *
+     * @param namespace the namespace
+     * @param saName the service account name
+     * @param roleName the role name
+     * @param newUser the new User object
+     */
+    private void updateSetRoleUser(String namespace, String saName, String roleName, Users newUser) {
+        if(!Constants.NOT_ASSIGNED_ROLE.equals(roleName)) {
+            resourceYamlService.createRoleBinding(saName, namespace, roleName);
+            String saSecretName = restTemplateService.getSecretName(namespace, saName);
+            newUser.setSaSecret(saSecretName);
+            newUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
+        } else {
+            newUser.setSaSecret(Constants.NOT_ASSIGNED_ROLE);
+            newUser.setSaToken(Constants.NOT_ASSIGNED_ROLE);
+        }
+
+    }
 }
