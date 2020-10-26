@@ -30,6 +30,11 @@ public class NodesController {
     /**
      * Nodes 목록 조회(Get Nodes list)
      *
+     * @param cluster the cluster
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
      * @return the nodes list
      */
     @GetMapping
@@ -49,7 +54,9 @@ public class NodesController {
     /**
      * Nodes 상세 조회(Get Nodes detail)
      *
+     * @param cluster the cluster
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the nodes detail
      */
     @GetMapping(value = "/{resourceName:.+}")
@@ -66,6 +73,7 @@ public class NodesController {
     /**
      * Nodes YAML 조회(Get Nodes yaml)
      *
+     * @param cluster the cluster
      * @param resourceName the resource name
      * @return the nodes yaml
      */

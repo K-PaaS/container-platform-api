@@ -49,7 +49,7 @@ public class NodesService {
      */
     NodesList getNodesList(int limit, String continueToken) {
         String param = "";
-        if(continueToken != null){
+        if (continueToken != null) {
             param = "&continue=" + continueToken;
         }
 
@@ -120,7 +120,7 @@ public class NodesService {
 
         HashMap responseMap;
 
-        try{
+        try {
             responseMap = (HashMap) obj;
         } catch (Exception e) {
             return obj;

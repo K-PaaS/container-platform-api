@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.clusters.nodes.support;
 import lombok.Data;
 
 /**
- * Nodes address 클래스
+ * Nodes Address Model 클래스
  *
  * @author hrjin
  * @version 1.0
