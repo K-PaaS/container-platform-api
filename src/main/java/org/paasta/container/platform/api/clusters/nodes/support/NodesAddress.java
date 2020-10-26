@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2020.08.31
  */
 @Data
-class NodesAddress {
+public class NodesAddress {
     private String address;
     private String type;
 }

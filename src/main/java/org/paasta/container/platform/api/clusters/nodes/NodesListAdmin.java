@@ -2,15 +2,14 @@ package org.paasta.container.platform.api.clusters.nodes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonCondition;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * Nodes List Model 클래스
+ * Nodes List Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0
@@ -22,9 +21,7 @@ public class NodesListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-    //private List<Nodes> items = new ArrayList<>();
 
-    private Map metadata;
     private List<NodesListAdminItem> items;
 }
 
@@ -36,13 +33,12 @@ class NodesListAdminItem {
 
     @JsonIgnore
     private CommonMetaData metadata;
-    @JsonIgnore
-    private CommonSpec spec;
+
     @JsonIgnore
     private CommonStatus status;
 
     public String getName() {
-        return name;
+        return name = metadata.getName();
     }
 
     public void setName(String name) {
@@ -50,7 +46,7 @@ class NodesListAdminItem {
     }
 
     public Object getLabels() {
-        return labels;
+        return labels = metadata.getLabels();
     }
 
     public void setLabels(Object labels) {
@@ -58,6 +54,13 @@ class NodesListAdminItem {
     }
 
     public String getReady() {
+        List<CommonCondition> conditions = status.getConditions();
+        for (CommonCondition c:conditions) {
+            if(c.getType().equals("Ready")) {
+                ready = c.getStatus();
+            }
+        }
+
         return ready;
     }
 
@@ -66,7 +69,7 @@ class NodesListAdminItem {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return creationTimestamp = metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
@@ -79,14 +82,6 @@ class NodesListAdminItem {
 
     public void setMetadata(CommonMetaData metadata) {
         this.metadata = metadata;
-    }
-
-    public CommonSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(CommonSpec spec) {
-        this.spec = spec;
     }
 
     public CommonStatus getStatus() {

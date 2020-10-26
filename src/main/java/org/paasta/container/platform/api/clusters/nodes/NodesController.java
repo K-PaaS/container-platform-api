@@ -1,10 +1,7 @@
 package org.paasta.container.platform.api.clusters.nodes;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -36,8 +33,16 @@ public class NodesController {
      * @return the nodes list
      */
     @GetMapping
-    public NodesList getNodesList() {
-        return nodesService.getNodesList();
+    public Object getNodesList(@PathVariable(value = "cluster") String cluster,
+                                  @RequestParam(required = false, defaultValue = "0") int limit,
+                                  @RequestParam(required = false, name = "continue") String continueToken,
+                                  @RequestParam(required = false) String searchParam,
+                                  @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return nodesService.getNodesListAdmin(limit, continueToken, searchParam);
+        }
+
+        return nodesService.getNodesList(limit, continueToken);
     }
 
 
@@ -48,8 +53,13 @@ public class NodesController {
      * @return the nodes detail
      */
     @GetMapping(value = "/{resourceName:.+}")
-    public Nodes getNodes(@PathVariable(value = "cluster") String cluster,
-                          @PathVariable(value = "resourceName") String resourceName) {
+    public Object getNodes(@PathVariable(value = "cluster") String cluster,
+                          @PathVariable(value = "resourceName") String resourceName,
+                          @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return nodesService.getNodesAdmin(resourceName);
+        }
+
         return nodesService.getNodes(resourceName);
     }
 

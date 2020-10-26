@@ -2,16 +2,16 @@ package org.paasta.container.platform.api.clusters.nodes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.clusters.nodes.support.NodesAddress;
 import org.paasta.container.platform.api.clusters.nodes.support.NodesStatus;
+import org.paasta.container.platform.api.clusters.nodes.support.NodesSystemInfo;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
 
-import java.lang.reflect.Array;
-import java.util.Map;
+import java.util.List;
 
 /**
- * Nodes Model 클래스
+ * Nodes Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0
@@ -31,26 +31,15 @@ public class NodesAdmin {
     private String creationTimestamp;
 
     private String podsCIDR;
-    private Array address;
-    private String machineID;
-    private String systemUUID;
-    private String bootID;
-    private String kernelVersion;
-    private String osImage;
-    private String containerRuntimeVersion;
-    private String kubeProxyVersion;
-    private String operationSystem;
-    private String architecture;
-
-    //private Map<String, Object> source;
-    private String sourceTypeYaml;
+    private List<NodesAddress> addresses;
+    private NodesSystemInfo info;
 
     @JsonIgnore
     private CommonMetaData metadata;
     @JsonIgnore
     private CommonSpec spec;
     @JsonIgnore
-    private CommonStatus status;
+    private NodesStatus status;
 
     public String getResultCode() {
         return resultCode;
@@ -85,7 +74,7 @@ public class NodesAdmin {
     }
 
     public String getName() {
-        return name;
+        return name = metadata.getName();
     }
 
     public void setName(String name) {
@@ -93,7 +82,7 @@ public class NodesAdmin {
     }
 
     public String getUid() {
-        return uid;
+        return uid = metadata.getUid();
     }
 
     public void setUid(String uid) {
@@ -101,7 +90,7 @@ public class NodesAdmin {
     }
 
     public Object getLabels() {
-        return labels;
+        return labels = metadata.getLabels();
     }
 
     public void setLabels(Object labels) {
@@ -109,7 +98,7 @@ public class NodesAdmin {
     }
 
     public Object getAnnotations() {
-        return annotations;
+        return annotations = metadata.getAnnotations();
     }
 
     public void setAnnotations(Object annotations) {
@@ -117,7 +106,7 @@ public class NodesAdmin {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return creationTimestamp = metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
@@ -125,99 +114,27 @@ public class NodesAdmin {
     }
 
     public String getPodsCIDR() {
-        return podsCIDR;
+        return podsCIDR = spec.getPodCIDR();
     }
 
     public void setPodsCIDR(String podsCIDR) {
         this.podsCIDR = podsCIDR;
     }
 
-    public Array getAddress() {
-        return address;
+    public List<NodesAddress> getAddresses() {
+        return addresses = status.getAddresses();
     }
 
-    public void setAddress(Array address) {
-        this.address = address;
+    public void setAddresses(List<NodesAddress> addresses) {
+        this.addresses = addresses;
     }
 
-    public String getMachineID() {
-        return machineID;
+    public NodesSystemInfo getInfo() {
+        return info = status.getNodeInfo();
     }
 
-    public void setMachineID(String machineID) {
-        this.machineID = machineID;
-    }
-
-    public String getSystemUUID() {
-        return systemUUID;
-    }
-
-    public void setSystemUUID(String systemUUID) {
-        this.systemUUID = systemUUID;
-    }
-
-    public String getBootID() {
-        return bootID;
-    }
-
-    public void setBootID(String bootID) {
-        this.bootID = bootID;
-    }
-
-    public String getKernelVersion() {
-        return kernelVersion;
-    }
-
-    public void setKernelVersion(String kernelVersion) {
-        this.kernelVersion = kernelVersion;
-    }
-
-    public String getOsImage() {
-        return osImage;
-    }
-
-    public void setOsImage(String osImage) {
-        this.osImage = osImage;
-    }
-
-    public String getContainerRuntimeVersion() {
-        return containerRuntimeVersion;
-    }
-
-    public void setContainerRuntimeVersion(String containerRuntimeVersion) {
-        this.containerRuntimeVersion = containerRuntimeVersion;
-    }
-
-    public String getKubeProxyVersion() {
-        return kubeProxyVersion;
-    }
-
-    public void setKubeProxyVersion(String kubeProxyVersion) {
-        this.kubeProxyVersion = kubeProxyVersion;
-    }
-
-    public String getOperationSystem() {
-        return operationSystem;
-    }
-
-    public void setOperationSystem(String operationSystem) {
-        this.operationSystem = operationSystem;
-    }
-
-    public String getArchitecture() {
-        return architecture;
-    }
-
-    public void setArchitecture(String architecture) {
-        this.architecture = architecture;
-    }
-
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
+    public void setInfo(NodesSystemInfo info) {
+        this.info = info;
     }
 
     public CommonMetaData getMetadata() {
@@ -236,11 +153,11 @@ public class NodesAdmin {
         this.spec = spec;
     }
 
-    public CommonStatus getStatus() {
+    public NodesStatus getStatus() {
         return status;
     }
 
-    public void setStatus(CommonStatus status) {
+    public void setStatus(NodesStatus status) {
         this.status = status;
     }
 }

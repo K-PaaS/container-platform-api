@@ -43,22 +43,58 @@ public class NodesService {
     /**
      * Nodes 목록 조회(Get Nodes list)
      *
+     * @param limit the limit
+     * @param continueToken the continueToken
      * @return the nodes list
      */
-    NodesList getNodesList() {
+    NodesList getNodesList(int limit, String continueToken) {
+        String param = "";
+        if(continueToken != null){
+            param = "&continue=" + continueToken;
+        }
+
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNodesListUrl(),
+                propertyService.getCpMasterApiListNodesListUrl() + "?limit" + limit + param,
                     HttpMethod.GET, null, Map.class);
 
         return (NodesList) commonService.setResultModel(commonService.setResultObject(responseMap, NodesList.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+    /**
+     * Nodes Admin 목록 조회(Get Nodes Admin list)
+     *
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the search param
+     * @return the nodes admin list
+     */
+    public Object getNodesListAdmin(int limit, String continueToken, String searchParam) {
+        String param = "";
+        HashMap responseMap = null;
+
+        if (continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
+        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListNodesListUrl() + "?limit" + limit + param,
+                HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, NodesListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+
+    }
 
     /**
      * Nodes 상세 조회(Get Nodes detail)
      *
      * @param resourceName the resource name
-     * @return the nodes detail
+     * @return the nodes
      */
     Nodes getNodes(String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -67,6 +103,30 @@ public class NodesService {
                 , HttpMethod.GET, null, Map.class);
 
         return (Nodes) commonService.setResultModel(commonService.setResultObject(responseMap, Nodes.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+    /**
+     * NodesAdmin 상세 조회(Get Nodes Admin detail)
+     *
+     * @param resourceName the resource name
+     * @return the nodes admin
+     */
+    public Object getNodesAdmin(String resourceName) {
+        Object obj = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListNodesGetUrl()
+                        .replace("{name}", resourceName)
+                , HttpMethod.GET, null, Map.class);
+
+        HashMap responseMap;
+
+        try{
+            responseMap = (HashMap) obj;
+        } catch (Exception e) {
+            return obj;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, NodesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
