@@ -71,8 +71,8 @@ public class SignUpAdminService {
             return nsResult;
         }
 
-        resourceYamlService.createResourceQuota();
-        resourceYamlService.createLimitRange();
+        resourceYamlService.createDefaultResourceQuota();
+        resourceYamlService.createDefaultLimitRange();
 
         ResultStatus saResult = resourceYamlService.createServiceAccount(username, namespace);
 
