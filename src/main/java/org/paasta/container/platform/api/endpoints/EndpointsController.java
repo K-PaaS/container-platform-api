@@ -1,10 +1,14 @@
 package org.paasta.container.platform.api.endpoints;
 
+import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
+import org.paasta.container.platform.api.workloads.deployments.Deployments;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 /**
  * Endpoints Controller 클래스
@@ -14,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2020.09.17
  */
 @RestController
-@RequestMapping("/namespaces/{namespace:.+}/endpoints")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/endpoints")
 public class EndpointsController {
 
     private final EndpointsService endpointsService;
@@ -31,25 +35,59 @@ public class EndpointsController {
     /**
      * Endpoints 목록 조회(Get Endpoints list)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
      * @return the endpoints list
      */
     @GetMapping
-    public EndpointsList getEndpointsList(@PathVariable("namespace") String namespace) {
-        return endpointsService.getEndpointsList(namespace);
+    public Object getEndpointsList(@PathVariable(value = "cluster") String cluster,
+                                   @PathVariable(value = "namespace") String namespace,
+                                   @RequestParam(required = false, defaultValue = "0") int limit,
+                                   @RequestParam(required = false, name = "continue") String continueToken,
+                                   @RequestParam(required = false) String searchParam,
+                                   @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return endpointsService.getEndpointsListAdmin(namespace, limit, continueToken, searchParam);
+        }
+        return endpointsService.getEndpointsList(namespace, limit, continueToken);
     }
 
 
     /**
      * Endpoints 상세 조회(Get Endpoints detail)
      *
-     * @param namespace   the namespace
-     * @param serviceName the service name
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the endpoints detail
      */
-    @GetMapping(value = "/{serviceName:.+}")
-    public Endpoints getEndpoints(@PathVariable("namespace") String namespace, @PathVariable("serviceName") String serviceName) {
-        return endpointsService.getEndpoints(namespace, serviceName);
+    @GetMapping(value = "/{resourceName:.+}")
+    public Object getEndpoints(@PathVariable(value = "namespace") String namespace
+            , @PathVariable(value = "resourceName") String resourceName
+            , @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        // For Admin
+        if (isAdmin) {
+            return endpointsService.getEndpointsAdmin(namespace, resourceName);
+        }
+
+        return endpointsService.getEndpoints(namespace, resourceName);
+    }
+
+    /**
+     * Endpoints YAML 조회(Get Endpoints yaml)
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return the endpoints yaml
+     */
+    @GetMapping(value = "/{resourceName:.+}/yaml")
+    public Endpoints getEndpointsYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+        return endpointsService.getEndpointsYaml(namespace, resourceName, new HashMap<>());
     }
 
 }
