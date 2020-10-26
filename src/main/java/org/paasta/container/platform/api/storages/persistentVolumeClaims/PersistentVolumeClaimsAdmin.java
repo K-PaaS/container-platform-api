@@ -7,7 +7,7 @@ import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
 
 /**
- * PersistentVolumeClaims Model 클래스
+ * PersistentVolumeClaims Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0

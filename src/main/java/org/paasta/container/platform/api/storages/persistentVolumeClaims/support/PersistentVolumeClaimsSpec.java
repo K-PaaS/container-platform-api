@@ -8,7 +8,7 @@ import org.paasta.container.platform.api.common.model.CommonTypedLocalObjectRefe
 import java.util.List;
 
 /**
- * PersistentVolumeClaimsSpec Model 클래스
+ * PersistentVolumeClaims Spec Model 클래스
  *
  * @author hrjin
  * @version 1.0

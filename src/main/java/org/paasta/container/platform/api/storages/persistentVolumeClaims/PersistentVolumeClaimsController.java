@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 
 /**
- * PersistentVolumeClaims Controller 클래스
+ * PersistentVolumeClaims Admin Controller 클래스
  *
  * @author hrjin
  * @version 1.0
@@ -32,15 +32,24 @@ public class PersistentVolumeClaimsController {
     /**
      * PersistentVolumeClaims 목록 조회(Get PersistentVolumeClaims list)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param limit the limit
      * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
      * @return the persistentVolumeClaims list
      */
     @GetMapping
-    public PersistentVolumeClaimsList getPersistentVolumeClaimsList(@PathVariable(value = "namespace") String namespace,
+    public Object getPersistentVolumeClaimsList(@PathVariable(value = "cluster") String cluster,
+                                                                    @PathVariable(value = "namespace") String namespace,
                                                                     @RequestParam(required = false, defaultValue = "0") int limit,
-                                                                    @RequestParam(required = false, name = "continue") String continueToken) {
+                                                                    @RequestParam(required = false, name = "continue") String continueToken,
+                                                                    @RequestParam(required = false) String searchParam,
+                                                                    @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return persistentVolumeClaimsService.getPersistentVolumeClaimsListAdmin(namespace, limit, continueToken, searchParam);
+        }
         return persistentVolumeClaimsService.getPersistentVolumeClaimsList(namespace, limit, continueToken);
     }
 
@@ -49,10 +58,18 @@ public class PersistentVolumeClaimsController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the persistentVolumeClaims detail
      */
     @GetMapping(value = "/{resourceName:.+}")
-    public PersistentVolumeClaims getPersistentVolumeClaims(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+    public Object getPersistentVolumeClaims(@PathVariable(value = "namespace") String namespace
+            , @PathVariable(value = "resourceName") String resourceName
+            , @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        // For Admin
+        if (isAdmin) {
+            return persistentVolumeClaimsService.getPersistentVolumeClaimsAdmin(namespace, resourceName);
+        }
         return persistentVolumeClaimsService.getPersistentVolumeClaims(namespace, resourceName);
     }
 
@@ -71,6 +88,7 @@ public class PersistentVolumeClaimsController {
     /**
      * PersistentVolumeClaims 생성(Create PersistentVolumeClaims)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param yaml the yaml
      * @return return is succeeded
@@ -79,7 +97,7 @@ public class PersistentVolumeClaimsController {
     public Object createPersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
                                  @PathVariable(value = "namespace") String namespace,
                                  @RequestBody String yaml) throws Exception {
-        if(yaml.contains("---")) {
+        if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
         }
@@ -104,6 +122,7 @@ public class PersistentVolumeClaimsController {
     /**
      * PersistentVolumeClaims 수정(Update PersistentVolumeClaims)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param yaml the yaml
