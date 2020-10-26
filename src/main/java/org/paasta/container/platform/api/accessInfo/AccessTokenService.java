@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.accessInfo;
 
+import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
@@ -22,16 +23,19 @@ import java.util.Map;
 public class AccessTokenService {
     private final RestTemplateService restTemplateService;
     private final PropertyService propertyService;
+    private final CommonService commonService;
 
     /**
      * Instantiates a new AccessToken service
      * @param restTemplateService the rest template service
      * @param propertyService     the property service
+     * @param commonService       the common service
      */
     @Autowired
-    public AccessTokenService(RestTemplateService restTemplateService, PropertyService propertyService) {
+    public AccessTokenService(RestTemplateService restTemplateService, PropertyService propertyService, CommonService commonService) {
         this.restTemplateService = restTemplateService;
         this.propertyService = propertyService;
+        this.commonService = commonService;
     }
 
     /**
@@ -63,7 +67,7 @@ public class AccessTokenService {
         accessToken.setCaCertToken(caCertDecodeToken);
         accessToken.setUserAccessToken(userDecodeToken);
 
-        return accessToken;
+        return (AccessToken) commonService.setResultModel(commonService.setResultObject(accessToken, AccessToken.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 }

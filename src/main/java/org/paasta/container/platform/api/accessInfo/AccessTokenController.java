@@ -37,7 +37,6 @@ public class AccessTokenController {
      * @return the AccessToken
      */
     @RequestMapping(value = "/{accessTokenName:.+}")
-    @ResponseBody
     public AccessToken getSecret(@PathVariable("namespace") String namespace, @PathVariable("accessTokenName") String accessTokenName) {
         return accessTokenService.getSecrets(namespace, accessTokenName);
     }
