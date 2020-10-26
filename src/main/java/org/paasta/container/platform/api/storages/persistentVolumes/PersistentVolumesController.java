@@ -33,16 +33,24 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes 목록 조회(Get PersistentVolumes list)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param limit the limit
      * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
      * @return the persistentVolumes list
      */
     @GetMapping
-    public PersistentVolumesList getPersistentVolumesList(@PathVariable(value = "cluster") String cluster,
+    public Object getPersistentVolumesList(@PathVariable(value = "cluster") String cluster,
                                                           @PathVariable(value = "namespace") String namespace,
                                                           @RequestParam(required = false, defaultValue = "0") int limit,
-                                                          @RequestParam(required = false, name = "continue") String continueToken) {
+                                                          @RequestParam(required = false, name = "continue") String continueToken,
+                                                          @RequestParam(required = false) String searchParam,
+                                                          @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return persistentVolumesService.getPersistentVolumesListAdmin(namespace, limit, continueToken, searchParam);
+        }
         return persistentVolumesService.getPersistentVolumesList(namespace, limit, continueToken);
 
     }
@@ -52,12 +60,18 @@ public class PersistentVolumesController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the persistentVolumes detail
      */
     @GetMapping(value = "/{resourceName:.+}")
-    public PersistentVolumes getPersistentVolumes(@PathVariable(value = "cluster") String cluster,
-                                                  @PathVariable(value = "namespace") String namespace,
-                                                  @PathVariable(value = "resourceName") String resourceName) {
+    public Object getPersistentVolumes(@PathVariable(value = "namespace") String namespace
+            , @PathVariable(value = "resourceName") String resourceName
+            , @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        // For Admin
+        if (isAdmin) {
+            return persistentVolumesService.getPersistentVolumesAdmin(namespace, resourceName);
+        }
         return persistentVolumesService.getPersistentVolumes(namespace, resourceName);
     }
 
@@ -78,6 +92,7 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes 생성(Create PersistentVolumes)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param yaml the yaml
      * @return return is succeeded
@@ -86,7 +101,7 @@ public class PersistentVolumesController {
     public Object createPersistentVolumes(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @RequestBody String yaml) throws Exception{
-        if(yaml.contains("---")) {
+        if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
         }
@@ -97,6 +112,7 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes 삭제(Delete PersistentVolumes)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @return return is succeeded
@@ -111,6 +127,7 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes 수정(Update PersistentVolumes)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @param yaml the yaml

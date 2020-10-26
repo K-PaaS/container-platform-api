@@ -6,6 +6,8 @@ import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.customServices.CustomServices;
+import org.paasta.container.platform.api.workloads.deployments.DeploymentsAdmin;
+import org.paasta.container.platform.api.workloads.deployments.DeploymentsListAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -51,7 +53,7 @@ public class PersistentVolumesService {
     public PersistentVolumesList getPersistentVolumesList(String namespace, int limit, String continueToken) {
 
         String param = "";
-        if(continueToken != null){
+        if (continueToken != null) {
             param = "&continue=" + continueToken;
         }
 
@@ -61,6 +63,37 @@ public class PersistentVolumesService {
                 , HttpMethod.GET, null, Map.class);
 
         return (PersistentVolumesList) commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumesList.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * PersistentVolumes 목록 조회(Get PersistentVolumes list)
+     *(Admin Portal)
+     *
+     * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @return the persistentVolumes list
+     */
+    public Object getPersistentVolumesListAdmin(String namespace, int limit, String continueToken, String searchParam) {
+        String param = "";
+        HashMap responseMap = null;
+
+        if (continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
+        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPersistentVolumesListUrl()
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumesListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -148,5 +181,30 @@ public class PersistentVolumesService {
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, PersistentVolumes.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{persistentVolumeName:.+}", resourceName));
+    }
+
+    /**
+     * PersistentVolumes 상세 조회(Get PersistentVolumes detail)
+     * (Admin Portal)
+     *
+     * @param namespace the namespace
+     * @param persistentVolumesName the persistentVolumes name
+     * @return the persistentVolumes detail
+     */
+    public Object getPersistentVolumesAdmin(String namespace, String persistentVolumesName) {
+        Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPersistentVolumesGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", persistentVolumesName)
+                , HttpMethod.GET, null, Map.class);
+        HashMap responseMap;
+
+        try {
+            responseMap = (HashMap) obj;
+        } catch (Exception e) {
+            return obj;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 }

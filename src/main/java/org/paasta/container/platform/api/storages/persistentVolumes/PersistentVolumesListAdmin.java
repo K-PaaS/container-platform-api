@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * PersistentVolumes List Model 클래스
+ * PersistentVolumes List Admin Model 클래스
  *
  * @author jjy
  * @version 1.0
