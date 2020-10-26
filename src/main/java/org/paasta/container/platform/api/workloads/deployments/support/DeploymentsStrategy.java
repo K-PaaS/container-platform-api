@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.workloads.deployments.support;
 import lombok.Data;
 
 /**
- * DeploymentsStrategy Model 클래스
+ * Deployments Strategy Model 클래스
  *
  * @author hrjin
  * @version 1.0

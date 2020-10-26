@@ -6,7 +6,7 @@ import org.paasta.container.platform.api.common.model.CommonCondition;
 import java.util.List;
 
 /**
- * DeploymentsStatus Model 클래스
+ * Deployments Status Model 클래스
  *
  * @author hrjin
  * @version 1.0

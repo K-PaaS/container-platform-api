@@ -43,12 +43,14 @@ public class DeploymentsService {
      * Deployments 목록 조회(Get Deployments list)
      *
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
      * @return the deployments list
      */
     public DeploymentsList getDeploymentsList(String namespace, int limit, String continueToken) {
         String param = "";
 
-        if(continueToken != null) {
+        if (continueToken != null) {
             param = "&continue=" + continueToken;
         }
 
@@ -60,6 +62,16 @@ public class DeploymentsService {
         return (DeploymentsList) commonService.setResultModel(commonService.setResultObject(responseMap, DeploymentsList.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+    /**
+     * Deployments 목록 조회(Get Deployments list)
+     *(Admin Portal)
+     *
+     * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @return the deployments list
+     */
     public Object getDeploymentsListAdmin(String namespace, int limit, String continueToken, String searchParam) {
         String param = "";
         HashMap responseMap = null;
@@ -106,7 +118,7 @@ public class DeploymentsService {
      * (Admin Portal)
      *
      * @param namespace the namespace
-     * @param deploymentName  the deployments name
+     * @param deploymentName the deployments name
      * @return the deployments detail
      */
     public Object getDeploymentsAdmin(String namespace, String deploymentName) {
@@ -117,7 +129,7 @@ public class DeploymentsService {
                 , HttpMethod.GET, null, Map.class);
         HashMap responseMap;
 
-        try{
+        try {
             responseMap = (HashMap) obj;
         } catch (Exception e) {
             return obj;

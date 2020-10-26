@@ -7,6 +7,8 @@ import org.paasta.container.platform.api.workloads.deployments.support.Deploymen
 import org.paasta.container.platform.api.workloads.deployments.support.DeploymentsStrategy;
 
 /**
+ * Deployments Admin Model 클래스
+ *
  * @author hrjin
  * @version 1.0
  * @since 2020.10.11

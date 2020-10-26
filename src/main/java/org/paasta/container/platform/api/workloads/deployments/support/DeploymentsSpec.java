@@ -5,7 +5,7 @@ import org.paasta.container.platform.api.common.model.CommonLabelSelector;
 import org.paasta.container.platform.api.common.model.CommonPodTemplateSpec;
 
 /**
- * DeploymentsSpec Model 클래스
+ * Deployments Spec Model 클래스
  *
  * @author hrjin
  * @version 1.0

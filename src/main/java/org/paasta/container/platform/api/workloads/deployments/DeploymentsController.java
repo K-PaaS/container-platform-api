@@ -38,7 +38,12 @@ public class DeploymentsController {
     /**
      * Deployments 목록 조회(Get Deployments list)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
      * @return the deployments list
      */
     @ApiOperation(value="Deployments 목록 조회", nickname="getDeploymentList")
@@ -65,6 +70,7 @@ public class DeploymentsController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the deployments detail
      */
     @ApiOperation(value="Deployments 상세 조회", nickname="getDeployment")
@@ -81,7 +87,7 @@ public class DeploymentsController {
             , @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         // For Admin
-        if(isAdmin) {
+        if (isAdmin) {
             return deploymentsService.getDeploymentsAdmin(namespace, resourceName);
         }
 
@@ -117,6 +123,7 @@ public class DeploymentsController {
     /**
      * Deployments 생성(Create Deployments)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param yaml the yaml
      * @return return is succeeded
@@ -125,7 +132,7 @@ public class DeploymentsController {
     public Object createDeployments(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
                                     @RequestBody String yaml) throws Exception {
-        if(yaml.contains("---")) {
+        if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
         }
@@ -150,6 +157,7 @@ public class DeploymentsController {
     /**
      * Deployments 수정(Update Deployments)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @return return is succeeded
