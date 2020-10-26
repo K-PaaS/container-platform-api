@@ -38,8 +38,11 @@ public class RolesController {
     /**
      * Roles 목록 조회(Get Roles list)
      *
-     * @param cluster   the cluster
+     * @param cluster the cluster
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param isAdmin the isAdmin
      * @return the roles list
      */
     @GetMapping
@@ -59,9 +62,10 @@ public class RolesController {
     /**
      * Roles 상세 조회(Get Roles detail)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the roles detail
      */
     @GetMapping(value = "/{resourceName:.+}")
@@ -80,8 +84,8 @@ public class RolesController {
     /**
      * Roles YAML 조회(Get Roles yaml)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return the roles yaml
      */
@@ -97,9 +101,9 @@ public class RolesController {
     /**
      * Roles 생성(Create Roles)
      *
-     * @param cluster   the cluster
+     * @param cluster the cluster
      * @param namespace the namespace
-     * @param yaml      the yaml
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @PostMapping
@@ -119,8 +123,8 @@ public class RolesController {
     /**
      * Roles 삭제(Delete Roles)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return return is succeeded
      */
@@ -136,10 +140,10 @@ public class RolesController {
     /**
      * Roles 수정(Update Roles)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @param yaml         the yaml
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")

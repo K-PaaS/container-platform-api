@@ -44,6 +44,8 @@ public class RolesService {
      * Roles 목록 조회(Get Roles list)
      *
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
      * @return the roles list
      */
     public RolesList getRolesList(String namespace, int limit, String continueToken) {
@@ -65,7 +67,7 @@ public class RolesService {
     /**
      * Roles 상세 조회(Get Roles detail)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return the roles
      */
@@ -83,9 +85,9 @@ public class RolesService {
     /**
      * Roles YAML 조회(Get Roles yaml)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @param resultMap    the result map
+     * @param resultMap the result map
      * @return the roles yaml
      */
     public Roles getRolesYaml(String namespace, String resourceName, HashMap resultMap) {
@@ -104,7 +106,7 @@ public class RolesService {
      * Roles 생성(Create Roles)
      *
      * @param namespace the namespace
-     * @param yaml      the yaml
+     * @param yaml the yaml
      * @return return is succeeded
      */
     public Object createRoles(String namespace, String yaml) {
@@ -120,9 +122,9 @@ public class RolesService {
     /**
      * Roles 삭제(Delete Roles)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @param resultMap    the result map
+     * @param resultMap the result map
      * @return return is succeeded
      */
     public ResultStatus deleteRoles(String namespace, String resourceName, HashMap resultMap) {
@@ -140,9 +142,9 @@ public class RolesService {
     /**
      * Roles 수정(Update Roles)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @param yaml         the yaml
+     * @param yaml the yaml
      * @return return is succeeded
      */
     public Object updateRoles(String namespace, String resourceName, String yaml) {
@@ -162,6 +164,7 @@ public class RolesService {
      * Roles Admin 목록 조회(Get Roles Admin list)
      *
      * @param namespace the namespace
+     * @param continueToken the continueToken
      * @return the roles admin list
      */
     public Object getRolesListAdmin(String namespace, int limit, String continueToken) {
@@ -190,7 +193,7 @@ public class RolesService {
     /**
      * Roles Admin 상세 조회(Get Roles Admin detail)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
      * @return the roles admin
      */

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * Roles Rule 클래스
+ * Roles Rule model 클래스
  *
  * @author kjhoon
  * @version 1.0
