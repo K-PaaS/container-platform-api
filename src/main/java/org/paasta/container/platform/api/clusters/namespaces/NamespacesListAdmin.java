@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Namespaces List Model 클래스
+ * Namespaces List Admin Model 클래스
  *
  * @author jjy
  * @version 1.0

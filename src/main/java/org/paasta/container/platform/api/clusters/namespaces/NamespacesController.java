@@ -32,30 +32,47 @@ public class NamespacesController {
     /**
      * Namespaces 목록 조회(Get Namespaces list)
      *
+     * @param cluster the cluster
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
      * @return the namespaces list
      */
     @GetMapping
-    public NamespacesList getNamespacesList(@PathVariable(value = "cluster") String cluster,
+    public Object getNamespacesList(@PathVariable(value = "cluster") String cluster,
                                             @RequestParam(required = false, defaultValue = "0") int limit,
-                                            @RequestParam(required = false, name = "continue") String continueToken){
+                                            @RequestParam(required = false, name = "continue") String continueToken,
+                                            @RequestParam(required = false) String searchParam,
+                                            @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return namespacesService.getNamespacesListAdmin(limit, continueToken, searchParam);
+        }
         return namespacesService.getNamespacesList(limit, continueToken);
     }
 
     /**
      * Namespaces 상세 조회(Get Namespaces detail)
      *
-     * @param namespace the namespaces
+     * @param cluster the cluster
+     * @param namespace the namespace name
+     * @param isAdmin the isAdmin
      * @return the namespaces detail
      */
     @GetMapping("/{namespace:.+}")
-    public Namespaces getNamespaces(@PathVariable(value = "cluster") String cluster,
-                                    @PathVariable("namespace") String namespace) {
+    public Object getNamespaces(@PathVariable(value = "cluster") String cluster,
+                                @PathVariable(value = "namespace") String namespace,
+                                @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return namespacesService.getNamespacesAdmin(namespace);
+        }
         return namespacesService.getNamespaces(namespace);
     }
 
     /**
      * Namespaces YAML 조회(Get Namespaces yaml)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @return the namespaces yaml
      */
@@ -68,13 +85,14 @@ public class NamespacesController {
     /**
      * Namespaces 생성(Create Namespaces)
      *
+     * @param cluster the cluster
      * @param yaml the yaml
      * @return return is succeeded
      */
     @PostMapping
     public Object createNamespaces(@PathVariable(value = "cluster") String cluster,
                                    @RequestBody String yaml) throws Exception {
-        if(yaml.contains("---")){
+        if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(null, yaml);
             return object;
         }
@@ -85,6 +103,7 @@ public class NamespacesController {
     /**
      * Namespaces 삭제(Delete Namespaces)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @return return is succeeded
      */
@@ -97,6 +116,7 @@ public class NamespacesController {
     /**
      * Namespaces 수정(Update Namespaces)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param yaml the yaml
      * @return return is succeeded

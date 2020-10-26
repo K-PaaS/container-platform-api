@@ -1,5 +1,7 @@
 package org.paasta.container.platform.api.clusters.namespaces;
 
+import org.paasta.container.platform.api.clusters.nodes.NodesAdmin;
+import org.paasta.container.platform.api.clusters.nodes.NodesListAdmin;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
@@ -56,12 +58,34 @@ public class NamespacesService {
         return (Namespaces) commonService.setResultModel(commonService.setResultObject(resultMap, Namespaces.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+    /**
+     * NameSpaces 상세 조회(Get NameSpaces Admin detail)
+     *
+     * @param resourceName the resource name
+     * @return the namespaces admin
+     */
+    public Object getNamespacesAdmin(String resourceName) {
+        Object obj = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListNamespacesGetUrl()
+                        .replace("{name}", resourceName)
+                , HttpMethod.GET, null, Map.class);
 
+        HashMap responseMap;
+
+        try {
+            responseMap = (HashMap) obj;
+        } catch (Exception e) {
+            return obj;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, NamespacesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+    }
 
 
     /**
      * NameSpaces 목록 조회(Get NameSpaces list)
-     *
+     * @param limit the limit
+     * @param continueToken the continueToken
      * @return the namespaces list
      */
     public NamespacesList getNamespacesList(int limit, String continueToken) {
@@ -76,6 +100,35 @@ public class NamespacesService {
                 , HttpMethod.GET, null, Map.class);
 
         return (NamespacesList) commonService.setResultModel(commonService.setResultObject(responseMap, NamespacesList.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * NameSpaces Admin 목록 조회(Get NameSpaces Admin list)
+     *
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the search param
+     * @return the namespaces admin list
+     */
+    public Object getNamespacesListAdmin(int limit, String continueToken, String searchParam) {
+        String param = "";
+        HashMap responseMap = null;
+
+        if (continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
+        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListNamespacesListUrl() + "?limit" + limit + param,
+                HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, NamespacesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -138,4 +191,6 @@ public class NamespacesService {
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
 
     }
+
+
 }
