@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * ReplicaSets Model 클래스
+ * ReplicaSets List Model 클래스
  *
  * @author hrjin
  * @version 1.0

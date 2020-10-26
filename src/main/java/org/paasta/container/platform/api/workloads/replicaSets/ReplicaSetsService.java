@@ -4,6 +4,8 @@ import org.paasta.container.platform.api.common.*;
 
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.customServices.CustomServices;
+import org.paasta.container.platform.api.workloads.deployments.DeploymentsAdmin;
+import org.paasta.container.platform.api.workloads.deployments.DeploymentsListAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -43,13 +45,15 @@ public class ReplicaSetsService {
      * ReplicaSets 목록 조회(Get ReplicaSets list)
      *
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
      * @return the replicaSets list
      */
     public ReplicaSetsList getReplicaSetsList(String namespace, int limit, String continueToken) {
 
         String param = "";
 
-        if(continueToken != null) {
+        if (continueToken != null) {
             param = "&continue=" + continueToken;
         }
 
@@ -77,6 +81,31 @@ public class ReplicaSetsService {
                 , HttpMethod.GET, null, Map.class);
 
         return (ReplicaSets) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSets.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * ReplicaSets 상세 조회(Get ReplicaSets detail)
+     * (Admin Portal)
+     *
+     * @param namespace the namespace
+     * @param replicaSetsName the replicaSets name
+     * @return the deployments detail
+     */
+    public Object getReplicaSetsAdmin(String namespace, String replicaSetsName) {
+        Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListReplicaSetsGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", replicaSetsName)
+                , HttpMethod.GET, null, Map.class);
+        HashMap responseMap;
+
+        try{
+            responseMap = (HashMap) obj;
+        } catch (Exception e) {
+            return obj;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, ReplicaSetsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -115,6 +144,36 @@ public class ReplicaSetsService {
         return (ReplicaSetsList) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSetsList.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+    /**
+     * ReplicaSets 목록 조회(Get ReplicaSets list)
+     *(Admin Portal)
+     *
+     * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @return the replicaSets list
+     */
+    public Object ReplicaSetsListAdmin(String namespace, int limit, String continueToken, String searchParam) {
+        String param = "";
+        HashMap responseMap = null;
+
+        if (continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
+        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListReplicaSetsListUrl()
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, ReplicaSetsListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+    }
 
     /**
      * ReplicaSets 생성(Create ReplicaSets)
@@ -164,4 +223,6 @@ public class ReplicaSetsService {
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS_DETAIL.replace("{replicaSetName:.+}", name));
     }
+
+
 }
