@@ -42,7 +42,7 @@ public class UsersController {
 
 
     /**
-     * 각 namespace별 Users 목록 조회(Get Users namespace list)
+     * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
      * @param namespace the namespace
      * @return the UsersList
@@ -53,7 +53,7 @@ public class UsersController {
     }
 
     /**
-     * 각 namespace별 Users 상세 조회(Get Users namespace detail)
+     * 각 Namespace 별 Users 상세 조회(Get Users namespace detail)
      *
      * @param namespace the namespace
      * @return the UsersList
@@ -65,7 +65,7 @@ public class UsersController {
 
 
     /**
-     * 하나의 Cluster 내 여러 namespace에 속한 User에 대한 상세 조회(Get Users cluster namespace)
+     * 하나의 Cluster 내 여러 Namespace 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)
      *
      * @param userId
      * @return
@@ -77,7 +77,7 @@ public class UsersController {
 
 
     /**
-     * 각 namespace별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
+     * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
      *
      * @return the Map
      */
@@ -90,7 +90,7 @@ public class UsersController {
     /**
      * Users 생성 (Create Users)
      * (Admin Portal)
-     * 복수 개의 namespace에 속할 수 있음
+     * 복수개의 Namespace 에 속할 수 있음
      *
      * @param users
      * @return

@@ -59,7 +59,7 @@ public class UsersService {
 
 
     /**
-     * 각 namespace별 Users 목록 조회(Get Users namespace list)
+     * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
      * @param namespace the namespace
      * @return the UsersList
@@ -70,7 +70,7 @@ public class UsersService {
 
 
     /**
-     * 하나의 Cluster 내 여러 namespaces에 속한 User에 대한 상세 조회(Get Users cluster namespace)
+     * 하나의 Cluster 내 여러 Namespaces 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)
      *
      * @param userId
      * @return
@@ -108,7 +108,7 @@ public class UsersService {
 
 
     /**
-     * 각 namespace별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
+     * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
      *
      * @return the Map
      */
@@ -140,7 +140,7 @@ public class UsersService {
 
 
     /**
-     * namespace와 userId로 사용자 단 건 상세 조회(Get Users userId namespace)
+     * Namespace 와 userId로 사용자 단 건 상세 조회(Get Users userId namespace)
      *
      * @param namespace
      * @param userId
@@ -448,7 +448,7 @@ public class UsersService {
 
 
     /**
-     * Role에 따른 사용자 권한 설정(Setting Role to User)
+     * Role 에 따른 사용자 권한 설정(Setting Role to User)
      *
      * @param namespace the namespace
      * @param saName the service account name

@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * UserAdmin Model 클래스
+ * User Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0
