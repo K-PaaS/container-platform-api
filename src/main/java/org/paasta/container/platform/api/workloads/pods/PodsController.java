@@ -37,13 +37,27 @@ public class PodsController {
     /**
      * Pods 목록 조회(Get Pods list)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
      * @return the pods list
      */
 
     @GetMapping
     @ResponseBody
-    public PodsList getPodsList(@PathVariable(value = "namespace") String namespace, @RequestParam(required = false, defaultValue = "0") int limit, @RequestParam(required = false, name = "continue") String continueToken) {
+    public Object getPodsList(@PathVariable(value = "cluster") String cluster,
+                                @PathVariable(value = "namespace") String namespace,
+                                @RequestParam(required = false, defaultValue = "0") int limit,
+                                @RequestParam(required = false, name = "continue") String continueToken,
+                                @RequestParam(required = false) String searchParam,
+                                @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return podsService.getPodsListAdmin(namespace, limit, continueToken, searchParam);
+        }
         return podsService.getPodsList(namespace, limit, continueToken);
     }
 
@@ -79,12 +93,17 @@ public class PodsController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the pods detail
      */
 
     @GetMapping(value = "/{resourceName:.+}")
-    public Pods getPods(@PathVariable(value = "namespace") String namespace,
-                        @PathVariable(value = "resourceName") String resourceName) {
+    public Object getPods(@PathVariable(value = "namespace") String namespace,
+                        @PathVariable(value = "resourceName") String resourceName,
+                        @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return podsService.getPodsAdmin(namespace, resourceName);
+        }
         return podsService.getPods(namespace, resourceName);
     }
 
@@ -104,6 +123,7 @@ public class PodsController {
     /**
      * Pods 생성(Create Pods)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param yaml the yaml
      * @return return is succeeded
@@ -112,7 +132,7 @@ public class PodsController {
     public Object createPods(@PathVariable(value = "cluster") String cluster,
                              @PathVariable(value = "namespace") String namespace,
                              @RequestBody String yaml) throws Exception {
-        if(yaml.contains("---")) {
+        if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
         }
@@ -137,6 +157,7 @@ public class PodsController {
     /**
      * Pods 수정(Update Pods)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
      * @return return is succeeded
@@ -144,7 +165,7 @@ public class PodsController {
     @PutMapping("/{resourceName:.+}")
     public Object updatePods(@PathVariable(value = "cluster") String cluster,
                              @PathVariable(value = "namespace") String namespace,
-                             @PathVariable(value ="resourceName") String resourceName,
+                             @PathVariable(value = "resourceName") String resourceName,
                              @RequestBody String yaml) {
         return podsService.updatePods(namespace, resourceName, yaml);
     }

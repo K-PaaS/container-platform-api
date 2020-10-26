@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Pods List Model 클래스
+ * Pods List Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0
