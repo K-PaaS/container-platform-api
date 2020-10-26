@@ -41,7 +41,7 @@ public class LimitRangesController {
     /**
      * LimitRanges 목록 조회(Get LimitRanges list)
      *
-     * @param cluster   the cluster
+     * @param cluster the cluster
      * @param namespace the namespace
      * @return the limitRanges list
      */
@@ -64,10 +64,11 @@ public class LimitRangesController {
     /**
      * LimitRanges 상세 조회(Get LimitRanges detail)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the limitRanges
+     * @param isAdmin the isAdmin
+     * @return the limitRanges detail
      */
     @GetMapping(value = "/{resourceName:.+}")
     public Object getLimitRanges(@PathVariable(value = "cluster") String cluster,
@@ -85,9 +86,10 @@ public class LimitRangesController {
     /**
      * LimitRanges YAML 조회(Get LimitRanges yaml)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the limitRanges yaml
      */
     @GetMapping(value = "/{resourceName:.+}/yaml")
@@ -106,9 +108,10 @@ public class LimitRangesController {
     /**
      * LimitRanges 생성(Create LimitRanges)
      *
-     * @param cluster   the cluster
+     * @param cluster the cluster
      * @param namespace the namespace
-     * @param yaml      the yaml
+     * @param isAdmin the isAdmin
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @PostMapping
@@ -134,9 +137,10 @@ public class LimitRangesController {
     /**
      * LimitRanges 삭제(Delete LimitRanges)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     @DeleteMapping("/{resourceName:.+}")
@@ -155,10 +159,11 @@ public class LimitRangesController {
     /**
      * LimitRanges 수정(Update LimitRanges)
      *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
+     * @param cluster the cluster
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @param yaml         the yaml
+     * @param isAdmin the isAdmin
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")

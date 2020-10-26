@@ -1,7 +1,7 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangeItem;
+import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import java.util.List;
@@ -22,7 +22,7 @@ public class LimitRangesAdmin {
 
     private String name;
     private String creationTimestamp;
-    private List<LimitRangeItem> limits;
+    private List<LimitRangesItem> limits;
     private String sourceTypeYaml;
 
     @JsonIgnore
@@ -91,9 +91,9 @@ public class LimitRangesAdmin {
         this.creationTimestamp = creationTimestamp;
     }
 
-    public List<LimitRangeItem> getLimits() { return spec.getLimits(); }
+    public List<LimitRangesItem> getLimits() { return spec.getLimits(); }
 
-    public void setLimits(List<LimitRangeItem> limits) { this.limits = limits; }
+    public void setLimits(List<LimitRangesItem> limits) { this.limits = limits; }
 
     public String getSourceTypeYaml() {
         return sourceTypeYaml;

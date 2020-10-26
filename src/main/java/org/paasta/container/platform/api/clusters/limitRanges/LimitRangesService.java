@@ -44,6 +44,9 @@ public class LimitRangesService {
      * LimitRanges Admin 목록 조회(Get LimitRanges Admin list)
      *
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param  searchParam the searchParam
      * @return the limitRanges admin list
      */
     public Object getLimitRangesListAdmin(String namespace, int limit, String continueToken, String searchParam) {
@@ -71,9 +74,9 @@ public class LimitRangesService {
     /**
      * LimitRanges Admin 상세 조회(Get LimitRanges Admin detail)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the limitRanges admin
+     * @return the limitRanges admin detail
      */
     public Object getLimitRangesAdmin(String namespace, String resourceName) {
 
@@ -98,9 +101,9 @@ public class LimitRangesService {
     /**
      * LimitRanges YAML 조회(Get LimitRanges yaml)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @param resultMap    the result map
+     * @param resultMap the result map
      * @return the limitRanges yaml
      */
     public LimitRanges getLimitRangesYaml(String namespace, String resourceName, HashMap resultMap) {
@@ -122,7 +125,7 @@ public class LimitRangesService {
      * LimitRanges 생성(Create LimitRanges)
      *
      * @param namespace the namespace
-     * @param yaml      the yaml
+     * @param yaml the yaml
      * @return return is succeeded
      */
     public Object createLimitRanges(String namespace, String yaml) {
@@ -138,9 +141,9 @@ public class LimitRangesService {
     /**
      * LimitRanges 삭제(Delete LimitRanges)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @return the resultStatus
+     * @return return is succeeded
      */
     public ResultStatus deleteLimitRanges(String namespace, String resourceName) {
         ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
@@ -154,9 +157,9 @@ public class LimitRangesService {
     /**
      * LimitRanges 수정(Update LimitRanges)
      *
-     * @param namespace    the namespace
+     * @param namespace the namespace
      * @param resourceName the resource name
-     * @param yaml         the yaml
+     * @param yaml the yaml
      * @return return is succeeded
      */
     public ResultStatus updateLimitRanges(String namespace, String resourceName, String yaml) {
