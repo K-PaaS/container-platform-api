@@ -124,9 +124,7 @@ public class ResourceYamlService {
      *  namespace에 ResourceQuota를 할당
      *
      */
-    public void createResourceQuota() {
-        LOGGER.info("Create Resource Quota...");
-
+    public void createDefaultResourceQuota() {
         Map<String, Object> model = new HashMap<>();
         model.put("resource_quota_cpu", propertyService.getResourceQuotaLimitsCpu());
         model.put("resource_quota_memory", propertyService.getResourceQuotaLimitsMemory());
@@ -142,9 +140,7 @@ public class ResourceYamlService {
      * namespace에 LimitRange를 할당
      *
      */
-    public void createLimitRange() {
-        LOGGER.info("Create Limit Range...");
-
+    public void createDefaultLimitRange() {
         Map<String, Object> model = new HashMap<>();
         model.put("limit_range_cpu", propertyService.getLimitRangeCpu());
         model.put("limit_range_memory", propertyService.getLimitRangeMemory());

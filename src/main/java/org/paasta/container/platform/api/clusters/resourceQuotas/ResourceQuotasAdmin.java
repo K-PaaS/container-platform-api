@@ -1,17 +1,15 @@
-package org.paasta.container.platform.api.managements.resourceQuotas;
+package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasSpec;
+import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatus;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
-import org.paasta.container.platform.api.managements.resourceQuotas.support.ResourceQuotasSpec;
-import org.paasta.container.platform.api.managements.resourceQuotas.support.ResourceQuotasStatus;
 
-import java.lang.reflect.Array;
+import java.util.List;
 
 /**
- * ResourceQuota Model 클래스
+ * ResourceQuotas Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0
@@ -23,20 +21,16 @@ public class ResourceQuotasAdmin {
   private String resultMessage;
   private Integer httpStatusCode;
   private String detailMessage;
-  private String apiVersion;
 
   private String name;
-  private Array scopes;
+  private List<String> scopes;
   private String creationTimestamp;
-
-  private String kind;
+  private ResourceQuotasStatus status;
 
   @JsonIgnore
   private CommonMetaData metadata;
   @JsonIgnore
-  private CommonSpec spec;
-  @JsonIgnore
-  private CommonStatus status;
+  private ResourceQuotasSpec spec;
 
   public String getResultCode() {
     return resultCode;
@@ -70,44 +64,28 @@ public class ResourceQuotasAdmin {
     this.detailMessage = detailMessage;
   }
 
-  public String getApiVersion() {
-    return apiVersion;
-  }
-
-  public void setApiVersion(String apiVersion) {
-    this.apiVersion = apiVersion;
-  }
-
   public String getName() {
-    return name;
+    return name = metadata.getName();
   }
 
   public void setName(String name) {
     this.name = name;
   }
 
-  public Array getScopes() {
-    return scopes;
+  public List<String> getScopes() {
+    return scopes = spec.getScopes();
   }
 
-  public void setScopes(Array scopes) {
+  public void setScopes(List<String> scopes) {
     this.scopes = scopes;
   }
 
   public String getCreationTimestamp() {
-    return creationTimestamp;
+    return creationTimestamp = metadata.getCreationTimestamp();
   }
 
   public void setCreationTimestamp(String creationTimestamp) {
     this.creationTimestamp = creationTimestamp;
-  }
-
-  public String getKind() {
-    return kind;
-  }
-
-  public void setKind(String kind) {
-    this.kind = kind;
   }
 
   public CommonMetaData getMetadata() {
@@ -118,19 +96,19 @@ public class ResourceQuotasAdmin {
     this.metadata = metadata;
   }
 
-  public CommonSpec getSpec() {
+  public ResourceQuotasSpec getSpec() {
     return spec;
   }
 
-  public void setSpec(CommonSpec spec) {
+  public void setSpec(ResourceQuotasSpec spec) {
     this.spec = spec;
   }
 
-  public CommonStatus getStatus() {
+  public ResourceQuotasStatus getStatus() {
     return status;
   }
 
-  public void setStatus(CommonStatus status) {
+  public void setStatus(ResourceQuotasStatus status) {
     this.status = status;
   }
 }

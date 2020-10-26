@@ -1,4 +1,4 @@
-package org.paasta.container.platform.api.managements.resourceQuotas;
+package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -32,13 +32,9 @@ class ResourceQuotasListAdminItem {
 
   @JsonIgnore
   private CommonMetaData metadata;
-  @JsonIgnore
-  private CommonSpec spec;
-  @JsonIgnore
-  private CommonStatus status;
 
   public String getName() {
-    return name;
+    return name = metadata.getName();
   }
 
   public void setName(String name) {
@@ -46,7 +42,7 @@ class ResourceQuotasListAdminItem {
   }
 
   public String getCreationTimestamp() {
-    return creationTimestamp;
+    return creationTimestamp = metadata.getCreationTimestamp();
   }
 
   public void setCreationTimestamp(String creationTimestamp) {
@@ -61,20 +57,5 @@ class ResourceQuotasListAdminItem {
     this.metadata = metadata;
   }
 
-  public CommonSpec getSpec() {
-    return spec;
-  }
-
-  public void setSpec(CommonSpec spec) {
-    this.spec = spec;
-  }
-
-  public CommonStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(CommonStatus status) {
-    this.status = status;
-  }
 }
 

@@ -1,5 +1,6 @@
-package org.paasta.container.platform.api.managements.resourceQuotas;
+package org.paasta.container.platform.api.clusters.resourceQuotas;
 
+import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesListAdmin;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
@@ -48,7 +49,7 @@ public class ResourceQuotasService {
      * @param continueToken the continueToken
      * @return the resourceQuotas list
      */
-    public ResourceQuotasList getResourceQuotasList(String namespace,  int limit, String continueToken) {
+    public ResourceQuotasList getResourceQuotasList(String namespace, int limit, String continueToken) {
 
         String param = "";
         if(continueToken != null){
@@ -61,6 +62,37 @@ public class ResourceQuotasService {
                 HttpMethod.GET, null, Map.class);
 
         return (ResourceQuotasList) commonService.setResultModel(commonService.setResultObject(responseMap, ResourceQuotasList.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+    /**
+     * ResourceQuotas Admin 목록 조회(Get ResourceQuotas Admin list)
+     *
+     * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continue token
+     * @param searchParam the search param
+     * @return the resourceQuotas admin list
+     */
+    public Object getResourceQuotasListAdmin(String namespace, int limit, String continueToken, String searchParam) {
+        String param = "";
+        HashMap responseMap = null;
+
+        if (continueToken != null) {
+            param = "&continue=" + continueToken;
+        }
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListResourceQuotasListUrl()
+                        .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, ResourceQuotasListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -78,6 +110,32 @@ public class ResourceQuotasService {
                 , HttpMethod.GET, null, Map.class);
 
         return (ResourceQuotas) commonService.setResultModel(commonService.setResultObject(responseMap, ResourceQuotas.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+    /**
+     * ResourceQuotasAdmin 상세 조회(Get ResourceQuotas Admin detail)
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @return the resourceQuotas admin
+     */
+    public Object getResourceQuotasAdmin(String namespace, String resourceName) {
+        Object obj = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListResourceQuotasGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", resourceName)
+                , HttpMethod.GET, null, Map.class);
+
+        HashMap responseMap;
+
+        try{
+            responseMap = (HashMap) obj;
+        } catch (Exception e) {
+            return obj;
+        }
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, ResourceQuotasAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -147,4 +205,5 @@ public class ResourceQuotasService {
 
         return commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS);
     }
+
 }

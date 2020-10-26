@@ -1,4 +1,4 @@
-package org.paasta.container.platform.api.managements.resourceQuotas;
+package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
@@ -39,9 +39,16 @@ public class ResourceQuotasController {
      * @return the resourceQuotas list
      */
     @GetMapping
-    public ResourceQuotasList getResourceQuotasList(@PathVariable("namespace") String namespace,
-                                                    @RequestParam(required = false, defaultValue = "0") int limit,
-                                                    @RequestParam(required = false, name = "continue") String continueToken) {
+    public Object getResourceQuotasList(@PathVariable(value = "cluster") String cluster,
+                                        @PathVariable("namespace") String namespace,
+                                        @RequestParam(required = false, defaultValue = "0") int limit,
+                                        @RequestParam(required = false, name = "continue") String continueToken,
+                                        @RequestParam(required = false) String searchParam,
+                                        @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return resourceQuotasService.getResourceQuotasListAdmin(namespace, limit, continueToken, searchParam);
+        }
+
         return resourceQuotasService.getResourceQuotasList(namespace, limit, continueToken);
     }
 
@@ -53,9 +60,18 @@ public class ResourceQuotasController {
      * @return the resourceQuotas detail
      */
     @GetMapping(value = "/{resourceName:.+}")
-    public ResourceQuotas getResourceQuotas(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+    public Object getResourceQuotas(@PathVariable(value = "cluster") String cluster,
+                                            @PathVariable(value = "namespace") String namespace,
+                                            @PathVariable(value = "resourceName") String resourceName,
+                                            @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return resourceQuotasService.getResourceQuotasAdmin(namespace, resourceName);
+        }
+
         return resourceQuotasService.getResourceQuotas(namespace, resourceName);
     }
+
 
     /**
      * ResourceQuotas YAML 조회(Get ResourceQuotas yaml)
