@@ -3,8 +3,8 @@ package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
+import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsSpec;
+import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsStatus;
 
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,7 @@ class PersistentVolumeClaimsListAdminItem {
 
     private String name;
     private String namespace;
-    private String status;
+    private String persistentVolumeClaimStatus;
     private String volume;
     private String capacity;
     private String creationTimestamp;
@@ -39,12 +39,12 @@ class PersistentVolumeClaimsListAdminItem {
     @JsonIgnore
     private CommonMetaData metadata;
     @JsonIgnore
-    private CommonSpec spec;
+    private PersistentVolumeClaimsSpec spec;
     @JsonIgnore
-    private CommonStatus commonStatus;
+    private PersistentVolumeClaimsStatus status;
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
@@ -52,31 +52,31 @@ class PersistentVolumeClaimsListAdminItem {
     }
 
     public String getNamespace() {
-        return namespace;
+        return metadata.getNamespace();
     }
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
 
-    public String getStatus() {
-        return status = commonStatus.getPhase();
+    public String getPersistentVolumeClaimStatus() {
+        return status.getPhase();
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPersistentVolumeClaimStatus(String persistentVolumeClaimStatus) {
+        this.persistentVolumeClaimStatus = persistentVolumeClaimStatus;
     }
 
     public String getVolume() {
-        return volume;
+        return spec.getVolumeName();
     }
 
     public void setVolume(String volume) {
         this.volume = volume;
     }
 
-    public String getCapacity() {
-        return capacity;
+    public Map<String, Object> getCapacity() {
+        return status.getCapacity();
     }
 
     public void setCapacity(String capacity) {
@@ -84,7 +84,7 @@ class PersistentVolumeClaimsListAdminItem {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
@@ -99,19 +99,19 @@ class PersistentVolumeClaimsListAdminItem {
         this.metadata = metadata;
     }
 
-    public CommonSpec getSpec() {
+    public PersistentVolumeClaimsSpec getSpec() {
         return spec;
     }
 
-    public void setSpec(CommonSpec spec) {
+    public void setSpec(PersistentVolumeClaimsSpec spec) {
         this.spec = spec;
     }
 
-    public CommonStatus getCommonStatus() {
-        return commonStatus;
+    public PersistentVolumeClaimsStatus getStatus() {
+        return status;
     }
 
-    public void setCommonStatus(CommonStatus status) {
-        this.commonStatus = commonStatus;
+    public void setStatus(PersistentVolumeClaimsStatus status) {
+        this.status = status;
     }
 }
