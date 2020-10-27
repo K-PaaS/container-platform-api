@@ -162,38 +162,6 @@ public class CustomServicesService {
     }
 
 
-    /**
-     * Services 목록 조회 페이징 테스트 (Get Services list paging test)
-     *
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param offset the offset
-     * @param searchParam the searchParam
-     * @return the services list
-     */
-    public CustomServicesList getCustomServicesListTest(String namespace, int limit, int offset, String searchParam) {
-
-        List<CustomServices> itemList = new ArrayList<>();
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListServicesListUrl()
-                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
-
-        //  JsonPath filter processing if there is a search keyword
-        if (searchParam != null) {
-            responseMap = commonService.searchKeywordForResourceName(responseMap, searchParam);
-        }
-
-        CustomServicesList customServicesList = commonService.setResultObject(responseMap, CustomServicesList.class);
-
-        // Sort by resource name
-        itemList = customServicesList.getItems().stream().sorted(Comparator.comparing(x -> x.getMetadata().getName())).collect(Collectors.toList());
-        //Truncate the list if there is a limit value
-        if (limit > 0) {
-            customServicesList.setItems(commonService.listProcessingforLimit(itemList, offset, limit));
-        }
-        return (CustomServicesList) commonService.setResultModel(customServicesList, Constants.RESULT_STATUS_SUCCESS);
-    }
-
 
     //methods for administrators
 

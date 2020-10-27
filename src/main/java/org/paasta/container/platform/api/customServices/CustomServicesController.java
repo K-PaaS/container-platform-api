@@ -152,23 +152,23 @@ public class CustomServicesController {
     }
 
 
-    /**
-     * Services 목록 조회 페이징 테스트 (Get Services list paging test)
-     *
-     * @param cluster the cluster
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param offset the offset
-     * @param searchParam the searchParam
-     * @return the services list
-     */
-    @GetMapping("/test")
-    public CustomServicesList getCustomServicesListTest(@PathVariable(value = "cluster") String cluster,
-                                                        @PathVariable(value = "namespace") String namespace,
-                                                        @RequestParam(required = false, defaultValue = "0") int limit,
-                                                        @RequestParam(required = false, defaultValue = "0") int offset,
-                                                        @RequestParam(required = false, name = "searchParam") String searchParam) {
-
-        return customServicesService.getCustomServicesListTest(namespace, limit, offset, searchParam);
-    }
+//    /**
+//     * Services 목록 조회 페이징 테스트 (Get Services list paging test)
+//     *
+//     * @param cluster the cluster
+//     * @param namespace the namespace
+//     * @param limit the limit
+//     * @param offset the offset
+//     * @param searchParam the searchParam
+//     * @return the services list
+//     */
+//    @GetMapping("/test")
+//    public CustomServicesList getCustomServicesListTest(@PathVariable(value = "cluster") String cluster,
+//                                                        @PathVariable(value = "namespace") String namespace,
+//                                                        @RequestParam(required = false, defaultValue = "0") int limit,
+//                                                        @RequestParam(required = false, defaultValue = "0") int offset,
+//                                                        @RequestParam(required = false, name = "searchParam") String searchParam) {
+//
+//        return customServicesService.getCustomServicesListTest(namespace, limit, offset, searchParam);
+//    }
 }
