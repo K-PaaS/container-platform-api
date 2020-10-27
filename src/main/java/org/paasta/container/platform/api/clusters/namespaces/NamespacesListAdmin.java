@@ -23,7 +23,7 @@ public class NamespacesListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-    private Map metadata;
+
     private List<NamespacesListAdminItem> items;
 }
 
@@ -31,7 +31,7 @@ class NamespacesListAdminItem {
 
     private String name;
     private Object labels;
-    //status?
+    private String namespaceStatus;
     private String creationTimestamp;
 
     @JsonIgnore
@@ -42,7 +42,7 @@ class NamespacesListAdminItem {
     private CommonStatus status;
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
@@ -50,15 +50,23 @@ class NamespacesListAdminItem {
     }
 
     public Object getLabels() {
-        return labels;
+        return metadata.getLabels();
     }
 
     public void setLabels(Object labels) {
         this.labels = labels;
     }
 
+    public String getNamespaceStatus() {
+        return status.getPhase();
+    }
+
+    public void setNamespaceStatus(String namespaceStatus) {
+        this.namespaceStatus = namespaceStatus;
+    }
+
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {

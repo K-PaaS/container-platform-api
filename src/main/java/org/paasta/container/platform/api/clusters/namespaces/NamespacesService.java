@@ -65,7 +65,7 @@ public class NamespacesService {
      * @return the namespaces admin
      */
     public Object getNamespacesAdmin(String resourceName) {
-        Object obj = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesGetUrl()
                         .replace("{name}", resourceName)
                 , HttpMethod.GET, null, Map.class);
@@ -118,7 +118,7 @@ public class NamespacesService {
             param = "&continue=" + continueToken;
         }
 
-        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesListUrl() + "?limit" + limit + param,
                 HttpMethod.GET, null, Map.class);
 
@@ -128,7 +128,7 @@ public class NamespacesService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, NamespacesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(responseMap, NamespacesListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
