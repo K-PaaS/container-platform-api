@@ -2,9 +2,8 @@ package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatus;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
 
 import java.util.List;
 
@@ -33,6 +32,9 @@ class ResourceQuotasListAdminItem {
   @JsonIgnore
   private CommonMetaData metadata;
 
+  @JsonIgnore
+  public ResourceQuotasStatus status;
+
   public String getName() {
     return name = metadata.getName();
   }
@@ -57,5 +59,12 @@ class ResourceQuotasListAdminItem {
     this.metadata = metadata;
   }
 
+  public ResourceQuotasStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(ResourceQuotasStatus status) {
+    this.status = status;
+  }
 }
 

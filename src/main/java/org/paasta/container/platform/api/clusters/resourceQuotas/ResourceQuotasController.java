@@ -1,5 +1,7 @@
 package org.paasta.container.platform.api.clusters.resourceQuotas;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,9 +68,9 @@ public class ResourceQuotasController {
      */
     @GetMapping(value = "/{resourceName:.+}")
     public Object getResourceQuotas(@PathVariable(value = "cluster") String cluster,
-                                            @PathVariable(value = "namespace") String namespace,
-                                            @PathVariable(value = "resourceName") String resourceName,
-                                            @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                    @PathVariable(value = "namespace") String namespace,
+                                    @PathVariable(value = "resourceName") String resourceName,
+                                    @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return resourceQuotasService.getResourceQuotasAdmin(namespace, resourceName);
@@ -87,8 +89,8 @@ public class ResourceQuotasController {
      */
     @GetMapping(value = "{resourceName:.+}/yaml")
     public ResourceQuotas getResourceQuotasYaml(@PathVariable(value = "cluster") String cluster,
-                                                      @PathVariable(value = "namespace") String namespace,
-                                                      @PathVariable(value = "resourceName") String resourceName) {
+                                                @PathVariable(value = "namespace") String namespace,
+                                                @PathVariable(value = "resourceName") String resourceName) {
         return resourceQuotasService.getResourceQuotasYaml(namespace, resourceName, new HashMap<>());
     }
 
@@ -102,8 +104,8 @@ public class ResourceQuotasController {
      */
     @PostMapping
     public Object createResourceQuotas(@PathVariable(value = "cluster") String cluster,
-                                          @PathVariable(value = "namespace") String namespace,
-                                          @RequestBody String yaml) throws Exception{
+                                       @PathVariable(value = "namespace") String namespace,
+                                       @RequestBody String yaml) throws Exception{
         if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
@@ -120,10 +122,10 @@ public class ResourceQuotasController {
      * @param resourceName the resource name
      * @return return is succeeded
      */
-    @DeleteMapping("/{resourceName:.+}")
+    @DeleteMapping(value = "/{resourceName:.+}")
     public ResultStatus deleteResourceQuotas(@PathVariable(value = "cluster") String cluster,
-                                                @PathVariable(value = "namespace") String namespace,
-                                                @PathVariable(value = "resourceName") String resourceName) {
+                                             @PathVariable(value = "namespace") String namespace,
+                                             @PathVariable(value = "resourceName") String resourceName) {
         return resourceQuotasService.deleteResourceQuotas(namespace, resourceName, new HashMap<>());
     }
 
@@ -136,11 +138,35 @@ public class ResourceQuotasController {
      * @param yaml the yaml
      * @return return is succeeded
      */
-    @PutMapping("/{resourceName:.+}")
+    @PutMapping(value = "/{resourceName:.+}")
     public Object updateResourceQuotas(@PathVariable(value = "cluster") String cluster,
-                                          @PathVariable(value = "namespace") String namespace,
-                                          @PathVariable(value = "resourceName") String resourceName,
-                                          @RequestBody String yaml) {
+                                       @PathVariable(value = "namespace") String namespace,
+                                       @PathVariable(value = "resourceName") String resourceName,
+                                       @RequestBody String yaml) {
         return resourceQuotasService.updateResourceQuotas(namespace, resourceName,yaml);
     }
+
+
+    /**
+     * ResourceQuota Default Template 목록 조회
+     *
+     * @param cluster the cluster
+     * @param namespace the namespace
+     * @param isAdmin the isAdmin
+     * @return the object
+     * @throws JsonProcessingException
+     */
+    @GetMapping(value = "/template")
+    public Object getResourceQuotasDefaultList(@PathVariable(value = "cluster") String cluster,
+                                               @PathVariable(value = "namespace") String namespace,
+                                               @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws JsonProcessingException {
+
+        if (isAdmin) {
+            return resourceQuotasService.getRqDefaultList(namespace);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+    }
+
+
 }
