@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.clusters.resourceQuotas;
 
-import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesListAdmin;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -207,4 +210,36 @@ public class ResourceQuotasService {
         return commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+
+    /**
+     * ResourceQuota Default Template 목록 조회
+     *
+     * @param namespace the namespace
+     * @return the object
+     * @throws JsonProcessingException
+     */
+    public Object getRqDefaultList(String namespace) throws JsonProcessingException {
+        ResourceQuotasListAdmin resourceQuotasList = (ResourceQuotasListAdmin) getResourceQuotasListAdmin(namespace, 0, null, null);
+
+        ResourceQuotasDefaultList defaultList = new ResourceQuotasDefaultList();
+        ResourceQuotasDefault quotasDefault;
+        List<ResourceQuotasDefault> quotasDefaultList = new ArrayList<>();
+
+        if(resourceQuotasList.getItems().size() > 0) {
+            for (ResourceQuotasListAdminItem i:resourceQuotasList.getItems()) {
+                ObjectMapper mapper = new ObjectMapper();
+                String status = mapper.writeValueAsString(i.getStatus());
+
+                quotasDefault = new ResourceQuotasDefault(i.getName(), status);
+                quotasDefaultList.add(quotasDefault);
+
+            }
+
+            defaultList.setItems(quotasDefaultList);
+
+            return commonService.setResultModel(defaultList, Constants.RESULT_STATUS_SUCCESS);
+        }
+
+        return commonService.setResultModel(restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, ResourceQuotasDefaultList.class), Constants.RESULT_STATUS_SUCCESS);
+    }
 }

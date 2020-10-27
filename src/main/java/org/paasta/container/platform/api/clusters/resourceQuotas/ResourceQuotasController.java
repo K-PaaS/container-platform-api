@@ -1,5 +1,7 @@
 package org.paasta.container.platform.api.clusters.resourceQuotas;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +122,7 @@ public class ResourceQuotasController {
      * @param resourceName the resource name
      * @return return is succeeded
      */
-    @DeleteMapping("/{resourceName:.+}")
+    @DeleteMapping(value = "/{resourceName:.+}")
     public ResultStatus deleteResourceQuotas(@PathVariable(value = "cluster") String cluster,
                                                 @PathVariable(value = "namespace") String namespace,
                                                 @PathVariable(value = "resourceName") String resourceName) {
@@ -136,11 +138,35 @@ public class ResourceQuotasController {
      * @param yaml the yaml
      * @return return is succeeded
      */
-    @PutMapping("/{resourceName:.+}")
+    @PutMapping(value = "/{resourceName:.+}")
     public Object updateResourceQuotas(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @PathVariable(value = "resourceName") String resourceName,
                                           @RequestBody String yaml) {
         return resourceQuotasService.updateResourceQuotas(namespace, resourceName,yaml);
     }
+
+
+    /**
+     * ResourceQuota Default Template 목록 조회
+     *
+     * @param cluster the cluster
+     * @param namespace the namespace
+     * @param isAdmin the isAdmin
+     * @return the object
+     * @throws JsonProcessingException
+     */
+    @GetMapping(value = "/template")
+    public Object getResourceQuotasDefaultList(@PathVariable(value = "cluster") String cluster,
+                                     @PathVariable(value = "namespace") String namespace,
+                                     @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws JsonProcessingException {
+
+        if (isAdmin) {
+            return resourceQuotasService.getRqDefaultList(namespace);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+    }
+
+
 }
