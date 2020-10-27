@@ -88,7 +88,7 @@ public class PersistentVolumeClaimsService {
             param = "&continue=" + continueToken;
         }
 
-        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumeClaimsListUrl()
                         .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
 
@@ -98,7 +98,7 @@ public class PersistentVolumeClaimsService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumeClaimsListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumeClaimsList.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -110,7 +110,7 @@ public class PersistentVolumeClaimsService {
      * @return the persistentVolumeClaims detail
      */
     public PersistentVolumeClaims getPersistentVolumeClaims(String namespace, String resourceName) {
-        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumeClaimsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)

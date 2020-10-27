@@ -28,19 +28,10 @@ public class ResourceQuotasListAdmin {
 
 class ResourceQuotasListAdminItem {
   private String name;
-  private String namespace;
   private String creationTimestamp;
 
   @JsonIgnore
   private CommonMetaData metadata;
-
-  public String getNamespace() {
-    return metadata.getNamespace();
-  }
-
-  public void setNamespace(String namespace) {
-    this.namespace = namespace;
-  }
 
   public String getName() {
     return name = metadata.getName();

@@ -1,5 +1,8 @@
 package org.paasta.container.platform.api.common;
 
+import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasDefault;
+import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasDefaultList;
+import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.paasta.container.platform.api.common.CommonUtils.yamlMatch;
+import static org.paasta.container.platform.api.common.Constants.DEFAULT_RESOURCE_QUOTA_NAME;
 import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
 
 /**
@@ -28,13 +32,15 @@ public class ResourceYamlService {
     private final PropertyService propertyService;
     private final TemplateService templateService;
     private final RestTemplateService restTemplateService;
+    private final ResourceQuotasService resourceQuotasService;
 
     @Autowired
-    public ResourceYamlService(CommonService commonService, PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService) {
+    public ResourceYamlService(CommonService commonService, PropertyService propertyService, TemplateService templateService, RestTemplateService restTemplateService, ResourceQuotasService resourceQuotasService) {
         this.commonService = commonService;
         this.propertyService = propertyService;
         this.templateService = templateService;
         this.restTemplateService = restTemplateService;
+        this.resourceQuotasService = resourceQuotasService;
     }
 
 
@@ -121,14 +127,33 @@ public class ResourceYamlService {
 
 
     /**
-     *  namespace에 ResourceQuota를 할당
+     *  namespace에 ResourceQuotas를 할당
      *
      */
     public void createDefaultResourceQuota() {
+        ResourceQuotasDefaultList resourceQuotasDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, ResourceQuotasDefaultList.class);
+        String name = "";
+        String requestCpu = "";
+        String requestMemory = "";
+        String limitsCpu = "";
+        String limitsMemory = "";
+
+        for (ResourceQuotasDefault d:resourceQuotasDefaultList.getItems()) {
+            if(DEFAULT_RESOURCE_QUOTA_NAME.equals(d.getName())) {
+                name = d.getName();
+                requestCpu = d.getRequestCpu();
+                requestMemory = d.getRequestMemory();
+                limitsCpu = d.getLimitCpu();
+                limitsMemory = d.getLimitMemory();
+            }
+        }
+
         Map<String, Object> model = new HashMap<>();
-        model.put("resource_quota_cpu", propertyService.getResourceQuotaLimitsCpu());
-        model.put("resource_quota_memory", propertyService.getResourceQuotaLimitsMemory());
-        model.put("resource_quota_disk", propertyService.getResourceQuotaRequestsStorage());
+        model.put("name", name);
+        model.put("request_cpu", requestCpu);
+        model.put("request_memory", requestMemory);
+        model.put("limits_cpu", limitsCpu);
+        model.put("limits_memory", limitsMemory);
         String resourceQuotaYaml = templateService.convert("create_resource_quota.ftl", model);
 
         restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListResourceQuotasCreateUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME), HttpMethod.POST, resourceQuotaYaml, Object.class);

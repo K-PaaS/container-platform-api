@@ -1,9 +1,10 @@
 apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: cp-resource-quota
+  name: ${name}
 spec:
   hard:
-    limits.cpu: ${resource_quota_cpu}
-    limits.memory: ${resource_quota_memory}
-    requests.storage: ${resource_quota_disk}
+    requests.cpu: ${request_cpu}
+    requests.memory: ${request_memory}
+    limits.cpu: ${limits_cpu}
+    limits.memory: ${limits_memory}

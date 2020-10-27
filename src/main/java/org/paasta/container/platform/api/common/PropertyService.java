@@ -27,15 +27,6 @@ public class PropertyService {
     @Value("${limitRange.memory}")
     private String limitRangeMemory;
 
-    @Value("${resourceQuota.limits.cpu}")
-    private String resourceQuotaLimitsCpu;
-
-    @Value("${resourceQuota.limits.memory}")
-    private String resourceQuotaLimitsMemory;
-
-    @Value("${resourceQuota.requests.storage}")
-    private String resourceQuotaRequestsStorage;
-
     @Value("${cpMaster.api.list.services.list}")
     private String cpMasterApiListServicesListUrl;
 
