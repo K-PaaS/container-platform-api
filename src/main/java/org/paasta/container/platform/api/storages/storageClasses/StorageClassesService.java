@@ -82,7 +82,7 @@ public class StorageClassesService {
             param = "&continue=" + continueToken;
         }
 
-        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListStorageClassesListUrl()
                         .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
 
@@ -92,7 +92,7 @@ public class StorageClassesService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, StorageClassesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(responseMap, StorageClassesListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

@@ -22,13 +22,13 @@ public class StorageClassesListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-    private Map metadata;
+    //private Map metadata;
     private List<StorageClassesListAdminItem> items;
 }
 
 class StorageClassesListAdminItem {
     private String name;
-    private String provider;
+    private String provisioner;
     private Object parameters;
     private String creationTimestamp;
 
@@ -40,19 +40,19 @@ class StorageClassesListAdminItem {
     private CommonStatus status;
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getProvider() {
-        return provider;
+    public String getProvisioner() {
+        return provisioner;
     }
 
-    public void setProvider(String provider) {
-        this.provider = provider;
+    public void setProvisioner(String provisioner) {
+        this.provisioner = provisioner;
     }
 
     public Object getParameters() {
@@ -64,7 +64,7 @@ class StorageClassesListAdminItem {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
