@@ -29,10 +29,19 @@ public class LimitRangesListAdmin {
 class LimitRangesListAdminItem {
 
     private String name;
+    private String namespace;
     private String creationTimestamp;
 
     @JsonIgnore
     private CommonMetaData metadata;
+
+    public String getNamespace() {
+        return metadata.getNamespace();
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
 
     public String getName() { return metadata.getName(); }
 
