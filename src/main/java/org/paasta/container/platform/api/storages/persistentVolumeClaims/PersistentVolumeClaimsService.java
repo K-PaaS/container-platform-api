@@ -34,8 +34,8 @@ public class PersistentVolumeClaimsService {
      * Instantiates a new PersistentVolumeClaims service
      *
      * @param restTemplateService the rest template service
-     * @param commonService        the common service
-     * @param propertyService      the property service
+     * @param commonService       the common service
+     * @param propertyService     the property service
      */
     @Autowired
     public PersistentVolumeClaimsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService) {
@@ -48,49 +48,48 @@ public class PersistentVolumeClaimsService {
     /**
      * PersistentVolumeClaims 목록 조회(Get PersistentVolumeClaims list)
      *
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the persistentVolumeClaims list
      */
-    public PersistentVolumeClaimsList getPersistentVolumeClaimsList(String namespace,int limit, String continueToken) {
-
-        String param = "";
-
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
+    public PersistentVolumeClaimsList getPersistentVolumeClaimsList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumeClaimsListUrl()
-                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+                        .replace("{namespace}", namespace)
                 , HttpMethod.GET, null, Map.class);
 
-        return (PersistentVolumeClaimsList) commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumeClaimsList.class), Constants.RESULT_STATUS_SUCCESS);
+
+        PersistentVolumeClaimsList persistentVolumeClaimsList = commonService.setResultObject(responseMap, PersistentVolumeClaimsList.class);
+        persistentVolumeClaimsList = (PersistentVolumeClaimsList) commonService.resourceListProcessing(persistentVolumeClaimsList, offset, limit, orderBy, order, searchName);
+
+        return (PersistentVolumeClaimsList) commonService.setResultModel(persistentVolumeClaimsList, Constants.RESULT_STATUS_SUCCESS);
 
     }
 
     /**
      * PersistentVolumeClaims 목록 조회(Get PersistentVolumeClaims list)
-     *(Admin Portal)
+     * (Admin Portal)
      *
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
-     * @param searchParam the searchParam
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the persistentVolumeClaims list
      */
-    public Object getPersistentVolumeClaimsListAdmin(String namespace, int limit, String continueToken, String searchParam) {
-        String param = "";
+    public Object getPersistentVolumeClaimsListAdmin(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
+
         HashMap responseMap = null;
 
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
-
-        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumeClaimsListUrl()
-                        .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace) , HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
@@ -98,14 +97,17 @@ public class PersistentVolumeClaimsService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumeClaimsList.class), Constants.RESULT_STATUS_SUCCESS);
+        PersistentVolumeClaimsListAdmin persistentVolumeClaimsListAdmin = commonService.setResultObject(responseMap, PersistentVolumeClaimsListAdmin.class);
+        persistentVolumeClaimsListAdmin = (PersistentVolumeClaimsListAdmin) commonService.resourceListProcessing(persistentVolumeClaimsListAdmin, offset, limit, orderBy, order, searchName);
+
+        return commonService.setResultModel(persistentVolumeClaimsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
 
     /**
      * PersistentVolumeClaims 상세 조회(Get PersistentVolumeClaims detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the persistentVolumeClaims detail
      */
@@ -123,7 +125,7 @@ public class PersistentVolumeClaimsService {
      * PersistentVolumeClaims 상세 조회(Get PersistentVolumeClaims detail)
      * (Admin Portal)
      *
-     * @param namespace the namespace
+     * @param namespace                  the namespace
      * @param persistentVolumeClaimsName the persistentVolumeClaims name
      * @return the persistentVolumeClaims detail
      */
@@ -147,9 +149,9 @@ public class PersistentVolumeClaimsService {
     /**
      * PersistentVolumeClaims YAML 조회(Get PersistentVolumeClaims yaml)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap the result map
+     * @param resultMap    the result map
      * @return the persistentVolumeClaims yaml
      */
     public PersistentVolumeClaims getPersistentVolumeClaimsYaml(String namespace, String resourceName, HashMap resultMap) {
@@ -168,7 +170,7 @@ public class PersistentVolumeClaimsService {
      * PersistentVolumeClaims 생성(Create PersistentVolumeClaims)
      *
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     public Object createPersistentVolumeClaims(String namespace, String yaml) {
@@ -176,16 +178,16 @@ public class PersistentVolumeClaimsService {
                 propertyService.getCpMasterApiListPersistentVolumeClaimsCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
-        return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
     }
 
     /**
      * PersistentVolumeClaims 삭제(Delete PersistentVolumeClaims)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap the result map
+     * @param resultMap    the result map
      * @return return is succeeded
      */
     public ResultStatus deletePersistentVolumeClaims(String namespace, String resourceName, HashMap resultMap) {
@@ -200,9 +202,9 @@ public class PersistentVolumeClaimsService {
     /**
      * PersistentVolumeClaims 수정(Update PersistentVolumeClaims)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param yaml the yaml
+     * @param yaml         the yaml
      * @return return is succeeded
      */
 
