@@ -31,8 +31,9 @@ public class ReplicaSetsListAdmin {
 
 class ReplicaSetsListAdminItem {
     private String name;
-    private String namesapce;
-    private String pods;
+    private String namespace;
+    private int runningPods;
+    private int totalPods;
     private String image;
     private String creationTimestamp;
 
@@ -44,31 +45,39 @@ class ReplicaSetsListAdminItem {
     private CommonStatus status;
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getNamespaces() {
-        return namesapce;
+    public String getNamespace() {
+        return metadata.getNamespace();
     }
 
-    public void setNamespaces(String namesapce) {
-        this.namesapce = namesapce;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
-    public String getPods() {
-        return pods;
+    public int getRunningPods() {
+        return status.getAvailableReplicas();
     }
 
-    public void setPods(String pods) {
-        this.pods = pods;
+    public void setRunningPods(int runningPods) {
+        this.runningPods = runningPods;
+    }
+
+    public int getTotalPods() {
+        return status.getReplicas();
+    }
+
+    public void setTotalPods(int totalPods) {
+        this.totalPods = totalPods;
     }
 
     public String getImage() {
-        return image;
+        return spec.getTemplate().getSpec().getContainers().get(0).getImage();
     }
 
     public void setImage(String image) {
@@ -76,7 +85,7 @@ class ReplicaSetsListAdminItem {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
