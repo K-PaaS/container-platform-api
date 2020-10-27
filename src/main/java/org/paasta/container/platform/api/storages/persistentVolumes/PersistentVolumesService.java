@@ -104,7 +104,7 @@ public class PersistentVolumesService {
      * @return the persistentVolumes detail
      */
     public PersistentVolumes getPersistentVolumes(String namespace, String resourceName) {
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
@@ -205,6 +205,6 @@ public class PersistentVolumesService {
             return obj;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumesListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 }
