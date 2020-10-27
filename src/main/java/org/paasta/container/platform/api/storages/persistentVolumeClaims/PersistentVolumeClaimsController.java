@@ -32,33 +32,37 @@ public class PersistentVolumeClaimsController {
     /**
      * PersistentVolumeClaims 목록 조회(Get PersistentVolumeClaims list)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
-     * @param searchParam the searchParam
-     * @param isAdmin the isAdmin
+     * @param cluster    the cluster
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @param isAdmin    the isAdmin
      * @return the persistentVolumeClaims list
      */
     @GetMapping
     public Object getPersistentVolumeClaimsList(@PathVariable(value = "cluster") String cluster,
-                                                                    @PathVariable(value = "namespace") String namespace,
-                                                                    @RequestParam(required = false, defaultValue = "0") int limit,
-                                                                    @RequestParam(required = false, name = "continue") String continueToken,
-                                                                    @RequestParam(required = false) String searchParam,
-                                                                    @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                                @PathVariable(value = "namespace") String namespace,
+                                                @RequestParam(required = false, defaultValue = "0") int offset,
+                                                @RequestParam(required = false, defaultValue = "0") int limit,
+                                                @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
+                                                @RequestParam(required = false, defaultValue = "desc") String order,
+                                                @RequestParam(required = false, defaultValue = "") String searchName,
+                                                @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
-            return persistentVolumeClaimsService.getPersistentVolumeClaimsListAdmin(namespace, limit, continueToken, searchParam);
+            return persistentVolumeClaimsService.getPersistentVolumeClaimsListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
-        return persistentVolumeClaimsService.getPersistentVolumeClaimsList(namespace, limit, continueToken);
+        return persistentVolumeClaimsService.getPersistentVolumeClaimsList(namespace, offset, limit, orderBy, order, searchName);
     }
 
     /**
      * PersistentVolumeClaims 상세 조회(Get PersistentVolumeClaims detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the persistentVolumeClaims detail
      */
     @GetMapping(value = "/{resourceName:.+}")
@@ -76,7 +80,7 @@ public class PersistentVolumeClaimsController {
     /**
      * PersistentVolumeClaims YAML 조회(Get PersistentVolumeClaims yaml)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the persistentVolumeClaims yaml
      */
@@ -88,15 +92,15 @@ public class PersistentVolumeClaimsController {
     /**
      * PersistentVolumeClaims 생성(Create PersistentVolumeClaims)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     @PostMapping
     public Object createPersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
-                                 @PathVariable(value = "namespace") String namespace,
-                                 @RequestBody String yaml) throws Exception {
+                                               @PathVariable(value = "namespace") String namespace,
+                                               @RequestBody String yaml) throws Exception {
         if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
             return object;
@@ -108,13 +112,13 @@ public class PersistentVolumeClaimsController {
     /**
      * PersistentVolumeClaims 삭제(Delete PersistentVolumeClaims)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return return is succeeded
      */
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deletePersistentVolumeClaims(@PathVariable(value = "namespace") String namespace,
-                                       @PathVariable(value = "resourceName") String resourceName) {
+                                                     @PathVariable(value = "resourceName") String resourceName) {
 
         return persistentVolumeClaimsService.deletePersistentVolumeClaims(namespace, resourceName, new HashMap<>());
     }
@@ -122,17 +126,17 @@ public class PersistentVolumeClaimsController {
     /**
      * PersistentVolumeClaims 수정(Update PersistentVolumeClaims)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param yaml the yaml
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
     public Object updatePersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
-                                 @PathVariable(value = "namespace") String namespace,
-                                 @PathVariable(value = "resourceName") String resourceName,
-                                 @RequestBody String yaml) {
+                                               @PathVariable(value = "namespace") String namespace,
+                                               @PathVariable(value = "resourceName") String resourceName,
+                                               @RequestBody String yaml) {
 
         return persistentVolumeClaimsService.updatePersistentVolumeClaims(namespace, resourceName, yaml);
     }
