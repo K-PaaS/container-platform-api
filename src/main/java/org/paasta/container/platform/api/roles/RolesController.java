@@ -38,24 +38,30 @@ public class RolesController {
     /**
      * Roles 목록 조회(Get Roles list)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
-     * @param isAdmin the isAdmin
+     * @param cluster    the cluster
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @param isAdmin    the isAdmin
      * @return the roles list
      */
     @GetMapping
     public Object getRolesList(@PathVariable(value = "cluster") String cluster,
                                @PathVariable(value = "namespace") String namespace,
+                               @RequestParam(required = false, defaultValue = "0") int offset,
                                @RequestParam(required = false, defaultValue = "0") int limit,
-                               @RequestParam(required = false, name = "continue") String continueToken,
+                               @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
+                               @RequestParam(required = false, defaultValue = "desc") String order,
+                               @RequestParam(required = false, defaultValue = "") String searchName,
                                @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return rolesService.getRolesListAdmin(namespace, limit, continueToken);
+            return rolesService.getRolesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
-        return rolesService.getRolesList(namespace, limit, continueToken);
+        return rolesService.getRolesList(namespace, offset, limit, orderBy, order, searchName);
     }
 
 

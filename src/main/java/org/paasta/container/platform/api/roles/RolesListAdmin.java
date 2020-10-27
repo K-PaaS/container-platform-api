@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.roles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class RolesListAdmin {
     private Integer httpStatusCode;
     private String detailMessage;
     private Map metadata;
+    private CommonItemMetaData itemMetaData;
     private List<RolesListAdminItem> items;
 
 }
