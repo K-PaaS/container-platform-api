@@ -1,8 +1,8 @@
 package org.paasta.container.platform.api.login;
 
-import com.google.gson.JsonArray;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 
@@ -18,6 +18,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class AuthenticationResponse extends ResultStatus {
 
 
