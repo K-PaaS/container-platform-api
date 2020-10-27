@@ -80,7 +80,7 @@ public class PodsService {
      * @param orderBy    the orderBy
      * @param order      the order
      * @param searchName the searchName
-     * @return the deployments list
+     * @return the pods list
      */
     public Object getPodsListAdmin(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
         HashMap responseMap = null;

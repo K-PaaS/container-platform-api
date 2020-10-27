@@ -32,6 +32,7 @@ class PodsListAdminList {
     private String name;
     private String namespace;
     private String nodes;
+    private String podStatus;
     private String restarts;
     private String creationTimestamp;
 
@@ -43,7 +44,7 @@ class PodsListAdminList {
     private CommonStatus status;
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
@@ -51,7 +52,7 @@ class PodsListAdminList {
     }
 
     public String getNamespace() {
-        return namespace;
+        return metadata.getNamespace();
     }
 
     public void setNamespace(String namespace) {
@@ -59,15 +60,23 @@ class PodsListAdminList {
     }
 
     public String getNodes() {
-        return nodes;
+        return spec.getNodeName();
     }
 
     public void setNodes(String nodes) {
         this.nodes = nodes;
     }
 
+    public String getPodStatus() {
+        return status.getPhase();
+    }
+
+    public void setPodStatus(String podStatus) {
+        this.podStatus = podStatus;
+    }
+
     public String getRestarts() {
-        return restarts;
+        return spec.getRestartPolicy();
     }
 
     public void setRestarts(String restarts) {
@@ -75,7 +84,7 @@ class PodsListAdminList {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
