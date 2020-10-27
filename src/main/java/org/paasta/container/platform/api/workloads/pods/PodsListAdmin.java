@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.workloads.pods;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
@@ -22,8 +23,8 @@ public class PodsListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-
     private Map metadata;
+    private CommonItemMetaData itemMetaData;
     private List<PodsListAdminList> items ;
 }
 

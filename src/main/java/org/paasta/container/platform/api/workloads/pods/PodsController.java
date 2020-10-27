@@ -37,28 +37,31 @@ public class PodsController {
     /**
      * Pods 목록 조회(Get Pods list)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
-     * @param searchParam the searchParam
-     * @param isAdmin the isAdmin
+     * @param cluster    the cluster
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @param isAdmin    the isAdmin
      * @return the pods list
      */
-
     @GetMapping
     @ResponseBody
     public Object getPodsList(@PathVariable(value = "cluster") String cluster,
-                                @PathVariable(value = "namespace") String namespace,
-                                @RequestParam(required = false, defaultValue = "0") int limit,
-                                @RequestParam(required = false, name = "continue") String continueToken,
-                                @RequestParam(required = false) String searchParam,
-                                @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                              @PathVariable(value = "namespace") String namespace,
+                              @RequestParam(required = false, defaultValue = "0") int offset,
+                              @RequestParam(required = false, defaultValue = "0") int limit,
+                              @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
+                              @RequestParam(required = false, defaultValue = "desc") String order,
+                              @RequestParam(required = false, defaultValue = "") String searchName,
+                              @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return podsService.getPodsListAdmin(namespace, limit, continueToken, searchParam);
+            return podsService.getPodsListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
-        return podsService.getPodsList(namespace, limit, continueToken);
+        return podsService.getPodsList(namespace, offset, limit, orderBy, order, searchName);
     }
 
     /**
@@ -91,16 +94,16 @@ public class PodsController {
     /**
      * Pods 상세 조회(Get Pods detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the pods detail
      */
 
     @GetMapping(value = "/{resourceName:.+}")
     public Object getPods(@PathVariable(value = "namespace") String namespace,
-                        @PathVariable(value = "resourceName") String resourceName,
-                        @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                          @PathVariable(value = "resourceName") String resourceName,
+                          @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
             return podsService.getPodsAdmin(namespace, resourceName);
         }
@@ -110,7 +113,7 @@ public class PodsController {
     /**
      * Pods YAML 조회(Get Pods yaml)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the pods yaml
      */
@@ -123,9 +126,9 @@ public class PodsController {
     /**
      * Pods 생성(Create Pods)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     @PostMapping
@@ -144,21 +147,21 @@ public class PodsController {
     /**
      * Pods 삭제(Delete Pods)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return return is succeeded
      */
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deletePods(@PathVariable(value = "namespace") String namespace,
-                                   @PathVariable(value = "resourceName") String resourceName){
+                                   @PathVariable(value = "resourceName") String resourceName) {
         return podsService.deletePods(namespace, resourceName, new HashMap<>());
     }
 
     /**
      * Pods 수정(Update Pods)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return return is succeeded
      */

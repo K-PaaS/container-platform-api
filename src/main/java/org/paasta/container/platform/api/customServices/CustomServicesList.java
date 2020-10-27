@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.customServices;
 
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class CustomServicesList {
     private Integer httpStatusCode;
     private String detailMessage;
     private Map metadata;
+    private CommonItemMetaData itemMetaData;
     private List<CustomServices> items;
 
 }

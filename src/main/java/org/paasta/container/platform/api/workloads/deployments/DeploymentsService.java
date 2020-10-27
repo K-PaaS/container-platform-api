@@ -61,7 +61,7 @@ public class DeploymentsService {
     public Object getDeploymentsListAdmin(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
         HashMap responseMap = null;
 
-        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsListUrl()
                         .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
 

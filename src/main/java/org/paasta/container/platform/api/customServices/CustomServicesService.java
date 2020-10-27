@@ -10,7 +10,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * CustomServices Service 클래스
@@ -44,32 +43,32 @@ public class CustomServicesService {
     /**
      * Services 목록 조회(Get Services list)
      *
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the services list
      */
-    public CustomServicesList getCustomServicesList(String namespace, int limit, String continueToken) {
-        String param = "";
-
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
+    public CustomServicesList getCustomServicesList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListServicesListUrl()
-                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+                        .replace("{namespace}", namespace)
                 , HttpMethod.GET, null, Map.class);
 
-        return (CustomServicesList) commonService.setResultModel(commonService.setResultObject(responseMap, CustomServicesList.class), Constants.RESULT_STATUS_SUCCESS);
-    }
+        CustomServicesList customServicesList = commonService.setResultObject(responseMap, CustomServicesList.class);
+        customServicesList = (CustomServicesList) commonService.resourceListProcessing(customServicesList, offset, limit, orderBy, order, searchName);
 
+        return (CustomServicesList) commonService.setResultModel(customServicesList, Constants.RESULT_STATUS_SUCCESS);
+    }
 
 
     /**
      * Services 상세 조회(Get Services detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the services detail
      */
@@ -87,9 +86,9 @@ public class CustomServicesService {
     /**
      * Services YAML 조회(Get Services yaml)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap the result map
+     * @param resultMap    the result map
      * @return the services yaml
      */
     public CustomServices getCustomServicesYaml(String namespace, String resourceName, HashMap resultMap) {
@@ -105,12 +104,11 @@ public class CustomServicesService {
     }
 
 
-
     /**
      * Services 생성(Create Services)
      *
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     public Object createServices(String namespace, String yaml) {
@@ -118,19 +116,17 @@ public class CustomServicesService {
                 propertyService.getCpMasterApiListServicesCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
-        return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_SERVICES);
     }
-
-
 
 
     /**
      * Services 삭제(Delete Services)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap the result map
+     * @param resultMap    the result map
      * @return return is succeeded
      */
     public ResultStatus deleteServices(String namespace, String resourceName, HashMap resultMap) {
@@ -143,13 +139,12 @@ public class CustomServicesService {
     }
 
 
-
     /**
      * Services 수정(Update Services)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param yaml the yaml
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     public Object updateServices(String namespace, String resourceName, String yaml) {
@@ -162,26 +157,24 @@ public class CustomServicesService {
     }
 
 
-
     //methods for administrators
 
     /**
      * Services Admin 목록 조회(Get Services Admin list)
      *
-     * @param namespace the namespace
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the services admin list
      */
-    public Object getCustomServicesListAdmin(String namespace, int limit, String continueToken) {
-        String param = "";
+    public Object getCustomServicesListAdmin(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
         HashMap responseMap = null;
 
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
-
-         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListServicesListUrl()
-                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListServicesListUrl().replace("{namespace}", namespace)
                 , HttpMethod.GET, null, Map.class);
 
         try {
@@ -190,14 +183,17 @@ public class CustomServicesService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, CustomServicesListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        CustomServicesListAdmin customServicesListAdmin = commonService.setResultObject(responseMap, CustomServicesListAdmin.class);
+        customServicesListAdmin = (CustomServicesListAdmin) commonService.resourceListProcessing(customServicesListAdmin, offset, limit, orderBy, order, searchName);
+
+        return commonService.setResultModel(customServicesListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
 
     /**
      * Services Admin 상세 조회(Get Services Admin detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the services admin
      */
@@ -205,7 +201,7 @@ public class CustomServicesService {
 
         HashMap responseMap = null;
 
-        Object response  = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListServicesGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
