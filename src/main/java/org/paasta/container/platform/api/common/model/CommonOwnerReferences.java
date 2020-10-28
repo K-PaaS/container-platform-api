@@ -10,6 +10,7 @@ import lombok.Data;
  * @since 2020.08.25
  */
 @Data
+public
 class CommonOwnerReferences {
     private String name;
     private boolean controller;
