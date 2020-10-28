@@ -2,9 +2,12 @@ package org.paasta.container.platform.api.workloads.replicaSets;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonContainer;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
+
+import java.util.List;
 
 /**
  * ReplicaSets Admin Model 클래스
@@ -27,9 +30,9 @@ public class ReplicaSetsAdmin {
     private Object labels;
     private Object annotations;
     private String creationTimestamp;
+
     private Object selector;
     private String image;
-    private String sourceTypeYaml;
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -37,6 +40,7 @@ public class ReplicaSetsAdmin {
     private CommonSpec spec;
     @JsonIgnore
     private CommonStatus status;
+
 
     public String getResultCode() {
         return resultCode;
@@ -71,7 +75,7 @@ public class ReplicaSetsAdmin {
     }
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
@@ -79,7 +83,7 @@ public class ReplicaSetsAdmin {
     }
 
     public String getUid() {
-        return uid;
+        return metadata.getUid();
     }
 
     public void setUid(String uid) {
@@ -87,7 +91,7 @@ public class ReplicaSetsAdmin {
     }
 
     public String getNamespace() {
-        return namespace;
+        return metadata.getNamespace();
     }
 
     public void setNamespace(String namespace) {
@@ -95,7 +99,7 @@ public class ReplicaSetsAdmin {
     }
 
     public Object getLabels() {
-        return labels;
+        return metadata.getLabels();
     }
 
     public void setLabels(Object labels) {
@@ -103,7 +107,7 @@ public class ReplicaSetsAdmin {
     }
 
     public Object getAnnotations() {
-        return annotations;
+        return metadata.getAnnotations();
     }
 
     public void setAnnotations(Object annotations) {
@@ -111,7 +115,7 @@ public class ReplicaSetsAdmin {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
@@ -119,27 +123,19 @@ public class ReplicaSetsAdmin {
     }
 
     public Object getSelector() {
-        return selector;
+        return spec.getSelector();
     }
 
     public void setSelector(Object selector) {
         this.selector = selector;
     }
 
-    public String getImage() {
-        return image;
+    public List<CommonContainer> getImage() {
+        return spec.getContainers();
     }
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
     }
 
     public CommonMetaData getMetadata() {
