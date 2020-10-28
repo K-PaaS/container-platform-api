@@ -21,12 +21,6 @@ public class PropertyService {
     @Value("${commonApi.url}")
     private String commonApiUrl;
 
-    @Value("${limitRange.cpu}")
-    private String limitRangeCpu;
-
-    @Value("${limitRange.memory}")
-    private String limitRangeMemory;
-
     @Value("${cpMaster.api.list.services.list}")
     private String cpMasterApiListServicesListUrl;
 

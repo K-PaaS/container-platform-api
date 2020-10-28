@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
+import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -171,4 +174,70 @@ public class LimitRangesService {
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMITRANGES_DETAIL.replace("{limitRangeName:.+}", resourceName));
     }
 
+
+    /**
+     * LimitRanges Template 목록 조회(Get LimitRanges Template list)
+     *
+     * @param namespace the namespace
+     * @return the limitRanges template list
+     */
+    public Object getLimitRangesTemplateList(String namespace) {
+        LimitRangesListAdmin limitRangesList = (LimitRangesListAdmin) getLimitRangesListAdmin(namespace, 0, null, null);
+        LimitRangesDefaultList defaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/limitRanges", HttpMethod.GET, null, LimitRangesDefaultList.class);
+
+        List<LimitRangesListAdminItem> adminItems = limitRangesList.getItems();
+        List<LimitRangesTemplateItem> serversItemList = new ArrayList();
+
+        LimitRangesTemplateList serverList = new LimitRangesTemplateList();
+
+        for (LimitRangesDefault limitRangesDefault : defaultList.getItems()) {
+            serversItemList.add(getLimitRangesDb(limitRangesDefault));
+        }
+
+        if(adminItems.size() > 0) {
+            for (LimitRangesListAdminItem i : adminItems) {
+                List<LimitRangesItem> list = new ArrayList<>();
+                LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
+                for (LimitRangesItem item : i.getSpec().getLimits()) {
+                    list.add(item);
+                }
+                serversItem.setName(i.getName());
+                serversItem.setLimits(list);
+
+                serversItemList.add(serversItem);
+            }
+
+            serverList.setItems(serversItemList);
+            return commonService.setResultModel(serverList, Constants.RESULT_STATUS_SUCCESS);
+        }
+
+        serverList.setItems(serversItemList);
+        return commonService.setResultModel(serverList, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+    /**
+     * LimitRanges DB Template 형식 맞춤
+     *
+     * @param limitRangesDefault the limitRangesDefault
+     * @return the LimitRanges template item
+     */
+    public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault) {
+        LimitRangesItem map = new LimitRangesItem();
+        List<LimitRangesItem> list = new ArrayList<>();
+        LimitRangesTemplateItem item = new LimitRangesTemplateItem();
+
+        map.setDefaultRequest(limitRangesDefault.getDefaultRequest());
+        map.setMin(limitRangesDefault.getMin());
+        map.setMax(limitRangesDefault.getMax());
+        map.setType(limitRangesDefault.getType());
+        map.setDefaultLimit(limitRangesDefault.getDefaultLimit());
+
+        list.add(map);
+
+        item.setName(limitRangesDefault.getName());
+        item.setLimits(list);
+
+        return item;
+    }
 }

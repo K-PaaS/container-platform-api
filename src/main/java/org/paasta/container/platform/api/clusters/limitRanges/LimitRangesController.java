@@ -1,8 +1,10 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.slf4j.Logger;
@@ -215,6 +217,32 @@ public class LimitRangesController {
 
         if (isAdmin) {
             return limitRangesService.updateLimitRanges(namespace, resourceName, yaml);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+    }
+
+
+    /**
+     * LimitRanges Template 목록 조회(Get LimitRanges Template list)
+     *
+     * @param cluster the cluster
+     * @param namespace the namespace
+     * @param isAdmin the isAdmin
+     * @return the limitRangesDefault list
+     */
+    @ApiOperation(value = "LimitRanges Template 목록 조회(Get LimitRanges Template list)", nickname = "getLimitRangesTemplateList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
+    })
+    @GetMapping(value = "/template")
+    public Object getLimitRangesTemplateList(@PathVariable(value = "cluster") String cluster,
+                                             @PathVariable(value = "namespace") String namespace,
+                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return limitRangesService.getLimitRangesTemplateList(namespace);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
