@@ -1,7 +1,6 @@
 package org.paasta.container.platform.api.workloads.replicaSets;
 
 import org.paasta.container.platform.api.common.*;
-
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -138,7 +137,10 @@ public class ReplicaSetsService {
                 propertyService.getCpMasterApiListReplicaSetsListUrl()
                         .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
-        return (ReplicaSetsList) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSetsList.class), Constants.RESULT_STATUS_SUCCESS);
+        ReplicaSetsList replicaSetsList = commonService.setResultObject(resultMap, ReplicaSetsList.class);
+        replicaSetsList = commonService.setCommonItemMetaDataBySelector(replicaSetsList, ReplicaSetsList.class);
+
+        return (ReplicaSetsList) commonService.setResultModel(replicaSetsList, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

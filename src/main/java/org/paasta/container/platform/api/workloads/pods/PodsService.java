@@ -5,11 +5,6 @@ import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.customServices.CustomServices;
-import org.paasta.container.platform.api.workloads.deployments.Deployments;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsAdmin;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsList;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsListAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -113,7 +108,10 @@ public class PodsService {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
-        return (PodsList) commonService.setResultModel(commonService.setResultObject(resultMap, PodsList.class), Constants.RESULT_STATUS_SUCCESS);
+        PodsList podsList = commonService.setResultObject(resultMap, PodsList.class);
+        podsList = commonService.setCommonItemMetaDataBySelector(podsList, PodsList.class);
+
+        return (PodsList) commonService.setResultModel(podsList, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -129,7 +127,11 @@ public class PodsService {
 
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API, requestURL,
                 HttpMethod.GET, null, Map.class);
-        return (PodsList) commonService.setResultModel(commonService.setResultObject(resultMap, PodsList.class), Constants.RESULT_STATUS_SUCCESS);
+
+        PodsList podsList = commonService.setResultObject(resultMap, PodsList.class);
+        podsList = commonService.setCommonItemMetaDataBySelector(podsList, PodsList.class);
+
+        return (PodsList) commonService.setResultModel(podsList, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

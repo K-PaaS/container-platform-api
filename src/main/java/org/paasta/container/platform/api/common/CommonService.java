@@ -193,7 +193,6 @@ public class CommonService {
     }
 
 
-
     /**
      * 필드를 조회하고, 그 값을 반환 처리
      *
@@ -310,7 +309,7 @@ public class CommonService {
      * @param limit
      * @return
      */
-    public CommonItemMetaData setItemsCount(List itemList, int offset, int limit) {
+    public CommonItemMetaData setCommonItemMetaData(List itemList, int offset, int limit) {
         CommonItemMetaData commonItemMetaData = new CommonItemMetaData(0, 0);
         int allItemCount = itemList.size();
         int remainingItemCount = allItemCount - ((offset + 1) * limit);
@@ -344,7 +343,7 @@ public class CommonService {
         resourceItemList = sortingListByCondition(resourceItemList, orderBy, order);
 
         // 3. commonItemMetaData 추가 처리
-        CommonItemMetaData commonItemMetaData = setItemsCount(resourceItemList, offset, limit);
+        CommonItemMetaData commonItemMetaData = setCommonItemMetaData(resourceItemList, offset, limit);
         resourceReturnList = setField("itemMetaData", resourceList, commonItemMetaData);
 
         // 4. offset, limit에 따른 리스트 subLIst 처리
@@ -353,6 +352,23 @@ public class CommonService {
 
 
         return resourceReturnList;
+    }
+
+
+    /**
+     * selector에 의한 리스트 조회 commonItemMetaData 설정
+     *
+     * @param resourceList
+     * @return
+     */
+    public <T> T setCommonItemMetaDataBySelector(Object resourceList, Class<T> requestClass) {
+
+        Object resourceReturnList = null;
+        List resourceItemList = getField("items", resourceList);
+        CommonItemMetaData commonItemMetaData = new CommonItemMetaData(resourceItemList.size(), 0);
+        resourceReturnList = setField("itemMetaData", resourceList, commonItemMetaData);
+
+        return (T) resourceReturnList;
     }
 
 }
