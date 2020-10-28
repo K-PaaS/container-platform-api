@@ -3,8 +3,11 @@ package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
+import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsSpec;
+import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsStatus;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * PersistentVolumeClaims Admin Model 클래스
@@ -27,20 +30,17 @@ public class PersistentVolumeClaimsAdmin {
     private Object annotations;
     private String creationTimestamp;
 
-    //private String status;
+    private String persistentVolumeClaimStatus;
     private String storageClasses;
     private String capacity;
     private String accessMode;
 
-    //private Map<String, Object> source;
-    private String sourceTypeYaml;
-
     @JsonIgnore
     private CommonMetaData metadata;
     @JsonIgnore
-    private CommonSpec spec;
+    private PersistentVolumeClaimsSpec spec;
     @JsonIgnore
-    private CommonStatus status;
+    private PersistentVolumeClaimsStatus status;
 
     public String getResultCode() {
         return resultCode;
@@ -75,7 +75,7 @@ public class PersistentVolumeClaimsAdmin {
     }
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
@@ -83,7 +83,7 @@ public class PersistentVolumeClaimsAdmin {
     }
 
     public String getUid() {
-        return uid;
+        return metadata.getUid();
     }
 
     public void setUid(String uid) {
@@ -91,7 +91,7 @@ public class PersistentVolumeClaimsAdmin {
     }
 
     public String getNamespace() {
-        return namespace;
+        return metadata.getNamespace();
     }
 
     public void setNamespace(String namespace) {
@@ -99,7 +99,7 @@ public class PersistentVolumeClaimsAdmin {
     }
 
     public Object getLabels() {
-        return labels;
+        return metadata.getLabels();
     }
 
     public void setLabels(Object labels) {
@@ -107,7 +107,7 @@ public class PersistentVolumeClaimsAdmin {
     }
 
     public Object getAnnotations() {
-        return annotations;
+        return metadata.getAnnotations();
     }
 
     public void setAnnotations(Object annotations) {
@@ -115,43 +115,43 @@ public class PersistentVolumeClaimsAdmin {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
     }
 
+    public String getPersistentVolumeClaimStatus() {
+        return status.getPhase();
+    }
+
+    public void setPersistentVolumeClaimStatus(String persistentVolumeClaimStatus) {
+        this.persistentVolumeClaimStatus = persistentVolumeClaimStatus;
+    }
+
     public String getStorageClasses() {
-        return storageClasses;
+        return spec.getStorageClassName();
     }
 
     public void setStorageClasses(String storageClasses) {
         this.storageClasses = storageClasses;
     }
 
-    public String getCapacity() {
-        return capacity;
+    public Map<String, Object> getCapacity() {
+        return status.getCapacity();
     }
 
     public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
 
-    public String getAccessMode() {
-        return accessMode;
+    public List<String> getAccessMode() {
+        return spec.getAccessModes();
     }
 
     public void setAccessMode(String accessMode) {
         this.accessMode = accessMode;
-    }
-
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
     }
 
     public CommonMetaData getMetadata() {
@@ -162,19 +162,19 @@ public class PersistentVolumeClaimsAdmin {
         this.metadata = metadata;
     }
 
-    public CommonSpec getSpec() {
+    public PersistentVolumeClaimsSpec getSpec() {
         return spec;
     }
 
-    public void setSpec(CommonSpec spec) {
+    public void setSpec(PersistentVolumeClaimsSpec spec) {
         this.spec = spec;
     }
 
-    public CommonStatus getStatus() {
+    public PersistentVolumeClaimsStatus getStatus() {
         return status;
     }
 
-    public void setStatus(CommonStatus status) {
+    public void setStatus(PersistentVolumeClaimsStatus status) {
         this.status = status;
     }
 }
