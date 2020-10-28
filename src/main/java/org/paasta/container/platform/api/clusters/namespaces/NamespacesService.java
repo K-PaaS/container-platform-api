@@ -61,14 +61,13 @@ public class NamespacesService {
     /**
      * NameSpaces 상세 조회(Get NameSpaces Admin detail)
      *
-     * @param resourceName the resource name
+     * @param namespace the namespaces
      * @return the namespaces admin
      */
-    public Object getNamespacesAdmin(String resourceName) {
+    public Object getNamespacesAdmin(String namespace) {
         Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesGetUrl()
-                        .replace("{name}", resourceName)
-                , HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
 
         HashMap responseMap;
 

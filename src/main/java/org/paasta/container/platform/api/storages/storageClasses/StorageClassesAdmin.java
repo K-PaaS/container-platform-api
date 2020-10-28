@@ -25,13 +25,11 @@ public class StorageClassesAdmin {
     private Object annotations;
     private String creationTimestamp;
 
-    private String provider;
+    private String provisioner;
     private Object parameters;
 
     @JsonIgnore
     private CommonMetaData metadata;
-    @JsonIgnore
-    private StorageClassesItem item;
 
     public String getResultCode() {
         return resultCode;
@@ -105,16 +103,16 @@ public class StorageClassesAdmin {
         this.creationTimestamp = creationTimestamp;
     }
 
-    public String getProvider() {
-        return item.getProvisioner();
+    public String getProvisioner() {
+        return provisioner;
     }
 
-    public void setProvider(String provider) {
-        this.provider = provider;
+    public void setProvisioner(String provisioner) {
+        this.provisioner = provisioner;
     }
 
     public Object getParameters() {
-        return item.getParameters();
+        return parameters;
     }
 
     public void setParameters(Object parameters) {
@@ -129,11 +127,4 @@ public class StorageClassesAdmin {
         this.metadata = metadata;
     }
 
-    public StorageClassesItem getItem() {
-        return item;
-    }
-
-    public void setItem(StorageClassesItem item) {
-        this.item = item;
-    }
 }

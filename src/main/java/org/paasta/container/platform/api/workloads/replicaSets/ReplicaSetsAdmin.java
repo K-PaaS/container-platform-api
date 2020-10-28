@@ -130,8 +130,9 @@ public class ReplicaSetsAdmin {
         this.selector = selector;
     }
 
-    public List<CommonContainer> getImage() {
-        return spec.getContainers();
+    public String getImage() {
+        return spec.getTemplate().getSpec().getContainers().get(0).getImage();
+
     }
 
     public void setImage(String image) {
