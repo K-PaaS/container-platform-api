@@ -23,9 +23,10 @@ public class EndpointsAdmin {
     private Integer httpStatusCode;
     private String detailMessage;
 
-    private CommonMetaData metadata;
-    private CommonSpec spec;
-    private CommonStatus status;
+
+    //private CommonMetaData metadata;
+    //private CommonSpec spec;
+    //private CommonStatus status;
     private List<CommonSubset> subsets;
 
 }

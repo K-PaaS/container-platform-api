@@ -18,7 +18,7 @@ import java.util.HashMap;
  * @since 2020.09.17
  */
 @RestController
-@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/endpoints")
+@RequestMapping("/namespaces/{namespace:.+}/endpoints")
 public class EndpointsController {
 
     private final EndpointsService endpointsService;
