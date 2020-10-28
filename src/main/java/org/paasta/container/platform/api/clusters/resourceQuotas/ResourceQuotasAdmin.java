@@ -23,6 +23,7 @@ public class ResourceQuotasAdmin {
   private String detailMessage;
 
   private String name;
+  private String namespace;
   private List<String> scopes;
   private String creationTimestamp;
   private ResourceQuotasStatus status;
@@ -31,6 +32,14 @@ public class ResourceQuotasAdmin {
   private CommonMetaData metadata;
   @JsonIgnore
   private ResourceQuotasSpec spec;
+
+  public String getNamespace() {
+    return metadata.getNamespace();
+  }
+
+  public void setNamespace(String namespace) {
+    this.namespace = namespace;
+  }
 
   public String getResultCode() {
     return resultCode;

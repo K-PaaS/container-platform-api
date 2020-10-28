@@ -124,7 +124,7 @@ public class ResourceQuotasService {
      * @return the resourceQuotas admin
      */
     public Object getResourceQuotasAdmin(String namespace, String resourceName) {
-        Object obj = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
