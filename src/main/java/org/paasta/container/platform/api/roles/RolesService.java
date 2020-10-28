@@ -58,7 +58,7 @@ public class RolesService {
                 , HttpMethod.GET, null, Map.class);
 
         RolesList roleList = commonService.setResultObject(responseMap, RolesList.class);
-        roleList = (RolesList) commonService.resourceListProcessing(roleList, offset, limit, orderBy, order, searchName);
+        roleList = commonService.resourceListProcessing(roleList, offset, limit, orderBy, order, searchName, RolesList.class);
 
 
         return (RolesList) commonService.setResultModel(roleList, Constants.RESULT_STATUS_SUCCESS);
@@ -188,7 +188,7 @@ public class RolesService {
 
 
         RolesListAdmin rolesListAdmin = commonService.setResultObject(responseMap, RolesListAdmin.class);
-        rolesListAdmin = (RolesListAdmin) commonService.resourceListProcessing(rolesListAdmin, offset, limit, orderBy, order, searchName);
+        rolesListAdmin = commonService.resourceListProcessing(rolesListAdmin, offset, limit, orderBy, order, searchName, RolesListAdmin.class);
         return commonService.setResultModel(rolesListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 

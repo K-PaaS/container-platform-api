@@ -56,7 +56,7 @@ public class ReplicaSetsService {
                 , HttpMethod.GET, null, Map.class);
 
         ReplicaSetsList replicaSetsList = commonService.setResultObject(resultMap, ReplicaSetsList.class);
-        replicaSetsList = (ReplicaSetsList) commonService.resourceListProcessing(replicaSetsList, offset, limit, orderBy, order, searchName);
+        replicaSetsList = commonService.resourceListProcessing(replicaSetsList, offset, limit, orderBy, order, searchName, ReplicaSetsList.class);
 
         return (ReplicaSetsList) commonService.setResultModel(replicaSetsList, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -169,7 +169,7 @@ public class ReplicaSetsService {
         }
 
         ReplicaSetsListAdmin replicaSetsListAdmin = commonService.setResultObject(responseMap, ReplicaSetsListAdmin.class);
-        replicaSetsListAdmin = (ReplicaSetsListAdmin) commonService.resourceListProcessing(replicaSetsListAdmin, offset, limit, orderBy, order, searchName);
+        replicaSetsListAdmin = commonService.resourceListProcessing(replicaSetsListAdmin, offset, limit, orderBy, order, searchName, ReplicaSetsListAdmin.class);
 
         return commonService.setResultModel(replicaSetsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }

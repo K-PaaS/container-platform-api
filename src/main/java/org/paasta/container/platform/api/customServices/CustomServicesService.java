@@ -59,7 +59,7 @@ public class CustomServicesService {
                 , HttpMethod.GET, null, Map.class);
 
         CustomServicesList customServicesList = commonService.setResultObject(responseMap, CustomServicesList.class);
-        customServicesList = (CustomServicesList) commonService.resourceListProcessing(customServicesList, offset, limit, orderBy, order, searchName);
+        customServicesList = commonService.resourceListProcessing(customServicesList, offset, limit, orderBy, order, searchName, CustomServicesList.class);
 
         return (CustomServicesList) commonService.setResultModel(customServicesList, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -184,7 +184,7 @@ public class CustomServicesService {
         }
 
         CustomServicesListAdmin customServicesListAdmin = commonService.setResultObject(responseMap, CustomServicesListAdmin.class);
-        customServicesListAdmin = (CustomServicesListAdmin) commonService.resourceListProcessing(customServicesListAdmin, offset, limit, orderBy, order, searchName);
+        customServicesListAdmin = commonService.resourceListProcessing(customServicesListAdmin, offset, limit, orderBy, order, searchName, CustomServicesListAdmin.class);
 
         return commonService.setResultModel(customServicesListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
