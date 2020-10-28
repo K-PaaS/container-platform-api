@@ -113,7 +113,7 @@ public class NodesService {
      * @return the nodes admin
      */
     public Object getNodesAdmin(String resourceName) {
-        Object obj = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNodesGetUrl()
                         .replace("{name}", resourceName)
                 , HttpMethod.GET, null, Map.class);
