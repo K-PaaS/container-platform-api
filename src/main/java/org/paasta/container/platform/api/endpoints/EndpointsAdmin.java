@@ -1,10 +1,8 @@
 package org.paasta.container.platform.api.endpoints;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
-import org.paasta.container.platform.api.common.model.CommonSubset;
+import org.paasta.container.platform.api.common.model.*;
 
 import java.util.List;
 
@@ -28,5 +26,6 @@ public class EndpointsAdmin {
     //private CommonSpec spec;
     //private CommonStatus status;
     private List<CommonSubset> subsets;
+    
 
 }
