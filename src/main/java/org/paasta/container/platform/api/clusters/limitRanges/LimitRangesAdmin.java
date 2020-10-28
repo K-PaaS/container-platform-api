@@ -18,20 +18,24 @@ public class LimitRangesAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-    private String nextActionUrl;
 
     private String name;
+    private String namespace;
     private String creationTimestamp;
     private List<LimitRangesItem> limits;
-    private String sourceTypeYaml;
+    //private String sourceTypeYaml;
 
     @JsonIgnore
     private CommonMetaData metadata;
     @JsonIgnore
     private CommonSpec spec;
 
-    public LimitRangesAdmin(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
+    public String getNamespace() {
+        return metadata.getNamespace();
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public String getResultCode() {
@@ -66,13 +70,6 @@ public class LimitRangesAdmin {
         this.detailMessage = detailMessage;
     }
 
-    public String getNextActionUrl() {
-        return nextActionUrl;
-    }
-
-    public void setNextActionUrl(String nextActionUrl) {
-        this.nextActionUrl = nextActionUrl;
-    }
 
     // LimitRanges
     public String getName() {
@@ -95,13 +92,6 @@ public class LimitRangesAdmin {
 
     public void setLimits(List<LimitRangesItem> limits) { this.limits = limits; }
 
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
-    }
 
     public CommonMetaData getMetadata() {
         return metadata;
