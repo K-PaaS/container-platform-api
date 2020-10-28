@@ -1,6 +1,6 @@
 package org.paasta.container.platform.api.clusters.limitRanges.support;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 /**
@@ -13,8 +13,8 @@ import lombok.Data;
 @Data
 public class LimitRangesItem {
 
-    @JsonProperty("default")
-    private Object LimitRange_default;
+    @SerializedName("default")
+    private Object defaultLimit;
     private Object defaultRequest;
     private Object min;
     private Object max;
