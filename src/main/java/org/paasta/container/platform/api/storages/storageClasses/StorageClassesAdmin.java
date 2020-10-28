@@ -3,12 +3,7 @@ package org.paasta.container.platform.api.storages.storageClasses;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsSpec;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsStatus;
-
-import java.util.Map;
+import org.paasta.container.platform.api.storages.storageClasses.support.StorageClassesItem;
 
 /**
  * StorageClasses Admin Model 클래스
@@ -31,19 +26,12 @@ public class StorageClassesAdmin {
     private String creationTimestamp;
 
     private String provider;
-    private String iopsPerGB;
-    private String type;
-    private String zones;
-
-    //private Map<String, Object> source;
-    private String sourceTypeYaml;
+    private Object parameters;
 
     @JsonIgnore
     private CommonMetaData metadata;
     @JsonIgnore
-    private CommonSpec spec;
-    @JsonIgnore
-    private CommonStatus status;
+    private StorageClassesItem item;
 
     public String getResultCode() {
         return resultCode;
@@ -78,7 +66,7 @@ public class StorageClassesAdmin {
     }
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
@@ -86,7 +74,7 @@ public class StorageClassesAdmin {
     }
 
     public String getUid() {
-        return uid;
+        return metadata.getUid();
     }
 
     public void setUid(String uid) {
@@ -94,7 +82,7 @@ public class StorageClassesAdmin {
     }
 
     public Object getLabels() {
-        return labels;
+        return metadata.getLabels();
     }
 
     public void setLabels(Object labels) {
@@ -102,7 +90,7 @@ public class StorageClassesAdmin {
     }
 
     public Object getAnnotations() {
-        return annotations;
+        return metadata.getAnnotations();
     }
 
     public void setAnnotations(Object annotations) {
@@ -110,7 +98,7 @@ public class StorageClassesAdmin {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
@@ -118,43 +106,19 @@ public class StorageClassesAdmin {
     }
 
     public String getProvider() {
-        return provider;
+        return item.getProvisioner();
     }
 
     public void setProvider(String provider) {
         this.provider = provider;
     }
 
-    public String getIopsPerGB() {
-        return iopsPerGB;
+    public Object getParameters() {
+        return item.getParameters();
     }
 
-    public void setIopsPerGB(String iopsPerGB) {
-        this.iopsPerGB = iopsPerGB;
-    }
-
-    public Object getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Object getZones() {
-        return zones;
-    }
-
-    public void setZones(String zones) {
-        this.zones = zones;
-    }
-
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
+    public void setParameters(Object parameters) {
+        this.parameters = parameters;
     }
 
     public CommonMetaData getMetadata() {
@@ -165,19 +129,11 @@ public class StorageClassesAdmin {
         this.metadata = metadata;
     }
 
-    public CommonSpec getSpec() {
-        return spec;
+    public StorageClassesItem getItem() {
+        return item;
     }
 
-    public void setSpec(CommonSpec spec) {
-        this.spec = spec;
-    }
-
-    public CommonStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(CommonStatus status) {
-        this.status = status;
+    public void setItem(StorageClassesItem item) {
+        this.item = item;
     }
 }
