@@ -2,11 +2,10 @@ package org.paasta.container.platform.api.workloads.pods;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
+import org.paasta.container.platform.api.common.model.*;
+import org.paasta.container.platform.api.workloads.pods.support.Volume;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * Pods Admin Model 클래스
@@ -35,8 +34,7 @@ public class PodsAdmin {
     private String restarts;
     private String controllers;
     private String volumes;
-    private String image;
-    private String sourceTypeYaml;
+    private String containers;
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -78,7 +76,7 @@ public class PodsAdmin {
     }
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
@@ -86,7 +84,7 @@ public class PodsAdmin {
     }
 
     public String getUid() {
-        return uid;
+        return metadata.getUid();
     }
 
     public void setUid(String uid) {
@@ -94,7 +92,7 @@ public class PodsAdmin {
     }
 
     public String getNamespace() {
-        return namespace;
+        return metadata.getNamespace();
     }
 
     public void setNamespace(String namespace) {
@@ -102,7 +100,7 @@ public class PodsAdmin {
     }
 
     public Object getLabels() {
-        return labels;
+        return metadata.getLabels();
     }
 
     public void setLabels(Object labels) {
@@ -110,7 +108,7 @@ public class PodsAdmin {
     }
 
     public Object getAnnotations() {
-        return annotations;
+        return metadata.getAnnotations();
     }
 
     public void setAnnotations(Object annotations) {
@@ -118,7 +116,7 @@ public class PodsAdmin {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
@@ -126,7 +124,7 @@ public class PodsAdmin {
     }
 
     public String getNodes() {
-        return nodes;
+        return spec.getNodeName();
     }
 
     public void setNodes(String nodes) {
@@ -134,7 +132,7 @@ public class PodsAdmin {
     }
 
     public String getIp() {
-        return ip;
+        return status.getPodIP();
     }
 
     public void setIp(String ip) {
@@ -142,7 +140,7 @@ public class PodsAdmin {
     }
 
     public String getQosClass() {
-        return qosClass;
+        return status.getQosClass();
     }
 
     public void setQosClass(String qosClass) {
@@ -150,43 +148,35 @@ public class PodsAdmin {
     }
 
     public String getRestarts() {
-        return restarts;
+        return spec.getRestartPolicy();
     }
 
     public void setRestarts(String restarts) {
         this.restarts = restarts;
     }
 
-    public String getControllers() {
-        return controllers;
+    public List<CommonOwnerReferences> getControllers() {
+        return metadata.getOwnerReferences();
     }
 
     public void setControllers(String controllers) {
         this.controllers = controllers;
     }
 
-    public String getVolumes() {
-        return volumes;
+    public List<Volume> getVolumes() {
+        return spec.getVolumes();
     }
 
     public void setVolumes(String volumes) {
         this.volumes = volumes;
     }
 
-    public String getImage() {
-        return image;
+    public List<CommonContainer> getContainers() {
+        return spec.getContainers();
     }
 
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
+    public void setContainers(String containers) {
+        this.containers = containers;
     }
 
     public CommonMetaData getMetadata() {
