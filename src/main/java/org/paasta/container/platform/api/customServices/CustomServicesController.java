@@ -5,6 +5,7 @@ import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.HashMap;
 
@@ -46,6 +47,16 @@ public class CustomServicesController {
      * @param isAdmin    the isAdmin
      * @return the services list
      */
+    @ApiOperation(value = "Services 목록 조회(Get Services list)", nickname = "getCustomServicesList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
+    })
     @GetMapping
     public Object getCustomServicesList(@PathVariable(value = "cluster") String cluster,
                                         @PathVariable(value = "namespace") String namespace,
@@ -54,7 +65,7 @@ public class CustomServicesController {
                                         @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
                                         @RequestParam(required = false, defaultValue = "desc") String order,
                                         @RequestParam(required = false, defaultValue = "") String searchName,
-                                        @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return customServicesService.getCustomServicesListAdmin(namespace, offset, limit, orderBy, order, searchName);
@@ -73,11 +84,17 @@ public class CustomServicesController {
      * @param isAdmin      the isAdmin
      * @return the services detail
      */
+    @ApiOperation(value = "Services 상세 조회(Get Services detail)", nickname = "getCustomServices")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getCustomServices(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
                                     @PathVariable(value = "resourceName") String resourceName,
-                                    @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return customServicesService.getCustomServicesAdmin(namespace, resourceName);
@@ -95,6 +112,12 @@ public class CustomServicesController {
      * @param resourceName the resource name
      * @return the services yaml
      */
+    @ApiOperation(value = "Services YAML 조회(Get Services yaml)", nickname = "getCustomServicesYaml")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}/yaml")
     public CustomServices getCustomServicesYaml(@PathVariable(value = "cluster") String cluster,
                                                 @PathVariable(value = "namespace") String namespace,
@@ -112,6 +135,13 @@ public class CustomServicesController {
      * @param yaml      the yaml
      * @return return is succeeded
      */
+
+    @ApiOperation(value = "Services 생성(Create Services)", nickname = "createServices")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 생성 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PostMapping
     public Object createServices(@PathVariable(value = "cluster") String cluster,
                                  @PathVariable(value = "namespace") String namespace,
@@ -133,6 +163,13 @@ public class CustomServicesController {
      * @param resourceName the resource name
      * @return return is succeeded
      */
+
+    @ApiOperation(value = "Services 삭제(Delete Services)", nickname = "deleteServices")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deleteServices(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
@@ -151,6 +188,13 @@ public class CustomServicesController {
      * @param yaml         the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "Services 수정(Update Services)", nickname = "updateServices")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PutMapping("/{resourceName:.+}")
     public Object updateServices(@PathVariable(value = "cluster") String cluster,
                                  @PathVariable(value = "namespace") String namespace,
