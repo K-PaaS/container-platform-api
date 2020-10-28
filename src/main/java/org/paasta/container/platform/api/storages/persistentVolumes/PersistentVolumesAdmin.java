@@ -36,7 +36,6 @@ public class PersistentVolumesAdmin {
     private String accessMode;
 
     private Object source;
-
     private Object capacity;
 
 
@@ -46,6 +45,22 @@ public class PersistentVolumesAdmin {
     private PersistentVolumesSpec spec;
     @JsonIgnore
     private PersistentVolumesStatus status;
+
+    public Object getSource() {
+        return spec.getHostPath();
+    }
+
+    public void setSource(Object source) {
+        this.source = source;
+    }
+
+    public Object getCapacity() {
+        return spec.getCapacity();
+    }
+
+    public void setCapacity(Object capacity) {
+        this.capacity = capacity;
+    }
 
     public String getResultCode() {
         return resultCode;
@@ -159,22 +174,6 @@ public class PersistentVolumesAdmin {
         this.accessMode = accessMode;
     }
 
-   /* public String getSource() {
-        return (String) spec.getHostPath();
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }*/
-
-   /* public String getCapacity() {
-        return (String) spec.getCapacity();
-    }
-
-    public void setCapacity(String capacity) {
-        this.capacity = capacity;
-    }
-*/
     public CommonMetaData getMetadata() {
         return metadata;
     }
