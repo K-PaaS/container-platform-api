@@ -3,12 +3,11 @@ package org.paasta.container.platform.api.storages.persistentVolumes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsSpec;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsStatus;
+import org.paasta.container.platform.api.storages.persistentVolumes.support.ObjectReference;
+import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumesSpec;
+import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumesStatus;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * PersistentVolumes Admin Model 클래스
@@ -30,27 +29,23 @@ public class PersistentVolumesAdmin {
     private Object annotations;
     private String creationTimestamp;
 
-    //status?
+    private String persistentVolumeStatus;
     private String claim;
     private String returnPolicy;
     private String storageClasses;
     private String accessMode;
 
-    private String type;
-    private String path;
+    private Object source;
 
-    private String resourceName;
-    private String capacity;
+    private Object capacity;
 
-    //private Map<String, Object> source;
-    private String sourceTypeYaml;
 
     @JsonIgnore
     private CommonMetaData metadata;
     @JsonIgnore
-    private CommonSpec spec;
+    private PersistentVolumesSpec spec;
     @JsonIgnore
-    private CommonStatus status;
+    private PersistentVolumesStatus status;
 
     public String getResultCode() {
         return resultCode;
@@ -85,7 +80,7 @@ public class PersistentVolumesAdmin {
     }
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
@@ -93,7 +88,7 @@ public class PersistentVolumesAdmin {
     }
 
     public String getUid() {
-        return uid;
+        return metadata.getUid();
     }
 
     public void setUid(String uid) {
@@ -101,7 +96,7 @@ public class PersistentVolumesAdmin {
     }
 
     public Object getLabels() {
-        return labels;
+        return metadata.getLabels();
     }
 
     public void setLabels(Object labels) {
@@ -109,7 +104,7 @@ public class PersistentVolumesAdmin {
     }
 
     public Object getAnnotations() {
-        return annotations;
+        return metadata.getAnnotations();
     }
 
     public void setAnnotations(Object annotations) {
@@ -117,15 +112,23 @@ public class PersistentVolumesAdmin {
     }
 
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
     }
 
-    public String getClaim() {
-        return claim;
+    public String getPersistentVolumeStatus() {
+        return persistentVolumeStatus;
+    }
+
+    public void setPersistentVolumeStatus(String persistentVolumeStatus) {
+        this.persistentVolumeStatus = persistentVolumeStatus;
+    }
+
+    public ObjectReference getClaim() {
+        return spec.getClaimRef();
     }
 
     public void setClaim(String claim) {
@@ -133,7 +136,7 @@ public class PersistentVolumesAdmin {
     }
 
     public String getReturnPolicy() {
-        return returnPolicy;
+        return spec.getPersistentVolumeReclaimPolicy();
     }
 
     public void setReturnPolicy(String returnPolicy) {
@@ -141,61 +144,37 @@ public class PersistentVolumesAdmin {
     }
 
     public String getStorageClasses() {
-        return storageClasses;
+        return spec.getStorageClassName();
     }
 
     public void setStorageClasses(String storageClasses) {
         this.storageClasses = storageClasses;
     }
 
-    public String getAccessMode() {
-        return accessMode;
+    public List<String> getAccessMode() {
+        return spec.getAccessModes();
     }
 
     public void setAccessMode(String accessMode) {
         this.accessMode = accessMode;
     }
 
-    public String getType() {
-        return type;
+   /* public String getSource() {
+        return (String) spec.getHostPath();
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+    public void setSource(String source) {
+        this.source = source;
+    }*/
 
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getResourceName() {
-        return resourceName;
-    }
-
-    public void setResourceName(String resourceName) {
-        this.resourceName = resourceName;
-    }
-
-    public String getCapacity() {
-        return capacity;
+   /* public String getCapacity() {
+        return (String) spec.getCapacity();
     }
 
     public void setCapacity(String capacity) {
         this.capacity = capacity;
     }
-
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
-    }
-
+*/
     public CommonMetaData getMetadata() {
         return metadata;
     }
@@ -204,19 +183,19 @@ public class PersistentVolumesAdmin {
         this.metadata = metadata;
     }
 
-    public CommonSpec getSpec() {
+    public PersistentVolumesSpec getSpec() {
         return spec;
     }
 
-    public void setSpec(CommonSpec spec) {
+    public void setSpec(PersistentVolumesSpec spec) {
         this.spec = spec;
     }
 
-    public CommonStatus getStatus() {
-        return status;
+    public String getStatus() {
+        return status.getPhase();
     }
 
-    public void setStatus(CommonStatus status) {
+    public void setStatus(PersistentVolumesStatus status) {
         this.status = status;
     }
 }

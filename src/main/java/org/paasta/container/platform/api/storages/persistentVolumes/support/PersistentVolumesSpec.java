@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.common.model.CommonResourceRequirement;
 import org.paasta.container.platform.api.common.model.CommonTypedLocalObjectReference;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * PersistentVolumes Spec Model 클래스
@@ -25,4 +26,6 @@ public class PersistentVolumesSpec {
     private CommonLabelSelector selector;
     private ObjectReference claimRef;
     private Object capacity;
+    private String persistentVolumeReclaimPolicy;
+    private HostPathVolumeSource hostPath;
 }

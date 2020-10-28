@@ -205,6 +205,6 @@ public class PersistentVolumesService {
             return obj;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumesListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 }
