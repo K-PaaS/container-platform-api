@@ -23,19 +23,12 @@ public class NamespacesAdmin {
     private Integer httpStatusCode;
     private String detailMessage;
 
-    private String kind;
-    private String apiVersion;
-
     private String name;
     private String uid;
     private Object labels;
     private Object annotations;
-    //status?
+    private String namespaceStatus;
     private String creationTimestamp;
-
-
-    //private Map<String, Object> source;
-    private String sourceTypeYaml;
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -76,24 +69,8 @@ public class NamespacesAdmin {
         this.detailMessage = detailMessage;
     }
 
-    public String getKind() {
-        return kind;
-    }
-
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
-
-    public String getApiVersion() {
-        return apiVersion;
-    }
-
-    public void setApiVersion(String apiVersion) {
-        this.apiVersion = apiVersion;
-    }
-
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public void setName(String name) {
@@ -101,7 +78,7 @@ public class NamespacesAdmin {
     }
 
     public String getUid() {
-        return uid;
+        return metadata.getUid();
     }
 
     public void setUid(String uid) {
@@ -109,7 +86,7 @@ public class NamespacesAdmin {
     }
 
     public Object getLabels() {
-        return labels;
+        return metadata.getLabels();
     }
 
     public void setLabels(Object labels) {
@@ -117,27 +94,27 @@ public class NamespacesAdmin {
     }
 
     public Object getAnnotations() {
-        return annotations;
+        return metadata.getAnnotations();
     }
 
     public void setAnnotations(Object annotations) {
         this.annotations = annotations;
     }
 
+    public String getNamespaceStatus() {
+        return status.getPhase();
+    }
+
+    public void setNamespaceStatus(String namespaceStatus) {
+        this.namespaceStatus = namespaceStatus;
+    }
+
     public String getCreationTimestamp() {
-        return creationTimestamp;
+        return metadata.getCreationTimestamp();
     }
 
     public void setCreationTimestamp(String creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
-    }
-
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
     }
 
     public CommonMetaData getMetadata() {
