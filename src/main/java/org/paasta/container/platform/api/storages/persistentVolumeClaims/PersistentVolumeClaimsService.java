@@ -61,7 +61,7 @@ public class PersistentVolumeClaimsService {
                 , HttpMethod.GET, null, Map.class);
 
         PersistentVolumeClaimsList persistentVolumeClaimsList = commonService.setResultObject(responseMap, PersistentVolumeClaimsList.class);
-        persistentVolumeClaimsList = (PersistentVolumeClaimsList) commonService.resourceListProcessing(persistentVolumeClaimsList, offset, limit, orderBy, order, searchName);
+        persistentVolumeClaimsList = commonService.resourceListProcessing(persistentVolumeClaimsList, offset, limit, orderBy, order, searchName, PersistentVolumeClaimsList.class);
 
         return (PersistentVolumeClaimsList) commonService.setResultModel(persistentVolumeClaimsList, Constants.RESULT_STATUS_SUCCESS);
 
@@ -93,7 +93,7 @@ public class PersistentVolumeClaimsService {
         }
 
         PersistentVolumeClaimsListAdmin persistentVolumeClaimsListAdmin = commonService.setResultObject(responseMap, PersistentVolumeClaimsListAdmin.class);
-        persistentVolumeClaimsListAdmin = (PersistentVolumeClaimsListAdmin) commonService.resourceListProcessing(persistentVolumeClaimsListAdmin, offset, limit, orderBy, order, searchName);
+        persistentVolumeClaimsListAdmin = commonService.resourceListProcessing(persistentVolumeClaimsListAdmin, offset, limit, orderBy, order, searchName, PersistentVolumeClaimsListAdmin.class);
 
         return commonService.setResultModel(persistentVolumeClaimsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }

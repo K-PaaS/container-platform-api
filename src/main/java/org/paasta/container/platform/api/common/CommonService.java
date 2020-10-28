@@ -324,7 +324,7 @@ public class CommonService {
         return commonItemMetaData;
     }
 
-    public Object resourceListProcessing(Object resourceList, int offset, int limit, String orderBy, String order, String searchName) {
+    public <T> T resourceListProcessing(Object resourceList, int offset, int limit, String orderBy, String order, String searchName, Class<T> requestClass) {
 
         Object resourceReturnList = null;
 
@@ -351,7 +351,7 @@ public class CommonService {
         resourceReturnList = setField("items", resourceReturnList, resourceItemList);
 
 
-        return resourceReturnList;
+        return (T) resourceReturnList;
     }
 
 

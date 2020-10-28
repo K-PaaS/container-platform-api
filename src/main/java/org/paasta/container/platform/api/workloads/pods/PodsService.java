@@ -59,7 +59,7 @@ public class PodsService {
                 , HttpMethod.GET, null, Map.class);
 
         PodsList podsList = commonService.setResultObject(responseMap, PodsList.class);
-        podsList = (PodsList) commonService.resourceListProcessing(podsList, offset, limit, orderBy, order, searchName);
+        podsList = commonService.resourceListProcessing(podsList, offset, limit, orderBy, order, searchName, PodsList.class);
 
         return (PodsList) commonService.setResultModel(podsList, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -91,7 +91,7 @@ public class PodsService {
         }
 
         PodsListAdmin podsListAdmin = commonService.setResultObject(responseMap, PodsListAdmin.class);
-        podsListAdmin = (PodsListAdmin) commonService.resourceListProcessing(podsListAdmin, offset, limit, orderBy, order, searchName);
+        podsListAdmin = commonService.resourceListProcessing(podsListAdmin, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
 
         return commonService.setResultModel(podsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }

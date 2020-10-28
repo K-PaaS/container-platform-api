@@ -58,7 +58,7 @@ public class DeploymentsService {
                 , HttpMethod.GET, null, Map.class);
 
         DeploymentsList deploymentsList = commonService.setResultObject(responseMap, DeploymentsList.class);
-        deploymentsList = (DeploymentsList) commonService.resourceListProcessing(deploymentsList, offset, limit, orderBy, order, searchName);
+        deploymentsList = commonService.resourceListProcessing(deploymentsList, offset, limit, orderBy, order, searchName, DeploymentsList.class);
         return (DeploymentsList) commonService.setResultModel(deploymentsList, Constants.RESULT_STATUS_SUCCESS);
     }
 
@@ -88,7 +88,7 @@ public class DeploymentsService {
         }
 
         DeploymentsListAdmin deploymentsListAdmin = commonService.setResultObject(responseMap, DeploymentsListAdmin.class);
-        deploymentsListAdmin = (DeploymentsListAdmin) commonService.resourceListProcessing(deploymentsListAdmin, offset, limit, orderBy, order, searchName);
+        deploymentsListAdmin = commonService.resourceListProcessing(deploymentsListAdmin, offset, limit, orderBy, order, searchName, DeploymentsListAdmin.class);
 
         return commonService.setResultModel(deploymentsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
