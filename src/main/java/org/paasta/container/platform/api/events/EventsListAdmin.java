@@ -21,3 +21,13 @@ public class EventsListAdmin {
     private List<Events> items;
 
 }
+
+class EventsListAdminItem {
+    private String message;
+    private String source;
+    private String subObject;
+    private String count;
+    private String firstSeen;
+    private String lastSeen;
+
+}
