@@ -33,8 +33,6 @@ public class CustomServicesAdmin {
     private String sessionAffinity;
     private Object selector;
 
-    private String sourceTypeYaml;
-
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -154,14 +152,6 @@ public class CustomServicesAdmin {
 
     public void setSelector(Object selector) {
         this.selector = selector;
-    }
-
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
     }
 
     public CommonMetaData getMetadata() {
