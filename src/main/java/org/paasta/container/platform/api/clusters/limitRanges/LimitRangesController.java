@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.HashMap;
 
@@ -45,13 +46,21 @@ public class LimitRangesController {
      * @param namespace the namespace
      * @return the limitRanges list
      */
+    @ApiOperation(value = "LimitRanges 목록 조회(Get LimitRanges list)", nickname = "getLimitRangesList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "continue", value = "컨티뉴 토큰", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchParam", value = "검색 매개 변수", required = false, dataType = "string", paramType = "query")
+    })
     @GetMapping
     public Object getLimitRangesList(@PathVariable(value = "cluster") String cluster,
                                      @PathVariable(value = "namespace") String namespace,
                                      @RequestParam(required = false, defaultValue = "0") int limit,
                                      @RequestParam(required = false, name = "continue") String continueToken,
                                      @RequestParam(required = false) String searchParam,
-                                     @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return limitRangesService.getLimitRangesListAdmin(namespace, limit, continueToken, searchParam);
@@ -70,11 +79,17 @@ public class LimitRangesController {
      * @param isAdmin the isAdmin
      * @return the limitRanges detail
      */
+    @ApiOperation(value = "LimitRanges 상세 조회(Get LimitRanges detail)", nickname = "getLimitRanges")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getLimitRanges(@PathVariable(value = "cluster") String cluster,
                                  @PathVariable(value = "namespace") String namespace,
                                  @PathVariable(value = "resourceName") String resourceName,
-                                 @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                 @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return limitRangesService.getLimitRangesAdmin(namespace, resourceName);
@@ -92,11 +107,17 @@ public class LimitRangesController {
      * @param isAdmin the isAdmin
      * @return the limitRanges yaml
      */
+    @ApiOperation(value = "LimitRanges YAML 조회(Get LimitRanges yaml)", nickname = "getLimitRangesYaml")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}/yaml")
     public Object getLimitRangesYaml(@PathVariable(value = "cluster") String cluster,
                                      @PathVariable(value = "namespace") String namespace,
                                      @PathVariable(value = "resourceName") String resourceName,
-                                     @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return limitRangesService.getLimitRangesYaml(namespace, resourceName, new HashMap<>());
@@ -114,10 +135,16 @@ public class LimitRangesController {
      * @param yaml the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "LimitRanges 생성(Create LimitRanges)", nickname = "createLimitRanges")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 생성 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PostMapping
     public Object createLimitRanges(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
-                                    @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                     @RequestBody String yaml) throws Exception {
 
         if (isAdmin) {
@@ -143,11 +170,17 @@ public class LimitRangesController {
      * @param isAdmin the isAdmin
      * @return return is succeeded
      */
+    @ApiOperation(value = "LimitRanges 삭제(Delete LimitRanges)", nickname = "deleteLimitRanges")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deleteLimitRanges(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @PathVariable(value = "resourceName") String resourceName,
-                                          @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
             return limitRangesService.deleteLimitRanges(namespace, resourceName);
         }
@@ -166,11 +199,18 @@ public class LimitRangesController {
      * @param yaml the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "LimitRanges 수정(Update LimitRanges)", nickname = "updateLimitRanges")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PutMapping("/{resourceName:.+}")
     public ResultStatus updateLimitRanges(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @PathVariable(value = "resourceName") String resourceName,
-                                          @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
+                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                           @RequestBody String yaml) {
 
         if (isAdmin) {
@@ -179,6 +219,4 @@ public class LimitRangesController {
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
-
-
 }

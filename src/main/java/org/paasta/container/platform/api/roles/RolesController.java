@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.HashMap;
 
@@ -48,6 +49,16 @@ public class RolesController {
      * @param isAdmin    the isAdmin
      * @return the roles list
      */
+    @ApiOperation(value = "Roles 목록 조회(Get Roles list)", nickname = "getRolesList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
+    })
     @GetMapping
     public Object getRolesList(@PathVariable(value = "cluster") String cluster,
                                @PathVariable(value = "namespace") String namespace,
@@ -56,7 +67,7 @@ public class RolesController {
                                @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
                                @RequestParam(required = false, defaultValue = "desc") String order,
                                @RequestParam(required = false, defaultValue = "") String searchName,
-                               @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return rolesService.getRolesListAdmin(namespace, offset, limit, orderBy, order, searchName);
@@ -74,11 +85,17 @@ public class RolesController {
      * @param isAdmin the isAdmin
      * @return the roles detail
      */
+    @ApiOperation(value = "Roles 상세 조회(Get Roles detail)", nickname = "getRoles")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getRoles(@PathVariable(value = "cluster") String cluster,
                            @PathVariable(value = "namespace") String namespace,
                            @PathVariable(value = "resourceName") String resourceName,
-                           @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                           @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return rolesService.getRolesAdmin(namespace, resourceName);
@@ -95,6 +112,12 @@ public class RolesController {
      * @param resourceName the resource name
      * @return the roles yaml
      */
+    @ApiOperation(value = "Roles YAML 조회(Get Roles yaml)", nickname = "getRolesYaml")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}/yaml")
     public Roles getRolesYaml(@PathVariable(value = "cluster") String cluster,
                               @PathVariable(value = "namespace") String namespace,
@@ -112,6 +135,12 @@ public class RolesController {
      * @param yaml the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "Roles 생성(Create Roles)", nickname = "createRoles")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 생성 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PostMapping
     public Object createRoles(@PathVariable(value = "cluster") String cluster,
                               @PathVariable(value = "namespace") String namespace,
@@ -134,6 +163,12 @@ public class RolesController {
      * @param resourceName the resource name
      * @return return is succeeded
      */
+    @ApiOperation(value = "Roles 삭제(Delete Roles)", nickname = "deleteRoles")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deleteRoles(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
@@ -152,6 +187,13 @@ public class RolesController {
      * @param yaml the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "Roles 수정(Update Roles)", nickname = "updateRoles")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PutMapping("/{resourceName:.+}")
     public Object updateRoles(@PathVariable(value = "cluster") String cluster,
                               @PathVariable(value = "namespace") String namespace,
@@ -160,5 +202,4 @@ public class RolesController {
 
         return rolesService.updateRoles(namespace, resourceName, yaml);
     }
-
 }

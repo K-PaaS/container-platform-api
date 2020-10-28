@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.HashMap;
 
@@ -49,8 +50,15 @@ public class DeploymentsController {
      * @param isAdmin    the isAdmin
      * @return the deployments list
      */
-    @ApiOperation(value = "Deployments 목록 조회", nickname = "getDeploymentList")
+    @ApiOperation(value = "Deployments 목록 조회(Get Deployments list)", nickname = "getDeploymentsList")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
     })
     @GetMapping
     public Object getDeploymentsList(@PathVariable(value = "cluster") String cluster,
@@ -60,7 +68,7 @@ public class DeploymentsController {
                                      @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
                                      @RequestParam(required = false, defaultValue = "desc") String order,
                                      @RequestParam(required = false, defaultValue = "") String searchName,
-                                     @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
             return deploymentsService.getDeploymentsListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
@@ -77,18 +85,15 @@ public class DeploymentsController {
      * @param isAdmin      the isAdmin
      * @return the deployments detail
      */
-    @ApiOperation(value = "Deployments 상세 조회", nickname = "getDeployment")
+    @ApiOperation(value = "Deployments 상세 조회(Get Deployments detail)", nickname = "getDeployments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "deploymentName", value = "deployment 명", required = true, dataType = "string", paramType = "path")
-    })
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "SUCCESS")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
-    public Object getDeployments(@PathVariable(value = "namespace") String namespace
-            , @PathVariable(value = "resourceName") String resourceName
-            , @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+    public Object getDeployments(@PathVariable(value = "namespace") String namespace,
+                                 @PathVariable(value = "resourceName") String resourceName,
+                                 @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         // For Admin
         if (isAdmin) {
@@ -119,8 +124,14 @@ public class DeploymentsController {
      * @param resourceName the resource name
      * @return the deployments yaml
      */
+    @ApiOperation(value = "Deployments YAML 조회(Get Deployments yaml)", nickname = "getDeploymentsYaml")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Deployments getDeploymentsYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+    public Deployments getDeploymentsYaml(@PathVariable(value = "namespace") String namespace,
+                                          @PathVariable(value = "resourceName") String resourceName) {
         return deploymentsService.getDeploymentsYaml(namespace, resourceName, new HashMap<>());
     }
 
@@ -132,6 +143,12 @@ public class DeploymentsController {
      * @param yaml      the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "Deployments 생성(Create Deployments)", nickname = "createDeployments")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 생성 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PostMapping
     public Object createDeployments(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,

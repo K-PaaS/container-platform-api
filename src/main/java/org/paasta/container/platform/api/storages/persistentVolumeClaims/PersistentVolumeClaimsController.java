@@ -1,9 +1,11 @@
 package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 
+import io.swagger.annotations.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.HashMap;
 
@@ -14,6 +16,7 @@ import java.util.HashMap;
  * @version 1.0
  * @since 2020.09.18
  */
+@Api(value = "PersistentVolumeClaimsController v1")
 @RestController
 @RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/persistentVolumeClaims")
 public class PersistentVolumeClaimsController {
@@ -42,6 +45,16 @@ public class PersistentVolumeClaimsController {
      * @param isAdmin    the isAdmin
      * @return the persistentVolumeClaims list
      */
+    @ApiOperation(value = "PersistentVolumeClaims 목록 조회(Get PersistentVolumeClaims list)", nickname = "getPersistentVolumeClaimsList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
+    })
     @GetMapping
     public Object getPersistentVolumeClaimsList(@PathVariable(value = "cluster") String cluster,
                                                 @PathVariable(value = "namespace") String namespace,
@@ -50,7 +63,7 @@ public class PersistentVolumeClaimsController {
                                                 @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
                                                 @RequestParam(required = false, defaultValue = "desc") String order,
                                                 @RequestParam(required = false, defaultValue = "") String searchName,
-                                                @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
             return persistentVolumeClaimsService.getPersistentVolumeClaimsListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
@@ -65,10 +78,15 @@ public class PersistentVolumeClaimsController {
      * @param isAdmin      the isAdmin
      * @return the persistentVolumeClaims detail
      */
+    @ApiOperation(value = "PersistentVolumeClaims 상세 조회(Get PersistentVolumeClaims detail)", nickname = "getPersistentVolumeClaims")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}")
-    public Object getPersistentVolumeClaims(@PathVariable(value = "namespace") String namespace
-            , @PathVariable(value = "resourceName") String resourceName
-            , @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+    public Object getPersistentVolumeClaims(@PathVariable(value = "namespace") String namespace,
+                                            @PathVariable(value = "resourceName") String resourceName,
+                                            @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         // For Admin
         if (isAdmin) {
@@ -84,8 +102,14 @@ public class PersistentVolumeClaimsController {
      * @param resourceName the resource name
      * @return the persistentVolumeClaims yaml
      */
+    @ApiOperation(value = "PersistentVolumeClaims YAML 조회(Get PersistentVolumeClaims yaml)", nickname = "getPersistentVolumeClaimsYaml")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public PersistentVolumeClaims getPersistentVolumeClaimsYaml(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
+    public PersistentVolumeClaims getPersistentVolumeClaimsYaml(@PathVariable(value = "namespace") String namespace,
+                                                                @PathVariable(value = "resourceName") String resourceName) {
         return persistentVolumeClaimsService.getPersistentVolumeClaimsYaml(namespace, resourceName, new HashMap<>());
     }
 
@@ -97,6 +121,12 @@ public class PersistentVolumeClaimsController {
      * @param yaml      the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "PersistentVolumeClaims 생성(Create PersistentVolumeClaims)", nickname = "createPersistentVolumeClaims")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 생성 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PostMapping
     public Object createPersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
                                                @PathVariable(value = "namespace") String namespace,
@@ -116,6 +146,11 @@ public class PersistentVolumeClaimsController {
      * @param resourceName the resource name
      * @return return is succeeded
      */
+    @ApiOperation(value = "PersistentVolumeClaims 삭제(Delete PersistentVolumeClaims)", nickname = "deletePersistentVolumeClaims")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deletePersistentVolumeClaims(@PathVariable(value = "namespace") String namespace,
                                                      @PathVariable(value = "resourceName") String resourceName) {
@@ -132,6 +167,13 @@ public class PersistentVolumeClaimsController {
      * @param yaml         the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "PersistentVolumeClaims 수정(Update PersistentVolumeClaims)", nickname = "updatePersistentVolumeClaims")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PutMapping("/{resourceName:.+}")
     public Object updatePersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
                                                @PathVariable(value = "namespace") String namespace,

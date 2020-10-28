@@ -59,7 +59,8 @@ public class UsersController {
      * @return the UsersList
      */
     @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/{userId:.+}")
-    public Users getUsersByNamespace(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "userId") String userId) {
+    public Users getUsersByNamespace(@PathVariable(value = "namespace") String namespace,
+                                     @PathVariable(value = "userId") String userId) {
         return usersService.getUsers(namespace, userId);
     }
 
@@ -138,7 +139,8 @@ public class UsersController {
      * @return the resultStatus
      */
     @PutMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users")
-    public ResultStatus modifyUsersConfig(@PathVariable(value = "namespace") String namespace, @RequestBody List<Users> users) {
+    public ResultStatus modifyUsersConfig(@PathVariable(value = "namespace") String namespace,
+                                          @RequestBody List<Users> users) {
         return usersService.modifyUsersConfig(namespace, users);
     }
 

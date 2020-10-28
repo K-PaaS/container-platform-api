@@ -1,11 +1,16 @@
 package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.HashMap;
 
@@ -16,7 +21,7 @@ import java.util.HashMap;
  * @version 1.0
  * @since 2020.09.03
  **/
-
+@Api(value = "ResourceQuotasController v1")
 @RestController
 @RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/resourceQuotas")
 public class ResourceQuotasController {
@@ -43,13 +48,21 @@ public class ResourceQuotasController {
      * @param isAdmin the isAdmin
      * @return the resourceQuotas list
      */
+    @ApiOperation(value = "ResourceQuotas 목록 조회(Get ResourceQuotas list)", nickname = "getResourceQuotasList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "continue", value = "컨티뉴 토큰", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchParam", value = "검색 매개 변수", required = false, dataType = "string", paramType = "query")
+    })
     @GetMapping
     public Object getResourceQuotasList(@PathVariable(value = "cluster") String cluster,
                                         @PathVariable("namespace") String namespace,
                                         @RequestParam(required = false, defaultValue = "0") int limit,
                                         @RequestParam(required = false, name = "continue") String continueToken,
                                         @RequestParam(required = false) String searchParam,
-                                        @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
             return resourceQuotasService.getResourceQuotasListAdmin(namespace, limit, continueToken, searchParam);
         }
@@ -66,11 +79,17 @@ public class ResourceQuotasController {
      * @param isAdmin the isAdmin
      * @return the resourceQuotas detail
      */
+    @ApiOperation(value = "ResourceQuotas 상세 조회(Get ResourceQuotas detail)", nickname = "getResourceQuotas")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getResourceQuotas(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
                                     @PathVariable(value = "resourceName") String resourceName,
-                                    @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return resourceQuotasService.getResourceQuotasAdmin(namespace, resourceName);
@@ -87,6 +106,12 @@ public class ResourceQuotasController {
      * @param resourceName the resource name
      * @return the resourceQuotas yaml
      */
+    @ApiOperation(value = "ResourceQuotas YAML 조회(Get ResourceQuotas yaml)", nickname = "getResourceQuotasYaml")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "{resourceName:.+}/yaml")
     public ResourceQuotas getResourceQuotasYaml(@PathVariable(value = "cluster") String cluster,
                                                 @PathVariable(value = "namespace") String namespace,
@@ -102,6 +127,12 @@ public class ResourceQuotasController {
      * @param yaml the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "ResourceQuotas 생성(Create ResourceQuotas)", nickname = "createResourceQuotas")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 생성 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PostMapping
     public Object createResourceQuotas(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
@@ -122,6 +153,12 @@ public class ResourceQuotasController {
      * @param resourceName the resource name
      * @return return is succeeded
      */
+    @ApiOperation(value = "ResourceQuotas 삭제(Delete ResourceQuotas)", nickname = "deleteResourceQuotas")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @DeleteMapping(value = "/{resourceName:.+}")
     public ResultStatus deleteResourceQuotas(@PathVariable(value = "cluster") String cluster,
                                              @PathVariable(value = "namespace") String namespace,
@@ -138,6 +175,13 @@ public class ResourceQuotasController {
      * @param yaml the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "ResourceQuotas 수정(Update ResourceQuotas)", nickname = "updateResourceQuotas")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PutMapping(value = "/{resourceName:.+}")
     public Object updateResourceQuotas(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
@@ -148,7 +192,7 @@ public class ResourceQuotasController {
 
 
     /**
-     * ResourceQuota Default Template 목록 조회
+     * ResourceQuota Default Template 목록 조회 (Get ResourceQouta Default Template list)
      *
      * @param cluster the cluster
      * @param namespace the namespace
@@ -156,10 +200,15 @@ public class ResourceQuotasController {
      * @return the object
      * @throws JsonProcessingException
      */
+    @ApiOperation(value = "ResourceQuota Default Template 목록 조회 (Get ResourceQouta Default Template list)", nickname = "getResourceQuotasDefaultList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
+    })
     @GetMapping(value = "/template")
     public Object getResourceQuotasDefaultList(@PathVariable(value = "cluster") String cluster,
                                                @PathVariable(value = "namespace") String namespace,
-                                               @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws JsonProcessingException {
+                                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws JsonProcessingException {
 
         if (isAdmin) {
             return resourceQuotasService.getRqDefaultList(namespace);
