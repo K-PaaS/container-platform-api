@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,9 +107,14 @@ public class StorageClassesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public StorageClasses getStorageClassesYaml(@PathVariable(value = "namespace") String namespace,
-                                                @PathVariable(value = "resourceName") String resourceName){
-        return storageClassesService.getStorageClassesYaml(namespace, resourceName, new HashMap<>());
+    public Object getStorageClassesYaml(@PathVariable(value = "namespace") String namespace,
+                                        @PathVariable(value = "resourceName") String resourceName,
+                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return storageClassesService.getStorageClassesYaml(namespace, resourceName, new HashMap<>());
+        }
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
@@ -128,13 +134,19 @@ public class StorageClassesController {
     @PostMapping
     public Object createStorageClasses(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
+                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                        @RequestBody String yaml) throws Exception {
-        if (yaml.contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
-            return object;
+        if (isAdmin) {
+
+            if (yaml.contains("---")) {
+                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+                return object;
+            }
+
+            return storageClassesService.createStorageClasses(namespace, yaml);
         }
 
-        return storageClassesService.createStorageClasses(namespace, yaml);
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
@@ -151,9 +163,14 @@ public class StorageClassesController {
     })
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deleteStorageClasses(@PathVariable(value = "namespace") String namespace,
-                                             @PathVariable(value = "resourceName") String resourceName){
+                                             @PathVariable(value = "resourceName") String resourceName,
+                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        return storageClassesService.deleteStorageClasses(namespace, resourceName, new HashMap<>());
+        if (isAdmin) {
+            return storageClassesService.deleteStorageClasses(namespace, resourceName, new HashMap<>());
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
@@ -176,8 +193,13 @@ public class StorageClassesController {
     public Object updateStorageClasses(@PathVariable(value =  "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
                                        @PathVariable(value = "resourceName") String resourceName,
+                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                        @RequestBody String yaml){
 
-        return storageClassesService.updateStorageClasses(namespace, resourceName, yaml);
+        if (isAdmin) {
+            return storageClassesService.updateStorageClasses(namespace, resourceName, yaml);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 }
