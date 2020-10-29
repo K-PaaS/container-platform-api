@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.roles;
 
 import io.swagger.annotations.*;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 
@@ -72,6 +73,7 @@ public class RolesController {
         if (isAdmin) {
             return rolesService.getRolesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
+
         return rolesService.getRolesList(namespace, offset, limit, orderBy, order, searchName);
     }
 
@@ -100,6 +102,7 @@ public class RolesController {
         if (isAdmin) {
             return rolesService.getRolesAdmin(namespace, resourceName);
         }
+
         return rolesService.getRoles(namespace, resourceName);
     }
 
@@ -119,11 +122,16 @@ public class RolesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Roles getRolesYaml(@PathVariable(value = "cluster") String cluster,
-                              @PathVariable(value = "namespace") String namespace,
-                              @PathVariable(value = "resourceName") String resourceName) {
+    public Object getRolesYaml(@PathVariable(value = "cluster") String cluster,
+                               @PathVariable(value = "namespace") String namespace,
+                               @PathVariable(value = "resourceName") String resourceName,
+                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        return rolesService.getRolesYaml(namespace, resourceName, new HashMap<>());
+        if (isAdmin) {
+            return rolesService.getRolesYaml(namespace, resourceName, new HashMap<>());
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
 
@@ -144,7 +152,10 @@ public class RolesController {
     @PostMapping
     public Object createRoles(@PathVariable(value = "cluster") String cluster,
                               @PathVariable(value = "namespace") String namespace,
+                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                               @RequestBody String yaml) throws Exception {
+
+    if (isAdmin) {
 
         if (yaml.contains("---")) {
             Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
@@ -152,6 +163,9 @@ public class RolesController {
         }
 
         return rolesService.createRoles(namespace, yaml);
+    }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
 
@@ -172,9 +186,14 @@ public class RolesController {
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deleteRoles(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
-                                    @PathVariable(value = "resourceName") String resourceName) {
+                                    @PathVariable(value = "resourceName") String resourceName,
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        return rolesService.deleteRoles(namespace, resourceName, new HashMap<>());
+        if (isAdmin) {
+            return rolesService.deleteRoles(namespace, resourceName, new HashMap<>());
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
 
@@ -198,8 +217,13 @@ public class RolesController {
     public Object updateRoles(@PathVariable(value = "cluster") String cluster,
                               @PathVariable(value = "namespace") String namespace,
                               @PathVariable(value = "resourceName") String resourceName,
+                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                               @RequestBody String yaml) {
 
-        return rolesService.updateRoles(namespace, resourceName, yaml);
+        if (isAdmin) {
+            return rolesService.updateRoles(namespace, resourceName, yaml);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 }
