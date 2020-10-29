@@ -24,9 +24,10 @@ public class UsersListAdmin {
     public static class UserDetail {
         private String userId;
         private String serviceAccountName;
-        private String cpNamespace;
+       /* private String cpNamespace;
         private String roleSetCode;
         private String userType;
-        private String created;
+        private String created;*/
     }
 }
+
