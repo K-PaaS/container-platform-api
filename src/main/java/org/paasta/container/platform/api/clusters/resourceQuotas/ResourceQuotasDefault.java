@@ -20,17 +20,9 @@ public class ResourceQuotasDefault {
     private String id;
 
     private String name;
-
-    @JsonIgnore
     private String requestCpu;
-
-    @JsonIgnore
     private String requestMemory;
-
-    @JsonIgnore
     private String limitCpu;
-
-    @JsonIgnore
     private String limitMemory;
 
     private String status;

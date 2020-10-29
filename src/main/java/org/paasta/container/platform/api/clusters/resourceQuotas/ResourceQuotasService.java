@@ -6,7 +6,9 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.util.YamlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -169,6 +171,17 @@ public class ResourceQuotasService {
      * @return return is succeeded
      */
     public Object createResourceQuotas(String namespace, String yaml) {
+        Map YamlMetadata = YamlUtil.parsingYamlMap(yaml, "metadata");
+        String createYamlResourceName = YamlMetadata.get("name").toString();
+
+        // ResourceQuotas DB Template name don't use when common create ResourceQuotas
+        if (Constants.DEFAULT_LOW_RESOURCE_QUOTA_NAME.equals(createYamlResourceName)
+                || Constants.DEFAULT_MEDIUM_RESOURCE_QUOTA_NAME.equals(createYamlResourceName)
+                || Constants.DEFAULT_HIGH_RESOURCE_QUOTA_NAME.equals(createYamlResourceName)) {
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.CONFLICT.getMsg(),
+                    CommonStatusCode.CONFLICT.getCode(),CommonStatusCode.CONFLICT.getMsg(), null );
+        }
+
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
@@ -220,10 +233,15 @@ public class ResourceQuotasService {
      */
     public Object getRqDefaultList(String namespace) throws JsonProcessingException {
         ResourceQuotasListAdmin resourceQuotasList = (ResourceQuotasListAdmin) getResourceQuotasListAdmin(namespace, 0, null, null);
+        ResourceQuotasDefaultList resourceQuotasDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, ResourceQuotasDefaultList.class);
 
         ResourceQuotasDefaultList defaultList = new ResourceQuotasDefaultList();
         ResourceQuotasDefault quotasDefault;
         List<ResourceQuotasDefault> quotasDefaultList = new ArrayList<>();
+
+        for(ResourceQuotasDefault resourceQuotasDefault:resourceQuotasDefaultList.getItems()) {
+            quotasDefaultList.add(resourceQuotasDefault);
+        }
 
         if(resourceQuotasList.getItems().size() > 0) {
             for (ResourceQuotasListAdminItem i:resourceQuotasList.getItems()) {
@@ -240,6 +258,7 @@ public class ResourceQuotasService {
             return commonService.setResultModel(defaultList, Constants.RESULT_STATUS_SUCCESS);
         }
 
-        return commonService.setResultModel(restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, ResourceQuotasDefaultList.class), Constants.RESULT_STATUS_SUCCESS);
+        defaultList.setItems(quotasDefaultList);
+        return commonService.setResultModel(defaultList, Constants.RESULT_STATUS_SUCCESS);
     }
 }
