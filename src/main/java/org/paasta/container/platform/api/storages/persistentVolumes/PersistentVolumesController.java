@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,10 +109,15 @@ public class PersistentVolumesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "{resourceName:.+}/yaml")
-    public PersistentVolumes getPersistentVolumesYaml(@PathVariable(value = "cluster") String cluster,
-                                                      @PathVariable(value = "namespace") String namespace,
-                                                      @PathVariable(value = "resourceName") String resourceName) {
-        return persistentVolumesService.getPersistentVolumesYaml(namespace, resourceName, new HashMap<>());
+    public Object getPersistentVolumesYaml(@PathVariable(value = "cluster") String cluster,
+                                           @PathVariable(value = "namespace") String namespace,
+                                           @PathVariable(value = "resourceName") String resourceName,
+                                           @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return persistentVolumesService.getPersistentVolumesYaml(namespace, resourceName, new HashMap<>());
+        }
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
@@ -131,13 +137,19 @@ public class PersistentVolumesController {
     @PostMapping
     public Object createPersistentVolumes(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
+                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                           @RequestBody String yaml) throws Exception{
-        if (yaml.contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
-            return object;
+        if (isAdmin) {
+
+            if (yaml.contains("---")) {
+                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+                return object;
+            }
+
+            return persistentVolumesService.createPersistentVolumes(namespace, yaml);
         }
 
-        return persistentVolumesService.createPersistentVolumes(namespace, yaml);
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
@@ -157,8 +169,14 @@ public class PersistentVolumesController {
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deletePersistentVolumes(@PathVariable(value = "cluster") String cluster,
                                                 @PathVariable(value = "namespace") String namespace,
-                                                @PathVariable(value = "resourceName") String resourceName) {
-        return persistentVolumesService.deletePersistentVolumes(namespace, resourceName, new HashMap<>());
+                                                @PathVariable(value = "resourceName") String resourceName,
+                                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return persistentVolumesService.deletePersistentVolumes(namespace, resourceName, new HashMap<>());
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
@@ -181,7 +199,13 @@ public class PersistentVolumesController {
     public Object updatePersistentVolumes(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @PathVariable(value = "resourceName") String resourceName,
+                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                           @RequestBody String yaml) {
-        return persistentVolumesService.updatePersistentVolumes(namespace, resourceName,yaml);
+
+        if (isAdmin) {
+            return persistentVolumesService.updatePersistentVolumes(namespace, resourceName,yaml);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 }
