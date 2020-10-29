@@ -70,6 +70,14 @@ public class RolesController {
                                @RequestParam(required = false, defaultValue = "") String searchName,
                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            if (isAdmin) {
+                return rolesService.getRolesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+            } else {
+                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+            }
+        }
+
         if (isAdmin) {
             return rolesService.getRolesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
@@ -81,17 +89,17 @@ public class RolesController {
     /**
      * Roles 상세 조회(Get Roles detail)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the roles detail
      */
     @ApiOperation(value = "Roles 상세 조회(Get Roles detail)", nickname = "getRoles")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getRoles(@PathVariable(value = "cluster") String cluster,
@@ -110,10 +118,10 @@ public class RolesController {
     /**
      * Roles YAML 조회(Get Roles yaml)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the roles yaml
      */
     @ApiOperation(value = "Roles YAML 조회(Get Roles yaml)", nickname = "getRolesYaml")
@@ -139,10 +147,10 @@ public class RolesController {
     /**
      * Roles 생성(Create Roles)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
+     * @param isAdmin   the isAdmin
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "Roles 생성(Create Roles)", nickname = "createRoles")
@@ -157,15 +165,15 @@ public class RolesController {
                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                               @RequestBody String yaml) throws Exception {
 
-    if (isAdmin) {
+        if (isAdmin) {
 
-        if (yaml.contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
-            return object;
+            if (yaml.contains("---")) {
+                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+                return object;
+            }
+
+            return rolesService.createRoles(namespace, yaml);
         }
-
-        return rolesService.createRoles(namespace, yaml);
-    }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
@@ -174,10 +182,10 @@ public class RolesController {
     /**
      * Roles 삭제(Delete Roles)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Roles 삭제(Delete Roles)", nickname = "deleteRoles")
@@ -203,11 +211,11 @@ public class RolesController {
     /**
      * Roles 수정(Update Roles)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
+     * @param isAdmin      the isAdmin
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "Roles 수정(Update Roles)", nickname = "updateRoles")
