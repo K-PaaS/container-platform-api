@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.paasta.container.platform.api.common.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -101,8 +102,14 @@ public class NodesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Nodes getNodesYaml(@PathVariable(value = "cluster") String cluster,
-                              @PathVariable(value = "resourceName") String resourceName){
-        return nodesService.getNodesYaml(resourceName, new HashMap<>());
+    public Object getNodesYaml(@PathVariable(value = "cluster") String cluster,
+                               @PathVariable(value = "resourceName") String resourceName,
+                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return nodesService.getNodesYaml(resourceName, new HashMap<>());
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 }
