@@ -98,8 +98,10 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes YAML 조회(Get PersistentVolumes yaml)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the persistentVolumes yaml
      */
     @ApiOperation(value = "PersistentVolumes YAML 조회(Get PersistentVolumes yaml)", nickname = "getPersistentVolumesYaml")
@@ -125,6 +127,7 @@ public class PersistentVolumesController {
      *
      * @param cluster the cluster
      * @param namespace the namespace
+     * @param isAdmin the isAdmin
      * @param yaml the yaml
      * @return return is succeeded
      */
@@ -158,6 +161,7 @@ public class PersistentVolumesController {
      * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "PersistentVolumes 삭제(Delete PersistentVolumes)", nickname = "deletePersistentVolumes")
@@ -185,6 +189,7 @@ public class PersistentVolumesController {
      * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @param yaml the yaml
      * @return return is succeeded
      */

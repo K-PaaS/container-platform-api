@@ -209,6 +209,7 @@ public class PodsController {
      * @param cluster      the cluster
      * @param namespace    the namespace
      * @param resourceName the resource name
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "Pods 수정(Update Pods)", nickname = "updatePods")

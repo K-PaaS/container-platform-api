@@ -50,7 +50,8 @@ public class UsersService {
     /**
      * Users 전체 목록 조회(Get Users list)
      *
-     * @return the UsersListAdmin
+     * @param namespace the namespace
+     * @return the users list
      */
     public UsersListAdmin getUsersAll(String namespace) {
         UsersListAdmin rsDb = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST + "?namespace=" + namespace, HttpMethod.GET, null, UsersListAdmin.class);
@@ -63,7 +64,7 @@ public class UsersService {
      * (Admin portal)
      *
      * @param namespace the namespace
-     * @return the UsersList
+     * @return the users list
      */
     public UsersListAdmin getUsersListByNamespaceAdmin(String namespace) {
         return restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersListAdmin.class);
@@ -73,7 +74,7 @@ public class UsersService {
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
      * @param namespace the namespace
-     * @return the UsersList
+     * @return the user list
      */
     public UsersList getUsersListByNamespace(String namespace) {
         return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersList.class);
@@ -83,8 +84,8 @@ public class UsersService {
     /**
      * 하나의 Cluster 내 여러 Namespaces 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)
      *
-     * @param userId
-     * @return
+     * @param userId the userId
+     * @return the users detail
      */
     public Object getUsers(String userId) throws Exception {
         UsersList list = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
@@ -121,7 +122,8 @@ public class UsersService {
     /**
      * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
      *
-     * @return the Map
+     * @param namespace the namespace
+     * @return the users list
      */
     public Map<String, List> getUsersNameListByNamespace(String namespace) {
         return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES_LIST.replace("{namespace:.+}", namespace), HttpMethod.GET, null, Map.class);
@@ -129,9 +131,11 @@ public class UsersService {
 
 
     /**
-     * Users 로그인을 위한 상세 조회(Get Users login)
+     * Users 로그인을 위한 상세 조회(Get Users for login)
      *
-     * @return the Users
+     * @param userId the userId
+     * @param isAdmin the isAdmin
+     * @return the users detail
      */
     public Users getUsersDetailsForLogin (String userId, String isAdmin) {
         return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DETAIL_LOGIN.replace("{userId:.+}", userId)
@@ -143,7 +147,8 @@ public class UsersService {
     /**
      * Users 상세 조회(Get Users detail)
      *
-     * @return the Users detail
+     * @param userId the userId
+     * @return the users detail
      */
     public UsersList getUsersDetails (String userId) {
         return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
@@ -153,9 +158,9 @@ public class UsersService {
     /**
      * Namespace 와 userId로 사용자 단 건 상세 조회(Get Users userId namespace)
      *
-     * @param namespace
-     * @param userId
-     * @return
+     * @param namespace the namespace
+     * @param userId the userId
+     * @return the users detail
      */
     public Users getUsers(String namespace, String userId) {
         Users users = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{namespace:.+}", namespace).replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
@@ -166,8 +171,8 @@ public class UsersService {
     /**
      * 사용자 DB 저장(Save Users DB)
      *
-     * @param users
-     * @return
+     * @param users the users
+     * @return return is succeeded
      */
     public ResultStatus createUsers(Users users) {
         return restTemplateService.sendAdmin(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class);
@@ -177,8 +182,8 @@ public class UsersService {
      * 사용자 생성(Create Users)
      * (Admin Portal)
      *
-     * @param users
-     * @return
+     * @param users the users
+     * @return return is succeeded
      */
     public ResultStatus registerUsers(Users users) {
         List<Users.NamespaceRole> list = users.getSelectValues();
@@ -225,9 +230,9 @@ public class UsersService {
      * Users 수정(Update Users)
      * (Admin Portal)
      *
-     * @param userId
-     * @param users
-     * @return
+     * @param userId the userId
+     * @param users the users
+     * @return return is succeeded
      */
     public ResultStatus modifyUsersAdmin(String userId, Users users) throws Exception {
         ResultStatus rsDb = new ResultStatus();
@@ -322,7 +327,8 @@ public class UsersService {
     /**
      * Users 삭제(Delete Users)
      *
-     * @param users
+     * @param users thes uesrs
+     * @return return is succeeded
      */
     public ResultStatus deleteUsers(Users users) {
         String namespace = users.getCpNamespace();
@@ -345,8 +351,8 @@ public class UsersService {
     /**
      * Users 수정(Update Users)
      *
-     * @param user
-     * @return
+     * @param user the users
+     * @return return is succeeded
      */
     public ResultStatus modifyUsers(String userId, Users user) {
         return restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.PUT, user, ResultStatus.class);
@@ -358,7 +364,7 @@ public class UsersService {
      * (All Namespaces)
      *
      * @param userId   the user id
-     * @return         the ResultStatus
+     * @return return is succeeded
      */
     public ResultStatus deleteUsersByAllNamespaces(String userId) {
         UsersList users = getUsersDetails(userId);
@@ -377,7 +383,7 @@ public class UsersService {
      *
      * @param namespace the namespace
      * @param users the users
-     * @return the resultStatus
+     * @return return is succeeded
      */
     public ResultStatus modifyUsersConfig(String namespace, List<Users> users) {
         ResultStatus rsDb = null;

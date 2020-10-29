@@ -95,6 +95,7 @@ public class NamespacesController {
      *
      * @param cluster the cluster
      * @param namespace the namespace
+     * @param isAdmin the isAdmin
      * @return the namespaces yaml
      */
     @ApiOperation(value = "Namespaces YAML 조회(Get Nodes yaml)", nickname = "getNamespacesYaml")
@@ -118,6 +119,7 @@ public class NamespacesController {
      * Namespaces 생성(Create Namespaces)
      *
      * @param cluster the cluster
+     * @param isAdmin the isAdmin
      * @param yaml the yaml
      * @return return is succeeded
      */
@@ -148,6 +150,7 @@ public class NamespacesController {
      *
      * @param cluster the cluster
      * @param namespace the namespace
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Namespaces 삭제(Delete Namespaces)", nickname = "deleteNamespaces")
@@ -171,6 +174,7 @@ public class NamespacesController {
      *
      * @param cluster the cluster
      * @param namespace the namespace
+     * @param isAdmin the isAdmin
      * @param yaml the yaml
      * @return return is succeeded
      */

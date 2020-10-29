@@ -113,6 +113,7 @@ public class RolesController {
      * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the roles yaml
      */
     @ApiOperation(value = "Roles YAML 조회(Get Roles yaml)", nickname = "getRolesYaml")
@@ -140,6 +141,7 @@ public class RolesController {
      *
      * @param cluster the cluster
      * @param namespace the namespace
+     * @param isAdmin the isAdmin
      * @param yaml the yaml
      * @return return is succeeded
      */
@@ -175,6 +177,7 @@ public class RolesController {
      * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Roles 삭제(Delete Roles)", nickname = "deleteRoles")
@@ -203,6 +206,7 @@ public class RolesController {
      * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @param yaml the yaml
      * @return return is succeeded
      */

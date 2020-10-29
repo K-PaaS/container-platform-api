@@ -46,6 +46,11 @@ public class LimitRangesController {
      *
      * @param cluster the cluster
      * @param namespace the namespace
+     * @param limit the limit
+     * @param continueToken the continueToken
+     * @param searchParam the searchParam
+     * @param isAdmin the isAdmin
+     *
      * @return the limitRanges list
      */
     @ApiOperation(value = "LimitRanges 목록 조회(Get LimitRanges list)", nickname = "getLimitRangesList")

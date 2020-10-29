@@ -217,10 +217,10 @@ public class LimitRangesService {
 
 
     /**
-     * LimitRanges DB Template 형식 맞춤
+     * LimitRanges DB Template 형식 맞춤(Set LimitRanges DB template)
      *
      * @param limitRangesDefault the limitRangesDefault
-     * @return the LimitRanges template item
+     * @return the limitRanges template item
      */
     public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault) {
         LimitRangesItem map = new LimitRangesItem();

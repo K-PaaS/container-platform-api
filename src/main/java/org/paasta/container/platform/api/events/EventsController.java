@@ -43,6 +43,7 @@ public class EventsController {
      *
      * @param namespace the namespace
      * @param resourceUid the resourceUid
+     * @param type the type
      * @return the events list
      */
     @ApiOperation(value = "Events 상세 조회(Get Events detail)", nickname = "getEventsUidList")
@@ -57,16 +58,6 @@ public class EventsController {
         return eventsService.getEventsUidList(namespace, resourceUid, type);
     }
 
-    /**
-     * Events 목록 조회(Get Events namespace)
-     *
-     * @param namespace the namespace
-     * @return the events list
-     */
-    /*@GetMapping
-    public EventsList getNamespaceEventsList(@PathVariable("namespace") String namespace) {
-        return eventsService.getNamespaceEventsList(namespace);
-    }*/
 
     /**
      * Events 목록 조회(Get Events list)
