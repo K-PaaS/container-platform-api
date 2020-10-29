@@ -31,8 +31,7 @@ public class RolesListAdmin {
 class RolesListAdminItem {
 
     private String name;
-    private Object labels;
-    private Object annotations;
+    private String namespace;
     private String creationTimestamp;
 
     @JsonIgnore
@@ -46,20 +45,12 @@ class RolesListAdminItem {
         this.name = name;
     }
 
-    public Object getLabels() {
-        return metadata.getLabels();
+    public String getNamespace() {
+        return metadata.getNamespace();
     }
 
-    public void setLabels(Object labels) {
-        this.labels = labels;
-    }
-
-    public Object getAnnotations() {
-        return metadata.getAnnotations();
-    }
-
-    public void setAnnotations(Object annotations) {
-        this.annotations = annotations;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
     public String getCreationTimestamp() {

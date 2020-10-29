@@ -23,16 +23,23 @@ public class RolesAdmin {
 
     private String name;
     private String uid;
+    private String namespace;
     private Object labels;
     private Object annotations;
     private String creationTimestamp;
     private List<RolesRule> rules;
 
-    private String sourceTypeYaml;
 
     @JsonIgnore
     private CommonMetaData metadata;
 
+    public String getNamespace() {
+        return metadata.getNamespace();
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
 
     public String getResultCode() {
         return resultCode;
@@ -112,14 +119,6 @@ public class RolesAdmin {
 
     public void setRules(List<RolesRule> rules) {
         this.rules = rules;
-    }
-
-    public String getSourceTypeYaml() {
-        return sourceTypeYaml;
-    }
-
-    public void setSourceTypeYaml(String sourceTypeYaml) {
-        this.sourceTypeYaml = sourceTypeYaml;
     }
 
     public CommonMetaData getMetadata() {
