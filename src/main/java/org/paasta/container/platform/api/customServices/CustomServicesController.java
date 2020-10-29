@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.customServices;
 
 import io.swagger.annotations.*;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,14 @@ public class CustomServicesController {
                                         @RequestParam(required = false, defaultValue = "") String searchName,
                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            if (isAdmin) {
+                return customServicesService.getCustomServicesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+            } else {
+                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+            }
+        }
+
         if (isAdmin) {
             return customServicesService.getCustomServicesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
@@ -88,7 +97,7 @@ public class CustomServicesController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getCustomServices(@PathVariable(value = "cluster") String cluster,

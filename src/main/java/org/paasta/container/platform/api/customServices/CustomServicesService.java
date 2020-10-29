@@ -217,4 +217,33 @@ public class CustomServicesService {
     }
 
 
+
+    /**
+     * 전체 Namespaces 의 Services Admin 목록 조회(Get Services Admin list in All Namespaces)
+     *
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @return the services admin list
+     */
+    public Object getCustomServicesListAllNamespacesAdmin(int offset, int limit, String orderBy, String order, String searchName) {
+        HashMap responseMap = null;
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListServicesListAllNamespacesUrl(), HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        CustomServicesListAdmin customServicesListAdmin = commonService.setResultObject(responseMap, CustomServicesListAdmin.class);
+        customServicesListAdmin = commonService.resourceListProcessing(customServicesListAdmin, offset, limit, orderBy, order, searchName, CustomServicesListAdmin.class);
+
+        return commonService.setResultModel(customServicesListAdmin, Constants.RESULT_STATUS_SUCCESS);
+    }
+
 }
