@@ -8,6 +8,7 @@ import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.config.NoAuth;
+import org.paasta.container.platform.api.login.support.loginMetaDataItem;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
 import org.paasta.container.platform.api.users.UsersService;
@@ -16,7 +17,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +28,9 @@ import java.util.List;
  * @version 1.0
  * @since 2020.09.28
  */
-@Api(value = "CustomServicesController v1")
+@Api(value = "LoginController v1")
 @RestController
+@RequestMapping("/login")
 public class LoginController {
 
     @Autowired
@@ -52,13 +53,14 @@ public class LoginController {
      */
     @ApiOperation(value = "사용자 로그인(User login)", nickname = "generateToken")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "authRequest", value = "인증 요청", required = true, dataType = "AuthenticationRequest", paramType = "body")
+            @ApiImplicitParam(name = "authRequest", value = "로그인을 위한 사용자 정보", required = true, dataType = "object", paramType = "body"),
+            @ApiImplicitParam(name = "isAdmin", value = "관리자 여부 (true/false)",  required = true, dataType = "string", paramType = "query")
     })
     @NoAuth
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping
     @ResponseBody
     public Object generateToken(@RequestBody AuthenticationRequest authRequest,
-                                @ApiIgnore @RequestParam(required = true, name = "isAdmin", defaultValue = "false") String isAdmin) {
+                                @RequestParam(required = true, name = "isAdmin", defaultValue = "false") String isAdmin) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authRequest.getUserId(), authRequest.getPassword()));
@@ -78,14 +80,14 @@ public class LoginController {
         UsersList userListByUserId = userService.getUsersDetails(authRequest.getUserId());
         List<Users> userItem = userListByUserId.getItems();
 
-         List namespaceList = new ArrayList();
+        List<loginMetaDataItem> loginMetaData = new ArrayList<>();
 
         for ( Users user : userItem) {
-            namespaceList.add(user.getCpNamespace());
+           loginMetaData.add(new loginMetaDataItem(user.getCpNamespace(), user.getUserType()));
         };
 
         AuthenticationResponse authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, namespaceList ) ;
+                Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData ) ;
 
         return authResponse;
     }

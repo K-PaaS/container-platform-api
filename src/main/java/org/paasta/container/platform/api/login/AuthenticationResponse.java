@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.login.support.loginMetaDataItem;
 
 import java.util.List;
 
@@ -24,18 +25,18 @@ public class AuthenticationResponse extends ResultStatus {
 
     private String userId;
     private String token;
-    private List namespace;
+    private List<loginMetaDataItem> loginMetaData;
 
     public AuthenticationResponse(String resultCode, String resultMessage, int httpStatusCode, String detailMessage) {
         super(resultCode, resultMessage, httpStatusCode, detailMessage);
     }
 
     public AuthenticationResponse(String resultCode, String resultMessage, int httpStatusCode, String detailMessage,
-                                  String nextActionUrl, String userId, String token, List namespace) {
+                                  String nextActionUrl, String userId, String token, List loginMetaData) {
         super(resultCode, resultMessage, httpStatusCode, detailMessage, nextActionUrl);
         this.userId = userId;
         this.token = token;
-        this.namespace = namespace ;
+        this.loginMetaData = loginMetaData ;
     }
 
 }

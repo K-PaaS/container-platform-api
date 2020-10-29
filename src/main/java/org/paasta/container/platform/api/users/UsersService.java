@@ -187,7 +187,6 @@ public class UsersService {
         for (Users.NamespaceRole nsRole:list) {
             String namespace = nsRole.getNamespace();
             String role = nsRole.getRole();
-            System.out.println("namespace = "+namespace + " & role = " + role);
 
             String userName = users.getUserId();
 
