@@ -21,7 +21,7 @@ import java.util.*;
 public class JwtUtil {
 
 	private String secret;
-	private int jwtExpirationInMs;
+	public static int jwtExpirationInMs;
 
 	@Value("${jwt.secret}")
 	public void setSecret(String secret) {
@@ -33,7 +33,7 @@ public class JwtUtil {
 		this.jwtExpirationInMs = jwtExpirationInMs;
 	}
 
-	public String generateToken(UserDetails userDetails) {
+	public String generateToken(UserDetails userDetails, AuthenticationRequest authRequest) {
 		Map<String, Object> claims = new HashMap<>();
 
 		Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
@@ -47,6 +47,9 @@ public class JwtUtil {
 		if (roles.contains(new SimpleGrantedAuthority("USER"))) {
 			claims.put("isUser", true);
 		}
+
+		claims.put("IP", authRequest.getClientIp());
+		claims.put("Browser", authRequest.getBrowser());
 
 		return doGenerateToken(claims, userDetails.getUsername());
 	}

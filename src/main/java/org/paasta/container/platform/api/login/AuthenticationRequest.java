@@ -18,5 +18,7 @@ public class AuthenticationRequest {
 
     private String userId;
     private String password;
+    private String browser;
+    private String clientIp;
 
 }
