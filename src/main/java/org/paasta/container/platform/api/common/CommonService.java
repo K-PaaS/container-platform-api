@@ -314,7 +314,7 @@ public class CommonService {
         int allItemCount = itemList.size();
         int remainingItemCount = allItemCount - ((offset + 1) * limit);
 
-        if (remainingItemCount < 0) {
+        if (limit == 0 || remainingItemCount < 0) {
             remainingItemCount = 0;
         }
 
