@@ -95,7 +95,7 @@ public class CommonUtils {
         String defaultValue = Constants.RESULT_STATUS_SUCCESS;
 
         boolean userIdCheck = Pattern.matches("^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*", users.getUserId());
-        boolean passwordCheck = Pattern.matches("^[a-z]+(?=.*\\d)(?=.*[$@$!%*#?&])[a-z\\d$@$!%*#?&]{3,11}$", users.getPassword());
+        boolean passwordCheck = Pattern.matches("^[a-zA-Z]+(?=.*\\d)(?=.*[-$@$!%*#?&])[a-zA-Z\\d-$@$!%*#?&]{3,39}$", users.getPassword());
         boolean emailCheck = Pattern.matches("^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$", users.getEmail());
 
         if(!userIdCheck) {
