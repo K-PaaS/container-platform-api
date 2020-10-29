@@ -212,10 +212,10 @@ public class ResourceQuotasService {
 
 
     /**
-     * ResourceQuota Default Template 목록 조회
+     * ResourceQuotas Default Template 목록 조회
      *
      * @param namespace the namespace
-     * @return the object
+     * @return the resourceQuotas list
      * @throws JsonProcessingException
      */
     public Object getRqDefaultList(String namespace) throws JsonProcessingException {

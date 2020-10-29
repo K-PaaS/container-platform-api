@@ -94,6 +94,7 @@ public class NodesController {
      *
      * @param cluster the cluster
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the nodes yaml
      */
     @ApiOperation(value = "Nodes YAML 조회(Get Nodes yaml)", nickname = "getNodesYaml")

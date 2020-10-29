@@ -221,7 +221,7 @@ public class ResourceQuotasController {
      * @param cluster the cluster
      * @param namespace the namespace
      * @param isAdmin the isAdmin
-     * @return the object
+     * @return the resourceQuota list
      * @throws JsonProcessingException
      */
     @ApiOperation(value = "ResourceQuota Default Template 목록 조회 (Get ResourceQouta Default Template list)", nickname = "getResourceQuotasDefaultList")

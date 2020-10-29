@@ -105,19 +105,6 @@ public class DeploymentsController {
 
 
     /**
-     * Deployments 상세 조회(Get Deployments detail)
-     * (Admin Portal)
-     *
-     * @param namespace the namespace
-     * @param resourceName   the resource name
-     * @return the Object
-     */
-//    @GetMapping(value = "/{resourceName:.+}/admin")
-//    public Object getDeploymentsAdmin(@PathVariable(value = "namespace") String namespace, @PathVariable(value = "resourceName") String resourceName) {
-//        return deploymentsService.getDeploymentsAdmin(namespace, resourceName);
-//    }
-
-    /**
      * Deployments YAML 조회(Get Deployments yaml)
      *
      * @param namespace    the namespace
@@ -181,6 +168,7 @@ public class DeploymentsController {
      * @param cluster      the cluster
      * @param namespace    the namespace
      * @param resourceName the resource name
+     * @param yaml the yaml
      * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")

@@ -39,7 +39,8 @@ public class UsersController {
     /**
      * Users 전체 목록 조회(Get Users all list)
      *
-     * @return the Users list
+     * @param namespace the namespace
+     * @return the users list
      */
     @ApiOperation(value = "Users 전체 목록 조회(Get Users list)", nickname = "getUsersList")
     @ApiImplicitParams({
@@ -55,7 +56,8 @@ public class UsersController {
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
      * @param namespace the namespace
-     * @return the Users list
+     * @param isAdmin the isAdmin
+     * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 Users 목록 조회(Get Users namespace list)", nickname = "getUsersListByNamespace")
     @ApiImplicitParams({
@@ -75,7 +77,8 @@ public class UsersController {
      * 각 Namespace 별 Users 상세 조회(Get Users namespace detail)
      *
      * @param namespace the namespace
-     * @return the Users list
+     * @param userId the userId
+     * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 Users 상세 조회(Get Users namespace detail)", nickname = "getUsersByNamespace")
     @ApiImplicitParams({
@@ -83,8 +86,9 @@ public class UsersController {
             @ApiImplicitParam(name = "userId", value = "유저 Id", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/{userId:.+}")
-    public Users getUsersByNamespace(@PathVariable(value = "namespace") String namespace,
-                                     @PathVariable(value = "userId") String userId) {
+    public Object getUsersByNamespace(@PathVariable(value = "namespace") String namespace,
+                                      @PathVariable(value = "userId") String userId) {
+
         return usersService.getUsers(namespace, userId);
     }
 
@@ -92,8 +96,8 @@ public class UsersController {
     /**
      * 하나의 Cluster 내 여러 Namespace 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)
      *
-     * @param userId
-     * @return
+     * @param userId the userId
+     * @return the users detail
      */
     @ApiOperation(value = "하나의 Cluster 내 여러 Namespace 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)", nickname = "getUsers")
     @ApiImplicitParams({
@@ -108,7 +112,8 @@ public class UsersController {
     /**
      * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
      *
-     * @return the Map
+     * @param namespace the namespace
+     * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)", nickname = "getUsersNameList")
     @ApiImplicitParams({
@@ -125,8 +130,8 @@ public class UsersController {
      * (Admin Portal)
      * 복수개의 Namespace 에 속할 수 있음
      *
-     * @param users
-     * @return
+     * @param users the users
+     * @return return is succeeded
      */
     @ApiOperation(value = "Users 생성 (Create Users)", nickname = "registerUsers")
     @ApiImplicitParams({
@@ -141,9 +146,10 @@ public class UsersController {
     /**
      * Users 수정(Update Users)
      *
-     * @param userId
-     * @param users
-     * @return
+     * @param userId the userId
+     * @param users the users
+     * @param isAdmin the isAdmin
+     * @return return is succeeded
      */
     @ApiOperation(value = "Users 수정(Update Users)", nickname = "modifyUsers")
     @ApiImplicitParams({
@@ -177,7 +183,7 @@ public class UsersController {
      *
      * @param namespace the namespace
      * @param users the users
-     * @return the resultStatus
+     * @return return is succeeded
      */
     @ApiOperation(value = "Users 권한 설정(Set Users authority)", nickname = "modifyUsersConfig")
     @ApiImplicitParams({
@@ -195,8 +201,8 @@ public class UsersController {
      * Users 삭제(Delete Users)
      * (All Namespaces)
      *
-     * @param userId   the user id
-     * @return         ResultStatus
+     * @param userId the user id
+     * @return return is succeeded
      */
     @ApiOperation(value = "Users 삭제(Delete Users)", nickname = "deleteUsers")
     @ApiImplicitParams({

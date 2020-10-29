@@ -99,6 +99,7 @@ public class StorageClassesController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return the storageClasses yaml
      */
     @ApiOperation(value = "StorageClasses YAML 조회(Get StorageClasses yaml)", nickname = "getStorageClassesYaml")
@@ -122,6 +123,7 @@ public class StorageClassesController {
      *
      * @param cluster the cluster
      * @param namespace the namespace
+     * @param isAdmin the isAdmin
      * @param yaml the yaml
      * @return return is succeeded
      */
@@ -154,6 +156,7 @@ public class StorageClassesController {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "StorageClasses 삭제(Delete StorageClasses)", nickname = "deleteStorageClasses")
@@ -179,6 +182,7 @@ public class StorageClassesController {
      * @param cluster the cluster
      * @param namespace the namespace
      * @param resourceName the resource name
+     * @param isAdmin the isAdmin
      * @param yaml the yaml
      * @return return is succeeded
      */

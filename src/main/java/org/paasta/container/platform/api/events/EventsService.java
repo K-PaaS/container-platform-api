@@ -49,6 +49,7 @@ public class EventsService {
      *
      * @param namespace   the namespace
      * @param resourceUid the resourceUid
+     * @param type the type
      * @return the events list
      */
     EventsList getEventsUidList(String namespace, String resourceUid, String type) {
@@ -88,6 +89,7 @@ public class EventsService {
      * @param namespace     the namespace
      * @param limit         the limit
      * @param continueToken the continueToken
+     * @param searchParam the searchParam
      * @return the events list
      */
     public Object getEventsListAdmin(String namespace, int limit, String continueToken, String searchParam) {
