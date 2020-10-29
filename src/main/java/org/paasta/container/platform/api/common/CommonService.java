@@ -183,17 +183,6 @@ public class CommonService {
 
 
     /**
-     * Token으로 Admin인지 판별
-     *
-     * @param user
-     * @return
-     */
-    public static boolean isAdminPortal(User user) {
-        return user.getAuthorities().contains(new SimpleGrantedAuthority(Constants.AUTH_CLUSTER_ADMIN));
-    }
-
-
-    /**
      * 필드를 조회하고, 그 값을 반환 처리
      *
      * @param fieldName
