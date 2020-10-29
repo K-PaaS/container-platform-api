@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.clusters.limitRanges;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.common.model.CommonSpec;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,9 @@ class LimitRangesListAdminItem {
     @JsonIgnore
     private CommonMetaData metadata;
 
+    @JsonIgnore
+    private CommonSpec spec;
+
     public String getNamespace() {
         return metadata.getNamespace();
     }
@@ -63,5 +67,13 @@ class LimitRangesListAdminItem {
 
     public void setMetadata(CommonMetaData metadata) {
         this.metadata = metadata;
+    }
+
+    public CommonSpec getSpec() {
+        return spec;
+    }
+
+    public void setSpec(CommonSpec spec) {
+        this.spec = spec;
     }
 }

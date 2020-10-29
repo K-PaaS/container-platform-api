@@ -72,7 +72,7 @@ public class SignUpAdminService {
         }
 
         resourceYamlService.createDefaultResourceQuota();
-        resourceYamlService.createDefaultLimitRange();
+        resourceYamlService.createDefaultLimitRanges();
 
         ResultStatus saResult = resourceYamlService.createServiceAccount(username, namespace);
 

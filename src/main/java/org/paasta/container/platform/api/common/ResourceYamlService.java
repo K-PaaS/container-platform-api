@@ -1,5 +1,7 @@
 package org.paasta.container.platform.api.common;
 
+import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesDefault;
+import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesDefaultList;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasDefault;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasDefaultList;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
@@ -14,8 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.paasta.container.platform.api.common.CommonUtils.yamlMatch;
-import static org.paasta.container.platform.api.common.Constants.DEFAULT_RESOURCE_QUOTA_NAME;
-import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
+import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
  * Resource Yaml Service 클래스
@@ -162,14 +163,28 @@ public class ResourceYamlService {
 
 
     /**
-     * namespace에 LimitRange를 할당
+     * namespace에 LimitRanges를 할당
      *
      */
-    public void createDefaultLimitRange() {
+    public void createDefaultLimitRanges() {
+        LimitRangesDefaultList limitRangesDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, LimitRangesDefaultList.class);
+        String name = "";
+        String requestMemory = "";
+        String limitsMemory = "";
+
+        for (LimitRangesDefault limitRanges:limitRangesDefaultList.getItems()) {
+            if(DEFAULT_LIMIT_RANGE_NAME.equals(limitRanges.getName())) {
+                name = limitRanges.getName();
+                requestMemory = limitRanges.getDefaultRequest();
+                limitsMemory = limitRanges.getDefaultLimit();
+            }
+        }
+
         Map<String, Object> model = new HashMap<>();
-        model.put("limit_range_cpu", propertyService.getLimitRangeCpu());
-        model.put("limit_range_memory", propertyService.getLimitRangeMemory());
-        String limitRangeYaml = templateService.convert("create_limit_range.ftl", model);
+        model.put("name", name);
+        model.put("limit_memory", limitsMemory);
+        model.put("request_memory", requestMemory);
+        String limitRangeYaml = templateService.convert("create_limit_range_memory.ftl", model);
 
         restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListLimitRangesCreateUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME), HttpMethod.POST, limitRangeYaml, Object.class);
 

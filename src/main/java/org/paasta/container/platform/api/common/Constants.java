@@ -34,7 +34,7 @@ public class Constants {
     public static final String DEFAULT_INIT_ROLE = "init-role";
     public static final String DEFAULT_CLUSTER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name
     public static final String DEFAULT_RESOURCE_QUOTA_NAME = "cp-low-rq";
-    public static final String DEFAULT_LIMIT_RANGE_NAME = "cp-low-lr";
+    public static final String DEFAULT_LIMIT_RANGE_NAME = "cp-memory-limit-range";
 
     static final String STRING_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";
     static final String STRING_ORIGINAL_DATE_TYPE = "yyyy-MM-dd'T'HH:mm:ss'Z'";

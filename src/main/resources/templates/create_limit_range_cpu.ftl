@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: LimitRange
 metadata:
-  name: cp-limit-range
+  name: ${name}
 spec:
   limits:
   - default:
-      cpu: ${limit_range_cpu}
-      memory: ${limit_range_memory}
+      cpu: ${limit_cpu}
+    defaultRequest:
+      cpu: ${request_cpu}
     type: Container
