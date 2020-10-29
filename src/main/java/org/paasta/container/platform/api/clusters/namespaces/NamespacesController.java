@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,7 @@ public class NamespacesController {
         if (isAdmin) {
             return namespacesService.getNamespacesListAdmin(limit, continueToken, searchParam);
         }
+
         return namespacesService.getNamespacesList(limit, continueToken);
     }
 
@@ -84,6 +86,7 @@ public class NamespacesController {
         if (isAdmin) {
             return namespacesService.getNamespacesAdmin(namespace);
         }
+
         return namespacesService.getNamespaces(namespace);
     }
 
@@ -100,9 +103,15 @@ public class NamespacesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{namespace:.+}/yaml")
-    public Namespaces getNamespacesYaml(@PathVariable(value = "cluster") String cluster,
-                                        @PathVariable(value = "namespace") String namespace){
-        return namespacesService.getNamespacesYaml(namespace);
+    public Object getNamespacesYaml(@PathVariable(value = "cluster") String cluster,
+                                    @PathVariable(value = "namespace") String namespace,
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return namespacesService.getNamespacesYaml(namespace);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
@@ -119,13 +128,19 @@ public class NamespacesController {
     })
     @PostMapping
     public Object createNamespaces(@PathVariable(value = "cluster") String cluster,
+                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                    @RequestBody String yaml) throws Exception {
-        if (yaml.contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(null, yaml);
-            return object;
+        if (isAdmin) {
+
+            if (yaml.contains("---")) {
+                Object object = ResourceExecuteManager.commonControllerExecute(null, yaml);
+                return object;
+            }
+            return namespacesService.createNamespaces(yaml);
         }
 
-        return namespacesService.createNamespaces(yaml);
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+
     }
 
     /**
@@ -142,8 +157,13 @@ public class NamespacesController {
     })
     @DeleteMapping(value = "/{namespace:.+}")
     public ResultStatus deleteNamespaces(@PathVariable(value = "cluster") String cluster,
-                                         @PathVariable("namespace") String namespace){
-        return namespacesService.deleteNamespaces(namespace);
+                                         @PathVariable("namespace") String namespace,
+                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return namespacesService.deleteNamespaces(namespace);
+        }
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
@@ -163,7 +183,12 @@ public class NamespacesController {
     @PutMapping(value = "/{namespace:.+}")
     public Object updateNamespaces(@PathVariable(value = "cluster") String cluster,
                                    @PathVariable(value = "namespace") String namespace,
+                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                    @RequestBody String yaml){
-        return namespacesService.updateNamespaces(namespace, yaml);
+        if (isAdmin) {
+            return namespacesService.updateNamespaces(namespace, yaml);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 }
