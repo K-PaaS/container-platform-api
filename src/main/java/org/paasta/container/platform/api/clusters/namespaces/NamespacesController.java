@@ -115,35 +115,34 @@ public class NamespacesController {
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
-    /**
-     * Namespaces 생성(Create Namespaces)
-     *
-     * @param cluster the cluster
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
-     * @return return is succeeded
-     */
-    @ApiOperation(value = "Namespaces 생성(Create Namespaces)", nickname = "createNamespaces")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "yaml", value = "리소스 생성 yaml", required = true, dataType = "string", paramType = "body")
-    })
-    @PostMapping
-    public Object createNamespaces(@PathVariable(value = "cluster") String cluster,
-                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
-                                   @RequestBody String yaml) throws Exception {
-        if (isAdmin) {
-
-            if (yaml.contains("---")) {
-                Object object = ResourceExecuteManager.commonControllerExecute(null, yaml);
-                return object;
-            }
-            return namespacesService.createNamespaces(yaml);
-        }
-
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
-
-    }
+//    /**
+//     * Namespaces 생성(Create Namespaces)
+//     *
+//     * @param cluster the cluster
+//     * @param yaml the yaml
+//     * @return return is succeeded
+//     */
+//    @ApiOperation(value = "Namespaces 생성(Create Namespaces)", nickname = "createNamespaces")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+//            @ApiImplicitParam(name = "yaml", value = "리소스 생성 yaml", required = true, dataType = "string", paramType = "body")
+//    })
+//    @PostMapping
+//    public Object createNamespaces(@PathVariable(value = "cluster") String cluster,
+//                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
+//                                   @RequestBody String yaml) throws Exception {
+//        if (isAdmin) {
+//
+//            if (yaml.contains("---")) {
+//                Object object = ResourceExecuteManager.commonControllerExecute(null, yaml);
+//                return object;
+//            }
+//            return namespacesService.createNamespaces(yaml);
+//        }
+//
+//        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+//
+//    }
 
     /**
      * Namespaces 삭제(Delete Namespaces)
@@ -191,6 +190,32 @@ public class NamespacesController {
                                    @RequestBody String yaml){
         if (isAdmin) {
             return namespacesService.updateNamespaces(namespace, yaml);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+    }
+
+
+    /**
+     * Namespaces 생성(Create Namespaces)
+     *
+     * @param cluster the cluster
+     * @param initTemplate the init template
+     * @param isAdmin the isAdmin
+     * @return return is succeeded
+     */
+    @ApiOperation(value = "Namespaces 생성(Create Namespaces)", nickname = "createNamespaces")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "initTemplate", value = "Namespace 생성 정보", required = true, dataType = "NamespacesInitTemplate", paramType = "body")
+    })
+    @PostMapping
+    public ResultStatus initNamespaces(@PathVariable(value = "cluster") String cluster,
+                                       @RequestBody NamespacesInitTemplate initTemplate,
+                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return namespacesService.createInitNamespaces(initTemplate);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

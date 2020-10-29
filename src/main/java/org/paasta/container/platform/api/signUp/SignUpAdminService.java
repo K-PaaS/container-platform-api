@@ -11,8 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import static org.paasta.container.platform.api.common.Constants.DEFAULT_CLUSTER_ADMIN_ROLE;
-import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
+import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
  * Sign Up Admin Service 클래스
@@ -71,8 +70,8 @@ public class SignUpAdminService {
             return nsResult;
         }
 
-        resourceYamlService.createDefaultResourceQuota();
-        resourceYamlService.createDefaultLimitRanges();
+        resourceYamlService.createDefaultResourceQuota(namespace,null);
+        resourceYamlService.createDefaultLimitRanges(namespace, null);
 
         ResultStatus saResult = resourceYamlService.createServiceAccount(username, namespace);
 
@@ -95,7 +94,7 @@ public class SignUpAdminService {
         users.setRoleSetCode(DEFAULT_CLUSTER_ADMIN_ROLE);
         users.setSaSecret(adminSaSecretName);
         users.setSaToken(accessTokenService.getSecrets(namespace, adminSaSecretName).getUserAccessToken());
-        users.setUserType("CLUSTER_ADMIN");
+        users.setUserType(AUTH_CLUSTER_ADMIN);
         users.setIsActive("Y");
 
         ResultStatus rsDb = usersService.createUsers(users);

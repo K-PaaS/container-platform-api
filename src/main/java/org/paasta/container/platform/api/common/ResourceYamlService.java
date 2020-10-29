@@ -114,13 +114,13 @@ public class ResourceYamlService {
     /**
      * ftl 파일로 init role 생성
      *
-     * @param namespace
+     * @param namespace the namespace
      */
     public void createInitRole(String namespace) {
         // init role 생성
         Map<String, Object> map = new HashMap();
         map.put("spaceName", namespace);
-        map.put("roleName", Constants.DEFAULT_INIT_ROLE);
+        map.put("roleName", Constants.DEFAULT_NAMESPACE_INIT_ROLE);
         String initRoleYaml = templateService.convert("create_init_role.ftl", map);
 
         restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRolesCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, initRoleYaml, Object.class);
@@ -128,36 +128,58 @@ public class ResourceYamlService {
 
 
     /**
-     *  namespace에 ResourceQuotas를 할당
+     * Namespace Admin Role 생성(Create Namespace Admin Role)
      *
+     * @param namespace the namespace
      */
-    public void createDefaultResourceQuota() {
+    public void createNsAdminRole(String namespace) {
+        Map<String, Object> map = new HashMap();
+        map.put("spaceName", namespace);
+        map.put("roleName", Constants.DEFAULT_NAMESPACE_ADMIN_ROLE);
+        String nsAdminRoleYaml = templateService.convert("create_admin_role.ftl", map);
+
+        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRolesCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, nsAdminRoleYaml, Object.class);
+    }
+
+
+    /**
+     * namespace에 ResourceQuotas를 할당
+     *
+     * @param reqNamespace the request namespace
+     * @param rqName the request name
+     */
+    public void createDefaultResourceQuota(String reqNamespace, String rqName) {
         ResourceQuotasDefaultList resourceQuotasDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, ResourceQuotasDefaultList.class);
-        String name = "";
+        String resourceQuotaYaml = "";
         String requestCpu = "";
         String requestMemory = "";
         String limitsCpu = "";
         String limitsMemory = "";
 
         for (ResourceQuotasDefault d:resourceQuotasDefaultList.getItems()) {
-            if(DEFAULT_RESOURCE_QUOTA_NAME.equals(d.getName())) {
-                name = d.getName();
+            if (rqName == null) {
+                rqName = DEFAULT_LOW_RESOURCE_QUOTA_NAME;
+            }
+
+            if (DEFAULT_RESOURCE_QUOTAS_LIST.contains(rqName) && d.getName().equals(rqName)) {
                 requestCpu = d.getRequestCpu();
                 requestMemory = d.getRequestMemory();
                 limitsCpu = d.getLimitCpu();
                 limitsMemory = d.getLimitMemory();
+
+                break;
             }
         }
-
         Map<String, Object> model = new HashMap<>();
-        model.put("name", name);
+        model.put("name", rqName);
         model.put("request_cpu", requestCpu);
         model.put("request_memory", requestMemory);
         model.put("limits_cpu", limitsCpu);
         model.put("limits_memory", limitsMemory);
-        String resourceQuotaYaml = templateService.convert("create_resource_quota.ftl", model);
 
-        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListResourceQuotasCreateUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME), HttpMethod.POST, resourceQuotaYaml, Object.class);
+        resourceQuotaYaml = templateService.convert("create_resource_quota.ftl", model);
+
+        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListResourceQuotasCreateUrl().replace("{namespace}", reqNamespace), HttpMethod.POST, resourceQuotaYaml, Object.class);
 
     }
 
@@ -165,28 +187,38 @@ public class ResourceYamlService {
     /**
      * namespace에 LimitRanges를 할당
      *
+     * @param reqNamespace the request namespace
+     * @param lrName the request name
      */
-    public void createDefaultLimitRanges() {
-        LimitRangesDefaultList limitRangesDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, LimitRangesDefaultList.class);
-        String name = "";
+    public void createDefaultLimitRanges(String reqNamespace, String lrName) {
+        LimitRangesDefaultList limitRangesDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/limitRanges", HttpMethod.GET, null, LimitRangesDefaultList.class);
+        String limitRangeYaml = "";
         String requestMemory = "";
         String limitsMemory = "";
+        String resourceType = "";
 
         for (LimitRangesDefault limitRanges:limitRangesDefaultList.getItems()) {
-            if(DEFAULT_LIMIT_RANGE_NAME.equals(limitRanges.getName())) {
-                name = limitRanges.getName();
+            if (lrName == null) {
+                lrName = DEFAULT_MEMORY_LIMIT_RANGE_NAME;
+            }
+
+            if (DEFAULT_LIMIT_RANGES_LIST.contains(lrName) && limitRanges.getName().equals(lrName)) {
                 requestMemory = limitRanges.getDefaultRequest();
                 limitsMemory = limitRanges.getDefaultLimit();
+                resourceType = limitRanges.getResource();
+
+                break;
             }
         }
 
         Map<String, Object> model = new HashMap<>();
-        model.put("name", name);
-        model.put("limit_memory", limitsMemory);
-        model.put("request_memory", requestMemory);
-        String limitRangeYaml = templateService.convert("create_limit_range_memory.ftl", model);
+        model.put("name", lrName);
+        model.put("limit_" + resourceType, limitsMemory);
+        model.put("request_" + resourceType, requestMemory);
 
-        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListLimitRangesCreateUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME), HttpMethod.POST, limitRangeYaml, Object.class);
+        limitRangeYaml = templateService.convert("create_limit_range_" + resourceType + ".ftl", model);
+
+        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListLimitRangesCreateUrl().replace("{namespace}", reqNamespace), HttpMethod.POST, limitRangeYaml, Object.class);
 
     }
 

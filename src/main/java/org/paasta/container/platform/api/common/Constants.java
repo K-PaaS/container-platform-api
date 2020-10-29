@@ -33,10 +33,29 @@ public class Constants {
 
     public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
     public static final String NOT_ASSIGNED_ROLE = "NOT_ASSIGNED_ROLE";
-    public static final String DEFAULT_INIT_ROLE = "init-role";
+    public static final String DEFAULT_NAMESPACE_INIT_ROLE = "ns-init-role";
+    public static final String DEFAULT_NAMESPACE_ADMIN_ROLE = "ns-admin-role";
     public static final String DEFAULT_CLUSTER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name
-    public static final String DEFAULT_RESOURCE_QUOTA_NAME = "cp-low-rq";
-    public static final String DEFAULT_LIMIT_RANGE_NAME = "cp-memory-limit-range";
+    public static final String DEFAULT_LOW_RESOURCE_QUOTA_NAME = "cp-low-rq";
+    public static final String DEFAULT_MEDIUM_RESOURCE_QUOTA_NAME = "cp-medium-rq";
+    public static final String DEFAULT_HIGH_RESOURCE_QUOTA_NAME = "cp-high-rq";
+    public static final String DEFAULT_MEMORY_LIMIT_RANGE_NAME = "cp-memory-limit-range";
+    public static final String DEFAULT_CPU_LIMIT_RANGE_NAME = "cp-cpu-limit-range";
+
+    public static final List<String> DEFAULT_RESOURCE_QUOTAS_LIST = Collections.unmodifiableList(new ArrayList<String>(){
+        {
+            add(DEFAULT_LOW_RESOURCE_QUOTA_NAME);
+            add(DEFAULT_MEDIUM_RESOURCE_QUOTA_NAME);
+            add(DEFAULT_HIGH_RESOURCE_QUOTA_NAME);
+        }
+    });
+
+    public static final List<String> DEFAULT_LIMIT_RANGES_LIST = Collections.unmodifiableList(new ArrayList<String>(){
+        {
+            add(DEFAULT_MEMORY_LIMIT_RANGE_NAME);
+            add(DEFAULT_CPU_LIMIT_RANGE_NAME);
+        }
+    });
 
     static final String STRING_DATE_TYPE = "yyyy-MM-dd HH:mm:ss";
     static final String STRING_ORIGINAL_DATE_TYPE = "yyyy-MM-dd'T'HH:mm:ss'Z'";

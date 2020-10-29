@@ -1,20 +1,19 @@
 package org.paasta.container.platform.api.clusters.namespaces;
 
-import org.paasta.container.platform.api.clusters.nodes.NodesAdmin;
-import org.paasta.container.platform.api.clusters.nodes.NodesListAdmin;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.accessInfo.AccessTokenService;
+import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.workloads.replicaSets.ReplicaSets;
+import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import javax.xml.transform.Result;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
  * Namespaces Service 클래스
@@ -26,22 +25,32 @@ import java.util.Map;
 @Service
 public class NamespacesService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NamespacesService.class);
+
     private final RestTemplateService restTemplateService;
     private final CommonService commonService;
     private final PropertyService propertyService;
+    private final ResourceYamlService resourceYamlService;
+    private final UsersService usersService;
+    private final AccessTokenService accessTokenService;
 
     /**
      * Instantiates a new Namespace service
-     *
      * @param restTemplateService the rest template service
      * @param commonService       the common service
      * @param propertyService     the property service
+     * @param resourceYamlService the resource yaml service
+     * @param usersService the users service
+     * @param accessTokenService the access token service
      */
     @Autowired
-    public NamespacesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService) {
+    public NamespacesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, ResourceYamlService resourceYamlService, UsersService usersService, AccessTokenService accessTokenService) {
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.propertyService = propertyService;
+        this.resourceYamlService = resourceYamlService;
+        this.usersService = usersService;
+        this.accessTokenService = accessTokenService;
     }
 
     /**
@@ -192,4 +201,67 @@ public class NamespacesService {
     }
 
 
+    /**
+     * Namespaces 생성(Create Namespaces)
+     *
+     * @param initTemplate the initTemplate
+     * @return return is succeeded
+     */
+    public ResultStatus createInitNamespaces(NamespacesInitTemplate initTemplate) {
+        String namespace = initTemplate.getName();
+        String nsAdminUserId = initTemplate.getNsAdminUserId();
+
+        resourceYamlService.createNamespace(namespace);
+
+        resourceYamlService.createInitRole(namespace);
+        resourceYamlService.createNsAdminRole(namespace);
+
+        ResultStatus saResult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
+
+        if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
+            return saResult;
+        }
+
+        ResultStatus rbResult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, Constants.DEFAULT_NAMESPACE_ADMIN_ROLE);
+
+        if(Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
+            LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId), HttpMethod.DELETE, null, Object.class);
+            return rbResult;
+        }
+
+
+        for (String rq:initTemplate.getResourceQuotasList()) {
+            if(DEFAULT_RESOURCE_QUOTAS_LIST.contains(rq)) {
+                resourceYamlService.createDefaultResourceQuota(namespace, rq);
+            }
+        }
+
+        for (String lr:initTemplate.getLimitRangesList()) {
+            if(DEFAULT_LIMIT_RANGES_LIST.contains(lr)) {
+                resourceYamlService.createDefaultLimitRanges(namespace, lr);
+            }
+        }
+
+        String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
+
+        Users newNsUser = usersService.getUsers(DEFAULT_NAMESPACE_NAME, nsAdminUserId);
+        newNsUser.setId(0);
+        newNsUser.setCpNamespace(namespace);
+        newNsUser.setRoleSetCode(DEFAULT_NAMESPACE_ADMIN_ROLE);
+        newNsUser.setSaSecret(saSecretName);
+        newNsUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
+        newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
+        newNsUser.setIsActive("Y");
+
+        ResultStatus rsDb = usersService.createUsers(newNsUser);
+
+        if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
+            LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId + "-" + DEFAULT_NAMESPACE_ADMIN_ROLE + "-binding"), HttpMethod.DELETE, null, Object.class);
+        }
+
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE");
+    }
 }
