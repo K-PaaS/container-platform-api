@@ -1,5 +1,9 @@
 package org.paasta.container.platform.api.login;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
@@ -12,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +28,7 @@ import java.util.List;
  * @version 1.0
  * @since 2020.09.28
  */
+@Api(value = "CustomServicesController v1")
 @RestController
 public class LoginController {
 
@@ -44,11 +50,15 @@ public class LoginController {
      * @param authRequest the AuthenticationRequest
      * @return return is succeeded
      */
+    @ApiOperation(value = "사용자 로그인(User login)", nickname = "generateToken")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authRequest", value = "인증 요청", required = true, dataType = "AuthenticationRequest", paramType = "body")
+    })
     @NoAuth
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public Object generateToken(@RequestBody AuthenticationRequest authRequest,
-                                @RequestParam(required = true, name = "isAdmin", defaultValue = "false") String isAdmin) {
+                                @ApiIgnore @RequestParam(required = true, name = "isAdmin", defaultValue = "false") String isAdmin) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authRequest.getUserId(), authRequest.getPassword()));

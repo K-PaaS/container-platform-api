@@ -45,7 +45,7 @@ public class NamespacesController {
      * @param isAdmin the isAdmin
      * @return the namespaces list
      */
-    @ApiOperation(value = "Namespaces 목록 조회(Get Services list)", nickname = "getNamespacesList")
+    @ApiOperation(value = "Namespaces 목록 조회(Get Namespaces list)", nickname = "getNamespacesList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),

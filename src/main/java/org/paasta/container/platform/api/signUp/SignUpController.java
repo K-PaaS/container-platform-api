@@ -2,6 +2,8 @@ package org.paasta.container.platform.api.signUp;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
@@ -52,8 +54,11 @@ public class SignUpController {
      * @param requestUsers the requestUsers
      * @return the resultStatus
      */
+    @ApiOperation(value = "회원가입(Sign Up)", nickname = "signUpUsers")
+    @ApiImplicitParams({
+           @ApiImplicitParam(name = "requestUsers", value = "요청한 유저", required = true, dataType = "Object", paramType = "body")
+    })
     @NoAuth
-    @ApiOperation(value = "회원가입", httpMethod = "POST", hidden = true)
     @PostMapping(value = "/signUp")
     public ResultStatus signUpUsers(@RequestBody Object requestUsers) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -97,6 +102,7 @@ public class SignUpController {
      *
      * @return the map
      */
+    @ApiOperation(value = "Users 이름 목록 조회(Get Users names list)", nickname = "getUsersNameList")
     @GetMapping(value = "/users/names")
     public Map<String, List<String>> getUsersNameList() {
         return signUpUserService.getUsersNameList();

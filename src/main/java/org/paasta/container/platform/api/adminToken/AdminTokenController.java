@@ -1,5 +1,7 @@
 package org.paasta.container.platform.api.adminToken;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @version 1.0
  * @since 2020.08.31
  */
+@Api(value = "CustomServicesController v1")
 @RestController
 public class AdminTokenController {
 
@@ -32,6 +35,7 @@ public class AdminTokenController {
      *
      * @return the adminToken detail
      */
+    @ApiOperation(value = "AdminToken 상세 조회(Get AdminToken detail)", nickname = "getAdminToken")
     @GetMapping(value = "/adminToken")
     public AdminToken getAdminToken(){
         AdminToken adminTokenValue = adminTokenService.getAdminToken();
