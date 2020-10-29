@@ -18,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,10 +72,9 @@ public class LoginController {
 
             return resultStatus;
         }
-
         //Generate token
         UserDetails userdetails = userDetailsService.loadUserByUsername(authRequest.getUserId());
-        String token = jwtUtil.generateToken(userdetails);
+        String token = jwtUtil.generateToken(userdetails, authRequest);
 
         // Extract the namespace list that contains the user
         UsersList userListByUserId = userService.getUsersDetails(authRequest.getUserId());
@@ -91,6 +91,4 @@ public class LoginController {
 
         return authResponse;
     }
-
-
 }
