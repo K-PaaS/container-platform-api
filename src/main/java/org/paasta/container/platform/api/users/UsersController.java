@@ -83,8 +83,9 @@ public class UsersController {
             @ApiImplicitParam(name = "userId", value = "유저 Id", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/{userId:.+}")
-    public Users getUsersByNamespace(@PathVariable(value = "namespace") String namespace,
-                                     @PathVariable(value = "userId") String userId) {
+    public Object getUsersByNamespace(@PathVariable(value = "namespace") String namespace,
+                                      @PathVariable(value = "userId") String userId) {
+
         return usersService.getUsers(namespace, userId);
     }
 

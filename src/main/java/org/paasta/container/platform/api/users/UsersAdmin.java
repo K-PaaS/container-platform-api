@@ -27,17 +27,19 @@ public class UsersAdmin {
     public static class UsersDetails {
         public String userId;
         public String serviceAccountName;
+        public String created;
+
         public String saSecret;
         public String cpNamespace;
         public String roleSetCode;
-        public String created;
+
+        public Secrets secrets;
 
         // Cluster Info
         public String clusterApiUrl;
         public String clusterServiceAccountName;
         public String clusterToken;
 
-        public Secrets secrets;
     }
 
     // Secrets
