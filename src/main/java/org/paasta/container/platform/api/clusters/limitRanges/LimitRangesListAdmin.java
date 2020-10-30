@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.clusters.limitRanges;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 
@@ -23,6 +24,7 @@ public class LimitRangesListAdmin {
     private Integer httpStatusCode;
     private String detailMessage;
     private Map metadata;
+    private CommonItemMetaData itemMetaData;
     private List<LimitRangesListAdminItem> items;
 
 }
