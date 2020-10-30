@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.endpoints;
 
+import org.paasta.container.platform.api.clusters.nodes.NodesAdmin;
 import org.paasta.container.platform.api.clusters.nodes.NodesService;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
@@ -152,9 +153,12 @@ public class EndpointsService {
         EndpointsAdmin endpointsAdmin = commonService.setResultObject(responseMap, EndpointsAdmin.class);
         String nodeName = endpointsAdmin.getSubsets().get(0).getAddresses().get(0).getNodeName();
 
-        Object nodeStatus = nodesService.getNodesAdmin(nodeName);
+        NodesAdmin nodesAdmin = (NodesAdmin) nodesService.getNodesAdmin(nodeName);
+        String nodeStatus = nodesAdmin.getStatus().getConditions().get(4).getStatus();
 
-        return commonService.setResultModel(null, Constants.RESULT_STATUS_SUCCESS);
+        responseMap.put("ready", nodeStatus);
+
+        return commonService.setResultModel(commonService.setResultObject(responseMap, EndpointsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
