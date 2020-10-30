@@ -1,9 +1,13 @@
 package org.paasta.container.platform.api.endpoints;
 
+import org.paasta.container.platform.api.clusters.nodes.NodesAdmin;
+import org.paasta.container.platform.api.clusters.nodes.NodesService;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.CommonAddresses;
+import org.paasta.container.platform.api.common.model.CommonSubset;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.workloads.deployments.Deployments;
 import org.paasta.container.platform.api.workloads.deployments.DeploymentsAdmin;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +35,7 @@ public class EndpointsService {
     private final RestTemplateService restTemplateService;
     private final CommonService commonService;
     private final PropertyService propertyService;
+    private final NodesService nodesService;
 
     /**
      * Instantiates a new Endpoints service
@@ -39,10 +45,11 @@ public class EndpointsService {
      * @param propertyService     the property service
      */
     @Autowired
-    public EndpointsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService) {
+    public EndpointsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, NodesService nodesService) {
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.propertyService = propertyService;
+        this.nodesService = nodesService;
     }
 
 
@@ -134,6 +141,7 @@ public class EndpointsService {
                         .replace("{namespace}", namespace)
                         .replace("{name}", endpointsName)
                 , HttpMethod.GET, null, Map.class);
+
         HashMap responseMap;
 
         try{
@@ -141,6 +149,14 @@ public class EndpointsService {
         } catch (Exception e) {
             return obj;
         }
+
+        EndpointsAdmin endpointsAdmin = commonService.setResultObject(responseMap, EndpointsAdmin.class);
+        String nodeName = endpointsAdmin.getSubsets().get(0).getAddresses().get(0).getNodeName();
+
+        NodesAdmin nodesAdmin = (NodesAdmin) nodesService.getNodesAdmin(nodeName);
+        String nodeStatus = nodesAdmin.getStatus().getConditions().get(4).getStatus();
+
+        responseMap.put("ready", nodeStatus);
 
         return commonService.setResultModel(commonService.setResultObject(responseMap, EndpointsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }

@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
-
 /**
  * ReplicaSets Controller 클래스
  *
@@ -78,15 +76,15 @@ public class ReplicaSetsController {
     /**
      * ReplicaSets 상세 조회(Get ReplicaSets detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the deployments detail
      */
     @ApiOperation(value = "ReplicaSets 상세 조회(Get ReplicaSets detail)", nickname = "getReplicaSets")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getReplicaSets(@PathVariable(value = "namespace") String namespace,
@@ -103,7 +101,7 @@ public class ReplicaSetsController {
     /**
      * ReplicaSets YAML 조회(Get ReplicaSets yaml)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the replicaSets yaml
      */
@@ -122,7 +120,7 @@ public class ReplicaSetsController {
      * ReplicaSets 목록 조회(Get ReplicaSets selector)
      *
      * @param namespace namespace
-     * @param selectors selectors
+     * @param selector  selector
      * @return the replicaSets list
      */
     @ApiOperation(value = "ReplicaSets 목록 조회(Get ReplicaSets selector)", nickname = "getReplicaSetsListLabelSelector")
@@ -130,18 +128,18 @@ public class ReplicaSetsController {
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "selector", value = "셀렉터", required = true, dataType = "string", paramType = "query")
     })
-    @GetMapping(value = "/resources/{selector:.+}")
+    @GetMapping(value = "/resources")
     public ReplicaSetsList getReplicaSetsListLabelSelector(@PathVariable("namespace") String namespace,
-                                                           @PathVariable("selector") String selectors ) {
-        return replicaSetsService.getReplicaSetsListLabelSelector(namespace, selectors);
+                                                           @RequestParam(name = "selector", required = true, defaultValue = "") String selector) {
+        return replicaSetsService.getReplicaSetsListLabelSelector(namespace, selector);
     }
 
     /**
      * ReplicaSets 생성(Create ReplicaSets)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "ReplicaSets 생성(Create ReplicaSets)", nickname = "createReplicaSets")
@@ -166,7 +164,7 @@ public class ReplicaSetsController {
     /**
      * ReplicaSets 삭제(Delete ReplicaSets)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return return is succeeded
      */
@@ -185,10 +183,10 @@ public class ReplicaSetsController {
     /**
      * ReplicaSets 수정(Update ReplicaSets)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param yaml the yaml
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "ReplicaSets 수정(Update ReplicaSets)", nickname = "updateReplicaSets")

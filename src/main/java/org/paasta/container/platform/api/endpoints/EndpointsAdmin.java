@@ -26,6 +26,7 @@ public class EndpointsAdmin {
     //private CommonSpec spec;
     //private CommonStatus status;
     private List<CommonSubset> subsets;
+    private String ready;
     
 
 }
