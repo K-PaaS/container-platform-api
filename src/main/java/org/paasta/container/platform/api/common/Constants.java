@@ -72,6 +72,7 @@ public class Constants {
     public static final String URI_COMMON_API_USERS_LIST_BY_NAMESPACE = "/clusters/cp-cluster/namespaces/{namespace:.+}/users";
     public static final String URI_COMMON_API_USERS_NAMES_LIST = "/clusters/cp-cluster/namespaces/{namespace:.+}/users/names";
     public static final String URI_COMMON_API_USER_DELETE = "/users/";
+    public static final String URI_COMMON_API_USERS_BY_NAMESPACE_NS_ADMIN = "/clusters/cp-cluster/namespaces/{namespace:.+}";
 
     // NEXT ACTION MOVEMENT DASHBOARD URI
     public static final String URI_CLUSTER_NODES = "/container-platform/clusters/nodes";
@@ -101,6 +102,8 @@ public class Constants {
     public static final String URI_USERS_CONFIG = "/container-platform/users/config";
 
     public static final String URI_ROLES = "/container-platform/roles";
+
+    public static final String URI_RESOURCE_QUOTAS = "/container-platform";
 
     public static final String URI_LIMITRANGES = "/container-platform";
     public static final String URI_LIMITRANGES_DETAIL = "/container-platform/{limitRangeName:.+}";
