@@ -6,7 +6,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -168,32 +167,32 @@ public class NamespacesController {
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
-    /**
-     * Namespaces 수정(Update Namespaces)
-     *
-     * @param cluster the cluster
-     * @param namespace the namespace
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
-     * @return return is succeeded
-     */
-    @ApiOperation(value = "Namespaces 수정(Update Namespaces)", nickname = "updateNamespaces")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
-    })
-    @PutMapping(value = "/{namespace:.+}")
-    public Object updateNamespaces(@PathVariable(value = "cluster") String cluster,
-                                   @PathVariable(value = "namespace") String namespace,
-                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
-                                   @RequestBody String yaml){
-        if (isAdmin) {
-            return namespacesService.updateNamespaces(namespace, yaml);
-        }
-
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
-    }
+//    /**
+//     * Namespaces 수정(Update Namespaces)
+//     *
+//     * @param cluster the cluster
+//     * @param namespace the namespace
+//     * @param isAdmin the isAdmin
+//     * @param yaml the yaml
+//     * @return return is succeeded
+//     */
+//    @ApiOperation(value = "Namespaces 수정(Update Namespaces)", nickname = "updateNamespaces")
+//    @ApiImplicitParams({
+//            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+//            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+//            @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
+//    })
+//    @PutMapping(value = "/{namespace:.+}")
+//    public Object updateNamespaces(@PathVariable(value = "cluster") String cluster,
+//                                   @PathVariable(value = "namespace") String namespace,
+//                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
+//                                   @RequestBody String yaml){
+//        if (isAdmin) {
+//            return namespacesService.updateNamespaces(namespace, yaml);
+//        }
+//
+//        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+//    }
 
 
     /**
@@ -204,7 +203,7 @@ public class NamespacesController {
      * @param isAdmin the isAdmin
      * @return return is succeeded
      */
-    @ApiOperation(value = "Namespaces 생성(Create Namespaces)", nickname = "createNamespaces")
+    @ApiOperation(value = "Namespaces 생성(Create Namespaces)", nickname = "initNamespaces")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "initTemplate", value = "Namespace 생성 정보", required = true, dataType = "NamespacesInitTemplate", paramType = "body")
@@ -216,6 +215,34 @@ public class NamespacesController {
 
         if (isAdmin) {
             return namespacesService.createInitNamespaces(initTemplate);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+    }
+
+
+    /**
+     * Namespaces 수정(modify Namespaces)
+     *
+     * @param cluster the cluster
+     * @param namespace the namespace
+     * @param isAdmin the isAdmin
+     * @param initTemplate the init template
+     * @return return is succeeded
+     */
+    @ApiOperation(value = "Namespaces 수정(modify Namespaces)", nickname = "modifyInitNamespaces")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "initTemplate", value = "Namespace 수정 정보", required = true, dataType = "NamespacesInitTemplate", paramType = "body")
+    })
+    @PutMapping(value = "/{namespace:.+}")
+    public ResultStatus modifyInitNamespaces(@PathVariable(value = "cluster") String cluster,
+                                       @PathVariable(value = "namespace") String namespace,
+                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
+                                       @RequestBody NamespacesInitTemplate initTemplate) {
+        if (isAdmin) {
+            return namespacesService.modifyInitNamespaces(namespace, initTemplate);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

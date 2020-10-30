@@ -195,16 +195,14 @@ public class ResourceQuotasService {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @param resultMap the result map
      * @return the return is succeeded
      */
-    public ResultStatus deleteResourceQuotas(String namespace, String resourceName, HashMap resultMap) {
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public ResultStatus deleteResourceQuotas(String namespace, String resourceName) {
+        ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasDeleteUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
-        return (ResultStatus) commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS);
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_RESOURCE_QUOTAS);
     }
 
     /**
