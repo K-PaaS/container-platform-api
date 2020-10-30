@@ -217,7 +217,7 @@ public class ResourceQuotasService {
      */
     public Object updateResourceQuotas(String namespace, String resourceName, String yaml) {
         Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentVolumesUpdateUrl()
+                propertyService.getCpMasterApiListResourceQuotasUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
 
         return commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS);
