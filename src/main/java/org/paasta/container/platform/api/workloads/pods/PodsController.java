@@ -92,10 +92,10 @@ public class PodsController {
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "selector", value = "셀렉터", required = true, dataType = "string", paramType = "query")
     })
-    @GetMapping(value = "/resources/{selector:.+}")
+    @GetMapping(value = "/resources")
     @ResponseBody
     public PodsList getPodListBySelector(@PathVariable(value = "namespace") String namespace,
-                                         @PathVariable(value = "selector") String selector) {
+                                         @RequestParam(name ="selector", required = true, defaultValue = "") String selector) {
         return podsService.getPodListWithLabelSelector(namespace, selector);
     }
 
