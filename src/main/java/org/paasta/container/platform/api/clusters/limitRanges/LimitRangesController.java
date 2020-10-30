@@ -44,33 +44,42 @@ public class LimitRangesController {
     /**
      * LimitRanges 목록 조회(Get LimitRanges list)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
-     * @param searchParam the searchParam
-     * @param isAdmin the isAdmin
-     *
+     * @param cluster    the cluster
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @param isAdmin    the isAdmin
      * @return the limitRanges list
      */
     @ApiOperation(value = "LimitRanges 목록 조회(Get LimitRanges list)", nickname = "getLimitRangesList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
-            @ApiImplicitParam(name = "continue", value = "컨티뉴 토큰", required = false, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "searchParam", value = "검색 매개 변수", required = false, dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
     })
     @GetMapping
     public Object getLimitRangesList(@PathVariable(value = "cluster") String cluster,
                                      @PathVariable(value = "namespace") String namespace,
+                                     @RequestParam(required = false, defaultValue = "0") int offset,
                                      @RequestParam(required = false, defaultValue = "0") int limit,
-                                     @RequestParam(required = false, name = "continue") String continueToken,
-                                     @RequestParam(required = false) String searchParam,
+                                     @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
+                                     @RequestParam(required = false, defaultValue = "desc") String order,
+                                     @RequestParam(required = false, defaultValue = "") String searchName,
                                      @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return limitRangesService.getLimitRangesListAdmin(namespace, limit, continueToken, searchParam);
+            if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+                //all namespace
+               return limitRangesService.getLimitRangesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+            }
+            return limitRangesService.getLimitRangesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
@@ -80,17 +89,17 @@ public class LimitRangesController {
     /**
      * LimitRanges 상세 조회(Get LimitRanges detail)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the limitRanges detail
      */
     @ApiOperation(value = "LimitRanges 상세 조회(Get LimitRanges detail)", nickname = "getLimitRanges")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getLimitRanges(@PathVariable(value = "cluster") String cluster,
@@ -108,10 +117,10 @@ public class LimitRangesController {
     /**
      * LimitRanges YAML 조회(Get LimitRanges yaml)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the limitRanges yaml
      */
     @ApiOperation(value = "LimitRanges YAML 조회(Get LimitRanges yaml)", nickname = "getLimitRangesYaml")
@@ -136,10 +145,10 @@ public class LimitRangesController {
     /**
      * LimitRanges 생성(Create LimitRanges)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
+     * @param isAdmin   the isAdmin
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "LimitRanges 생성(Create LimitRanges)", nickname = "createLimitRanges")
@@ -171,10 +180,10 @@ public class LimitRangesController {
     /**
      * LimitRanges 삭제(Delete LimitRanges)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "LimitRanges 삭제(Delete LimitRanges)", nickname = "deleteLimitRanges")
@@ -199,11 +208,11 @@ public class LimitRangesController {
     /**
      * LimitRanges 수정(Update LimitRanges)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
+     * @param isAdmin      the isAdmin
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "LimitRanges 수정(Update LimitRanges)", nickname = "updateLimitRanges")
@@ -231,9 +240,9 @@ public class LimitRangesController {
     /**
      * LimitRanges Template 목록 조회(Get LimitRanges Template list)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return the limitRangesDefault list
      */
     @ApiOperation(value = "LimitRanges Template 목록 조회(Get LimitRanges Template list)", nickname = "getLimitRangesTemplateList")
