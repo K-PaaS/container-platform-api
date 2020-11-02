@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class ResourceQuotasList {
   private String resultMessage;
   private Integer httpStatusCode;
   private String detailMessage;
+  private CommonItemMetaData itemMetaData;
   private List<ResourceQuotas> items;
 
 }

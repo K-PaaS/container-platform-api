@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.clusters.resourceQuotas;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatus;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ResourceQuotasListAdmin {
   private String resultMessage;
   private Integer httpStatusCode;
   private String detailMessage;
+  private CommonItemMetaData itemMetaData;
   private List<ResourceQuotasListAdminItem> items;
 
 }
