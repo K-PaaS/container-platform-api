@@ -327,8 +327,7 @@ public class MethodHandler {
                     return new ResultStatus(Constants.RESULT_STATUS_FAIL, "BadRequest", 400, "the namespace of the provided object does not match the namespace sent on the request");
                 }
             } else {
-                LOGGER.info("the namespace of the provided object does not match the namespace sent on the request':::::::::error");
-                return new ResultStatus(Constants.RESULT_STATUS_FAIL, "BadRequest", 400, "the namespace of the provided object does not match the namespace sent on the request");
+                break;
             }
 
         }
