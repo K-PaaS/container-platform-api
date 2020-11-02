@@ -2,7 +2,8 @@ package org.paasta.container.platform.api.endpoints;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.paasta.container.platform.api.common.model.*;
+import org.paasta.container.platform.api.endpoints.support.EndPointsDetailsItemAdmin;
+import org.paasta.container.platform.api.endpoints.support.EndpointSubset;
 
 import java.util.List;
 
@@ -20,13 +21,10 @@ public class EndpointsAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
+    private List<EndPointsDetailsItemAdmin> endpoints;
 
+    @JsonIgnore
+    private List<EndpointSubset> subsets;
 
-    //private CommonMetaData metadata;
-    //private CommonSpec spec;
-    //private CommonStatus status;
-    private List<CommonSubset> subsets;
-    private String ready;
-    
 
 }

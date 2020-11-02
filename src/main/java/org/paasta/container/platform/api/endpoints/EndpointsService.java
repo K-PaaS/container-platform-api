@@ -2,22 +2,17 @@ package org.paasta.container.platform.api.endpoints;
 
 import org.paasta.container.platform.api.clusters.nodes.NodesAdmin;
 import org.paasta.container.platform.api.clusters.nodes.NodesService;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
-import org.paasta.container.platform.api.common.model.CommonAddresses;
-import org.paasta.container.platform.api.common.model.CommonSubset;
-import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.workloads.deployments.Deployments;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsAdmin;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsListAdmin;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonCondition;
+import org.paasta.container.platform.api.endpoints.support.EndPointsDetailsItemAdmin;
+import org.paasta.container.platform.api.endpoints.support.EndpointAddress;
+import org.paasta.container.platform.api.endpoints.support.EndpointPort;
+import org.paasta.container.platform.api.endpoints.support.EndpointSubset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,8 +52,8 @@ public class EndpointsService {
      * Endpoints 목록 조회(Get Endpoints list)
      * (User Portal)
      *
-     * @param namespace the namespace
-     * @param limit the limit
+     * @param namespace     the namespace
+     * @param limit         the limit
      * @param continueToken the continueToken
      * @return the endpoints list
      */
@@ -81,10 +76,10 @@ public class EndpointsService {
      * Endpoints 목록 조회(Get Endpoints list)
      * (Admin Portal)
      *
-     * @param namespace the namespace
-     * @param limit the limit
+     * @param namespace     the namespace
+     * @param limit         the limit
      * @param continueToken the continueToken
-     * @param searchParam the searchParam
+     * @param searchParam   the searchParam
      * @return the endpoints list
      */
     public Object getEndpointsListAdmin(String namespace, int limit, String continueToken, String searchParam) {
@@ -105,6 +100,7 @@ public class EndpointsService {
             return response;
         }
 
+
         return commonService.setResultModel(commonService.setResultObject(responseMap, EndpointsListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
@@ -112,7 +108,7 @@ public class EndpointsService {
      * Endpoints 상세 조회(Get Endpoints list)
      * (User Portal)
      *
-     * @param namespace the namespace
+     * @param namespace     the namespace
      * @param endpointsName the endpoints name
      * @return the endpoints list
      */
@@ -131,43 +127,38 @@ public class EndpointsService {
      * Endpoints 상세 조회(Get Endpoints detail)
      * (Admin Portal)
      *
-     * @param namespace the namespace
+     * @param namespace     the namespace
      * @param endpointsName the endpoints name
      * @return the endpoints detail
      */
     public Object getEndpointsAdmin(String namespace, String endpointsName) {
-        Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListEndpointsGetUrl()
-                        .replace("{namespace}", namespace)
-                        .replace("{name}", endpointsName)
-                , HttpMethod.GET, null, Map.class);
 
         HashMap responseMap;
 
-        try{
+        Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListEndpointsGetUrl()
+                        .replace("{namespace}", namespace).replace("{name}", endpointsName)
+                , HttpMethod.GET, null, Map.class);
+
+        try {
             responseMap = (HashMap) obj;
         } catch (Exception e) {
             return obj;
         }
 
         EndpointsAdmin endpointsAdmin = commonService.setResultObject(responseMap, EndpointsAdmin.class);
-        String nodeName = endpointsAdmin.getSubsets().get(0).getAddresses().get(0).getNodeName();
+        endpointsAdmin = endpointsAdminProcessing(endpointsAdmin);
 
-        NodesAdmin nodesAdmin = (NodesAdmin) nodesService.getNodesAdmin(nodeName);
-        String nodeStatus = nodesAdmin.getStatus().getConditions().get(4).getStatus();
-
-        responseMap.put("ready", nodeStatus);
-
-        return commonService.setResultModel(commonService.setResultObject(responseMap, EndpointsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(endpointsAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
 
     /**
      * Endpoints YAML 조회(Get Endpoints yaml)
      *
-     * @param namespace the namespace
+     * @param namespace     the namespace
      * @param endpointsName the endpoints name
-     * @param resultMap the result map
+     * @param resultMap     the result map
      * @return the endpoints yaml
      */
     public Endpoints getEndpointsYaml(String namespace, String endpointsName, HashMap resultMap) {
@@ -181,5 +172,71 @@ public class EndpointsService {
 
         return (Endpoints) commonService.setResultModel(commonService.setResultObject(resultMap, Endpoints.class), Constants.RESULT_STATUS_SUCCESS);
     }
+
+
+    /**
+     * Node 명에 따른 Node "Ready" 상태 값 조회 (Get Node "Ready" Status Value by Node Name)
+     *
+     * @param endpointsAdmin the endpoints admin
+     * @return the endpointsAdmin
+     */
+    public EndpointsAdmin endpointsAdminProcessing(EndpointsAdmin endpointsAdmin) {
+
+        List<EndPointsDetailsItemAdmin> endPointsDetailsItemAdminsList = new ArrayList<>();
+
+        List<EndpointSubset> susbsets = endpointsAdmin.getSubsets();
+
+        for (EndpointSubset es : susbsets) {
+
+            List<EndpointAddress> addresses = es.getAddresses();
+            List<EndpointPort> ports = es.getPorts();
+
+            if (addresses == null) {
+                addresses = es.getNotReadyAddresses();
+            }
+
+            if (ports != null) {
+
+                for (EndpointAddress endpointAddress : addresses) {
+
+                    EndPointsDetailsItemAdmin endPointsDetailsItem = new EndPointsDetailsItemAdmin();
+                    String nodeName = CommonUtils.resourceNameCheck(endpointAddress.getNodeName());
+
+                    for (EndpointPort endpointPort : ports) {
+                        endpointPort.setName(CommonUtils.resourceNameCheck(endpointPort.getName()));
+                    }
+
+                    String nodeReady = Constants.noName;
+
+                    if (!nodeName.equals(Constants.noName)) {
+                        NodesAdmin nodesDetails = (NodesAdmin) nodesService.getNodesAdmin(nodeName);
+
+                        List<CommonCondition> nodeConditionList = nodesDetails.getStatus().getConditions();
+
+                        for (CommonCondition condition : nodeConditionList) {
+                            if (condition.getType().equals("Ready")) {
+                                nodeReady = condition.getStatus();
+                            }
+                        }
+                    }
+
+                    endPointsDetailsItem.setHost(endpointAddress.getIp());
+                    endPointsDetailsItem.setPorts(ports);
+                    endPointsDetailsItem.setNodes(nodeName);
+                    endPointsDetailsItem.setReady(nodeReady);
+
+                    endPointsDetailsItemAdminsList.add(endPointsDetailsItem);
+
+                }
+            }
+
+        }
+
+        EndpointsAdmin returnEndpointsAdmin = new EndpointsAdmin();
+        returnEndpointsAdmin.setEndpoints(endPointsDetailsItemAdminsList);
+
+        return returnEndpointsAdmin;
+    }
+
 
 }

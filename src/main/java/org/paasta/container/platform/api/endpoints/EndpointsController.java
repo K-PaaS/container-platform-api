@@ -24,7 +24,7 @@ import java.util.HashMap;
  */
 @Api(value = "EndpointsController v1")
 @RestController
-@RequestMapping("/namespaces/{namespace:.+}/endpoints")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/endpoints")
 public class EndpointsController {
 
     private final EndpointsService endpointsService;
