@@ -41,6 +41,9 @@ public class Users {
     public String created;
     public String lastModified;
 
+    private String browser;
+    private String clientIp;
+
     // user 생성 시 multi namespaces, roles
     private List<NamespaceRole> selectValues;
 
