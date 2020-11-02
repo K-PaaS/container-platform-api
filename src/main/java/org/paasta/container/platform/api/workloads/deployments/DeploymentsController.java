@@ -67,7 +67,7 @@ public class DeploymentsController {
                                      @RequestParam(required = false, defaultValue = "0") int offset,
                                      @RequestParam(required = false, defaultValue = "0") int limit,
                                      @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                     @RequestParam(required = false, defaultValue = "desc") String order,
+                                     @RequestParam(required = false, defaultValue = "") String order,
                                      @RequestParam(required = false, defaultValue = "") String searchName,
                                      @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
@@ -98,7 +98,7 @@ public class DeploymentsController {
     @ApiOperation(value = "Deployments 상세 조회(Get Deployments detail)", nickname = "getDeployments")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getDeployments(@PathVariable(value = "namespace") String namespace,
@@ -178,7 +178,7 @@ public class DeploymentsController {
      * @param cluster      the cluster
      * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param yaml the yaml
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     @PutMapping("/{resourceName:.+}")
