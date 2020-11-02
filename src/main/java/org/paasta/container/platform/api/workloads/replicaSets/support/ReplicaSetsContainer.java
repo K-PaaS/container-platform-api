@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.workloads.replicaSets.support;
 import lombok.Data;
 
 /**
- * ReplicaSets Admin Model 클래스
+ * ReplicaSets Container Model 클래스
  *
  * @author jjy
  * @version 1.0

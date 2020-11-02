@@ -8,7 +8,7 @@ import org.paasta.container.platform.api.common.model.CommonMetaData;
 import java.util.List;
 
 /**
- * ResourceQuotas List Model 클래스
+ * ResourceQuotas List Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0

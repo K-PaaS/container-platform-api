@@ -58,7 +58,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Users user = usersService.getUsersDetailsForLogin(userId, isAdmin);
         if (user != null) {
             roles = Arrays.asList(new SimpleGrantedAuthority(user.getUserType()));
-
             return new User(user.getUserId(), user.getPassword(), roles);
         }
         throw new UsernameNotFoundException(Constants.NON_EXISTENT_ID);
@@ -67,25 +66,41 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public Object createAuthenticationResponse(AuthenticationRequest authRequest) {
 
-        //Generate token
+
+        AuthenticationResponse authResponse = new AuthenticationResponse();
+
         UserDetails userdetails = loadUserByUsername(authRequest.getUserId());
+
+        //Generate token
         String token = jwtUtil.generateToken(userdetails, authRequest);
 
-        // Extract the namespace, user type list that contains the user
-        UsersList userListByUserId = usersService.getUsersDetails(authRequest.getUserId());
-        List<Users> userItem = userListByUserId.getItems();
+        //user_auth get
+        String user_auth = userdetails.getAuthorities().toArray()[0].toString();
 
 
-        //generate loginMetadata
-        List<loginMetaDataItem> loginMetaData = defaultNamespaceFilter(userItem);
+        // CLUSTER_ADMIN
+        if (user_auth.equals(Constants.AUTH_CLUSTER_ADMIN)) {
+            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
+                    Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, null);
+        }
+        // NAMESPACE_ADMIN, USER
+        else {
+            UsersList userListByUserId = usersService.getUsersDetails(authRequest.getUserId());
+            List<Users> userItem = userListByUserId.getItems();
 
-        if (loginMetaData.size() == 0) {
-            //in-active user
-            return new ResultStatus(Constants.RESULT_STATUS_FAIL, Constants.LOGIN_FAIL, CommonStatusCode.FORBIDDEN.getCode(), Constants.INACTIVE_USER_ACCESS);
+            //generate loginMetadata & filter default namespace
+            List<loginMetaDataItem> loginMetaData = defaultNamespaceFilter(userItem);
+
+            if (loginMetaData.size() == 0) {
+                //in-active user
+                return new ResultStatus(Constants.RESULT_STATUS_FAIL, Constants.LOGIN_FAIL, CommonStatusCode.FORBIDDEN.getCode(), Constants.INACTIVE_USER_ACCESS);
+            }
+
+            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
+                    Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData);
+
         }
 
-        AuthenticationResponse authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData);
 
         return authResponse;
     }

@@ -219,7 +219,7 @@ public class CustomServicesService {
 
 
     /**
-     * 전체 Namespaces 의 Services Admin 목록 조회(Get Services Admin list in All Namespaces)
+     * 전체 Namespaces 의 Services Admin 목록 조회(Get Services Admin list in all namespaces)
      *
      * @param offset     the offset
      * @param limit      the limit

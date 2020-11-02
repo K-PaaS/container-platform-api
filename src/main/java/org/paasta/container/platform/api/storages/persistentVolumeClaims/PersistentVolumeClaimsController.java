@@ -1,6 +1,8 @@
 package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 
 import io.swagger.annotations.*;
+import org.paasta.container.platform.api.clusters.namespaces.NamespacesService;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,15 @@ public class PersistentVolumeClaimsController {
                                                 @RequestParam(required = false, defaultValue = "desc") String order,
                                                 @RequestParam(required = false, defaultValue = "") String searchName,
                                                 @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            if (isAdmin) {
+                return persistentVolumeClaimsService.getPersistentVolumeClaimsListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+            } else {
+                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+            }
+        }
+
         if (isAdmin) {
             return persistentVolumeClaimsService.getPersistentVolumeClaimsListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
