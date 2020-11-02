@@ -148,7 +148,7 @@ public class Constants {
     public static final String ID_REQUIRED = "사용자 아이디를 입력해주세요.";
     public static final String PASSWORD_REQUIRED = "비밀번호를 입력해주세요.";
     public static final String ID_PASSWORD_REQUIRED = "사용자 아이디와 비밀번호를 입력해주세요.";
-    public static final String INACTIVE_USER_ACCESS = "승인되지 않은 사용자입니다. 네임스페이스 지정이 필요합니다.";
+    public static final String INACTIVE_USER_ACCESS = "승인되지 않은 사용자입니다. 관리자에게 문의하시기 바랍니다.";
 
 
     public static final String LIMIT_ILLEGALARGUMENT= "limit(한 페이지에 가져올 리소스 최대 수) 는 반드시 0 이상이여아 합니다. limit >=0 ";
