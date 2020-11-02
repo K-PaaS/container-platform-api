@@ -13,9 +13,4 @@ import lombok.Data;
 public class ObjectReference {
     private String name;
     private String namespace;
-   /* private String apiVersion;
-    private String fieldPath;
-    private String kind;
-    private String resourceVersion;
-    private String uid; */
 }

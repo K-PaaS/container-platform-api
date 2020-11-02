@@ -22,7 +22,6 @@ public class StorageClassesListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-    //private Map metadata;
     private List<StorageClassesListAdminItem> items;
 }
 
