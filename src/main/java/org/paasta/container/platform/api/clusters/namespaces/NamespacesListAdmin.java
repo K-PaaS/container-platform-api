@@ -2,13 +2,12 @@ package org.paasta.container.platform.api.clusters.namespaces;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
-import org.paasta.container.platform.api.customServices.CustomServices;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Namespaces List Admin Model 클래스
@@ -23,7 +22,7 @@ public class NamespacesListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-
+    private CommonItemMetaData itemMetaData;
     private List<NamespacesListAdminItem> items;
 }
 
