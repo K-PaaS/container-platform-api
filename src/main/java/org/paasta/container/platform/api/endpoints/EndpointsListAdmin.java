@@ -19,6 +19,6 @@ public class EndpointsListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-    private List<Endpoints> items;
     private CommonItemMetaData itemMetaData;
+    private List<Endpoints> items;
 }
