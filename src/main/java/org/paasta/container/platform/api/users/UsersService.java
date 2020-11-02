@@ -145,6 +145,18 @@ public class UsersService {
 
 
     /**
+     * Namespace 관리자 상세 조회(Get Namespace Admin Users detail)
+     *
+     * @param namespace the namespace
+     * @return the users detail
+     */
+    public Users getUsersByNamespaceAndNsAdmin (String namespace) {
+        return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_BY_NAMESPACE_NS_ADMIN.replace("{namespace:.+}", namespace)
+                , HttpMethod.GET, null, Users.class);
+    }
+
+
+    /**
      * Users 상세 조회(Get Users detail)
      *
      * @param userId the userId
@@ -176,6 +188,17 @@ public class UsersService {
      */
     public ResultStatus createUsers(Users users) {
         return restTemplateService.sendAdmin(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class);
+    }
+
+
+    /**
+     * 사용자 권한 변경 DB 저장(Save Users DB)
+     *
+     * @param users the users
+     * @return return is succeeded
+     */
+    public ResultStatus updateUsers(Users users) {
+        return restTemplateService.sendAdmin(TARGET_COMMON_API, "/users", HttpMethod.PUT, users, ResultStatus.class);
     }
 
     /**
@@ -412,7 +435,7 @@ public class UsersService {
 
                         updateSetRoleUser(namespace, sa, role, updatedUser);
                         updatedUser.setRoleSetCode(role);
-                        rsDb = createUsers(updatedUser);
+                        rsDb = updateUsers(updatedUser);
                     }
                 }
             }
@@ -452,7 +475,7 @@ public class UsersService {
                     newUser.setIsActive("Y");
                     newUser.setUserType("USER");
 
-                    rsDb = createUsers(newUser);
+                    rsDb = updateUsers(newUser);
                 }
             }
         }

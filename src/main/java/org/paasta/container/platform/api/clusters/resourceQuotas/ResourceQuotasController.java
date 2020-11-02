@@ -178,7 +178,7 @@ public class ResourceQuotasController {
                                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return resourceQuotasService.deleteResourceQuotas(namespace, resourceName, new HashMap<>());
+            return resourceQuotasService.deleteResourceQuotas(namespace, resourceName);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

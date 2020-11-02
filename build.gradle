@@ -45,6 +45,7 @@ ext {
 	swaggerVersion = '2.9.2'
 	jjwtVersion = '0.9.1'
 	jsonpathVersion = '2.4.0'
+	jacocoVersion = '0.8.1'
 }
 
 jar {

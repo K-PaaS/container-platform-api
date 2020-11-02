@@ -100,6 +100,13 @@ public class JwtUtil {
 		return roles;
 	}
 
+	public String getClientIpFromToken(String authToken) {
+		Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken).getBody();
+		String clientIp = String.valueOf(claims.get("IP"));
+
+		return clientIp;
+	}
+
 
 
 

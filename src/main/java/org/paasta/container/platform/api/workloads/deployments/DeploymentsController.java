@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.workloads.deployments;
 
 import io.swagger.annotations.*;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.slf4j.Logger;
@@ -69,6 +70,15 @@ public class DeploymentsController {
                                      @RequestParam(required = false, defaultValue = "desc") String order,
                                      @RequestParam(required = false, defaultValue = "") String searchName,
                                      @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            if (isAdmin) {
+                return deploymentsService.getDeploymentsListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+            } else {
+                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+            }
+        }
+
         if (isAdmin) {
             return deploymentsService.getDeploymentsListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }

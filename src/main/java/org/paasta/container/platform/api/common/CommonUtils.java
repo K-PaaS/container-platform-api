@@ -128,4 +128,9 @@ public class CommonUtils {
         return list.toArray();
 
     }
+
+    public static String resourceNameCheck(String resourceName){
+      String result =  (resourceName == null) ? Constants.noName : resourceName;
+      return result;
+    }
 }

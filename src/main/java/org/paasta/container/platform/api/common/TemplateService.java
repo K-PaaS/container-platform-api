@@ -45,7 +45,6 @@ public class TemplateService {
         String yml;
         try {
             yml = FreeMarkerTemplateUtils.processTemplateIntoString(configuration.getTemplate(templateName), model);
-            LOGGER.info("original yml {}",yml);
         } catch (Exception e) {
             return "Occur unexpected exception...";
         }

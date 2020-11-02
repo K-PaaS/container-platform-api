@@ -23,7 +23,7 @@ public class EventsAdmin {
     private Integer httpStatusCode;
     private String detailMessage;
 
-    private CommonMetaData metadata;
+   // private CommonMetaData metadata;
     //private String action;
     private int count;
     //private String eventTime;
@@ -33,7 +33,8 @@ public class EventsAdmin {
     //private String reason;
     private Events.EventSource source;
     private String type;
-    private CommonObjectReference involvedObject;
+    private String subObject;
+    //private CommonObjectReference involvedObject;
 
     public String getFirstTimestamp() {
         return CommonUtils.procSetTimestamp(firstTimestamp);
@@ -44,6 +45,11 @@ public class EventsAdmin {
         return CommonUtils.procSetTimestamp(lastTimestamp);
     }
 
+    @JsonIgnore
+    private CommonMetaData metadata;
+
+    @JsonIgnore
+    private CommonObjectReference involvedObject;
 
     @Data
     public class EventSource {
@@ -51,4 +57,11 @@ public class EventsAdmin {
         private String host;
     }
 
+    public String getSubObject() {
+        return involvedObject.getFieldPath();
+    }
+
+    public void setSubObject(String subObject) {
+        this.subObject = subObject;
+    }
 }

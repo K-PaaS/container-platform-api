@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.slf4j.Logger;
@@ -74,6 +75,14 @@ public class PodsController {
                               @RequestParam(required = false, defaultValue = "") String searchName,
                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            if (isAdmin) {
+                return podsService.getPodsListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+            } else {
+                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+            }
+        }
+
         if (isAdmin) {
             return podsService.getPodsListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
@@ -92,10 +101,10 @@ public class PodsController {
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "selector", value = "셀렉터", required = true, dataType = "string", paramType = "query")
     })
-    @GetMapping(value = "/resources/{selector:.+}")
+    @GetMapping(value = "/resources")
     @ResponseBody
     public PodsList getPodListBySelector(@PathVariable(value = "namespace") String namespace,
-                                         @PathVariable(value = "selector") String selector) {
+                                         @RequestParam(name ="selector", required = true, defaultValue = "") String selector) {
         return podsService.getPodListWithLabelSelector(namespace, selector);
     }
 

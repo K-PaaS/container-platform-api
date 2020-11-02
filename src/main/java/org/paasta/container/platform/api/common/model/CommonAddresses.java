@@ -10,7 +10,7 @@ import lombok.Data;
  * @since 2020.08.25
  */
 @Data
-class CommonAddresses {
+public class CommonAddresses {
     private String ip;
     private String nodeName;
 }
