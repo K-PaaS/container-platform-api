@@ -23,7 +23,6 @@ public class LimitRangesAdmin {
     private String namespace;
     private String creationTimestamp;
     private List<LimitRangesItem> limits;
-    //private String sourceTypeYaml;
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -70,8 +69,6 @@ public class LimitRangesAdmin {
         this.detailMessage = detailMessage;
     }
 
-
-    // LimitRanges
     public String getName() {
         return metadata.getName();
     }

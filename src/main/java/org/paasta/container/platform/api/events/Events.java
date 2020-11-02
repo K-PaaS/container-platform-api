@@ -21,13 +21,10 @@ public class Events {
     private String detailMessage;
 
     private CommonMetaData metadata;
-    //private String action;
     private int count;
-    //private String eventTime;
     private String firstTimestamp;
     private String lastTimestamp;
     private String message;
-    //private String reason;
     private EventSource source;
     private String type;
     private CommonObjectReference involvedObject;
@@ -35,8 +32,6 @@ public class Events {
     public String getFirstTimestamp() {
         return CommonUtils.procSetTimestamp(firstTimestamp);
     }
-
-
     public String getLastTimestamp() {
         return CommonUtils.procSetTimestamp(lastTimestamp);
     }
