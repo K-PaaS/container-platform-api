@@ -224,7 +224,8 @@ public class CommonService {
      */
     public <T> List<T> searchKeywordForResourceName(List<T> commonList, String keyword) {
         List filterList = commonList.stream()
-                .filter(x -> this.<String>getField("name", getField("metadata", x)).matches("(?i).*" + keyword + ".*"))
+                .filter(x -> this.<String>getField(Constants.RESOURCE_NAME,
+                        getField(Constants.RESOURCE_METADATA, x)).matches("(?i).*" + keyword + ".*"))
                 .collect(Collectors.toList());
 
         return filterList;
@@ -246,22 +247,29 @@ public class CommonService {
         orderBy = orderBy.toLowerCase();
         order = order.toLowerCase();
 
-        if (orderBy.equals("name")) {
+        if (orderBy.equals(Constants.RESOURCE_NAME)) {
             //리소스명 기준
+            order = (order.equals("")) ? "asc" : order;
             if (order.equals("asc")) {
-                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField("name", getField("metadata", x)))).collect(Collectors.toList());
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_NAME,
+                        getField(Constants.RESOURCE_METADATA, x)))).collect(Collectors.toList());
             } else {
-                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField("name", getField("metadata", x))).reversed()).collect(Collectors.toList());
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_NAME,
+                        getField(Constants.RESOURCE_METADATA, x))).reversed()).collect(Collectors.toList());
             }
         } else {
+            // 생성날짜 기준
+            order = (order.equals("")) ? "desc" : order;
+
             if (order.equals("asc")) {
-                // 생성날짜 기준
-                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField("creationTimestamp", getField("metadata", x)))).collect(Collectors.toList());
+
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATIONTIMESTAMP,
+                        getField(Constants.RESOURCE_METADATA, x)))).collect(Collectors.toList());
             } else {
-                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField("creationTimestamp", getField("metadata", x))).reversed()).collect(Collectors.toList());
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_CREATIONTIMESTAMP,
+                        getField(Constants.RESOURCE_METADATA, x))).reversed()).collect(Collectors.toList());
             }
         }
-
 
         return sortList;
     }
@@ -277,12 +285,6 @@ public class CommonService {
      */
     public <T> List<T> subListforLimit(List<T> itemList, int offset, int limit) {
         List returnList = itemList;
-        if (limit < 0 || limit > 50) {
-            throw new IllegalArgumentException("Limits can only be between 0 and 50.");
-        }
-        if (offset < 0) {
-            throw new IllegalArgumentException("Offset must be >=0 but was " + offset + "!");
-        }
 
         if (limit > 0) {
             returnList = itemList.stream().skip(offset * limit).limit(limit).collect(Collectors.toList());
@@ -300,6 +302,20 @@ public class CommonService {
      */
     public CommonItemMetaData setCommonItemMetaData(List itemList, int offset, int limit) {
         CommonItemMetaData commonItemMetaData = new CommonItemMetaData(0, 0);
+
+
+        if (limit < 0) {
+            throw new IllegalArgumentException(Constants.LIMIT_ILLEGALARGUMENT);
+        }
+        if (offset < 0) {
+            throw new IllegalArgumentException(Constants.OFFSET_ILLEGALARGUMENT);
+        }
+
+        if (offset > 0 && limit == 0) {
+            throw new IllegalArgumentException(Constants.OFFSET_REQUIRES_LIMIT_ILLEGALARGUMENT);
+        }
+
+
         int allItemCount = itemList.size();
         int remainingItemCount = allItemCount - ((offset + 1) * limit);
 
@@ -323,22 +339,22 @@ public class CommonService {
             searchName = searchName.trim();
         }
 
-        // 1. 키워드 match에 따른 리스트 필터 처리
+        // 1. 키워드 match에 따른 리스트 필터
         if (searchName != null || searchName.length() > 0) {
             resourceItemList = searchKeywordForResourceName(resourceItemList, searchName);
         }
 
-        // 2. 조건에 따른 리스트 정렬 처리
+        // 2. 조건에 따른 리스트 정렬
         resourceItemList = sortingListByCondition(resourceItemList, orderBy, order);
 
-        // 3. commonItemMetaData 추가 처리
+        // 3. commonItemMetaData 추가
         CommonItemMetaData commonItemMetaData = setCommonItemMetaData(resourceItemList, offset, limit);
         resourceReturnList = setField("itemMetaData", resourceList, commonItemMetaData);
 
-        // 4. offset, limit에 따른 리스트 subLIst 처리
+
+        // 4. offset, limit에 따른 리스트 subLIst
         resourceItemList = subListforLimit(resourceItemList, offset, limit);
         resourceReturnList = setField("items", resourceReturnList, resourceItemList);
-
 
         return (T) resourceReturnList;
     }
