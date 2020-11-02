@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
+import org.paasta.container.platform.api.workloads.pods.support.PodsStatus;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class PodsListAdmin {
     private String detailMessage;
     private Map metadata;
     private CommonItemMetaData itemMetaData;
-    private List<PodsListAdminList> items ;
+    private List<PodsListAdminList> items;
 }
 
 class PodsListAdminList {
@@ -41,7 +42,7 @@ class PodsListAdminList {
     @JsonIgnore
     private CommonSpec spec;
     @JsonIgnore
-    private CommonStatus status;
+    private PodsStatus status;
 
     public String getName() {
         return metadata.getName();
@@ -107,11 +108,11 @@ class PodsListAdminList {
         this.spec = spec;
     }
 
-    public CommonStatus getStatus() {
+    public PodsStatus getStatus() {
         return status;
     }
 
-    public void setStatus(CommonStatus status) {
+    public void setStatus(PodsStatus status) {
         this.status = status;
     }
 }

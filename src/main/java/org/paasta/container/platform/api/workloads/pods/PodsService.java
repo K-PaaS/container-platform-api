@@ -243,4 +243,31 @@ public class PodsService {
     }
 
 
+    /**
+     * 전체 Namespaces 의 Pods Admin 목록 조회(Get Services Admin list in All Namespaces)
+     *
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @return the pods all list
+     */
+    public Object getPodsListAllNamespacesAdmin(int offset, int limit, String orderBy, String order, String searchName) {
+        HashMap responseMap;
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPodsListAllNamespacesUrl(), HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        PodsListAdmin podsListAdminList = commonService.setResultObject(responseMap, PodsListAdmin.class);
+        podsListAdminList = commonService.resourceListProcessing(podsListAdminList, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
+
+        return commonService.setResultModel(podsListAdminList, Constants.RESULT_STATUS_SUCCESS);
+    }
 }

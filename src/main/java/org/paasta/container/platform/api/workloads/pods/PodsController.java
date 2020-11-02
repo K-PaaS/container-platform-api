@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.slf4j.Logger;
@@ -73,6 +74,14 @@ public class PodsController {
                               @RequestParam(required = false, defaultValue = "desc") String order,
                               @RequestParam(required = false, defaultValue = "") String searchName,
                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            if (isAdmin) {
+                return podsService.getPodsListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+            } else {
+                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+            }
+        }
 
         if (isAdmin) {
             return podsService.getPodsListAdmin(namespace, offset, limit, orderBy, order, searchName);
