@@ -73,7 +73,7 @@ public class PersistentVolumesController {
 
         if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
             if (isAdmin) {
-                return persistentVolumesService.getPersistentVolumesListAllNamesapcesAdmin(offset, limit, orderBy, order, searchName);
+                return persistentVolumesService.getPersistentVolumesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
             } else {
                 return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
             }

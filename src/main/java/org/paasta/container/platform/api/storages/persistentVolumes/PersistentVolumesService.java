@@ -220,7 +220,7 @@ public class PersistentVolumesService {
      * @param searchName the searchName
      * @return the persistentVolumes all list
      */
-    public Object getPersistentVolumesListAllNamesapcesAdmin(int offset, int limit, String orderBy, String order, String searchName) {
+    public Object getPersistentVolumesListAllNamespacesAdmin(int offset, int limit, String orderBy, String order, String searchName) {
         HashMap responseMap;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
