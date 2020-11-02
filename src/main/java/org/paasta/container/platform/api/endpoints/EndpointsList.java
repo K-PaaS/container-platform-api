@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.endpoints;
 
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 
 import java.util.List;
 
@@ -19,5 +20,7 @@ public class EndpointsList {
     private Integer httpStatusCode;
     private String detailMessage;
     private List<Endpoints> items;
+
+    private CommonItemMetaData itemMetaData;
 
 }
