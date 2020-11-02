@@ -225,7 +225,7 @@ public class ResourceQuotasService {
 
 
     /**
-     * ResourceQuotas Default Template 목록 조회
+     * ResourceQuotas Default Template 목록 조회(Get ResourceQuotas Default Template list)
      *
      * @param namespace the namespace
      * @return the resourceQuotas list

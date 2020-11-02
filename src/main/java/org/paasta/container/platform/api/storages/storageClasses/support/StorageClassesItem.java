@@ -2,7 +2,7 @@ package org.paasta.container.platform.api.storages.storageClasses.support;
 
 import lombok.Data;
 /**
- * StorageClasses Model 클래스
+ * StorageClasses Item Model 클래스
  *
  * @author jjy
  * @version 1.0

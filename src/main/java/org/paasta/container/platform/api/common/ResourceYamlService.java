@@ -46,10 +46,10 @@ public class ResourceYamlService {
 
 
     /**
-     * ftl 파일로 Namespace 생성
+     * ftl 파일로 Namespace 생성(Create Namespace)
      *
      * @param namespace
-     * @return
+     * @return the result status
      */
     public ResultStatus createNamespace(String namespace) {
         Map map = new HashMap();
@@ -64,11 +64,11 @@ public class ResourceYamlService {
 
 
     /**
-     * ftl 파일로 Service Account 생성
+     * ftl 파일로 Service Account 생성(Create Service Account)
      *
      * @param username
      * @param namespace
-     * @return
+     * @return the result status
      */
     public ResultStatus createServiceAccount(String username, String namespace) {
         String saYaml = templateService.convert("create_account.ftl", yamlMatch(username, namespace));
@@ -80,7 +80,7 @@ public class ResourceYamlService {
 
 
     /**
-     * ftl 파일로 Role Binding 생성
+     * ftl 파일로 Role Binding 생성(Create Role Binding)
      *
      * @param username
      * @param namespace
@@ -112,7 +112,7 @@ public class ResourceYamlService {
 
 
     /**
-     * ftl 파일로 init role 생성
+     * ftl 파일로 init role 생성(Create init role)
      *
      * @param namespace the namespace
      */
@@ -143,7 +143,7 @@ public class ResourceYamlService {
 
 
     /**
-     * namespace에 ResourceQuotas를 할당
+     * namespace에 ResourceQuotas를 할당(Allocate ResourceQuotas to Namespace)
      *
      * @param reqNamespace the request namespace
      * @param rqName the request name
@@ -185,7 +185,7 @@ public class ResourceYamlService {
 
 
     /**
-     * namespace에 LimitRanges를 할당
+     * namespace에 LimitRanges를 할당(Allocate LimitRanges to Namespace)
      *
      * @param reqNamespace the request namespace
      * @param lrName the request name

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * ResourceQuotasDefault Model 클래스
+ * LimitRangesDefault Model 클래스
  *
  * @author hrjin
  * @version 1.0

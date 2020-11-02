@@ -112,7 +112,7 @@ public class InspectionUtil {
     }
 
     /**
-     * CREATE/UPDATE dryRun 체크(DryRun check)
+     * CREATE/UPDATE dryRun 체크(Check DryRun)
      *
      * @param namespace the namespace
      * @param kind the kind
