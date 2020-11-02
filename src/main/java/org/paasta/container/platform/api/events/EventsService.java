@@ -9,6 +9,8 @@ import org.paasta.container.platform.api.endpoints.Endpoints;
 import org.paasta.container.platform.api.endpoints.EndpointsAdmin;
 import org.paasta.container.platform.api.endpoints.EndpointsList;
 import org.paasta.container.platform.api.endpoints.EndpointsListAdmin;
+import org.paasta.container.platform.api.workloads.deployments.DeploymentsList;
+import org.paasta.container.platform.api.workloads.deployments.DeploymentsListAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -86,23 +88,20 @@ public class EventsService {
      * Events 목록 조회(Get Events list)
      * (Admin Portal)
      *
-     * @param namespace     the namespace
-     * @param limit         the limit
-     * @param continueToken the continueToken
-     * @param searchParam the searchParam
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the events list
      */
-    public Object getEventsListAdmin(String namespace, int limit, String continueToken, String searchParam) {
-        String param = "";
+    public Object getEventsListAdmin(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
         HashMap responseMap = null;
 
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
-
-        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListEventsListUrl()
-                        .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace) , HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
@@ -110,31 +109,35 @@ public class EventsService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, EventsListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        EventsListAdmin eventsListAdmin = commonService.setResultObject(responseMap, EventsListAdmin.class);
+        eventsListAdmin = commonService.resourceListProcessing(eventsListAdmin, offset, limit, orderBy, order, searchName, EventsListAdmin.class);
+
+        return commonService.setResultModel(eventsListAdmin,Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
      * Events 목록 조회(Get Events list)
      * (User Portal)
      *
-     * @param namespace     the namespace
-     * @param limit         the limit
-     * @param continueToken the continueToken
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the events list
      */
-    public EventsList getEventsList(String namespace, int limit, String continueToken) {
-        String param = "";
-
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
+    public EventsList getEventsList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListEventsListUrl()
-                        .replace("{namespace}", namespace) + "?limit=" + limit + param
+                        .replace("{namespace}", namespace)
                 , HttpMethod.GET, null, Map.class);
 
-        return (EventsList) commonService.setResultModel(commonService.setResultObject(responseMap, EventsList.class), Constants.RESULT_STATUS_SUCCESS);
+        EventsList eventsList = commonService.setResultObject(responseMap, EventsList.class);
+        eventsList = commonService.resourceListProcessing(eventsList, offset, limit, orderBy, order, searchName, EventsList.class);
+
+        return (EventsList) commonService.setResultModel(eventsList, Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -201,4 +204,31 @@ public class EventsService {
         return (Events) commonService.setResultModel(commonService.setResultObject(resultMap, Events.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+    /**
+     * 전체 Namespaces 의 Events Admin 목록 조회(Get Events Admin list in all namespaces)
+     *
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @return the events all list
+     */
+    public Object getEventsListAllNamespacesAdmin(int offset, int limit, String orderBy, String order, String searchName) {
+        HashMap responseMap;
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListEventsListAllNamespacesUrl(),  HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        EventsListAdmin eventsListAdmin = commonService.setResultObject(responseMap, EventsListAdmin.class);
+        eventsListAdmin = commonService.resourceListProcessing(eventsListAdmin, offset, limit, orderBy, order, searchName, EventsListAdmin.class);
+
+        return commonService.setResultModel(eventsListAdmin, Constants.RESULT_STATUS_SUCCESS);
+    }
 }

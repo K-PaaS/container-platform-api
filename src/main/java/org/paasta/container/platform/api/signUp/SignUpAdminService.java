@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.signUp;
 
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
+import org.paasta.container.platform.api.adminToken.AdminTokenService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
@@ -31,25 +32,27 @@ public class SignUpAdminService {
     private final AccessTokenService accessTokenService;
     private final UsersService usersService;
     private final ResourceYamlService resourceYamlService;
+    private final AdminTokenService adminTokenService;
 
     /**
      * Instantiates a new SignUpAdminService service
-     *
      * @param propertyService the property service
      * @param restTemplateService the rest template service
      * @param commonService the common service
      * @param accessTokenService the access token service
      * @param usersService the users service
      * @param resourceYamlService the resource yaml service
+     * @param adminTokenService the admin token service
      */
     @Autowired
-    public SignUpAdminService(PropertyService propertyService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService) {
+    public SignUpAdminService(PropertyService propertyService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService, AdminTokenService adminTokenService) {
         this.propertyService = propertyService;
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.accessTokenService = accessTokenService;
         this.usersService = usersService;
         this.resourceYamlService = resourceYamlService;
+        this.adminTokenService = adminTokenService;
     }
 
 
@@ -62,6 +65,9 @@ public class SignUpAdminService {
     public ResultStatus signUpAdminUsers(Users users) {
         String namespace = users.getCpNamespace();
         String username = users.getUserId();
+
+        // save admin token
+        adminTokenService.saveAdminToken(users.getClusterToken());
 
         // create row spec resource quota, limit range
         ResultStatus nsResult = resourceYamlService.createNamespace(namespace);

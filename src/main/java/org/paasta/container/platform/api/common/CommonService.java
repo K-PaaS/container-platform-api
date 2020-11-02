@@ -45,7 +45,7 @@ public class CommonService {
 
 
     /**
-     * Sets result model
+     * result model 설정(Sets result model)
      *
      * @param reqObject  the req object
      * @param resultCode the result code
@@ -83,7 +83,7 @@ public class CommonService {
     }
 
     /**
-     * 생성/수정/삭제 후 페이지 이동을 위한 Sets result model
+     * 생성/수정/삭제 후 페이지 이동을 위한 result model 설정(Set result model for moving the page after a create/update/delete)
      *
      * @param reqObject
      * @param resultCode
@@ -121,7 +121,7 @@ public class CommonService {
     }
 
     /**
-     * Sets result object
+     * result object 설정(Set result object)
      *
      * @param <T>           the type parameter
      * @param requestObject the request object
@@ -134,7 +134,7 @@ public class CommonService {
 
 
     /**
-     * To json string
+     * json string 으로 변환(To json string)
      *
      * @param requestObject the request object
      * @return the string
@@ -145,7 +145,7 @@ public class CommonService {
 
 
     /**
-     * From json t
+     * json 에서 t로 변환(From json t)
      *
      * @param <T>           the type parameter
      * @param requestString the request string
@@ -157,13 +157,13 @@ public class CommonService {
     }
 
     /**
-     * 서로 다른 객체를 매핑
+     * 서로 다른 객체를 매핑 (mapping each other objects)
      *
      * @param instance
      * @param targetClass
      * @param <A>
      * @param <B>
-     * @return
+     * @return the b
      * @throws Exception
      */
     public static <A, B> B convert(A instance, Class<B> targetClass) throws Exception {
@@ -183,11 +183,11 @@ public class CommonService {
 
 
     /**
-     * 필드를 조회하고, 그 값을 반환 처리
+     * 필드를 조회하고, 그 값을 반환 처리(check the field and return the result)
      *
      * @param fieldName
      * @param obj
-     * @return
+     * @return the t
      */
     @SneakyThrows
     public <T> T getField(String fieldName, Object obj) {
@@ -199,11 +199,12 @@ public class CommonService {
     }
 
     /**
-     * 필드를 조회하고, 그 값을 저장 처리
+     * 필드를 조회하고, 그 값을 저장 처리(check the field and save the result)
      *
      * @param fieldName
      * @param obj
-     * @return
+     * @param value
+     * @return the object
      */
     @SneakyThrows
     public Object setField(String fieldName, Object obj, Object value) {
@@ -216,11 +217,11 @@ public class CommonService {
 
 
     /**
-     * 리소스 명 기준, 키워드가 포함된 리스트 반환 처리
+     * 리소스 명 기준, 키워드가 포함된 리스트 반환 처리(return the list including keywords)
      *
      * @param commonList
      * @param keyword
-     * @return
+     * @return the list
      */
     public <T> List<T> searchKeywordForResourceName(List<T> commonList, String keyword) {
         List filterList = commonList.stream()
@@ -233,12 +234,12 @@ public class CommonService {
 
 
     /**
-     * 리소스 생성날짜 또는 이름으로 리스트 정렬 처리
+     * 리소스 생성날짜 또는 이름으로 리스트 정렬 처리(order by creation time or name)
      *
      * @param commonList
      * @param orderBy
      * @param order
-     * @return
+     * @return the list
      */
     public <T> List<T> sortingListByCondition(List<T> commonList, String orderBy, String order) {
 
@@ -276,12 +277,12 @@ public class CommonService {
 
 
     /**
-     * offset & limit을 통한 리스트 가공 처리
+     * offset & limit을 통한 리스트 가공 처리(sublist using offset and limit)
      *
      * @param itemList
      * @param offset
      * @param limit
-     * @return
+     * @return the list
      */
     public <T> List<T> subListforLimit(List<T> itemList, int offset, int limit) {
         List returnList = itemList;
@@ -293,12 +294,12 @@ public class CommonService {
     }
 
     /**
-     * commonItemMetaData 객체 생성
+     * commonItemMetaData 객체 생성(create a commonItemMetaData object)
      *
      * @param itemList
      * @param offset
      * @param limit
-     * @return
+     * @return the CommonItemMetaData
      */
     public CommonItemMetaData setCommonItemMetaData(List itemList, int offset, int limit) {
         CommonItemMetaData commonItemMetaData = new CommonItemMetaData(0, 0);
@@ -361,10 +362,10 @@ public class CommonService {
 
 
     /**
-     * selector에 의한 리스트 조회 commonItemMetaData 설정
+     * selector에 의한 리스트 조회 commonItemMetaData 설정(config commonItemMetaData)
      *
      * @param resourceList
-     * @return
+     * @return the t
      */
     public <T> T setCommonItemMetaDataBySelector(Object resourceList, Class<T> requestClass) {
 

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * ReplicaSets Admin Model 클래스
+ * ReplicaSets Spec Model 클래스
  *
  * @author jjy
  * @version 1.0

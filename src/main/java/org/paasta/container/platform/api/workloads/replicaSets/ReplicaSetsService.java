@@ -228,7 +228,7 @@ public class ReplicaSetsService {
 
 
     /**
-     * 전체 Namespaces 의 ReplicaSets Admin 목록 조회(Get ReplicaSets Admin list in All Namespaces)
+     * 전체 Namespaces 의 ReplicaSets Admin 목록 조회(Get ReplicaSets Admin list in all namespaces)
      *
      * @param offset     the offset
      * @param limit      the limit

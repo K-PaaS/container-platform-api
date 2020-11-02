@@ -9,6 +9,8 @@ import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.YamlUtil;
+import org.paasta.container.platform.api.workloads.deployments.DeploymentsList;
+import org.paasta.container.platform.api.workloads.deployments.DeploymentsListAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -49,47 +51,45 @@ public class ResourceQuotasService {
     /**
      * ResourceQuotas 목록 조회(Get ResourceQuotas list)
      *
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continueToken
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the resourceQuotas list
      */
-    public ResourceQuotasList getResourceQuotasList(String namespace, int limit, String continueToken) {
-
-        String param = "";
-        if(continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
+    public ResourceQuotasList getResourceQuotasList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasListUrl()
-                        .replace("{namespace}", namespace) + "?limit" + limit + param,
+                        .replace("{namespace}", namespace),
                 HttpMethod.GET, null, Map.class);
 
-        return (ResourceQuotasList) commonService.setResultModel(commonService.setResultObject(responseMap, ResourceQuotasList.class), Constants.RESULT_STATUS_SUCCESS);
+        ResourceQuotasList resourceQuotasList = commonService.setResultObject(responseMap, ResourceQuotasList.class);
+        resourceQuotasList = commonService.resourceListProcessing(resourceQuotasList, offset, limit, orderBy, order, searchName, ResourceQuotasList.class);
+
+        return (ResourceQuotasList) commonService.setResultModel(resourceQuotasList, Constants.RESULT_STATUS_SUCCESS);
     }
 
 
     /**
      * ResourceQuotas Admin 목록 조회(Get ResourceQuotas Admin list)
      *
-     * @param namespace the namespace
-     * @param limit the limit
-     * @param continueToken the continue token
-     * @param searchParam the search param
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the resourceQuotas admin list
      */
-    public Object getResourceQuotasListAdmin(String namespace, int limit, String continueToken, String searchParam) {
-        String param = "";
+    public Object getResourceQuotasListAdmin(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
         HashMap responseMap = null;
-
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasListUrl()
-                        .replace("{namespace}", namespace) + "?limit=" + limit + param, HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace) , HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
@@ -97,7 +97,10 @@ public class ResourceQuotasService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, ResourceQuotasListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        ResourceQuotasListAdmin resourceQuotasListAdmin = commonService.setResultObject(responseMap, ResourceQuotasListAdmin.class);
+        resourceQuotasListAdmin = commonService.resourceListProcessing(resourceQuotasListAdmin,  offset, limit, orderBy, order, searchName, ResourceQuotasListAdmin.class);
+
+        return commonService.setResultModel(resourceQuotasListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -223,14 +226,14 @@ public class ResourceQuotasService {
 
 
     /**
-     * ResourceQuotas Default Template 목록 조회
+     * ResourceQuotas Default Template 목록 조회(Get ResourceQuotas Default Template list)
      *
      * @param namespace the namespace
      * @return the resourceQuotas list
      * @throws JsonProcessingException
      */
     public Object getRqDefaultList(String namespace) throws JsonProcessingException {
-        ResourceQuotasListAdmin resourceQuotasList = (ResourceQuotasListAdmin) getResourceQuotasListAdmin(namespace, 0, null, null);
+        ResourceQuotasListAdmin resourceQuotasList = (ResourceQuotasListAdmin) getResourceQuotasListAdmin(namespace, 0, 0, "creationTime", "desc", "");
         ResourceQuotasDefaultList resourceQuotasDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, ResourceQuotasDefaultList.class);
 
         ResourceQuotasDefaultList defaultList = new ResourceQuotasDefaultList();
@@ -258,5 +261,33 @@ public class ResourceQuotasService {
 
         defaultList.setItems(quotasDefaultList);
         return commonService.setResultModel(defaultList, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * 전체 Namespaces 의 ResourceQuotas Admin 목록 조회(Get ResourceQuotas Admin list in all namespaces)
+     *
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @return the resourceQuotas all list
+     */
+    public Object getResourceQuotasListAllNamespacesAdmin(int offset, int limit, String orderBy, String order, String searchName) {
+        HashMap responseMap;
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListResourceQuotasListAllNamespacesUrl(), HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        ResourceQuotasListAdmin resourceQuotasListAdmin = commonService.setResultObject(responseMap, ResourceQuotasListAdmin.class);
+        resourceQuotasListAdmin = commonService.resourceListProcessing(resourceQuotasListAdmin, offset, limit, orderBy, order, searchName, ResourceQuotasListAdmin.class);
+
+        return commonService.setResultModel(resourceQuotasListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 }

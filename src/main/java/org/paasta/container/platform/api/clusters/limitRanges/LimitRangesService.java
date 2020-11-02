@@ -75,7 +75,7 @@ public class LimitRangesService {
 
 
     /**
-     * 전체 Namespaces 의 LimitRanges Admin 목록 조회(Get LimitRanges Admin list in All Namespaces)
+     * 전체 Namespaces 의 LimitRanges Admin 목록 조회(Get LimitRanges Admin list in all namespaces)
      *
      * @param offset     the offset
      * @param limit      the limit
