@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
@@ -10,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * LimitRanges Service 클래스
@@ -226,8 +224,24 @@ public class LimitRangesService {
         if (adminItems.size() > 0) {
             for (LimitRangesListAdminItem i : adminItems) {
                 List<LimitRangesItem> list = new ArrayList<>();
+                String key = "";
+
                 LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
                 for (LimitRangesItem item : i.getSpec().getLimits()) {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    Map<String, Object> map = objectMapper.convertValue(item.getDefaultLimit(), Map.class);
+
+                    if(map != null) {
+                        Iterator<String> keys = map.keySet().iterator();
+                        while(keys.hasNext()) {
+                            key += keys.next() + ",";
+                        }
+                    }
+                    if(key.endsWith(",")) {
+                        key = key.substring(0, key.length()-1);
+                    }
+
+                    item.setResource(key);
                     list.add(item);
                 }
                 serversItem.setName(i.getName());
@@ -260,6 +274,7 @@ public class LimitRangesService {
         map.setMin(limitRangesDefault.getMin());
         map.setMax(limitRangesDefault.getMax());
         map.setType(limitRangesDefault.getType());
+        map.setResource(limitRangesDefault.getResource());
         map.setDefaultLimit(limitRangesDefault.getDefaultLimit());
 
         list.add(map);

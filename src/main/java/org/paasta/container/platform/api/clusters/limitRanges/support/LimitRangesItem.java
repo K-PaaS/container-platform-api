@@ -20,4 +20,5 @@ public class LimitRangesItem {
     private Object max;
     private Object maxLimitRequestRatio;
     private String type;
+    private String resource;
 }
