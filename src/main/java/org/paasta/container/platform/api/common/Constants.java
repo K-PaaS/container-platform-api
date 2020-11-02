@@ -150,13 +150,6 @@ public class Constants {
     public static final String RESOURCE_ROLE = "Role";
 
 
-//    public static final List<String> RESOURCE_MAP = Collections.unmodifiableList(new ArrayList<String>(){
-//        {
-//            add(RESOURCE_POD);
-//            add(RESOURCE_DEPLOYMENT);
-//            add(RESOURCE_SERVICE);
-//        }
-//    });
 
     /** 서비스 클래스의 Package */
     public static final String SERVICE_PACKAGE = "org.paasta.container.platform.api.";
