@@ -71,7 +71,7 @@ public class PodsController {
                               @RequestParam(required = false, defaultValue = "0") int offset,
                               @RequestParam(required = false, defaultValue = "0") int limit,
                               @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                              @RequestParam(required = false, defaultValue = "desc") String order,
+                              @RequestParam(required = false, defaultValue = "") String order,
                               @RequestParam(required = false, defaultValue = "") String searchName,
                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
@@ -104,7 +104,7 @@ public class PodsController {
     @GetMapping(value = "/resources")
     @ResponseBody
     public PodsList getPodListBySelector(@PathVariable(value = "namespace") String namespace,
-                                         @RequestParam(name ="selector", required = true, defaultValue = "") String selector) {
+                                         @RequestParam(name = "selector", required = true, defaultValue = "") String selector) {
         return podsService.getPodListWithLabelSelector(namespace, selector);
     }
 
@@ -137,7 +137,7 @@ public class PodsController {
     @ApiOperation(value = "Pods 상세 조회(Get Pods detail)", nickname = "getPods")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getPods(@PathVariable(value = "namespace") String namespace,
@@ -218,7 +218,7 @@ public class PodsController {
      * @param cluster      the cluster
      * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param yaml the yaml
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "Pods 수정(Update Pods)", nickname = "updatePods")
