@@ -70,14 +70,19 @@ public class ResourceQuotasController {
                                         @RequestParam(required = false, defaultValue = "") String searchName,
                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        if (isAdmin) {
-            if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            if (isAdmin) {
                 return resourceQuotasService.getResourceQuotasListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+            } else {
+                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
             }
-            return resourceQuotasService.getResourceQuotasListAdmin(namespace, offset, limit, orderBy, order, searchName);
-
         }
-            return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+
+        if (isAdmin) {
+            return resourceQuotasService.getResourceQuotasListAdmin(namespace, offset, limit, orderBy, order, searchName);
+        }
+
+        return resourceQuotasService.getResourceQuotasList(namespace, offset, limit, orderBy, order, searchName);
     }
 
     /**

@@ -137,6 +137,8 @@ public class MethodHandler {
         String[] yamlArray = YamlUtil.splitYaml(yaml);
         boolean isExistResource = false;
 
+
+
         for (String temp : yamlArray) {
             LOGGER.info("temp:::::::::" + temp);
             Map YamlMetadata = YamlUtil.parsingYamlMap(temp, "metadata");
@@ -164,6 +166,26 @@ public class MethodHandler {
                     break;
                 }
             }
+        }
+
+        for (String temp : yamlArray) {
+            LOGGER.info("temp:::::::::" + temp);
+            Map YamlMetadata = YamlUtil.parsingYamlMap(temp, "metadata");
+            String createYamlResourceNamespace;
+
+            if (YamlMetadata.get("namespace") != null) {
+                createYamlResourceNamespace = YamlMetadata.get("namespace").toString();
+
+                if (namespace.equals(createYamlResourceNamespace)) {
+                    break;
+                } else {
+                    LOGGER.info("the namespace of the provided object does not match the namespace sent on the request':::::::::error");
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, "BadRequest", 400, "the namespace of the provided object does not match the namespace sent on the request");
+                }
+            } else {
+                break;
+            }
+
         }
 
 
@@ -289,6 +311,28 @@ public class MethodHandler {
                 }
             }
         }
+
+        for (String temp : yamlArray) {
+            LOGGER.info("temp:::::::::" + temp);
+            Map YamlMetadata = YamlUtil.parsingYamlMap(temp, "metadata");
+            String createYamlResourceNamespace;
+
+            if (YamlMetadata.get("namespace") != null) {
+                createYamlResourceNamespace = YamlMetadata.get("namespace").toString();
+
+                if (namespace.equals(createYamlResourceNamespace)) {
+                    break;
+                } else {
+                    LOGGER.info("the namespace of the provided object does not match the namespace sent on the request':::::::::error");
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, "BadRequest", 400, "the namespace of the provided object does not match the namespace sent on the request");
+                }
+            } else {
+                LOGGER.info("the namespace of the provided object does not match the namespace sent on the request':::::::::error");
+                return new ResultStatus(Constants.RESULT_STATUS_FAIL, "BadRequest", 400, "the namespace of the provided object does not match the namespace sent on the request");
+            }
+
+        }
+
 
         String updateYamlResourceName = YamlUtil.parsingYaml(yaml, "metadata");
 
