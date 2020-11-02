@@ -211,7 +211,7 @@ public class DeploymentsService {
 
 
     /**
-     * 전체 Namespaces 의 Deployments Admin 목록 조회(Get Deployments Admin list in All Namespaces)
+     * 전체 Namespaces 의 Deployments Admin 목록 조회(Get Deployments Admin list in all namespaces)
      *
      * @param offset     the offset
      * @param limit      the limit
