@@ -18,7 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,13 +54,13 @@ public class LoginController {
     @ApiOperation(value = "사용자 로그인(User login)", nickname = "generateToken")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authRequest", value = "로그인을 위한 사용자 정보", required = true, dataType = "object", paramType = "body"),
-            @ApiImplicitParam(name = "isAdmin", value = "관리자 여부 (true/false)",  required = true, dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "isAdmin", value = "관리자 여부 (true/false)", required = true, dataType = "string", paramType = "query")
     })
     @NoAuth
     @PostMapping
     @ResponseBody
-    public Object generateToken(@RequestBody AuthenticationRequest authRequest,
-                                @RequestParam(required = true, name = "isAdmin", defaultValue = "false") String isAdmin) {
+    public Object userLogin(@RequestBody AuthenticationRequest authRequest,
+                            @RequestParam(required = true, name = "isAdmin", defaultValue = "false") String isAdmin) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authRequest.getUserId(), authRequest.getPassword()));
@@ -72,23 +71,7 @@ public class LoginController {
 
             return resultStatus;
         }
-        //Generate token
-        UserDetails userdetails = userDetailsService.loadUserByUsername(authRequest.getUserId());
-        String token = jwtUtil.generateToken(userdetails, authRequest);
 
-        // Extract the namespace list that contains the user
-        UsersList userListByUserId = userService.getUsersDetails(authRequest.getUserId());
-        List<Users> userItem = userListByUserId.getItems();
-
-        List<loginMetaDataItem> loginMetaData = new ArrayList<>();
-
-        for ( Users user : userItem) {
-           loginMetaData.add(new loginMetaDataItem(user.getCpNamespace(), user.getUserType()));
-        };
-
-        AuthenticationResponse authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData ) ;
-
-        return authResponse;
+        return userDetailsService.createAuthenticationResponse(authRequest);
     }
 }

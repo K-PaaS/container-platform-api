@@ -96,7 +96,7 @@ public class NodesService {
      * @param resourceName the resource name
      * @return the nodes
      */
-    Nodes getNodes(String resourceName) {
+    public Nodes getNodes(String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNodesGetUrl()
                         .replace("{name}", resourceName)

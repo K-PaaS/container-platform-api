@@ -44,13 +44,13 @@ public class MethodHandler {
 
 
     /**
-     * API URL 호출 시 로그인한 사용자 정보로 admin/user 판별
+     * API URL 호출 시 로그인한 사용자 정보로 admin/user 판별 (check that login user is admin or user)
      *
      * true/false 를 argument 안에 파라미터로 넣어줌
      * isAdmin으로 판별해서 true면 admin 서비스 호출
      *
      * @param joinPoint
-     * @return
+     * @return the object
      * @throws Throwable
      */
     @Around("execution(* org.paasta.container.platform.api..*Controller.*(..))" + "&& !@annotation(org.paasta.container.platform.api.config.NoAuth)")
@@ -89,7 +89,7 @@ public class MethodHandler {
 
 
     /**
-     * API URL 호출 시 create 메소드인 경우 메소드 수행 전 처리
+     * API URL 호출 시 create 메소드인 경우 메소드 수행 전 처리 (do preprocessing, if create method is)
      *
      * @param joinPoint
      * @throws Throwable
@@ -206,7 +206,7 @@ public class MethodHandler {
     }
 
     /**
-     * API URL 호출 시 update 메소드인 경우 메소드 수행 전 처리
+     * API URL 호출 시 update 메소드인 경우 메소드 수행 전 처리 (do preprocessing, if update method is)
      *
      * @param joinPoint
      * @throws Throwable

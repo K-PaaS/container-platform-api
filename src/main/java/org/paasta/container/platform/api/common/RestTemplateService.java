@@ -67,7 +67,7 @@ public class RestTemplateService {
 
 
     /**
-     * Send t
+     * t 전송(Send t)
      *
      * @param <T>          the type parameter
      * @param reqApi       the req api
@@ -83,7 +83,7 @@ public class RestTemplateService {
 
 
     /**
-     * Send t
+     * t 전송(Send t)
      *
      * @param <T>          the type parameter
      * @param reqApi       the req api
@@ -100,7 +100,7 @@ public class RestTemplateService {
 
 
     /**
-     * Send t
+     * t 전송(Send t)
      *
      * @param <T>          the type parameter
      * @param reqApi       the req api
@@ -188,7 +188,7 @@ public class RestTemplateService {
     }
 
     /**
-     * Authorization 값을 입력
+     * Authorization 값을 입력(Set the authorization value)
      *
      * @param reqApi the reqApi
      */
@@ -214,7 +214,7 @@ public class RestTemplateService {
     }
 
     /**
-     * Admin Token 상세 정보를 조회
+     * Admin Token 상세 정보를 조회(Get the Admin Token Detail)
      *
      * @return the AdminToken
      */
@@ -232,7 +232,7 @@ public class RestTemplateService {
 
 
     /**
-     * 사용자가 보낸 YAML 그대로 REST API Call 하는 메소드
+     * 사용자가 보낸 YAML 그대로 REST API Call 하는 메소드(Call the Rest Api)
      *
      * @param reqApi       the req api
      * @param reqUrl       the req url
@@ -247,7 +247,7 @@ public class RestTemplateService {
 
 
     /**
-     * Create/Update/Delete logic's status code discriminate
+     * 생성, 갱신, 삭제 로직의 코드 식별(Create/Update/Delete logic's status code discriminate)
      *
      * @param reqApi      the reqApi
      * @param res         the response
@@ -291,7 +291,7 @@ public class RestTemplateService {
 
 
     /**
-     * service account의 secret 이름을 조회
+     * service account의 secret 이름을 조회(Get Secret of Service Account)
      *
      * @param namespace the namespace
      * @param userName the user name

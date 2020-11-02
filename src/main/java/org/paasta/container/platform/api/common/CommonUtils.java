@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class CommonUtils {
 
     /**
-     * Timestamp Timezone 을 변경하여 재설정
+     * Timestamp Timezone 을 변경하여 재설정(reset timestamp)
      *
      * @param requestTimestamp the request timestamp
      * @return the string
@@ -48,7 +48,7 @@ public class CommonUtils {
     }
 
     /**
-     * 넘어온 Object의 parameter가 null 또는 ""(빈 값)인지 체크
+     * 넘어온 Object의 parameter가 null 또는 ""(빈 값)인지 체크 (check that the parameter is null or empty)
      *
      * @param obj the obj
      * @return the Object
@@ -86,7 +86,7 @@ public class CommonUtils {
     }
 
     /**
-     * 정규 표현식에 일치하는 지 체크
+     * 정규 표현식에 일치하는 지 체크(check regex)
      *
      * @param users the users
      * @return the String
@@ -111,7 +111,7 @@ public class CommonUtils {
 
 
     /**
-     * Object List value modify
+     * Object 목록 값 수정(Object List value modify)
      *
      * @param obj    the obj
      * @param index  the index
@@ -127,5 +127,10 @@ public class CommonUtils {
         }
         return list.toArray();
 
+    }
+
+    public static String resourceNameCheck(String resourceName){
+      String result =  (resourceName == null) ? Constants.noName : resourceName;
+      return result;
     }
 }
