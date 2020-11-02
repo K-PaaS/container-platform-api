@@ -64,7 +64,7 @@ public class ReplicaSetsController {
                                      @RequestParam(required = false, defaultValue = "0") int offset,
                                      @RequestParam(required = false, defaultValue = "0") int limit,
                                      @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                     @RequestParam(required = false, defaultValue = "desc") String order,
+                                     @RequestParam(required = false, defaultValue = "") String order,
                                      @RequestParam(required = false, defaultValue = "") String searchName,
                                      @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
