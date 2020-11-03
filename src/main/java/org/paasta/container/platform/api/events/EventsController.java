@@ -20,7 +20,7 @@ import java.util.HashMap;
  */
 @Api(value = "EventsController v1")
 @RestController
-@RequestMapping("/namespaces/{namespace:.+}/events")
+@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/events")
 public class EventsController {
 
     private final EventsService eventsService;
@@ -64,7 +64,7 @@ public class EventsController {
     }
 
     /**
-     * Events 목록 조회(Get Events node)
+     * Events node 목록 조회(Get Events node)
      *
      * @param namespace the namespace
      * @param nodeName the node name
