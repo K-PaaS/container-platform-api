@@ -26,9 +26,11 @@ public class ResourceQuotasDefault {
     private String limitMemory;
 
     private String status;
+    private String checkYn;
 
-    public ResourceQuotasDefault(String name, String status) {
+    public ResourceQuotasDefault(String name, String status, String checkYn) {
         this.name = name;
         this.status = status;
+        this.checkYn = checkYn;
     }
 }
