@@ -193,6 +193,37 @@ public class UsersController {
 
 
     /**
+     * 운영자 정보 수정
+     *
+     * @param cluster the cluster
+     * @param userId the user id
+     * @param users the users
+     * @param isAdmin the isAdmin
+     * @return return is succeeded
+     */
+    @PutMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}/info")
+    public Object modifyUsersInfo(@PathVariable(value = "cluster") String cluster,
+                                  @PathVariable(value = "userId") String userId,
+                                  @RequestBody Users users,
+                                  @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        // input parameter regex
+        if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
+            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                    .resultMessage("입력 값을 다시 확인해 주세요.")
+                    .httpStatusCode(400)
+                    .detailMessage(regexMatch(users)).build();
+        }
+
+        if(isAdmin) {
+            return usersService.modifyUsers(userId, users);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+    }
+
+
+    /**
      * Users 권한 설정(Set Users authority)
      *
      * @param namespace the namespace
