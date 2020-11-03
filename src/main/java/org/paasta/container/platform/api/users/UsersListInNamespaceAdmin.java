@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.users;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.Constants;
 
 import java.util.List;
 
@@ -33,10 +34,10 @@ public class UsersListInNamespaceAdmin {
 
         public String getIsAdmin() {
 
-            if (userType.equals("USER")) {
-                isAdmin = "N";
-            } else {
+            if (userType.equals(Constants.AUTH_NAMESPACE_ADMIN)) {
                 isAdmin = "Y";
+            } else {
+                isAdmin = "N";
             }
 
             return isAdmin;
