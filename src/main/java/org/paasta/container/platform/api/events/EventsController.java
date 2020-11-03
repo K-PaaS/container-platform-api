@@ -4,11 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
-import org.paasta.container.platform.api.endpoints.Endpoints;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -46,18 +42,49 @@ public class EventsController {
      * @param namespace the namespace
      * @param resourceUid the resourceUid
      * @param type the type
+     * @param isAdmin the isAdmin
      * @return the events list
      */
-    @ApiOperation(value = "Events 상세 조회(Get Events detail)", nickname = "getEventsUidList")
+    @ApiOperation(value = "Events 목록 조회(Get Events list)", nickname = "getEventsUidList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "resourceUid", value = "리소스 Uid 명",  required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/resources/{resourceUid:.+}")
-    public EventsList getEventsUidList(@PathVariable("namespace") String namespace,
-                                       @PathVariable("resourceUid") String resourceUid,
-                                       @ApiIgnore @RequestParam(value="type", required=false) String type) {
+    public Object getEventsUidList(@PathVariable("namespace") String namespace,
+                                   @PathVariable("resourceUid") String resourceUid,
+                                   @ApiIgnore @RequestParam(value="type", required=false) String type,
+                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return eventsService.getEventsUidListAdmin(namespace, resourceUid, type);
+        }
+
         return eventsService.getEventsUidList(namespace, resourceUid, type);
+    }
+
+    /**
+     * Events 목록 조회(Get Events node)
+     *
+     * @param namespace the namespace
+     * @param nodeName the node name
+     * @param isAdmin the isAdmin
+     * @return the events list
+     */
+    @ApiOperation(value = "Events 목록 조회(Get Events node)", nickname = "getEventsByNode")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "nodeName", value = "노드 명", required = true, dataType = "string", paramType = "query")
+    })
+    @GetMapping(value = "/nodes/{nodeName:.+}")
+    public Object getEventsByNode(@PathVariable(value = "namespace") String namespace,
+                                  @PathVariable(value = "nodeName") String nodeName,
+                                  @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return eventsService.getEventsListByNodeAdmin(namespace, nodeName);
+        }
+        return eventsService.getEventsListByNode(namespace, nodeName);
     }
 
 

@@ -115,6 +115,25 @@ public class PodsService {
     }
 
     /**
+     * Pods 목록 조회(Get Pods selector)
+     * (Admin portal)
+     *
+     * @param namespace the namespace
+     * @param selector  the selector
+     * @return the pods list
+     */
+    public PodsListAdmin getPodListWithLabelSelectorAdmin(String namespace, String selector) {
+        String requestSelector = "?labelSelector=" + selector;
+        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
+
+        PodsListAdmin podsListAdmin = commonService.setResultObject(resultMap, PodsListAdmin.class);
+        podsListAdmin = commonService.setCommonItemMetaDataBySelector(podsListAdmin, PodsListAdmin.class);
+
+        return (PodsListAdmin) commonService.setResultModel(podsListAdmin, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
      * Pods 목록 조회(Get Pods node)
      *
      * @param namespace the namespace
@@ -132,6 +151,27 @@ public class PodsService {
         podsList = commonService.setCommonItemMetaDataBySelector(podsList, PodsList.class);
 
         return (PodsList) commonService.setResultModel(podsList, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * Pods 목록 조회(Get Pods node)
+     * (Admin portal)
+     *
+     * @param namespace the namespace
+     * @param nodeName  the node name
+     * @return the pods list
+     */
+    public PodsListAdmin getPodListByNodeAdmin(String namespace, String nodeName) {
+        String requestURL = propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace)
+                + "/?fieldSelector=spec.nodeName=" + nodeName;
+
+        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API, requestURL,
+                HttpMethod.GET, null, Map.class);
+
+        PodsListAdmin podsListAdmin = commonService.setResultObject(resultMap, PodsListAdmin.class);
+        podsListAdmin = commonService.setCommonItemMetaDataBySelector(podsListAdmin, PodsListAdmin.class);
+
+        return (PodsListAdmin) commonService.setResultModel(podsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -270,4 +310,6 @@ public class PodsService {
 
         return commonService.setResultModel(podsListAdminList, Constants.RESULT_STATUS_SUCCESS);
     }
+
+
 }

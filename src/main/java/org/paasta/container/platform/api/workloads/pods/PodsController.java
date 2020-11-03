@@ -94,6 +94,7 @@ public class PodsController {
      *
      * @param namespace the namespace
      * @param selector  the selector
+     * @param isAdmin the isAdmin
      * @return the pods list
      */
     @ApiOperation(value = "Pods 목록 조회(Get Pods selector)", nickname = "getPodListBySelector")
@@ -103,8 +104,13 @@ public class PodsController {
     })
     @GetMapping(value = "/resources")
     @ResponseBody
-    public PodsList getPodListBySelector(@PathVariable(value = "namespace") String namespace,
-                                         @RequestParam(name = "selector", required = true, defaultValue = "") String selector) {
+    public Object getPodListBySelector(@PathVariable(value = "namespace") String namespace,
+                                       @RequestParam(name = "selector", required = true, defaultValue = "") String selector,
+                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return podsService.getPodListWithLabelSelectorAdmin(namespace, selector);
+        } else
         return podsService.getPodListWithLabelSelector(namespace, selector);
     }
 
@@ -113,6 +119,7 @@ public class PodsController {
      *
      * @param namespace the namespace
      * @param nodeName  the node name
+     * @param isAdmin the isAdmin
      * @return the pods list
      */
     @ApiOperation(value = "Pods 목록 조회(Get Pods node)", nickname = "getPodListByNode")
@@ -121,8 +128,13 @@ public class PodsController {
             @ApiImplicitParam(name = "nodeName", value = "노드 명", required = true, dataType = "string", paramType = "query")
     })
     @GetMapping(value = "/nodes/{nodeName:.+}")
-    public PodsList getPodListByNode(@PathVariable(value = "namespace") String namespace,
-                                     @PathVariable(value = "nodeName") String nodeName) {
+    public Object getPodListByNode(@PathVariable(value = "namespace") String namespace,
+                                   @PathVariable(value = "nodeName") String nodeName,
+                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return podsService.getPodListByNodeAdmin(namespace, nodeName);
+        }
         return podsService.getPodListByNode(namespace, nodeName);
     }
 

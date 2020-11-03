@@ -9,8 +9,6 @@ import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.YamlUtil;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsList;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsListAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -19,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * ResourceQuotas Service 클래스
@@ -240,7 +239,16 @@ public class ResourceQuotasService {
         ResourceQuotasDefault quotasDefault;
         List<ResourceQuotasDefault> quotasDefaultList = new ArrayList<>();
 
+        List<String> k8sRqNameList = resourceQuotasList.getItems().stream().map(ResourceQuotasListAdminItem::getName).collect(Collectors.toList());
+        List<String> dbRqNameList = resourceQuotasDefaultList.getItems().stream().map(ResourceQuotasDefault::getName).collect(Collectors.toList());
+
         for(ResourceQuotasDefault resourceQuotasDefault:resourceQuotasDefaultList.getItems()) {
+            String yn = "N";
+
+            if(k8sRqNameList.contains(resourceQuotasDefault.getName())) {
+                yn = "Y";
+            }
+            resourceQuotasDefault.setCheckYn(yn);
             quotasDefaultList.add(resourceQuotasDefault);
         }
 
@@ -249,13 +257,14 @@ public class ResourceQuotasService {
                 ObjectMapper mapper = new ObjectMapper();
                 String status = mapper.writeValueAsString(i.getStatus());
 
-                quotasDefault = new ResourceQuotasDefault(i.getName(), status);
-                quotasDefaultList.add(quotasDefault);
+                if(!dbRqNameList.contains(i.getName())) {
+                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, "Y");
+                    quotasDefaultList.add(quotasDefault);
+                }
 
             }
 
             defaultList.setItems(quotasDefaultList);
-
             return commonService.setResultModel(defaultList, Constants.RESULT_STATUS_SUCCESS);
         }
 

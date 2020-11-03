@@ -34,7 +34,8 @@ public class PodsAdmin {
     private String restarts;
     private String controllers;
     private String volumes;
-    private String containers;
+    private String containersName;
+    private String containersImage;
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -171,12 +172,20 @@ public class PodsAdmin {
         this.volumes = volumes;
     }
 
-    public List<CommonContainer> getContainers() {
-        return spec.getContainers();
+    public String getContainersName() {
+        return spec.getContainers().get(0).getName();
     }
 
-    public void setContainers(String containers) {
-        this.containers = containers;
+    public void setContainersName(String containersName) {
+        this.containersName = containersName;
+    }
+
+    public String getContainersImage() {
+        return spec.getContainers().get(0).getImage();
+    }
+
+    public void setContainersImage(String containersImage) {
+        this.containersImage = containersImage;
     }
 
     public CommonMetaData getMetadata() {
