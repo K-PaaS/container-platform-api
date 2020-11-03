@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +31,7 @@ public class StorageClassesController {
      * @param storageClassesService the storageClasses service
      */
     @Autowired
-    public StorageClassesController(StorageClassesService storageClassesService){
+    public StorageClassesController(StorageClassesService storageClassesService) {
         this.storageClassesService = storageClassesService;
     }
 
@@ -65,35 +64,28 @@ public class StorageClassesController {
                                         @RequestParam(required = false, defaultValue = "0") int offset,
                                         @RequestParam(required = false, defaultValue = "0") int limit,
                                         @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                        @RequestParam(required = false, defaultValue = "desc") String order,
+                                        @RequestParam(required = false, defaultValue = "") String order,
                                         @RequestParam(required = false, defaultValue = "") String searchName,
                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
-            if (isAdmin) {
-                return storageClassesService.getStorageClassesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
-            } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
-            }
-        }
         if (isAdmin) {
             return storageClassesService.getStorageClassesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
-        return storageClassesService.getStorageClassesList(namespace, offset, limit, orderBy, order, searchName);
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
      * StorageClasses 상세 조회(Get StorageClasses detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the storageClasses detail
      */
     @ApiOperation(value = "StorageClasses 상세 조회(Get StorageClasses detail)", nickname = "getStorageClasses")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getStorageClasses(@PathVariable(value = "namespace") String namespace,
@@ -105,15 +97,15 @@ public class StorageClassesController {
             return storageClassesService.getStorageClassesAdmin(namespace, resourceName);
         }
 
-        return storageClassesService.getStorageClasses(namespace, resourceName);
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**
      * StorageClasses YAML 조회(Get StorageClasses yaml)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the storageClasses yaml
      */
     @ApiOperation(value = "StorageClasses YAML 조회(Get StorageClasses yaml)", nickname = "getStorageClassesYaml")
@@ -135,10 +127,10 @@ public class StorageClassesController {
     /**
      * StorageClasses 생성(Create StorageClasses)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
+     * @param isAdmin   the isAdmin
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "StorageClasses 생성(Create StorageClasses)", nickname = "createStorageClasses")
@@ -168,9 +160,9 @@ public class StorageClassesController {
     /**
      * StorageClasses 삭제(Delete StorageClasses)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "StorageClasses 삭제(Delete StorageClasses)", nickname = "deleteStorageClasses")
@@ -179,7 +171,7 @@ public class StorageClassesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @DeleteMapping("/{resourceName:.+}")
-    public ResultStatus deleteStorageClasses(@PathVariable(value = "namespace") String namespace,
+    public Object deleteStorageClasses(@PathVariable(value = "namespace") String namespace,
                                              @PathVariable(value = "resourceName") String resourceName,
                                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
@@ -193,11 +185,11 @@ public class StorageClassesController {
     /**
      * StorageClasses 수정(Update StorageClasses)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
+     * @param isAdmin      the isAdmin
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "StorageClasses 수정(Update StorageClasses)", nickname = "updateStorageClasses")
@@ -208,11 +200,11 @@ public class StorageClassesController {
             @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
     })
     @PutMapping("/{resourceName:.+}")
-    public Object updateStorageClasses(@PathVariable(value =  "cluster") String cluster,
+    public Object updateStorageClasses(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
                                        @PathVariable(value = "resourceName") String resourceName,
                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
-                                       @RequestBody String yaml){
+                                       @RequestBody String yaml) {
 
         if (isAdmin) {
             return storageClassesService.updateStorageClasses(namespace, resourceName, yaml);
