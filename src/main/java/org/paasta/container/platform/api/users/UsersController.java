@@ -55,7 +55,7 @@ public class UsersController {
 
 
     /**
-     * 각 Namespace 별 Users 목록 조회(Get Users namespace list) todo
+     * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
      * @param namespace the namespace
      * @param isAdmin the isAdmin
@@ -78,7 +78,7 @@ public class UsersController {
     }
 
     /**
-     * Namespace 상세 Users 목록 조회(Get Users in namespace list) todo
+     * Namespace 상세 Users 목록 조회(Get Users in namespace list)
      *
      * @param namespace the namespace
      * @param isAdmin the isAdmin
