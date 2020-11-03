@@ -1,7 +1,7 @@
 package org.paasta.container.platform.api.storages.persistentVolumes;
 
 import lombok.Data;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.PersistentVolumeClaims;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 
 import java.util.List;
 import java.util.Map;
@@ -20,5 +20,6 @@ public class PersistentVolumesList {
     private Integer httpStatusCode;
     private String detailMessage;
     private Map metadata;
+    private CommonItemMetaData itemMetaData;
     private List<PersistentVolumes> items;
 }

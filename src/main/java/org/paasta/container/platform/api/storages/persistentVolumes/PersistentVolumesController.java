@@ -33,7 +33,7 @@ public class PersistentVolumesController {
      * @param persistentVolumesService the persistentVolumes service
      */
     @Autowired
-    public PersistentVolumesController(PersistentVolumesService persistentVolumesService){
+    public PersistentVolumesController(PersistentVolumesService persistentVolumesService) {
         this.persistentVolumesService = persistentVolumesService;
     }
 
@@ -66,7 +66,7 @@ public class PersistentVolumesController {
                                            @RequestParam(required = false, defaultValue = "0") int offset,
                                            @RequestParam(required = false, defaultValue = "0") int limit,
                                            @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                           @RequestParam(required = false, defaultValue = "desc") String order,
+                                           @RequestParam(required = false, defaultValue = "") String order,
                                            @RequestParam(required = false, defaultValue = "") String searchName,
                                            @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
@@ -89,15 +89,15 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes 상세 조회(Get PersistentVolumes detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the persistentVolumes detail
      */
     @ApiOperation(value = "PersistentVolumes 상세 조회(Get PersistentVolumes detail)", nickname = "getPersistentVolumes")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getPersistentVolumes(@PathVariable(value = "namespace") String namespace,
@@ -114,10 +114,10 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes YAML 조회(Get PersistentVolumes yaml)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the persistentVolumes yaml
      */
     @ApiOperation(value = "PersistentVolumes YAML 조회(Get PersistentVolumes yaml)", nickname = "getPersistentVolumesYaml")
@@ -141,10 +141,10 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes 생성(Create PersistentVolumes)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
+     * @param isAdmin   the isAdmin
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "PersistentVolumes 생성(Create PersistentVolumes)", nickname = "createPersistentVolumes")
@@ -157,7 +157,7 @@ public class PersistentVolumesController {
     public Object createPersistentVolumes(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
-                                          @RequestBody String yaml) throws Exception{
+                                          @RequestBody String yaml) throws Exception {
         if (isAdmin) {
 
             if (yaml.contains("---")) {
@@ -174,10 +174,10 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes 삭제(Delete PersistentVolumes)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "PersistentVolumes 삭제(Delete PersistentVolumes)", nickname = "deletePersistentVolumes")
@@ -202,11 +202,11 @@ public class PersistentVolumesController {
     /**
      * PersistentVolumes 수정(Update PersistentVolumes)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
+     * @param isAdmin      the isAdmin
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "PersistentVolumes 수정(Update PersistentVolumes)", nickname = "updatePersistentVolumes")
@@ -224,7 +224,7 @@ public class PersistentVolumesController {
                                           @RequestBody String yaml) {
 
         if (isAdmin) {
-            return persistentVolumesService.updatePersistentVolumes(namespace, resourceName,yaml);
+            return persistentVolumesService.updatePersistentVolumes(namespace, resourceName, yaml);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

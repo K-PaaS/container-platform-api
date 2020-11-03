@@ -5,10 +5,6 @@ import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.customServices.CustomServices;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsAdmin;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsList;
-import org.paasta.container.platform.api.workloads.deployments.DeploymentsListAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -81,7 +77,7 @@ public class PersistentVolumesService {
         String param = "";
         HashMap responseMap = null;
 
-        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesListUrl()
                         .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
 
@@ -106,7 +102,7 @@ public class PersistentVolumesService {
      * @return the persistentVolumes detail
      */
     public PersistentVolumes getPersistentVolumes(String namespace, String resourceName) {
-        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)

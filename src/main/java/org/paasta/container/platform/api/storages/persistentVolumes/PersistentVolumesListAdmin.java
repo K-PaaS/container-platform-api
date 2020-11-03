@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.storages.persistentVolumes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.ObjectReference;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumesSpec;
@@ -24,6 +25,7 @@ public class PersistentVolumesListAdmin {
     private Integer httpStatusCode;
     private String detailMessage;
     private Map metadata;
+    private CommonItemMetaData itemMetaData;
     private List<PersistentVolumesListAdminItem> items;
 }
 
