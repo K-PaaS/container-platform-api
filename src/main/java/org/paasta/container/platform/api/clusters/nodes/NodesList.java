@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.clusters.nodes;
 
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,5 +19,6 @@ public class NodesList {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
+    private CommonItemMetaData itemMetaData;
     private List<Nodes> items = new ArrayList<>();
 }
