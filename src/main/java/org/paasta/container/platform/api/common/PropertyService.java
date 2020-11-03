@@ -149,8 +149,6 @@ public class PropertyService {
     @Value("${cpMaster.api.list.storageClasses.update}")
     private String cpMasterApiListStorageClassesUpdateUrl;
 
-    @Value("${cpMaster.api.list.storageClasses.listAllNamespaces}")
-    private String cpMasterApiListStorageClassesListAllNamespacesUrl;
     //event
     @Value("${cpMaster.api.list.events.list}")
     private String cpMasterApiListEventsListUrl;

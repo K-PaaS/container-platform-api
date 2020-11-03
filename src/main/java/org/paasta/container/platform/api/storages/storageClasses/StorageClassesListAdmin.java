@@ -2,12 +2,12 @@ package org.paasta.container.platform.api.storages.storageClasses;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * StorageClasses List Admin Model 클래스
@@ -22,6 +22,7 @@ public class StorageClassesListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
+    private CommonItemMetaData itemMetaData;
     private List<StorageClassesListAdminItem> items;
 }
 
