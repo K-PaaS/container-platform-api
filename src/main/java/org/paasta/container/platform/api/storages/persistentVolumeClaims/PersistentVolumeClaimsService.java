@@ -31,8 +31,8 @@ public class PersistentVolumeClaimsService {
      * Instantiates a new PersistentVolumeClaims service
      *
      * @param restTemplateService the rest template service
-     * @param commonService        the common service
-     * @param propertyService      the property service
+     * @param commonService       the common service
+     * @param propertyService     the property service
      */
     @Autowired
     public PersistentVolumeClaimsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService) {
@@ -69,7 +69,7 @@ public class PersistentVolumeClaimsService {
 
     /**
      * PersistentVolumeClaims 목록 조회(Get PersistentVolumeClaims list)
-     *(Admin Portal)
+     * (Admin Portal)
      *
      * @param namespace  the namespace
      * @param offset     the offset
@@ -102,12 +102,12 @@ public class PersistentVolumeClaimsService {
     /**
      * PersistentVolumeClaims 상세 조회(Get PersistentVolumeClaims detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the persistentVolumeClaims detail
      */
     public PersistentVolumeClaims getPersistentVolumeClaims(String namespace, String resourceName) {
-        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumeClaimsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
@@ -120,7 +120,7 @@ public class PersistentVolumeClaimsService {
      * PersistentVolumeClaims 상세 조회(Get PersistentVolumeClaims detail)
      * (Admin Portal)
      *
-     * @param namespace the namespace
+     * @param namespace                  the namespace
      * @param persistentVolumeClaimsName the persistentVolumeClaims name
      * @return the persistentVolumeClaims detail
      */
@@ -144,9 +144,9 @@ public class PersistentVolumeClaimsService {
     /**
      * PersistentVolumeClaims YAML 조회(Get PersistentVolumeClaims yaml)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap the result map
+     * @param resultMap    the result map
      * @return the persistentVolumeClaims yaml
      */
     public PersistentVolumeClaims getPersistentVolumeClaimsYaml(String namespace, String resourceName, HashMap resultMap) {
@@ -165,7 +165,7 @@ public class PersistentVolumeClaimsService {
      * PersistentVolumeClaims 생성(Create PersistentVolumeClaims)
      *
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     public Object createPersistentVolumeClaims(String namespace, String yaml) {
@@ -173,16 +173,16 @@ public class PersistentVolumeClaimsService {
                 propertyService.getCpMasterApiListPersistentVolumeClaimsCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
 
-        return  commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
     }
 
     /**
      * PersistentVolumeClaims 삭제(Delete PersistentVolumeClaims)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap the result map
+     * @param resultMap    the result map
      * @return return is succeeded
      */
     public ResultStatus deletePersistentVolumeClaims(String namespace, String resourceName, HashMap resultMap) {
@@ -197,9 +197,9 @@ public class PersistentVolumeClaimsService {
     /**
      * PersistentVolumeClaims 수정(Update PersistentVolumeClaims)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param yaml the yaml
+     * @param yaml         the yaml
      * @return return is succeeded
      */
 

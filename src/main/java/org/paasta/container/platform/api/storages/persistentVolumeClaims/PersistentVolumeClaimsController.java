@@ -1,7 +1,6 @@
 package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 
 import io.swagger.annotations.*;
-import org.paasta.container.platform.api.clusters.namespaces.NamespacesService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
@@ -63,7 +62,7 @@ public class PersistentVolumeClaimsController {
                                                 @RequestParam(required = false, defaultValue = "0") int offset,
                                                 @RequestParam(required = false, defaultValue = "0") int limit,
                                                 @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                                @RequestParam(required = false, defaultValue = "desc") String order,
+                                                @RequestParam(required = false, defaultValue = "") String order,
                                                 @RequestParam(required = false, defaultValue = "") String searchName,
                                                 @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
@@ -92,7 +91,7 @@ public class PersistentVolumeClaimsController {
     @ApiOperation(value = "PersistentVolumeClaims 상세 조회(Get PersistentVolumeClaims detail)", nickname = "getPersistentVolumeClaims")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getPersistentVolumeClaims(@PathVariable(value = "namespace") String namespace,
