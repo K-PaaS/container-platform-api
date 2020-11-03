@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.clusters.namespaces;
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesList;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesService;
+import org.paasta.container.platform.api.clusters.namespaces.support.NamespacesList_sb;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasList;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
 import org.paasta.container.platform.api.common.*;
@@ -46,14 +47,15 @@ public class NamespacesService {
 
     /**
      * Instantiates a new Namespace service
-     * @param restTemplateService the rest template service
-     * @param commonService       the common service
-     * @param propertyService     the property service
-     * @param resourceYamlService the resource yaml service
-     * @param usersService the users service
-     * @param accessTokenService the access token service
+     *
+     * @param restTemplateService   the rest template service
+     * @param commonService         the common service
+     * @param propertyService       the property service
+     * @param resourceYamlService   the resource yaml service
+     * @param usersService          the users service
+     * @param accessTokenService    the access token service
      * @param resourceQuotasService the resource quotas service
-     * @param limitRangesService the limit ranges service
+     * @param limitRangesService    the limit ranges service
      */
     @Autowired
     public NamespacesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, ResourceYamlService resourceYamlService, UsersService usersService, AccessTokenService accessTokenService, ResourceQuotasService resourceQuotasService, LimitRangesService limitRangesService) {
@@ -117,7 +119,7 @@ public class NamespacesService {
     public NamespacesList getNamespacesList(int offset, int limit, String orderBy, String order, String searchName) {
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                    propertyService.getCpMasterApiListNamespacesListUrl()
+                propertyService.getCpMasterApiListNamespacesListUrl()
                 , HttpMethod.GET, null, Map.class);
 
         NamespacesList namespacesList = commonService.setResultObject(responseMap, NamespacesList.class);
@@ -165,9 +167,9 @@ public class NamespacesService {
     public Namespaces getNamespacesYaml(String namespace) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesGetUrl()
-                        .replace("{namespace}", namespace), HttpMethod.GET, null, String.class , Constants.ACCEPT_TYPE_YAML);
+                        .replace("{namespace}", namespace), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
-        HashMap<String,Object> resultMap = new HashMap<>();
+        HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("sourceTypeYaml", resultString);
 
         return (Namespaces) commonService.setResultModel(commonService.setResultObject(resultMap, Namespaces.class), Constants.RESULT_STATUS_SUCCESS);
@@ -198,14 +200,14 @@ public class NamespacesService {
                 propertyService.getCpMasterApiListNamespacesDeleteUrl()
                         .replace("{name}", namespace), HttpMethod.DELETE, null, ResultStatus.class);
 
-        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus,ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
     }
 
     /**
      * NameSpaces 수정(Update NameSpaces)
      *
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     public ResultStatus updateNamespaces(String namespace, String yaml) {
@@ -235,27 +237,27 @@ public class NamespacesService {
 
         ResultStatus saResult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
 
-        if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
+        if (Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
             return saResult;
         }
 
         ResultStatus rbResult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, Constants.DEFAULT_NAMESPACE_ADMIN_ROLE);
 
-        if(Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
+        if (Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
             LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
             restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId), HttpMethod.DELETE, null, Object.class);
             return rbResult;
         }
 
 
-        for (String rq:initTemplate.getResourceQuotasList()) {
-            if(DEFAULT_RESOURCE_QUOTAS_LIST.contains(rq)) {
+        for (String rq : initTemplate.getResourceQuotasList()) {
+            if (DEFAULT_RESOURCE_QUOTAS_LIST.contains(rq)) {
                 resourceYamlService.createDefaultResourceQuota(namespace, rq);
             }
         }
 
-        for (String lr:initTemplate.getLimitRangesList()) {
-            if(DEFAULT_LIMIT_RANGES_LIST.contains(lr)) {
+        for (String lr : initTemplate.getLimitRangesList()) {
+            if (DEFAULT_LIMIT_RANGES_LIST.contains(lr)) {
                 resourceYamlService.createDefaultLimitRanges(namespace, lr);
             }
         }
@@ -273,7 +275,7 @@ public class NamespacesService {
 
         ResultStatus rsDb = usersService.createUsers(newNsUser);
 
-        if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
+        if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
             restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class);
             restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId + "-" + DEFAULT_NAMESPACE_ADMIN_ROLE + "-binding"), HttpMethod.DELETE, null, Object.class);
@@ -286,7 +288,7 @@ public class NamespacesService {
     /**
      * Namespaces 수정(modify Namespaces)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param initTemplate the init template
      * @return return is succeeded
      */
@@ -300,18 +302,18 @@ public class NamespacesService {
         String nsAdminUserId = initTemplate.getNsAdminUserId();
         Users nsAdminUser = usersService.getUsersByNamespaceAndNsAdmin(namespace);
 
-        if(!nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
+        if (!nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
             usersService.deleteUsers(nsAdminUser);
             // add new sa
             ResultStatus saResult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
 
-            if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
+            if (Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
                 return saResult;
             }
 
             ResultStatus rbResult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, Constants.DEFAULT_NAMESPACE_ADMIN_ROLE);
 
-            if(Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
+            if (Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
                 LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
                 restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId), HttpMethod.DELETE, null, Object.class);
                 return rbResult;
@@ -338,7 +340,7 @@ public class NamespacesService {
     /**
      * ResourceQuotas 변경
      *
-     * @param namespace the namespace
+     * @param namespace            the namespace
      * @param requestUpdatedRqList the request update resourceQuotas list
      */
     private void modifyResourceQuotas(String namespace, List<String> requestUpdatedRqList) {
@@ -352,12 +354,12 @@ public class NamespacesService {
         ArrayList<String> toBeAdd = compareArrayList(requestUpdatedRqList, k8sResourceQuotasList);
 
         // delete
-        for (String deleteRqName:toBeDelete) {
+        for (String deleteRqName : toBeDelete) {
             resourceQuotasService.deleteResourceQuotas(namespace, deleteRqName);
         }
 
         // add
-        for (String rqName:toBeAdd) {
+        for (String rqName : toBeAdd) {
             resourceYamlService.createDefaultResourceQuota(namespace, rqName);
         }
     }
@@ -366,7 +368,7 @@ public class NamespacesService {
     /**
      * LimitRanges 변경
      *
-     * @param namespace the namespace
+     * @param namespace            the namespace
      * @param requestUpdatedLrList the request update limitRanges list
      */
     private void modifyLimitRanges(String namespace, List<String> requestUpdatedLrList) {
@@ -379,11 +381,11 @@ public class NamespacesService {
         ArrayList<String> toBeDelete = compareArrayList(k8sLimitRangesList, requestUpdatedLrList);
         ArrayList<String> toBeAdd = compareArrayList(requestUpdatedLrList, k8sLimitRangesList);
 
-        for (String lrName:toBeAdd) {
+        for (String lrName : toBeAdd) {
             resourceYamlService.createDefaultLimitRanges(namespace, lrName);
         }
 
-        for(String deleteLrName:toBeDelete) {
+        for (String deleteLrName : toBeDelete) {
             limitRangesService.deleteLimitRanges(namespace, deleteLrName);
         }
     }
@@ -397,6 +399,30 @@ public class NamespacesService {
      * @return the ArrayList
      */
     private ArrayList<String> compareArrayList(List<String> defaultList, List<String> compareList) {
-        return (ArrayList<String>) defaultList.stream().filter(x-> !compareList.contains(x)).collect(Collectors.toList());
+        return (ArrayList<String>) defaultList.stream().filter(x -> !compareList.contains(x)).collect(Collectors.toList());
     }
+
+
+    /**
+     * Namespace Selectbox를 위한 전체 목록 조회
+     *
+     * @return the namespaces admin
+     */
+    public Object getNamespacesListForSelectbox() {
+        NamespacesListAdmin namespacesListAdmin = (NamespacesListAdmin) getNamespacesListAdmin(0, 0, "name", "asc", "");
+        List<NamespacesListAdminItem> namespaceItem = namespacesListAdmin.getItems();
+
+        List<String> returnNamespaceList = new ArrayList<>();
+        NamespacesList_sb namespacesList_sb = new NamespacesList_sb();
+
+        for (NamespacesListAdminItem n : namespaceItem) {
+            returnNamespaceList.add(n.getName());
+        }
+
+        namespacesList_sb.setItems(returnNamespaceList);
+
+
+        return commonService.setResultModel(namespacesList_sb, Constants.RESULT_STATUS_SUCCESS);
+    }
+
 }

@@ -38,7 +38,7 @@ public class NamespacesController {
     /**
      * Namespaces 목록 조회(Get Namespaces list)
      *
-     * @param cluster the cluster
+     * @param cluster    the cluster
      * @param offset     the offset
      * @param limit      the limit
      * @param orderBy    the orderBy
@@ -50,18 +50,20 @@ public class NamespacesController {
     @ApiOperation(value = "Namespaces 목록 조회(Get Namespaces list)", nickname = "getNamespacesList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
-            @ApiImplicitParam(name = "continue", value = "컨티뉴 토큰", required = false, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "searchParam", value = "검색 매개 변수", required = false, dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
     })
     @GetMapping
     public Object getNamespacesList(@PathVariable(value = "cluster") String cluster,
                                     @RequestParam(required = false, defaultValue = "0") int offset,
                                     @RequestParam(required = false, defaultValue = "0") int limit,
                                     @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                    @RequestParam(required = false, defaultValue = "desc") String order,
+                                    @RequestParam(required = false, defaultValue = "") String order,
                                     @RequestParam(required = false, defaultValue = "") String searchName,
-                                            @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
             return namespacesService.getNamespacesListAdmin(offset, limit, orderBy, order, searchName);
         }
@@ -72,9 +74,9 @@ public class NamespacesController {
     /**
      * Namespaces 상세 조회(Get Namespaces detail)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace name
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return the namespaces detail
      */
     @ApiOperation(value = "Namespaces 상세 조회(Get Namespaces detail)", nickname = "getNamespaces")
@@ -96,9 +98,9 @@ public class NamespacesController {
     /**
      * Namespaces YAML 조회(Get Namespaces yaml)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return the namespaces yaml
      */
     @ApiOperation(value = "Namespaces YAML 조회(Get Nodes yaml)", nickname = "getNamespacesYaml")
@@ -121,9 +123,9 @@ public class NamespacesController {
     /**
      * Namespaces 삭제(Delete Namespaces)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Namespaces 삭제(Delete Namespaces)", nickname = "deleteNamespaces")
@@ -146,9 +148,9 @@ public class NamespacesController {
     /**
      * Namespaces 생성(Create Namespaces)
      *
-     * @param cluster the cluster
+     * @param cluster      the cluster
      * @param initTemplate the init template
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Namespaces 생성(Create Namespaces)", nickname = "initNamespaces")
@@ -172,9 +174,9 @@ public class NamespacesController {
     /**
      * Namespaces 수정(modify Namespaces)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
-     * @param isAdmin the isAdmin
+     * @param cluster      the cluster
+     * @param namespace    the namespace
+     * @param isAdmin      the isAdmin
      * @param initTemplate the init template
      * @return return is succeeded
      */
@@ -186,11 +188,32 @@ public class NamespacesController {
     })
     @PutMapping(value = "/{namespace:.+}")
     public ResultStatus modifyInitNamespaces(@PathVariable(value = "cluster") String cluster,
-                                       @PathVariable(value = "namespace") String namespace,
-                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
-                                       @RequestBody NamespacesInitTemplate initTemplate) {
+                                             @PathVariable(value = "namespace") String namespace,
+                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
+                                             @RequestBody NamespacesInitTemplate initTemplate) {
         if (isAdmin) {
             return namespacesService.modifyInitNamespaces(namespace, initTemplate);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+    }
+
+
+    /**
+     * Namespaces SelectBox 를 위한 Namespaces 목록 조회(Get Namespaces list for SelectBox)
+     *
+     * @param cluster the cluster
+     * @return the namespaces list
+     */
+    @ApiOperation(value = "Namespaces selectbox를 위한 Namespace 목록 조회(Get Namespaces list for SelectBox)", nickname = "getNamespacesListForSelectBox")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path")
+    })
+    @GetMapping("/selectbox")
+    public Object getNamespacesListForSelectBox(@PathVariable(value = "cluster") String cluster,
+                                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return namespacesService.getNamespacesListForSelectbox();
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
