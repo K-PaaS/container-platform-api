@@ -43,41 +43,39 @@ public class NodesService {
     /**
      * Nodes 목록 조회(Get Nodes list)
      *
-     * @param limit the limit
-     * @param continueToken the continueToken
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the nodes list
      */
-    NodesList getNodesList(int limit, String continueToken) {
-        String param = "";
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
+    NodesList getNodesList(int offset, int limit, String orderBy, String order, String searchName) {
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNodesListUrl() + "?limit" + limit + param,
-                    HttpMethod.GET, null, Map.class);
+                propertyService.getCpMasterApiListNodesListUrl(),
+                HttpMethod.GET, null, Map.class);
 
-        return (NodesList) commonService.setResultModel(commonService.setResultObject(responseMap, NodesList.class), Constants.RESULT_STATUS_SUCCESS);
+        NodesList nodesList = commonService.setResultObject(responseMap, NodesList.class);
+        nodesList = commonService.resourceListProcessing(nodesList, offset, limit, orderBy, order, searchName, NodesList.class);
+        return (NodesList) commonService.setResultModel(nodesList, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
      * Nodes Admin 목록 조회(Get Nodes Admin list)
      *
-     * @param limit the limit
-     * @param continueToken the continueToken
-     * @param searchParam the search param
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the nodes admin list
      */
-    public Object getNodesListAdmin(int limit, String continueToken, String searchParam) {
-        String param = "";
+    public Object getNodesListAdmin(int offset, int limit, String orderBy, String order, String searchName) {
         HashMap responseMap = null;
 
-        if (continueToken != null) {
-            param = "&continue=" + continueToken;
-        }
-
-        Object response = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNodesListUrl() + "?limit" + limit + param,
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListNodesListUrl(),
                 HttpMethod.GET, null, Map.class);
 
         try {
@@ -86,7 +84,10 @@ public class NodesService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, NodesListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        NodesListAdmin nodesListAdmin = commonService.setResultObject(responseMap, NodesListAdmin.class);
+        nodesListAdmin = commonService.resourceListProcessing(nodesListAdmin, offset, limit, orderBy, order, searchName, NodesListAdmin.class);
+
+        return commonService.setResultModel(nodesListAdmin, Constants.RESULT_STATUS_SUCCESS);
 
     }
 
@@ -133,13 +134,13 @@ public class NodesService {
      * Nodes YAML 조회(Get Nodes yaml)
      *
      * @param resourceName the resource name
-     * @param resultMap the result map
+     * @param resultMap    the result map
      * @return the nodes yaml
      */
     public Nodes getNodesYaml(String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNodesGetUrl()
-                    .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
         resultMap.put("sourceTypeYaml", resultString);
 
