@@ -28,7 +28,6 @@ public class EventsAdmin {
     private String lastTimestamp;
     private String message;
     private Events.EventSource source;
-    private String type;
     private String subObject;
 
     public String getFirstTimestamp() {
