@@ -507,5 +507,14 @@ public class UsersService {
 
     }
 
-
+    /**
+     * Namespace 상세 Users 목록 조회(Get Users namespace list)
+     * (Admin portal)
+     *
+     * @param namespace the namespace
+     * @return the users list
+   */
+    public Object getUsersListInNamespaceAdmin(String namespace) {
+        return restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersListInNamespaceAdmin.class);
+    }
 }

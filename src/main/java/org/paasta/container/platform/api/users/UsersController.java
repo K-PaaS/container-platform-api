@@ -55,7 +55,7 @@ public class UsersController {
 
 
     /**
-     * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
+     * 각 Namespace 별 Users 목록 조회(Get Users namespace list) todo
      *
      * @param namespace the namespace
      * @param isAdmin the isAdmin
@@ -76,6 +76,31 @@ public class UsersController {
         }
         return usersService.getUsersListByNamespace(namespace);
     }
+
+    /**
+     * Namespace 상세 Users 목록 조회(Get Users in namespace list) todo
+     *
+     * @param namespace the namespace
+     * @param isAdmin the isAdmin
+     * @return the users list
+     */
+    @ApiOperation(value = "각 Namespace 별 Users 목록 조회(Get Users namespace list)", nickname = "getUsersListInNamespace")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
+    })
+    @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/namespace")
+    public Object getUsersListInNamespace(@PathVariable(value = "cluster") String cluster,
+                                          @PathVariable(value = "namespace") String namespace,
+                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return usersService.getUsersListInNamespaceAdmin(namespace);
+        }
+        return usersService.getUsersListByNamespace(namespace);
+    }
+
+
 
     /**
      * 각 Namespace 별 Users 상세 조회(Get Users namespace detail)
