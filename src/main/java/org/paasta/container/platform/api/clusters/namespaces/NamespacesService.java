@@ -271,7 +271,7 @@ public class NamespacesService {
         newNsUser.setSaSecret(saSecretName);
         newNsUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
         newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
-        newNsUser.setIsActive("Y");
+        newNsUser.setIsActive(CHECK_Y);
 
         ResultStatus rsDb = usersService.createUsers(newNsUser);
 
@@ -327,7 +327,7 @@ public class NamespacesService {
             newNsUser.setSaSecret(saSecretName);
             newNsUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
             newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
-            newNsUser.setIsActive("Y");
+            newNsUser.setIsActive(CHECK_Y);
 
             resultStatus = usersService.createUsers(newNsUser);
 

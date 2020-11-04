@@ -26,5 +26,6 @@ public class LimitRangesTemplateList {
 class LimitRangesTemplateItem {
     private String name;
     private List<LimitRangesItem> limits;
+    private String checkYn;
 
 }
