@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
-
 /**
  * LimitRanges Controller 클래스
  *
@@ -39,7 +37,7 @@ public class LimitRangesController {
     @Autowired
     public LimitRangesController(LimitRangesService limitRangesService) {
         this.limitRangesService = limitRangesService;
-    }
+}
 
     /**
      * LimitRanges 목록 조회(Get LimitRanges list)
@@ -70,7 +68,7 @@ public class LimitRangesController {
                                      @RequestParam(required = false, defaultValue = "0") int offset,
                                      @RequestParam(required = false, defaultValue = "0") int limit,
                                      @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                     @RequestParam(required = false, defaultValue = "desc") String order,
+                                     @RequestParam(required = false, defaultValue = "") String order,
                                      @RequestParam(required = false, defaultValue = "") String searchName,
                                      @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
@@ -113,33 +111,6 @@ public class LimitRangesController {
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
-
-    /**
-     * LimitRanges YAML 조회(Get LimitRanges yaml)
-     *
-     * @param cluster      the cluster
-     * @param namespace    the namespace
-     * @param resourceName the resource name
-     * @param isAdmin      the isAdmin
-     * @return the limitRanges yaml
-     */
-    @ApiOperation(value = "LimitRanges YAML 조회(Get LimitRanges yaml)", nickname = "getLimitRangesYaml")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
-    })
-    @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Object getLimitRangesYaml(@PathVariable(value = "cluster") String cluster,
-                                     @PathVariable(value = "namespace") String namespace,
-                                     @PathVariable(value = "resourceName") String resourceName,
-                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
-
-        if (isAdmin) {
-            return limitRangesService.getLimitRangesYaml(namespace, resourceName, new HashMap<>());
-        }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
-    }
 
 
     /**

@@ -129,29 +129,6 @@ public class LimitRangesService {
 
 
     /**
-     * LimitRanges YAML 조회(Get LimitRanges yaml)
-     *
-     * @param namespace    the namespace
-     * @param resourceName the resource name
-     * @param resultMap    the result map
-     * @return the limitRanges yaml
-     */
-    public LimitRanges getLimitRangesYaml(String namespace, String resourceName, HashMap resultMap) {
-
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListLimitRangesGetUrl()
-                        .replace("{namespace}", namespace)
-                        .replace("{name}", resourceName),
-                HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
-
-        resultMap.put("sourceTypeYaml", resultString);
-
-        return (LimitRanges) commonService.setResultModel(commonService.setResultObject(resultMap, LimitRanges.class), Constants.RESULT_STATUS_SUCCESS);
-
-    }
-
-
-    /**
      * LimitRanges 생성(Create LimitRanges)
      *
      * @param namespace the namespace
