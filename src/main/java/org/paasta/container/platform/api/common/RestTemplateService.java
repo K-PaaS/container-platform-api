@@ -8,6 +8,9 @@ import org.paasta.container.platform.api.adminToken.AdminToken;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.exception.CpCommonAPIException;
+import org.paasta.container.platform.api.login.JwtUtil;
+import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +18,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
 
@@ -44,6 +49,9 @@ public class RestTemplateService {
     private final PropertyService propertyService;
     private String base64Authorization;
     private String baseUrl;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     /**
      * Instantiates a new Rest template service
@@ -196,11 +204,17 @@ public class RestTemplateService {
 
         String apiUrl = "";
         String authorization = "";
+        String namespace = "";
+        String saUserToken = "";
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
 
         // CONTAINER PLATFORM MASTER API
         if (Constants.TARGET_CP_MASTER_API.equals(reqApi)) {
+            namespace = getNs(request.getRequestURI());
+            saUserToken = jwtUtil.extractJwtFromRequest(request);
             apiUrl = propertyService.getCpMasterApiUrl();
-            authorization = "Bearer " + this.getAdminToken().getTokenValue();
+            authorization = "Bearer " + jwtUtil.getSaTokenFromToken(saUserToken, namespace);
+            System.out.println(namespace +" - "+ authorization);
         }
 
         // COMMON API
@@ -211,6 +225,21 @@ public class RestTemplateService {
 
         this.base64Authorization = authorization;
         this.baseUrl = apiUrl;
+    }
+
+    public String getNs(String URI) {
+        String namespace = "";
+        int nsOrder = 0;
+        if(URI.indexOf("namespaces")>0){
+            String[] arrString = URI.split("/");
+            for(int i=0;i<arrString.length;i++){
+                if(arrString[i].equals("namespaces"))
+                    nsOrder = i+1;
+            }
+
+            namespace = arrString[nsOrder];
+        }
+        return namespace;
     }
 
     /**
@@ -228,6 +257,29 @@ public class RestTemplateService {
         }
 
         return adminToken;
+    }
+
+    public String getSaToken(String userId) {
+        String saToken = null;
+
+        this.setApiUrlAuthorization(TARGET_COMMON_API);
+        UsersList userList = this.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
+
+        if(Constants.RESULT_STATUS_FAIL.equals(userList.getResultCode())) {
+            throw new CpCommonAPIException(userList.getResultCode(), CommonStatusCode.NOT_FOUND.getMsg(), 0, userList.getResultMessage());
+        }
+
+        try{
+            List<Users> user = userList.getItems();
+            if(user.size() > 0) {
+                Users userInfo = user.get(0);
+                saToken = userInfo.getSaToken();
+            }
+        }catch(Exception e){
+
+        }
+
+        return saToken;
     }
 
 
