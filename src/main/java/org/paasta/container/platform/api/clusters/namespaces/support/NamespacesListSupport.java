@@ -12,7 +12,7 @@ import java.util.List;
  * @since 2020.10.14
  */
 @Data
-public class NamespacesList_sb {
+public class NamespacesListSupport{
     private String resultCode;
     private String resultMessage;
     private Integer httpStatusCode;

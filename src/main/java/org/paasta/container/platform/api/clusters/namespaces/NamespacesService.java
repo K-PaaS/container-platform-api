@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.clusters.namespaces;
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesList;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesService;
-import org.paasta.container.platform.api.clusters.namespaces.support.NamespacesList_sb;
+import org.paasta.container.platform.api.clusters.namespaces.support.NamespacesListSupport;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasList;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
 import org.paasta.container.platform.api.common.*;
@@ -413,16 +413,16 @@ public class NamespacesService {
         List<NamespacesListAdminItem> namespaceItem = namespacesListAdmin.getItems();
 
         List<String> returnNamespaceList = new ArrayList<>();
-        NamespacesList_sb namespacesList_sb = new NamespacesList_sb();
+        NamespacesListSupport namespacesListSupport = new NamespacesListSupport();
 
         for (NamespacesListAdminItem n : namespaceItem) {
             returnNamespaceList.add(n.getName());
         }
 
-        namespacesList_sb.setItems(returnNamespaceList);
+        namespacesListSupport.setItems(returnNamespaceList);
 
 
-        return commonService.setResultModel(namespacesList_sb, Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(namespacesListSupport, Constants.RESULT_STATUS_SUCCESS);
     }
 
 }
