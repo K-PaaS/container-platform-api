@@ -59,7 +59,7 @@ public class SignUpController {
            @ApiImplicitParam(name = "requestUsers", value = "요청한 유저", required = true, dataType = "Object", paramType = "body")
     })
     @NoAuth
-    @PostMapping(value = "/signUp")
+    @PostMapping(value = Constants.URI_SIGN_UP)
     public ResultStatus signUpUsers(@RequestBody Object requestUsers) {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> map = objectMapper.convertValue(requestUsers, Map.class);
