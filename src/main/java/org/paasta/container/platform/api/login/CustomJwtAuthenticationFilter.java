@@ -47,7 +47,7 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 
 		try{
 
-			String jwtToken = extractJwtFromRequest(request);
+			String jwtToken = jwtTokenUtil.extractJwtFromRequest(request);
 
 			String agent = request.getHeader("User-Agent");
 			String clientIp = request.getHeader("HTTP_X_FORWARDED_FOR");
@@ -91,14 +91,6 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 
 		}
 		chain.doFilter(request, response);
-	}
-
-	private String extractJwtFromRequest(HttpServletRequest request) {
-		String bearerToken = request.getHeader("Authorization");
-		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-			return bearerToken.substring(7, bearerToken.length());
-		}
-		return null;
 	}
 
 }
