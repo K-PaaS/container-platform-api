@@ -101,7 +101,7 @@ public class SignUpAdminService {
         users.setSaSecret(adminSaSecretName);
         users.setSaToken(accessTokenService.getSecrets(namespace, adminSaSecretName).getUserAccessToken());
         users.setUserType(AUTH_CLUSTER_ADMIN);
-        users.setIsActive("Y");
+        users.setIsActive(CHECK_Y);
 
         ResultStatus rsDb = usersService.createUsers(users);
 

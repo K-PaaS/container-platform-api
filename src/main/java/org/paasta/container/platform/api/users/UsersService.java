@@ -232,7 +232,7 @@ public class UsersService {
             users.setRoleSetCode(role);
             users.setSaSecret(adminSaSecretName);
             users.setSaToken(accessTokenService.getSecrets(namespace, adminSaSecretName).getUserAccessToken());
-            users.setIsActive("Y");
+            users.setIsActive(CHECK_Y);
 
             // DB에 저장
             rsDb = createUsers(users);
@@ -333,7 +333,7 @@ public class UsersService {
 
                 newUser.setCpNamespace(namespaceRole.getNamespace());
                 newUser.setRoleSetCode(namespaceRole.getRole());
-                newUser.setIsActive("Y");
+                newUser.setIsActive(CHECK_Y);
                 newUser.setSaSecret(saSecretName);
                 newUser.setSaToken(accessTokenService.getSecrets(newNamespace, saSecretName).getUserAccessToken());
                 newUser.setUserType("USER");
@@ -472,7 +472,7 @@ public class UsersService {
                     newUser.setId(0);
                     newUser.setCpNamespace(namespace);
                     newUser.setRoleSetCode(roleName);
-                    newUser.setIsActive("Y");
+                    newUser.setIsActive(CHECK_Y);
                     newUser.setUserType("USER");
 
                     rsDb = updateUsers(newUser);
