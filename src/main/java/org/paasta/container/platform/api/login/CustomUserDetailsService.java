@@ -80,8 +80,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // CLUSTER_ADMIN
         if (user_auth.equals(Constants.AUTH_CLUSTER_ADMIN)) {
+
+            Users user = usersService.getUsersDetailsForLogin(userdetails.getUsername(), "true");
+
             authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                    Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, null);
+                    Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, null,  user.getClusterName());
         }
         // NAMESPACE_ADMIN, USER
         else {
@@ -97,7 +100,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             }
 
             authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                    Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData);
+                    Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, null);
 
         }
 
@@ -111,8 +114,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<loginMetaDataItem> loginMetaData = new ArrayList<>();
 
         for (Users user : userItem) {
-            if (!user.getCpNamespace().equals(Constants.DEFAULT_NAMESPACE_NAME))
-                loginMetaData.add(new loginMetaDataItem(user.getCpNamespace(), user.getUserType()));
+
+            if (!user.getUserType().equals(Constants.AUTH_CLUSTER_ADMIN)) {
+
+                if (!user.getCpNamespace().equals(Constants.DEFAULT_NAMESPACE_NAME)) {
+                    loginMetaData.add(new loginMetaDataItem(user.getCpNamespace(), user.getUserType()));
+                }
+
+            }
         }
 
         return loginMetaData;

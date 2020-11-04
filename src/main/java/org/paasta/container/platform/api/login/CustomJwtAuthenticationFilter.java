@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
+
 /**
  * Custom Jwt Authentication Filter 클래스
  *
@@ -63,7 +65,7 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 				String tokenIp = jwtTokenUtil.getClientIpFromToken(jwtToken);
 				LOGGER.error("agent: {} || clientIp: {} || tokenIp {}", agent, clientIp, tokenIp);
 
-				if(AuthTokenValid.equals("Y")) {
+				if(AuthTokenValid.equals(CHECK_Y)) {
 					if (clientIp.equals(tokenIp) && agent.indexOf("Java") >= 0) {
 						UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
 								userDetails, null, userDetails.getAuthorities());

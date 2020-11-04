@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.paasta.container.platform.api.common.Constants.CHECK_N;
+import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
+
 /**
  * ResourceQuotas Service 클래스
  *
@@ -88,7 +91,7 @@ public class ResourceQuotasService {
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasListUrl()
-                        .replace("{namespace}", namespace) , HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
@@ -97,7 +100,7 @@ public class ResourceQuotasService {
         }
 
         ResourceQuotasListAdmin resourceQuotasListAdmin = commonService.setResultObject(responseMap, ResourceQuotasListAdmin.class);
-        resourceQuotasListAdmin = commonService.resourceListProcessing(resourceQuotasListAdmin,  offset, limit, orderBy, order, searchName, ResourceQuotasListAdmin.class);
+        resourceQuotasListAdmin = commonService.resourceListProcessing(resourceQuotasListAdmin, offset, limit, orderBy, order, searchName, ResourceQuotasListAdmin.class);
 
         return commonService.setResultModel(resourceQuotasListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -105,7 +108,7 @@ public class ResourceQuotasService {
     /**
      * ResourceQuotas 상세 조회(Get ResourceQuotas detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the resourceQuotas detail
      */
@@ -123,7 +126,7 @@ public class ResourceQuotasService {
     /**
      * ResourceQuotasAdmin 상세 조회(Get ResourceQuotas Admin detail)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the resourceQuotas admin
      */
@@ -148,9 +151,9 @@ public class ResourceQuotasService {
     /**
      * ResourceQuotas YAML 조회(Get ResourceQuotas yaml)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap the resultMap
+     * @param resultMap    the resultMap
      * @return the resourceQuotas yaml
      */
     public ResourceQuotas getResourceQuotasYaml(String namespace, String resourceName, HashMap resultMap) {
@@ -169,7 +172,7 @@ public class ResourceQuotasService {
      * ResourceQuotas 생성(Create ResourceQuotas)
      *
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     public Object createResourceQuotas(String namespace, String yaml) {
@@ -181,7 +184,7 @@ public class ResourceQuotasService {
                 || Constants.DEFAULT_MEDIUM_RESOURCE_QUOTA_NAME.equals(createYamlResourceName)
                 || Constants.DEFAULT_HIGH_RESOURCE_QUOTA_NAME.equals(createYamlResourceName)) {
             return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.CONFLICT.getMsg(),
-                    CommonStatusCode.CONFLICT.getCode(),CommonStatusCode.CONFLICT.getMsg(), null );
+                    CommonStatusCode.CONFLICT.getCode(), CommonStatusCode.CONFLICT.getMsg(), null);
         }
 
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
@@ -195,7 +198,7 @@ public class ResourceQuotasService {
     /**
      * ResourceQuotas 삭제(Delete ResourceQuotas)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return the return is succeeded
      */
@@ -210,9 +213,9 @@ public class ResourceQuotasService {
     /**
      * ResourceQuotas 수정(Update ResourceQuotas)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param yaml the yaml
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     public Object updateResourceQuotas(String namespace, String resourceName, String yaml) {
@@ -242,23 +245,23 @@ public class ResourceQuotasService {
         List<String> k8sRqNameList = resourceQuotasList.getItems().stream().map(ResourceQuotasListAdminItem::getName).collect(Collectors.toList());
         List<String> dbRqNameList = resourceQuotasDefaultList.getItems().stream().map(ResourceQuotasDefault::getName).collect(Collectors.toList());
 
-        for(ResourceQuotasDefault resourceQuotasDefault:resourceQuotasDefaultList.getItems()) {
-            String yn = "N";
+        for(ResourceQuotasDefault resourceQuotasDefault : resourceQuotasDefaultList.getItems()) {
+            String yn = CHECK_N;
 
-            if(k8sRqNameList.contains(resourceQuotasDefault.getName())) {
-                yn = "Y";
+            if (k8sRqNameList.contains(resourceQuotasDefault.getName())) {
+                yn = CHECK_Y;
             }
             resourceQuotasDefault.setCheckYn(yn);
             quotasDefaultList.add(resourceQuotasDefault);
         }
 
-        if(resourceQuotasList.getItems().size() > 0) {
-            for (ResourceQuotasListAdminItem i:resourceQuotasList.getItems()) {
+        if (resourceQuotasList.getItems().size() > 0) {
+            for (ResourceQuotasListAdminItem i : resourceQuotasList.getItems()) {
                 ObjectMapper mapper = new ObjectMapper();
                 String status = mapper.writeValueAsString(i.getStatus());
 
-                if(!dbRqNameList.contains(i.getName())) {
-                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, "Y");
+                if (!dbRqNameList.contains(i.getName())) {
+                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, CHECK_Y);
                     quotasDefaultList.add(quotasDefault);
                 }
 

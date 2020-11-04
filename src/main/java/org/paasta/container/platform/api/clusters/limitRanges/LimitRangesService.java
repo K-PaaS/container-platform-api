@@ -12,6 +12,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.paasta.container.platform.api.common.Constants.CHECK_N;
+import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
 
 /**
  * LimitRanges Service 클래스
@@ -194,37 +198,51 @@ public class LimitRangesService {
 
         LimitRangesTemplateList serverList = new LimitRangesTemplateList();
 
+        List<String> k8sLrNameList = limitRangesList.getItems().stream().map(LimitRangesListAdminItem::getName).collect(Collectors.toList());
+        List<String> dbLrNameList = defaultList.getItems().stream().map(LimitRangesDefault::getName).collect(Collectors.toList());
+
         for (LimitRangesDefault limitRangesDefault : defaultList.getItems()) {
-            serversItemList.add(getLimitRangesDb(limitRangesDefault));
+            String yn = CHECK_N;
+
+            if(k8sLrNameList.contains(limitRangesDefault.getName())) {
+                yn = CHECK_Y;
+            }
+            serversItemList.add(getLimitRangesDb(limitRangesDefault, yn));
         }
 
         if (adminItems.size() > 0) {
             for (LimitRangesListAdminItem i : adminItems) {
                 List<LimitRangesItem> list = new ArrayList<>();
-                String key = "";
 
-                LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
-                for (LimitRangesItem item : i.getSpec().getLimits()) {
-                    ObjectMapper objectMapper = new ObjectMapper();
-                    Map<String, Object> map = objectMapper.convertValue(item.getDefaultLimit(), Map.class);
+                if(!dbLrNameList.contains(i.getName())) {
+                    LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
 
-                    if(map != null) {
-                        Iterator<String> keys = map.keySet().iterator();
-                        while(keys.hasNext()) {
-                            key += keys.next() + ",";
+                    for (LimitRangesItem item : i.getSpec().getLimits()) {
+
+                        List<String> duplicateKeys = new ArrayList<>();
+                        List<String> exclusiveKeys = new ArrayList<>();
+                        duplicateKeys.addAll(getKeyResource(objectToMap(item.getDefaultLimit())));
+                        duplicateKeys.addAll(getKeyResource(objectToMap(item.getDefaultRequest())));
+                        duplicateKeys.addAll(getKeyResource(objectToMap(item.getMin())));
+                        duplicateKeys.addAll(getKeyResource(objectToMap(item.getMax())));
+
+                        for(String name:duplicateKeys) {
+                            if(!exclusiveKeys.contains(name)) {
+                                exclusiveKeys.add(name);
+                            }
                         }
-                    }
-                    if(key.endsWith(",")) {
-                        key = key.substring(0, key.length()-1);
-                    }
 
-                    item.setResource(key);
-                    list.add(item);
+                        String result = String.join(", ", exclusiveKeys);
+
+                        item.setResource(result);
+                        list.add(item);
+                    }
+                    serversItem.setName(i.getName());
+                    serversItem.setLimits(list);
+                    serversItem.setCheckYn(CHECK_Y);
+
+                    serversItemList.add(serversItem);
                 }
-                serversItem.setName(i.getName());
-                serversItem.setLimits(list);
-
-                serversItemList.add(serversItem);
             }
 
             serverList.setItems(serversItemList);
@@ -242,7 +260,7 @@ public class LimitRangesService {
      * @param limitRangesDefault the limitRangesDefault
      * @return the limitRanges template item
      */
-    public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault) {
+    public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault, String yn) {
         LimitRangesItem map = new LimitRangesItem();
         List<LimitRangesItem> list = new ArrayList<>();
         LimitRangesTemplateItem item = new LimitRangesTemplateItem();
@@ -258,7 +276,40 @@ public class LimitRangesService {
 
         item.setName(limitRangesDefault.getName());
         item.setLimits(list);
+        item.setCheckYn(yn);
 
         return item;
+    }
+
+
+    /**
+     * LimitRanges 각 요소 map으로 변환(Object convert to map)
+     *
+     * @param obj the object
+     * @return the map
+     */
+    private Map<String, Object> objectToMap(Object obj) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        return objectMapper.convertValue(obj, Map.class);
+    }
+
+
+    /**
+     * LimitRanges Resource keys 추출(Extract LimitRanges's resource key)
+     *
+     * @param map the map
+     * @return the list
+     */
+    private List<String> getKeyResource(Map<String, Object> map) {
+        List<String> keyList = new ArrayList<>();
+        if(map != null) {
+            Iterator<String> keys = map.keySet().iterator();
+            while(keys.hasNext()) {
+                keyList.add(keys.next());
+            }
+        }
+
+        return keyList;
     }
 }

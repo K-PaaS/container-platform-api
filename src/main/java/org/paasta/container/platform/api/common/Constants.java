@@ -17,6 +17,8 @@ public class Constants {
 
     public static final String RESULT_STATUS_SUCCESS = "SUCCESS";
     public static final String RESULT_STATUS_FAIL = "FAIL";
+    public static final String CHECK_Y = "Y";
+    public static final String CHECK_N = "N";
 
     public static final String TARGET_CP_MASTER_API = "cpMasterApi";
     public static final String TARGET_COMMON_API = "commonApi";

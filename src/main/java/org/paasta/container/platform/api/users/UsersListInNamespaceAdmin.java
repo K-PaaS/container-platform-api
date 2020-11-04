@@ -1,11 +1,12 @@
 package org.paasta.container.platform.api.users;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import lombok.Data;
 import org.paasta.container.platform.api.common.Constants;
 
 import java.util.List;
+
+import static org.paasta.container.platform.api.common.Constants.CHECK_N;
+import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
 
 /**
  * User List Admin Model 클래스
@@ -35,9 +36,9 @@ public class UsersListInNamespaceAdmin {
         public String getIsAdmin() {
 
             if (userType.equals(Constants.AUTH_NAMESPACE_ADMIN)) {
-                isAdmin = "Y";
+                isAdmin = CHECK_Y;
             } else {
-                isAdmin = "N";
+                isAdmin = CHECK_N;
             }
 
             return isAdmin;
