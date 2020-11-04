@@ -207,13 +207,14 @@ public class RestTemplateService {
         String namespace = "";
         String saUserToken = "";
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+        String requestUri = request.getRequestURI();
 
         // CONTAINER PLATFORM MASTER API
         if (Constants.TARGET_CP_MASTER_API.equals(reqApi)) {
-            namespace = getNs(request.getRequestURI());
+            namespace = getNs(requestUri);
             saUserToken = jwtUtil.extractJwtFromRequest(request);
             apiUrl = propertyService.getCpMasterApiUrl();
-            if(namespace.equals("signup"))
+            if(requestUri.equals(Constants.URI_SIGN_UP))
                 authorization = getAdminToken().getTokenValue();
             else
                 authorization = "Bearer " + jwtUtil.getSaTokenFromToken(saUserToken, namespace);
@@ -240,8 +241,6 @@ public class RestTemplateService {
             }
 
             namespace = arrString[nsOrder];
-        }else if(URI.equals(Constants.URI_SIGN_UP)){
-            namespace = "signup";
         }
         return namespace;
     }
