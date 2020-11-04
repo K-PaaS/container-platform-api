@@ -215,7 +215,7 @@ public class RestTemplateService {
             saUserToken = jwtUtil.extractJwtFromRequest(request);
             apiUrl = propertyService.getCpMasterApiUrl();
             if(requestUri.equals(Constants.URI_SIGN_UP))
-                authorization = getAdminToken().getTokenValue();
+                authorization = "Bearer " + this.getAdminToken().getTokenValue();
             else
                 authorization = "Bearer " + jwtUtil.getSaTokenFromToken(saUserToken, namespace);
         }
