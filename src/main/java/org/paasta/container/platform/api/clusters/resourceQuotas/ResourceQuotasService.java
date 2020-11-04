@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static org.paasta.container.platform.api.common.Constants.CHECK_N;
+import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
+
 /**
  * ResourceQuotas Service 클래스
  *
@@ -242,11 +245,11 @@ public class ResourceQuotasService {
         List<String> k8sRqNameList = resourceQuotasList.getItems().stream().map(ResourceQuotasListAdminItem::getName).collect(Collectors.toList());
         List<String> dbRqNameList = resourceQuotasDefaultList.getItems().stream().map(ResourceQuotasDefault::getName).collect(Collectors.toList());
 
-        for (ResourceQuotasDefault resourceQuotasDefault : resourceQuotasDefaultList.getItems()) {
-            String yn = "N";
+        for(ResourceQuotasDefault resourceQuotasDefault : resourceQuotasDefaultList.getItems()) {
+            String yn = CHECK_N;
 
             if (k8sRqNameList.contains(resourceQuotasDefault.getName())) {
-                yn = "Y";
+                yn = CHECK_Y;
             }
             resourceQuotasDefault.setCheckYn(yn);
             quotasDefaultList.add(resourceQuotasDefault);
@@ -258,7 +261,7 @@ public class ResourceQuotasService {
                 String status = mapper.writeValueAsString(i.getStatus());
 
                 if (!dbRqNameList.contains(i.getName())) {
-                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, "Y");
+                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, CHECK_Y);
                     quotasDefaultList.add(quotasDefault);
                 }
 
