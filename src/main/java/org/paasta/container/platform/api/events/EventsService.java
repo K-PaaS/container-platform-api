@@ -268,7 +268,7 @@ public class EventsService {
      */
     public EventsList getEventsListByNode(String namespace, String nodeName) {
         String requestURL = propertyService.getCpMasterApiListEventsListUrl().replace("{namespace}", namespace)
-                + "/?fieldSelector=spec.nodeName=" + nodeName;
+                + "/?fieldSelector=deprecatedSource.node=" + nodeName;
 
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API, requestURL,
                 HttpMethod.GET, null, Map.class);
@@ -289,7 +289,7 @@ public class EventsService {
      */
     public EventsListAdmin getEventsListByNodeAdmin(String namespace, String nodeName) {
         String requestURL = propertyService.getCpMasterApiListEventsListUrl().replace("{namespace}", namespace)
-                + "/?fieldSelector=spec.nodeName=" + nodeName;
+                + "/?fieldSelector=deprecatedSource.node=" + nodeName;
 
         HashMap resultMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, requestURL,
                 HttpMethod.GET, null, Map.class);

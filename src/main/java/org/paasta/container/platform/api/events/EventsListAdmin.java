@@ -1,9 +1,7 @@
 package org.paasta.container.platform.api.events;
 
 import lombok.Data;
-import org.paasta.container.platform.api.common.CommonUtils;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonObjectReference;
+import org.paasta.container.platform.api.events.support.EventsAdminItem;
 
 import java.util.List;
 
@@ -22,28 +20,19 @@ public class EventsListAdmin {
     private Integer httpStatusCode;
     private String detailMessage;
 
-    //private CommonMetaData metadata;
-    private int count;
-    private String firstTimestamp;
-    private String lastTimestamp;
-    private String message;
-    private Events.EventSource source;
-    private String type;
-    private CommonObjectReference involvedObject;
+    //private String node;
+    private List<EventsAdminItem> items;
 
-    public String getFirstTimestamp() {
-        return CommonUtils.procSetTimestamp(firstTimestamp);
-    }
-    public String getLastTimestamp() {
-        return CommonUtils.procSetTimestamp(lastTimestamp);
+   /* @JsonIgnore
+    private EventsdeprecatedSource deprecatedSource;
+
+    public String getNode() {
+        return deprecatedSource.getNode();
     }
 
-
-    @Data
-    public class EventSource {
-        private String component;
-        private String host;
-    }
+    public void setNode(String node) {
+        this.node = node;
+    }*/
 }
 
 
