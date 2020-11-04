@@ -111,8 +111,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<loginMetaDataItem> loginMetaData = new ArrayList<>();
 
         for (Users user : userItem) {
-            if (!user.getCpNamespace().equals(Constants.DEFAULT_NAMESPACE_NAME))
-                loginMetaData.add(new loginMetaDataItem(user.getCpNamespace(), user.getUserType()));
+
+            if (!user.getUserType().equals(Constants.AUTH_CLUSTER_ADMIN)) {
+
+                if (!user.getCpNamespace().equals(Constants.DEFAULT_NAMESPACE_NAME)) {
+                    loginMetaData.add(new loginMetaDataItem(user.getCpNamespace(), user.getUserType()));
+                }
+
+            }
         }
 
         return loginMetaData;
