@@ -214,6 +214,8 @@ public class RestTemplateService {
             saUserToken = jwtUtil.extractJwtFromRequest(request);
             apiUrl = propertyService.getCpMasterApiUrl();
             authorization = "Bearer " + jwtUtil.getSaTokenFromToken(saUserToken, namespace);
+            if(namespace.equals("signup"))
+                authorization = getAdminToken().getTokenValue();
         }
 
         // COMMON API
@@ -237,6 +239,8 @@ public class RestTemplateService {
             }
 
             namespace = arrString[nsOrder];
+        }else if(URI.equals(Constants.URI_SIGN_UP)){
+            namespace = "signup";
         }
         return namespace;
     }
