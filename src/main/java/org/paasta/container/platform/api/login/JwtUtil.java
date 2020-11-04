@@ -56,7 +56,7 @@ public class JwtUtil {
 		claims.put("Browser", authRequest.getBrowser());
 		for(Users users : userListByUserId.getItems()) {
 			claims.put(users.getCpNamespace(), users.getSaToken());
-			//claims.put("sa-token", users.getSaToken());
+			claims.put("sa-token", users.getSaToken());
 			claims.put("url", users.getClusterApiUrl());
 		}
 

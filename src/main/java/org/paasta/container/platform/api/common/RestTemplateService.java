@@ -214,7 +214,6 @@ public class RestTemplateService {
             saUserToken = jwtUtil.extractJwtFromRequest(request);
             apiUrl = propertyService.getCpMasterApiUrl();
             authorization = "Bearer " + jwtUtil.getSaTokenFromToken(saUserToken, namespace);
-            System.out.println(namespace +" - "+ authorization);
         }
 
         // COMMON API
@@ -228,7 +227,7 @@ public class RestTemplateService {
     }
 
     public String getNs(String URI) {
-        String namespace = "";
+        String namespace = "sa-token";
         int nsOrder = 0;
         if(URI.indexOf("namespaces")>0){
             String[] arrString = URI.split("/");
