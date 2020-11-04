@@ -30,6 +30,7 @@ public class RolesListAllNamespaces {
         private String name;
         private String namespace;
         private String checkYn;
+        private String userType;
 
         @JsonIgnore
         private CommonMetaData metadata;
@@ -64,6 +65,14 @@ public class RolesListAllNamespaces {
 
         public void setCheckYn(String checkYn) {
             this.checkYn = checkYn;
+        }
+
+        public String getUserType() {
+            return userType;
+        }
+
+        public void setUserType(String userType) {
+            this.userType = userType;
         }
     }
 }

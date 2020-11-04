@@ -286,8 +286,10 @@ public class RolesService {
         for (Users user:usersList.getItems()) {
             for (RolesListAllNamespaces.RolesListAllNamespacesItem item:rolesListAllNamespaces.getItems()) {
                 item.setCheckYn(Constants.CHECK_N);
+                item.setUserType(Constants.NOT_ASSIGNED_ROLE);
                 if(user.getCpNamespace().equals(item.getNamespace()) && user.getRoleSetCode().equals(item.getName())) {
                     item.setCheckYn(Constants.CHECK_Y);
+                    item.setUserType(user.getUserType());
                 }
             }
         }
