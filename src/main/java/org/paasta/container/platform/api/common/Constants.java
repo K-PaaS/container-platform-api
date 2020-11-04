@@ -187,8 +187,23 @@ public class Constants {
 
     });
 
+    public static final ResultStatus BAD_REQUEST_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.getMsg(),
+            CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
+
+    public static final ResultStatus UNAUTHORIZED_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.UNAUTHORIZED.getMsg(),
+            CommonStatusCode.UNAUTHORIZED.getCode(),CommonStatusCode.UNAUTHORIZED.getMsg(), null );
+
     public static final ResultStatus FORBIDDEN_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.FORBIDDEN.getMsg(),
             CommonStatusCode.FORBIDDEN.getCode(),CommonStatusCode.FORBIDDEN.getMsg(), null );
+
+    public static final ResultStatus NOT_FOUND_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.NOT_FOUND.getMsg(),
+            CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg(), null );
+
+    public static final ResultStatus CONFLICT_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.CONFLICT.getMsg(),
+            CommonStatusCode.CONFLICT.getCode(),CommonStatusCode.CONFLICT.getMsg(), null );
+
+    public static final ResultStatus UNPROCESSABLE_ENTITY_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.UNPROCESSABLE_ENTITY.getMsg(),
+            CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(),CommonStatusCode.UNPROCESSABLE_ENTITY.getMsg(), null );
 
     public Constants() {
         throw new IllegalStateException();
