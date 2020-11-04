@@ -66,7 +66,7 @@ public class ResourceQuotasController {
                                         @RequestParam(required = false, defaultValue = "0") int offset,
                                         @RequestParam(required = false, defaultValue = "0") int limit,
                                         @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                        @RequestParam(required = false, defaultValue = "desc") String order,
+                                        @RequestParam(required = false, defaultValue = "") String order,
                                         @RequestParam(required = false, defaultValue = "") String searchName,
                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
@@ -88,17 +88,17 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas 상세 조회(Get ResourceQuotas detail)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the resourceQuotas detail
      */
     @ApiOperation(value = "ResourceQuotas 상세 조회(Get ResourceQuotas detail)", nickname = "getResourceQuotas")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
     public Object getResourceQuotas(@PathVariable(value = "cluster") String cluster,
@@ -116,10 +116,11 @@ public class ResourceQuotasController {
 
     /**
      * ResourceQuotas YAML 조회(Get ResourceQuotas yaml)
-     * @param cluster the cluster
-     * @param namespace the namespace
+     *
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the resourceQuotas yaml
      */
     @ApiOperation(value = "ResourceQuotas YAML 조회(Get ResourceQuotas yaml)", nickname = "getResourceQuotasYaml")
@@ -130,9 +131,9 @@ public class ResourceQuotasController {
     })
     @GetMapping(value = "{resourceName:.+}/yaml")
     public Object getResourceQuotasYaml(@PathVariable(value = "cluster") String cluster,
-                                                @PathVariable(value = "namespace") String namespace,
-                                                @PathVariable(value = "resourceName") String resourceName,
-                                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                        @PathVariable(value = "namespace") String namespace,
+                                        @PathVariable(value = "resourceName") String resourceName,
+                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
             return resourceQuotasService.getResourceQuotasYaml(namespace, resourceName, new HashMap<>());
         }
@@ -142,10 +143,10 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas 생성(Create ResourceQuotas)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param yaml the yaml
-     * @param isAdmin the isAdmin
+     * @param yaml      the yaml
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "ResourceQuotas 생성(Create ResourceQuotas)", nickname = "createResourceQuotas")
@@ -158,7 +159,7 @@ public class ResourceQuotasController {
     public Object createResourceQuotas(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
-                                       @RequestBody String yaml) throws Exception{
+                                       @RequestBody String yaml) throws Exception {
         if (isAdmin) {
 
             if (yaml.contains("---")) {
@@ -174,10 +175,10 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas 삭제(Delete ResourceQuotas)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "ResourceQuotas 삭제(Delete ResourceQuotas)", nickname = "deleteResourceQuotas")
@@ -202,11 +203,11 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas 수정(Update ResourceQuotas)
      *
-     * @param cluster the cluster
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
-     * @param yaml the yaml
+     * @param isAdmin      the isAdmin
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     @ApiOperation(value = "ResourceQuotas 수정(Update ResourceQuotas)", nickname = "updateResourceQuotas")
@@ -223,7 +224,7 @@ public class ResourceQuotasController {
                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                        @RequestBody String yaml) {
         if (isAdmin) {
-            return resourceQuotasService.updateResourceQuotas(namespace, resourceName,yaml);
+            return resourceQuotasService.updateResourceQuotas(namespace, resourceName, yaml);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
@@ -233,9 +234,9 @@ public class ResourceQuotasController {
     /**
      * ResourceQuota Default Template 목록 조회 (Get ResourceQouta Default Template list)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return the resourceQuota list
      * @throws JsonProcessingException
      */
