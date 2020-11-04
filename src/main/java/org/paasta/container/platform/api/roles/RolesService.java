@@ -5,12 +5,16 @@ import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.paasta.container.platform.api.common.Constants.URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID;
 
 /**
  * Roles Service 클래스
@@ -247,4 +251,48 @@ public class RolesService {
         return commonService.setResultModel(rolesListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
+
+    /**
+     * User가 속해 있는 Namespace와 Role 목록 조회(Get Namespace and Roles List to which User belongs)
+     *
+     * @param cluster    the cluster
+     * @param namespace  the namespace
+     * @param userId     the user id
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @return return is succeeded
+     */
+    public Object getRolesListAllNamespacesAdminByUserId(String cluster, String namespace, String userId, int offset, int limit, String orderBy, String order, String searchName) {
+        HashMap responseMap;
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListRolesListAllNamespacesUrl(), HttpMethod.GET, null, Map.class);
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        RolesListAllNamespaces rolesListAllNamespaces = commonService.setResultObject(responseMap, RolesListAllNamespaces.class);
+
+        UsersList usersList = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID
+                .replace("{cluster:.+}", cluster)
+                .replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
+
+        for (Users user:usersList.getItems()) {
+            for (RolesListAllNamespaces.RolesListAllNamespacesItem item:rolesListAllNamespaces.getItems()) {
+                item.setCheckYn(Constants.CHECK_N);
+                if(user.getCpNamespace().equals(item.getNamespace()) && user.getRoleSetCode().equals(item.getName())) {
+                    item.setCheckYn(Constants.CHECK_Y);
+                }
+            }
+        }
+
+        rolesListAllNamespaces = commonService.resourceListProcessing(rolesListAllNamespaces, offset, limit, orderBy, order, searchName, RolesListAllNamespaces.class);
+        return commonService.setResultModel(rolesListAllNamespaces, Constants.RESULT_STATUS_SUCCESS);
+    }
 }
