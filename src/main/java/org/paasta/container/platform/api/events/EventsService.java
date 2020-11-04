@@ -48,7 +48,7 @@ public class EventsService {
     }
 
     /**
-     * Events 목록 조회(Get Events list)
+     * Events resourceUid 목록 조회(Get Events resource uid list)
      *
      * @param namespace   the namespace
      * @param resourceUid the resourceUid
@@ -71,7 +71,7 @@ public class EventsService {
     }
 
     /**
-     * Events 목록 조회(Get Events list)
+     * Events resourceUid 목록 조회(Get Events resource uid list)
      * (Admin portal)
      *
      * @param namespace   the namespace
@@ -93,6 +93,48 @@ public class EventsService {
         return (EventsListAdmin) commonService.setResultModel(
                 commonService.setResultObject(resultMap, EventsListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
 
+    }
+
+    /**
+     * Events resourceName 목록 조회(Get Events resourceName list)
+     * (Admin portal)
+     *
+     * @param namespace   the namespace
+     * @param resourceName the resource name
+     * @return the events list
+     */
+    EventsListAdmin getEventsResourceNameListAdmin(String namespace, String resourceName) {
+        String requestSelector = "?fieldSelector=involvedObject.name=" + resourceName;
+
+        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListEventsListUrl()
+                        .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
+
+
+
+
+
+        return (EventsListAdmin) commonService.setResultModel(
+                commonService.setResultObject(resultMap, EventsListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+    /**
+     * Events resourceName 목록 조회(Get Events resourceName list)
+     * (User portal)
+     *
+     * @param namespace   the namespace
+     * @param resourceName the resource name
+     * @return the events list
+     */
+    EventsList getEventsResourceNameList(String namespace, String resourceName) {
+        String requestSelector = "?fieldSelector=involvedObject.name=" + resourceName;
+
+        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListEventsListUrl()
+                        .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
+
+        return (EventsList) commonService.setResultModel(
+                commonService.setResultObject(resultMap, EventsList.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -299,4 +341,6 @@ public class EventsService {
 
         return (EventsListAdmin) commonService.setResultModel(eventsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
+
+
 }

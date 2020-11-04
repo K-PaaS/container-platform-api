@@ -37,7 +37,7 @@ public class EventsController {
 
 
     /**
-     * Events 목록 조회(Get Events list)
+     * Events resourceUid 목록 조회(Get Events resource uid list)
      *
      * @param namespace the namespace
      * @param resourceUid the resourceUid
@@ -45,7 +45,7 @@ public class EventsController {
      * @param isAdmin the isAdmin
      * @return the events list
      */
-    @ApiOperation(value = "Events 목록 조회(Get Events list)", nickname = "getEventsUidList")
+    @ApiOperation(value = "Events resourceUid 목록 조회(Get Events list)", nickname = "getEventsUidList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "resourceUid", value = "리소스 Uid 명",  required = true, dataType = "string", paramType = "path")
@@ -62,6 +62,34 @@ public class EventsController {
 
         return eventsService.getEventsUidList(namespace, resourceUid, type);
     }
+
+    /**
+     * Events resourceName 목록 조회(Get Events resource name list)
+     *
+     * @param namespace the namespace
+     * @param resourceName the resource name
+     * @param isAdmin the isAdmin
+     * @return the events list
+     */
+    @ApiOperation(value = "Events resourceName 목록 조회(Get Events list)", nickname = "getEventsResourceNameList")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceUid", value = "리소스 Uid 명",  required = true, dataType = "string", paramType = "path")
+    })
+    @GetMapping(value = "/resourcesName/{resourceName:.+}")
+    public Object getEventsResourceNameList(@PathVariable("namespace") String namespace,
+                                                @PathVariable("resourceName") String resourceName,
+                                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return eventsService.getEventsResourceNameListAdmin(namespace, resourceName);
+        }
+
+        return eventsService.getEventsResourceNameList(namespace, resourceName);
+    }
+
+
+
 
     /**
      * Events node 목록 조회(Get Events node)
