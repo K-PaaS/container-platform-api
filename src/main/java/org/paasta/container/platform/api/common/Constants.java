@@ -66,6 +66,7 @@ public class Constants {
     static final String ACCEPT_TYPE_JSON = MediaType.APPLICATION_JSON_VALUE;
 
     public static final String URI_SIGN_UP = "/signUp";
+    public static final String CLUSTER_ROLE_URI = "users/resources";
 
     // COMMON API CALL URI
     public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";

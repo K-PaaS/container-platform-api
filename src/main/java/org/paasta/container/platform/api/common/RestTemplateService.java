@@ -7,10 +7,10 @@ import com.google.gson.JsonParser;
 import org.paasta.container.platform.api.adminToken.AdminToken;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.exception.CpCommonAPIException;
 import org.paasta.container.platform.api.login.JwtUtil;
 import org.paasta.container.platform.api.users.Users;
-import org.paasta.container.platform.api.users.UsersList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +18,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -154,7 +152,7 @@ public class RestTemplateService {
 
     public <T> T sendAdmin(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, String acceptType, String contentType) {
 
-        setApiUrlAuthorization(reqApi);
+        setApiUrlAuthorizationAdmin(reqApi);
 
         HttpHeaders reqHeaders = new HttpHeaders();
         reqHeaders.add(AUTHORIZATION_HEADER_KEY, base64Authorization);
@@ -214,7 +212,7 @@ public class RestTemplateService {
             namespace = getNs(requestUri);
             saUserToken = jwtUtil.extractJwtFromRequest(request);
             apiUrl = propertyService.getCpMasterApiUrl();
-            if(requestUri.equals(Constants.URI_SIGN_UP))
+            if(namespace.equals("-"))
                 authorization = "Bearer " + this.getAdminToken().getTokenValue();
             else
                 authorization = "Bearer " + jwtUtil.getSaTokenFromToken(saUserToken, namespace);
@@ -230,17 +228,54 @@ public class RestTemplateService {
         this.baseUrl = apiUrl;
     }
 
-    public String getNs(String URI) {
-        String namespace = "sa-token";
-        int nsOrder = 0;
-        if(URI.indexOf("namespaces")>0){
-            String[] arrString = URI.split("/");
-            for(int i=0;i<arrString.length;i++){
-                if(arrString[i].equals("namespaces"))
-                    nsOrder = i+1;
-            }
+    /**
+     * Authorization 값을 입력(Set the authorization value)
+     *
+     * @param reqApi the reqApi
+     */
+    private void setApiUrlAuthorizationAdmin(String reqApi) {
 
-            namespace = arrString[nsOrder];
+        String apiUrl = "";
+        String authorization = "";
+
+        // CONTAINER PLATFORM MASTER API
+        if (Constants.TARGET_CP_MASTER_API.equals(reqApi)) {
+            apiUrl = propertyService.getCpMasterApiUrl();
+            authorization = "Bearer " + this.getAdminToken().getTokenValue();
+        }
+
+        // COMMON API
+        if (TARGET_COMMON_API.equals(reqApi)) {
+            apiUrl = propertyService.getCommonApiUrl();
+            authorization = commonApiBase64Authorization;
+        }
+
+        this.base64Authorization = authorization;
+        this.baseUrl = apiUrl;
+    }
+
+    /**
+     * requestURI에서 namespace명 추출
+     *
+     * @param URI the requestURI
+     */
+    public String getNs(String URI) {
+        String namespace = "-";
+        int nsOrder = 0;
+        try {
+            if (URI.indexOf("namespaces") > 0) {
+                String[] arrString = URI.split("/");
+                for (int i = 0; i < arrString.length; i++) {
+                    if (arrString[i].equals("namespaces")) {
+                        nsOrder = i + 1;
+                        if (Constants.CLUSTER_ROLE_URI.indexOf(arrString[nsOrder + 1])>=0)
+                            return namespace;
+                    }
+                }
+                namespace = arrString[nsOrder];
+            }
+        }catch(Exception e){
+            return namespace;
         }
         return namespace;
     }
@@ -262,27 +297,21 @@ public class RestTemplateService {
         return adminToken;
     }
 
-    public String getSaToken(String userId) {
-        String saToken = null;
-
+    /**
+     * User Token 상세 정보를 조회(Get the User Token Detail)
+     *
+     * @return the UserToken
+     */
+    public String getSaToken(String userId, String namespace) {
         this.setApiUrlAuthorization(TARGET_COMMON_API);
-        UsersList userList = this.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
+        String reqUrl = Constants.URI_COMMON_API_USERS.replace("{userId:.+}", userId).replace("{namespace:.+}",namespace);
+        Users user = this.send(TARGET_COMMON_API, reqUrl, HttpMethod.GET, null, Users.class);
 
-        if(Constants.RESULT_STATUS_FAIL.equals(userList.getResultCode())) {
-            throw new CpCommonAPIException(userList.getResultCode(), CommonStatusCode.NOT_FOUND.getMsg(), 0, userList.getResultMessage());
+        if(Constants.RESULT_STATUS_FAIL.equals(user.getResultCode())) {
+            throw new CpCommonAPIException(user.getResultCode(), CommonStatusCode.NOT_FOUND.getMsg(), user.getHttpStatusCode(), user.getResultMessage());
         }
 
-        try{
-            List<Users> user = userList.getItems();
-            if(user.size() > 0) {
-                Users userInfo = user.get(0);
-                saToken = userInfo.getSaToken();
-            }
-        }catch(Exception e){
-
-        }
-
-        return saToken;
+        return user.getSaToken();
     }
 
 
@@ -296,8 +325,11 @@ public class RestTemplateService {
      * @param responseType the response type
      * @return the t
      */
-    public <T> T sendYaml(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType) {
-        return sendAdmin(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml");
+    public <T> T sendYaml(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, Boolean isAdmin) {
+        if(isAdmin)
+            return sendAdmin(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml");
+        else
+            return send(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, "application/yaml");
     }
 
 
