@@ -40,7 +40,7 @@ public class ResourceExecuteManager {
      * @return the object
      * @throws Exception
      */
-    public static Object execServiceMethod(String namespace, String kind, String yaml) throws Exception {
+    public static Object execServiceMethod(String namespace, String kind, String yaml, boolean isAdmin) throws Exception {
 
         // get method info for processing the service class
         String [] arrMethodInfo = Constants.RESOURCE_SERVICE_MAP.get(kind).split(":");
@@ -60,10 +60,10 @@ public class ResourceExecuteManager {
         }
 
         if(namespace == null || namespace.length() == 0) {
-            return paramMethod.invoke(targetObject, yaml);
+            return paramMethod.invoke(targetObject, yaml, isAdmin);
         }
 
-        return paramMethod.invoke(targetObject, namespace, yaml);
+        return paramMethod.invoke(targetObject, namespace, yaml, isAdmin);
     }
 
     /**
@@ -74,7 +74,7 @@ public class ResourceExecuteManager {
      * @return the object
      * @throws Exception
      */
-    public static Object commonControllerExecute(String namespace, String yaml) throws Exception {
+    public static Object commonControllerExecute(String namespace, String yaml, boolean isAdmin) throws Exception {
         String[] multiYaml;
 
         multiYaml = YamlUtil.splitYaml(yaml);
@@ -82,7 +82,7 @@ public class ResourceExecuteManager {
 
         for (String temp : multiYaml) {
             String kind = YamlUtil.parsingYaml(temp,"kind");
-            object = execServiceMethod(namespace, kind, temp);
+            object = execServiceMethod(namespace, kind, temp, isAdmin);
         }
         return object;
     }

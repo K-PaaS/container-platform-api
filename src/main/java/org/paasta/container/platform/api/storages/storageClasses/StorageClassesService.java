@@ -123,10 +123,10 @@ public class StorageClassesService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public Object createStorageClasses(String namespace, String yaml) {
+    public Object createStorageClasses(String namespace, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListStorageClassesCreateUrl()
-                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModel(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS);
@@ -137,11 +137,10 @@ public class StorageClassesService {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap    the result map
      * @return return is succeeded
      */
-    public Object deleteStorageClasses(String namespace, String resourceName, HashMap resultMap) {
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public Object deleteStorageClasses(String namespace, String resourceName) {
+        ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListStorageClassesDeleteUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
@@ -160,7 +159,7 @@ public class StorageClassesService {
     public Object updateStorageClasses(String namespace, String resourceName, String yaml) {
         Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListStorageClassesUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
 
         return commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS);
     }

@@ -196,13 +196,14 @@ public class PodsController {
     @PostMapping
     public Object createPods(@PathVariable(value = "cluster") String cluster,
                              @PathVariable(value = "namespace") String namespace,
-                             @RequestBody String yaml) throws Exception {
+                             @RequestBody String yaml,
+                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
         if (yaml.contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, isAdmin);
             return object;
         }
 
-        return podsService.createPods(namespace, yaml);
+        return podsService.createPods(namespace, yaml, isAdmin);
 
     }
 
@@ -220,8 +221,9 @@ public class PodsController {
     })
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deletePods(@PathVariable(value = "namespace") String namespace,
-                                   @PathVariable(value = "resourceName") String resourceName) {
-        return podsService.deletePods(namespace, resourceName, new HashMap<>());
+                                   @PathVariable(value = "resourceName") String resourceName,
+                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        return podsService.deletePods(namespace, resourceName, isAdmin);
     }
 
     /**
@@ -244,7 +246,8 @@ public class PodsController {
     public Object updatePods(@PathVariable(value = "cluster") String cluster,
                              @PathVariable(value = "namespace") String namespace,
                              @PathVariable(value = "resourceName") String resourceName,
-                             @RequestBody String yaml) {
-        return podsService.updatePods(namespace, resourceName, yaml);
+                             @RequestBody String yaml,
+                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        return podsService.updatePods(namespace, resourceName, yaml, isAdmin);
     }
 }

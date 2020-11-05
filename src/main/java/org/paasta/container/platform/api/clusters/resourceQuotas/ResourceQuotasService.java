@@ -175,7 +175,7 @@ public class ResourceQuotasService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public Object createResourceQuotas(String namespace, String yaml) {
+    public Object createResourceQuotas(String namespace, String yaml, boolean isAdmin) {
         Map YamlMetadata = YamlUtil.parsingYamlMap(yaml, "metadata");
         String createYamlResourceName = YamlMetadata.get("name").toString();
 
@@ -189,7 +189,7 @@ public class ResourceQuotasService {
 
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasCreateUrl()
-                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModel(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS);
@@ -221,7 +221,7 @@ public class ResourceQuotasService {
     public Object updateResourceQuotas(String namespace, String resourceName, String yaml) {
         Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
 
         return commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS);
     }

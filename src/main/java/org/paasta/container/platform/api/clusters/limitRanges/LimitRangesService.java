@@ -139,11 +139,11 @@ public class LimitRangesService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public Object createLimitRanges(String namespace, String yaml) {
+    public Object createLimitRanges(String namespace, String yaml, boolean isAdmin) {
 
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListLimitRangesCreateUrl().replace("{namespace}", namespace),
-                HttpMethod.POST, yaml, Object.class);
+                HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMITRANGES);
     }
@@ -176,7 +176,7 @@ public class LimitRangesService {
     public ResultStatus updateLimitRanges(String namespace, String resourceName, String yaml) {
         ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListLimitRangesUpdateUrl().replace("{namespace}", namespace).replace("{name}", resourceName),
-                HttpMethod.PUT, yaml, ResultStatus.class);
+                HttpMethod.PUT, yaml, ResultStatus.class, true);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMITRANGES_DETAIL.replace("{limitRangeName:.+}", resourceName));

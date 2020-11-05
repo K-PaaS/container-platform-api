@@ -175,19 +175,19 @@ public class NamespacesService {
         return (Namespaces) commonService.setResultModel(commonService.setResultObject(resultMap, Namespaces.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
-    /**
-     * NameSpace 생성(Create NameSpaces)
-     *
-     * @param yaml the yaml
-     * @return return is succeeded
-     */
-    public Object createNamespaces(String yaml) {
-        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNamespacesCreateUrl(), HttpMethod.POST, yaml, Object.class);
-
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
-    }
+//    /**
+//     * NameSpace 생성(Create NameSpaces)
+//     *
+//     * @param yaml the yaml
+//     * @return return is succeeded
+//     */
+//    public Object createNamespaces(String yaml) {
+//        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+//                propertyService.getCpMasterApiListNamespacesCreateUrl(), HttpMethod.POST, yaml, Object.class, true);
+//
+//        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
+//                Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
+//    }
 
     /**
      * NameSpaces 삭제(Delete NameSpaces)
@@ -196,28 +196,28 @@ public class NamespacesService {
      * @return return is succeeded
      */
     public ResultStatus deleteNamespaces(String namespace) {
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesDeleteUrl()
                         .replace("{name}", namespace), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
     }
 
-    /**
-     * NameSpaces 수정(Update NameSpaces)
-     *
-     * @param namespace the namespace
-     * @param yaml      the yaml
-     * @return return is succeeded
-     */
-    public ResultStatus updateNamespaces(String namespace, String yaml) {
-        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNamespacesUpdateUrl()
-                        .replace("{name}", namespace), HttpMethod.PUT, yaml, ResultStatus.class);
-        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
-
-    }
+//    /**
+//     * NameSpaces 수정(Update NameSpaces)
+//     *
+//     * @param namespace the namespace
+//     * @param yaml      the yaml
+//     * @return return is succeeded
+//     */
+//    public ResultStatus updateNamespaces(String namespace, String yaml) {
+//        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+//                propertyService.getCpMasterApiListNamespacesUpdateUrl()
+//                        .replace("{name}", namespace), HttpMethod.PUT, yaml, ResultStatus.class, true);
+//        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+//                Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
+//
+//    }
 
 
     /**
@@ -245,7 +245,7 @@ public class NamespacesService {
 
         if (Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
             LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId), HttpMethod.DELETE, null, Object.class);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId), HttpMethod.DELETE, null, Object.class, true);
             return rbResult;
         }
 
@@ -277,8 +277,8 @@ public class NamespacesService {
 
         if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class);
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId + "-" + DEFAULT_NAMESPACE_ADMIN_ROLE + "-binding"), HttpMethod.DELETE, null, Object.class);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class, true);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId + "-" + DEFAULT_NAMESPACE_ADMIN_ROLE + "-binding"), HttpMethod.DELETE, null, Object.class, true);
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE");
@@ -315,7 +315,7 @@ public class NamespacesService {
 
             if (Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
                 LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
-                restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId), HttpMethod.DELETE, null, Object.class);
+                restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId), HttpMethod.DELETE, null, Object.class, true);
                 return rbResult;
             }
             String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);

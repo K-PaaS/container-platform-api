@@ -168,10 +168,10 @@ public class PersistentVolumeClaimsService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public Object createPersistentVolumeClaims(String namespace, String yaml) {
+    public Object createPersistentVolumeClaims(String namespace, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentVolumeClaimsCreateUrl()
-                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+                    propertyService.getCpMasterApiListPersistentVolumeClaimsCreateUrl()
+                            .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
@@ -203,10 +203,10 @@ public class PersistentVolumeClaimsService {
      * @return return is succeeded
      */
 
-    public Object updatePersistentVolumeClaims(String namespace, String resourceName, String yaml) {
+    public Object updatePersistentVolumeClaims(String namespace, String resourceName, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumeClaimsUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, PersistentVolumes.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{persistentVolumeClaimName:.+}", resourceName));

@@ -163,11 +163,11 @@ public class ResourceQuotasController {
         if (isAdmin) {
 
             if (yaml.contains("---")) {
-                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, true);
                 return object;
             }
 
-            return resourceQuotasService.createResourceQuotas(namespace, yaml);
+            return resourceQuotasService.createResourceQuotas(namespace, yaml, true);
         }
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }

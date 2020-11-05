@@ -147,11 +147,11 @@ public class StorageClassesController {
         if (isAdmin) {
 
             if (yaml.contains("---")) {
-                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, true);
                 return object;
             }
 
-            return storageClassesService.createStorageClasses(namespace, yaml);
+            return storageClassesService.createStorageClasses(namespace, yaml, true);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
@@ -176,7 +176,7 @@ public class StorageClassesController {
                                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return storageClassesService.deleteStorageClasses(namespace, resourceName, new HashMap<>());
+            return storageClassesService.deleteStorageClasses(namespace, resourceName);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

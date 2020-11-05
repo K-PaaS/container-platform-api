@@ -385,7 +385,7 @@ public class RestTemplateService {
      * @return the String
      */
     public String getSecretName(String namespace, String userName) {
-        String jsonObj = this.send(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersGetUrl().replace("{namespace}", namespace).replace("{name}", userName), HttpMethod.GET, null, String.class);
+        String jsonObj = this.sendAdmin(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersGetUrl().replace("{namespace}", namespace).replace("{name}", userName), HttpMethod.GET, null, String.class);
 
         JsonObject jsonObject = JsonParser.parseString(jsonObj).getAsJsonObject();
         JsonElement element = jsonObject.getAsJsonObject().get("secrets");

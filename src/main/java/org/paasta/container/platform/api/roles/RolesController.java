@@ -168,11 +168,11 @@ public class RolesController {
         if (isAdmin) {
 
             if (yaml.contains("---")) {
-                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, true);
                 return object;
             }
 
-            return rolesService.createRoles(namespace, yaml);
+            return rolesService.createRoles(namespace, yaml, true);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

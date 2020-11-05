@@ -253,7 +253,7 @@ public class UsersService {
             // DB 커밋에 실패했을 경우 k8s 에 만들어진 service account 삭제
             if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
                 LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
-                restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", userName), HttpMethod.DELETE, null, Object.class);
+                restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", userName), HttpMethod.DELETE, null, Object.class, true);
                 return rsDb;
             }
         }
@@ -299,7 +299,7 @@ public class UsersService {
                     // role이 다를 경우
                     if(details.getCpNamespace().equalsIgnoreCase(nsRole.getNamespace()) && !details.getRoleSetCode().equalsIgnoreCase(nsRole.getRole())) {
                         LOGGER.info("Same Namespace >> {}, Default Role >> {}, New Role >> {}", namespace, details.getRoleSetCode(), role);
-                        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + "-" + details.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class);
+                        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + "-" + details.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
                         resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, role);
 
                         updateUser.setPassword(users.getPassword());
@@ -372,10 +372,10 @@ public class UsersService {
         String role = users.getRoleSetCode();
 
         // 기존 service account 삭제
-        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class);
+        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class, true);
 
         // role binding 삭제
-        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + "-" + role + "-binding"), HttpMethod.DELETE, null, Object.class);
+        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + "-" + role + "-binding"), HttpMethod.DELETE, null, Object.class, true);
 
         // DB delete
         ResultStatus rsDb = (ResultStatus) restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DELETE + users.getId(), HttpMethod.DELETE, null, Object.class);
@@ -444,7 +444,7 @@ public class UsersService {
                         Users updatedUser = getUsers(namespace, sa);
 
                         // remove default roleBinding, add new roleBinding
-                        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", sa + "-" + value.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class);
+                        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", sa + "-" + value.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
 
                         updateSetRoleUser(namespace, sa, role, updatedUser);
                         updatedUser.setRoleSetCode(role);
@@ -460,8 +460,8 @@ public class UsersService {
 
                     LOGGER.info("Delete >>> sa :: {}, role :: {}", saName, roleName);
 
-                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class);
-                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + "-" + roleName + "-binding"), HttpMethod.DELETE, null, Object.class);
+                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class, true);
+                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + "-" + roleName + "-binding"), HttpMethod.DELETE, null, Object.class, true);
 
                     rsDb = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{namespace:.+}", namespace).replace("{userId:.+}", saName), HttpMethod.DELETE, null, ResultStatus.class);
                 }

@@ -154,13 +154,14 @@ public class CustomServicesController {
     @PostMapping
     public Object createServices(@PathVariable(value = "cluster") String cluster,
                                  @PathVariable(value = "namespace") String namespace,
-                                 @RequestBody String yaml) throws Exception {
+                                 @RequestBody String yaml,
+                                 @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
         if (yaml.contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, isAdmin);
             return object;
         }
 
-        return customServicesService.createServices(namespace, yaml);
+        return customServicesService.createServices(namespace, yaml, isAdmin);
     }
 
 
@@ -182,9 +183,10 @@ public class CustomServicesController {
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deleteServices(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
-                                       @PathVariable(value = "resourceName") String resourceName) {
+                                       @PathVariable(value = "resourceName") String resourceName,
+                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        return customServicesService.deleteServices(namespace, resourceName, new HashMap<>());
+        return customServicesService.deleteServices(namespace, resourceName, isAdmin);
     }
 
 
@@ -208,9 +210,10 @@ public class CustomServicesController {
     public Object updateServices(@PathVariable(value = "cluster") String cluster,
                                  @PathVariable(value = "namespace") String namespace,
                                  @PathVariable(value = "resourceName") String resourceName,
-                                 @RequestBody String yaml) {
+                                 @RequestBody String yaml,
+                                 @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        return customServicesService.updateServices(namespace, resourceName, yaml);
+        return customServicesService.updateServices(namespace, resourceName, yaml, isAdmin);
     }
 
 }
