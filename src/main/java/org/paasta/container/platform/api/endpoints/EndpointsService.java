@@ -49,66 +49,6 @@ public class EndpointsService {
 
 
     /**
-     * Endpoints 목록 조회(Get Endpoints list)
-     * (User Portal)
-     *
-     * @param namespace  the namespace
-     * @param offset     the offset
-     * @param limit      the limit
-     * @param orderBy    the orderBy
-     * @param order      the order
-     * @param searchName the searchName
-     * @return the endpoints list
-     */
-    EndpointsList getEndpointsList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
-
-
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListEndpointsListUrl()
-                        .replace("{namespace}", namespace)
-                , HttpMethod.GET, null, Map.class);
-
-
-        EndpointsList endpointsList = commonService.setResultObject(responseMap, EndpointsList.class);
-        endpointsList = commonService.resourceListProcessing(endpointsList, offset, limit, orderBy, order, searchName, EndpointsList.class);
-
-
-        return (EndpointsList) commonService.setResultModel(endpointsList, Constants.RESULT_STATUS_SUCCESS);
-    }
-
-    /**
-     * Endpoints 목록 조회(Get Endpoints list)
-     * (Admin Portal)
-     *
-     * @param namespace  the namespace
-     * @param offset     the offset
-     * @param limit      the limit
-     * @param orderBy    the orderBy
-     * @param order      the order
-     * @param searchName the searchName
-     * @return the endpoints list
-     */
-    public Object getEndpointsListAdmin(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
-
-        HashMap responseMap = null;
-
-        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListEndpointsListUrl()
-                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
-
-        try {
-            responseMap = (HashMap) response;
-        } catch (Exception e) {
-            return response;
-        }
-
-        EndpointsListAdmin endpointsListAdmin = commonService.setResultObject(responseMap, EndpointsListAdmin.class);
-        endpointsListAdmin = commonService.resourceListProcessing(endpointsListAdmin, offset, limit, orderBy, order, searchName, EndpointsListAdmin.class);
-
-        return commonService.setResultModel(endpointsListAdmin, Constants.RESULT_STATUS_SUCCESS);
-    }
-
-    /**
      * Endpoints 상세 조회(Get Endpoints list)
      * (User Portal)
      *
@@ -151,30 +91,14 @@ public class EndpointsService {
         }
 
         EndpointsAdmin endpointsAdmin = commonService.setResultObject(responseMap, EndpointsAdmin.class);
+
+        if (endpointsAdmin.getSubsets() == null) {
+            return Constants.NOT_FOUND_RESULT_STATUS;
+        }
+
         endpointsAdmin = endpointsAdminProcessing(endpointsAdmin);
 
         return commonService.setResultModel(endpointsAdmin, Constants.RESULT_STATUS_SUCCESS);
-    }
-
-
-    /**
-     * Endpoints YAML 조회(Get Endpoints yaml)
-     *
-     * @param namespace     the namespace
-     * @param endpointsName the endpoints name
-     * @param resultMap     the result map
-     * @return the endpoints yaml
-     */
-    public Endpoints getEndpointsYaml(String namespace, String endpointsName, HashMap resultMap) {
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListEndpointsGetUrl()
-                        .replace("{namespace}", namespace)
-                        .replace("{name}", endpointsName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
-
-        //noinspection unchecked
-        resultMap.put("sourceTypeYaml", resultString);
-
-        return (Endpoints) commonService.setResultModel(commonService.setResultObject(resultMap, Endpoints.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -242,33 +166,5 @@ public class EndpointsService {
         return returnEndpointsAdmin;
     }
 
-
-    /**
-     * 전체 Namespaces 의 Endpoints Admin 목록 조회(Get Endpoints Admin list in all namespaces)
-     *
-     * @param offset     the offset
-     * @param limit      the limit
-     * @param orderBy    the orderBy
-     * @param order      the order
-     * @param searchName the searchName
-     * @return the services admin list
-     */
-    public Object getEndPointsListAllNamespacesAdmin(int offset, int limit, String orderBy, String order, String searchName) {
-        HashMap responseMap = null;
-
-        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListEndpointsListAllNamespacesUrl(), HttpMethod.GET, null, Map.class);
-
-        try {
-            responseMap = (HashMap) response;
-        } catch (Exception e) {
-            return response;
-        }
-
-        EndpointsListAdmin endpointsListAdmin = commonService.setResultObject(responseMap, EndpointsListAdmin.class);
-        endpointsListAdmin = commonService.resourceListProcessing(endpointsListAdmin, offset, limit, orderBy, order, searchName, EndpointsListAdmin.class);
-
-        return commonService.setResultModel(endpointsListAdmin, Constants.RESULT_STATUS_SUCCESS);
-    }
 
 }
