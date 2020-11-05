@@ -18,7 +18,7 @@ public class LimitRangesItem {
     private Object defaultRequest;
     private Object min;
     private Object max;
-    private Object maxLimitRequestRatio;
+    //private Object maxLimitRequestRatio;
     private String type;
     private String resource;
 }
