@@ -39,6 +39,7 @@ public class UsersController {
     /**
      * Users 전체 목록 조회(Get Users all list)
      *
+     * @param cluster    the cluster
      * @param namespace the namespace
      * @return the users list
      */
@@ -57,6 +58,7 @@ public class UsersController {
     /**
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
+     * @param cluster    the cluster
      * @param namespace the namespace
      * @param isAdmin the isAdmin
      * @return the users list
@@ -80,6 +82,7 @@ public class UsersController {
     /**
      * Namespace 상세 Users 목록 조회(Get Users in namespace list)
      *
+     * @param cluster    the cluster
      * @param namespace the namespace
      * @param isAdmin the isAdmin
      * @return the users list
@@ -105,6 +108,7 @@ public class UsersController {
     /**
      * 각 Namespace 별 Users 상세 조회(Get Users namespace detail)
      *
+     * @param cluster    the cluster
      * @param namespace the namespace
      * @param userId the userId
      * @return the users list
@@ -127,6 +131,7 @@ public class UsersController {
     /**
      * 하나의 Cluster 내 여러 Namespace 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)
      *
+     * @param cluster    the cluster
      * @param userId the userId
      * @return the users detail
      */
@@ -145,6 +150,7 @@ public class UsersController {
     /**
      * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
      *
+     * @param cluster    the cluster
      * @param namespace the namespace
      * @return the users list
      */
@@ -165,6 +171,7 @@ public class UsersController {
      * (Admin Portal)
      * 복수개의 Namespace 에 속할 수 있음
      *
+     * @param cluster    the cluster
      * @param users the users
      * @return return is succeeded
      */
@@ -183,6 +190,7 @@ public class UsersController {
     /**
      * Users 수정(Update Users)
      *
+     * @param cluster    the cluster
      * @param userId the userId
      * @param users the users
      * @param isAdmin the isAdmin
@@ -251,6 +259,7 @@ public class UsersController {
     /**
      * Users 권한 설정(Set Users authority)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @param users the users
      * @return return is succeeded
@@ -273,6 +282,7 @@ public class UsersController {
      * Users 삭제(Delete Users)
      * (All Namespaces)
      *
+     * @param cluster the cluster
      * @param userId the user id
      * @return return is succeeded
      */

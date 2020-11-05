@@ -232,7 +232,7 @@ public class ResourceQuotasController {
 
 
     /**
-     * ResourceQuota Default Template 목록 조회 (Get ResourceQouta Default Template list)
+     * ResourceQuotas Default Template 목록 조회 (Get ResourceQoutas Default Template list)
      *
      * @param cluster   the cluster
      * @param namespace the namespace
@@ -240,7 +240,7 @@ public class ResourceQuotasController {
      * @return the resourceQuota list
      * @throws JsonProcessingException
      */
-    @ApiOperation(value = "ResourceQuota Default Template 목록 조회 (Get ResourceQouta Default Template list)", nickname = "getResourceQuotasDefaultList")
+    @ApiOperation(value = "ResourceQuotas Default Template 목록 조회 (Get ResourceQoutas Default Template list)", nickname = "getResourceQuotasDefaultList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
