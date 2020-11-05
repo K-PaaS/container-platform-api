@@ -136,6 +136,7 @@ public class ReplicaSetsService {
      */
     public ReplicaSetsList getReplicaSetsListLabelSelector(String namespace, String selectors) {
         String requestSelector = "?labelSelector=" + selectors;
+
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListReplicaSetsListUrl()
                         .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
@@ -145,6 +146,29 @@ public class ReplicaSetsService {
 
         return (ReplicaSetsList) commonService.setResultModel(replicaSetsList, Constants.RESULT_STATUS_SUCCESS);
     }
+
+    /**
+     * ReplicaSets 목록 조회(Get ReplicaSets Selector)
+     *(Admin portal)
+     *
+     * @param namespace the namespace
+     * @param selectors the selectors
+     * @return the replicaSets list
+     */
+    public ReplicaSetsListAdmin getReplicaSetsListLabelSelectorAdmin(String namespace, String selectors) {
+        String requestSelector = "?labelSelector=" + selectors;
+
+        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListReplicaSetsListUrl()
+                        .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
+
+        ReplicaSetsListAdmin replicaSetsListAdmin = commonService.setResultObject(resultMap, ReplicaSetsListAdmin.class);
+        replicaSetsListAdmin = commonService.setCommonItemMetaDataBySelector(replicaSetsListAdmin, ReplicaSetsListAdmin.class);
+
+        return (ReplicaSetsListAdmin) commonService.setResultModel(replicaSetsListAdmin, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
 
     /**
      * ReplicaSets 목록 조회(Get ReplicaSets list)
@@ -254,4 +278,6 @@ public class ReplicaSetsService {
 
         return commonService.setResultModel(replicaSetsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
+
+
 }

@@ -66,13 +66,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public Object createAuthenticationResponse(AuthenticationRequest authRequest) {
 
-
         AuthenticationResponse authResponse = new AuthenticationResponse();
 
         UserDetails userdetails = loadUserByUsername(authRequest.getUserId());
 
+        UsersList userListByUserId = usersService.getUsersDetails(authRequest.getUserId());
+        List<Users> userItem = userListByUserId.getItems();
+
         //Generate token
-        String token = jwtUtil.generateToken(userdetails, authRequest);
+        String token = jwtUtil.generateToken(userdetails, authRequest, userListByUserId);
 
         //user_auth get
         String user_auth = userdetails.getAuthorities().toArray()[0].toString();
@@ -88,8 +90,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         // NAMESPACE_ADMIN, USER
         else {
-            UsersList userListByUserId = usersService.getUsersDetails(authRequest.getUserId());
-            List<Users> userItem = userListByUserId.getItems();
 
             //generate loginMetadata & filter default namespace
             List<loginMetaDataItem> loginMetaData = defaultNamespaceFilter(userItem);

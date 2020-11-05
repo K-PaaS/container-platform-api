@@ -1,13 +1,17 @@
 package org.paasta.container.platform.api.login;
 
 import io.jsonwebtoken.*;
+import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -33,9 +37,9 @@ public class JwtUtil {
 		this.jwtExpirationInMs = jwtExpirationInMs;
 	}
 
-	public String generateToken(UserDetails userDetails, AuthenticationRequest authRequest) {
+	public String generateToken(UserDetails userDetails, AuthenticationRequest authRequest, UsersList userListByUserId) {
 		Map<String, Object> claims = new HashMap<>();
-
+		String url = null;
 		Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
 
 		if (roles.contains(new SimpleGrantedAuthority("CLUSTER_ADMIN"))) {
@@ -50,6 +54,10 @@ public class JwtUtil {
 
 		claims.put("IP", authRequest.getClientIp());
 		claims.put("Browser", authRequest.getBrowser());
+		for(Users users : userListByUserId.getItems()) {
+			claims.put(users.getCpNamespace(), users.getSaToken());
+			claims.put("url", users.getClusterApiUrl());
+		}
 
 		return doGenerateToken(claims, userDetails.getUsername());
 	}
@@ -105,6 +113,21 @@ public class JwtUtil {
 		String clientIp = String.valueOf(claims.get("IP"));
 
 		return clientIp;
+	}
+
+	public String getSaTokenFromToken(String authToken, String namespace) {
+		Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken).getBody();
+		String saUserToken = String.valueOf(claims.get(namespace));
+
+		return saUserToken;
+	}
+
+	public String extractJwtFromRequest(HttpServletRequest request) {
+		String bearerToken = request.getHeader("Authorization");
+		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+			return bearerToken.substring(7, bearerToken.length());
+		}
+		return null;
 	}
 
 

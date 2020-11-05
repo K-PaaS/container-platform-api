@@ -139,8 +139,12 @@ public class ReplicaSetsController {
             @ApiImplicitParam(name = "selector", value = "셀렉터", required = true, dataType = "string", paramType = "query")
     })
     @GetMapping(value = "/resources")
-    public ReplicaSetsList getReplicaSetsListLabelSelector(@PathVariable("namespace") String namespace,
-                                                           @RequestParam(name = "selector", required = true, defaultValue = "") String selector) {
+    public Object getReplicaSetsListLabelSelector(@PathVariable("namespace") String namespace,
+                                                  @RequestParam(name = "selector", required = true, defaultValue = "") String selector,
+                                                  @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return replicaSetsService.getReplicaSetsListLabelSelectorAdmin(namespace, selector);
+        }
         return replicaSetsService.getReplicaSetsListLabelSelector(namespace, selector);
     }
 
