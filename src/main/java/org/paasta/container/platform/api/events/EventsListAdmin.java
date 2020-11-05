@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.events;
 
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.events.support.EventsAdminItem;
 
 import java.util.List;
@@ -19,20 +20,9 @@ public class EventsListAdmin {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-
-    //private String node;
+    private CommonItemMetaData itemMetaData;
     private List<EventsAdminItem> items;
 
-   /* @JsonIgnore
-    private EventsdeprecatedSource deprecatedSource;
-
-    public String getNode() {
-        return deprecatedSource.getNode();
-    }
-
-    public void setNode(String node) {
-        this.node = node;
-    }*/
 }
 
 
