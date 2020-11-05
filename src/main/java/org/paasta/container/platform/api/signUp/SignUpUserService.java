@@ -82,7 +82,7 @@ public class SignUpUserService {
         users.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
         users.setUserType("USER");
 
-        ResultStatus rsDb = usersService.createUsers(users);
+        ResultStatus rsDb = usersService.createUsers(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, users));
 
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");

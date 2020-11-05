@@ -1,6 +1,8 @@
 package org.paasta.container.platform.api.users;
 
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
+import org.paasta.container.platform.api.clusters.clusters.Clusters;
+import org.paasta.container.platform.api.clusters.clusters.ClustersService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.secret.Secrets;
@@ -35,15 +37,26 @@ public class UsersService {
     private final CommonService commonService;
     private final ResourceYamlService resourceYamlService;
     private final AccessTokenService accessTokenService;
+    private final ClustersService clustersService;
 
-
+    /**
+     * Instantiates a new Users service
+     *
+     * @param restTemplateService the rest template service
+     * @param propertyService     the property service
+     * @param commonService       the common service
+     * @param resourceYamlService the resource yaml service
+     * @param accessTokenService  the access token service
+     * @param clustersService     the clusters service
+     */
     @Autowired
-    public UsersService(RestTemplateService restTemplateService, PropertyService propertyService, CommonService commonService, ResourceYamlService resourceYamlService, AccessTokenService accessTokenService) {
+    public UsersService(RestTemplateService restTemplateService, PropertyService propertyService, CommonService commonService, ResourceYamlService resourceYamlService, AccessTokenService accessTokenService, ClustersService clustersService) {
         this.restTemplateService = restTemplateService;
         this.propertyService = propertyService;
         this.commonService = commonService;
         this.resourceYamlService = resourceYamlService;
         this.accessTokenService = accessTokenService;
+        this.clustersService = clustersService;
     }
 
 
@@ -516,5 +529,23 @@ public class UsersService {
    */
     public Object getUsersListInNamespaceAdmin(String namespace) {
         return restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersListInNamespaceAdmin.class);
+    }
+
+
+    /**
+     * 해당 클러스터 정보의 값을 사용자에 저장
+     *
+     * @param clusterName the cluster name
+     * @param users the users
+     * @return the users
+     */
+    public Users commonSaveClusterInfo(String clusterName, Users users) {
+        Clusters clusters = clustersService.getClusters(clusterName);
+
+        users.setClusterApiUrl(clusters.getClusterApiUrl());
+        users.setClusterName(clusters.getClusterName());
+        users.setClusterToken(clusters.getClusterToken());
+
+        return users;
     }
 }
