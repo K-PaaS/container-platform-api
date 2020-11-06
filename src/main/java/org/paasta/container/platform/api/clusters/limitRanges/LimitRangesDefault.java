@@ -26,4 +26,5 @@ public class LimitRangesDefault {
     private String max;
     private String defaultRequest;
     private String defaultLimit;
+    private String creationTimestamp;
 }

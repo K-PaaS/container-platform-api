@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.common.model.CommonSpec;
+
+import javax.management.monitor.CounterMonitor;
 
 /**
  * ResourceQuotasDefault Model 클래스
@@ -27,10 +31,18 @@ public class ResourceQuotasDefault {
 
     private String status;
     private String checkYn;
+    private String creationTimestamp;
 
-    public ResourceQuotasDefault(String name, String status, String checkYn) {
+    @JsonIgnore
+    private CommonMetaData metadata;
+
+    @JsonIgnore
+    private CommonSpec spec;
+
+    public ResourceQuotasDefault(String name, String status, String checkYn, CommonMetaData metadata) {
         this.name = name;
         this.status = status;
         this.checkYn = checkYn;
+        this.metadata = metadata;
     }
 }

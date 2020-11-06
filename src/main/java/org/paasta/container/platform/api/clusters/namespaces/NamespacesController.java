@@ -163,6 +163,9 @@ public class NamespacesController {
                                        @RequestBody NamespacesInitTemplate initTemplate,
                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
+        if(initTemplate.getName().equals(Constants.ALL_NAMESPACES))
+            return Constants.BAD_REQUEST_ACCESS_RESULT_STATUS;
+
         if (isAdmin) {
             return namespacesService.createInitNamespaces(initTemplate);
         }
