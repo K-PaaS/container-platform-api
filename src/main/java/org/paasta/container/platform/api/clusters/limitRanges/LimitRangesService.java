@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.clusters.limitRanges;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
+import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasYaml;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
@@ -132,6 +133,25 @@ public class LimitRangesService {
         return commonService.setResultModel(commonService.setResultObject(responseMap, LimitRangesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+    /**
+     * LimitRanges YAML 조회(Get v yaml)
+     *
+     * @param namespace    the namespace
+     * @param resourceName the resource name
+     * @param resultMap    the resultMap
+     * @return the limitRanges yaml
+     */
+    public LimitRangesYaml getLimitRangesYaml(String namespace, String resourceName, HashMap resultMap) {
+        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListLimitRangesGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+
+        //noinspection unchecked
+        resultMap.put("sourceTypeYaml", resultString);
+
+        return (LimitRangesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, LimitRangesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+    }
 
     /**
      * LimitRanges 생성(Create LimitRanges)
@@ -326,4 +346,6 @@ public class LimitRangesService {
 
         return keyList;
     }
+
+
 }
