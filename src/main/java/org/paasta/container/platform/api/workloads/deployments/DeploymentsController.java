@@ -127,7 +127,7 @@ public class DeploymentsController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Deployments getDeploymentsYaml(@PathVariable(value = "namespace") String namespace,
+    public DeploymentsYaml getDeploymentsYaml(@PathVariable(value = "namespace") String namespace,
                                           @PathVariable(value = "resourceName") String resourceName) {
         return deploymentsService.getDeploymentsYaml(namespace, resourceName, new HashMap<>());
     }

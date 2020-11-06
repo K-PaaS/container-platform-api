@@ -147,7 +147,7 @@ public class DeploymentsService {
      * @param resultMap      the result map
      * @return the deployments yaml
      */
-    public Deployments getDeploymentsYaml(String namespace, String deploymentName, HashMap resultMap) {
+    public DeploymentsYaml getDeploymentsYaml(String namespace, String deploymentName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsGetUrl()
                         .replace("{namespace}", namespace)
@@ -156,7 +156,7 @@ public class DeploymentsService {
         //noinspection unchecked
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (Deployments) commonService.setResultModel(commonService.setResultObject(resultMap, Deployments.class), Constants.RESULT_STATUS_SUCCESS);
+        return (DeploymentsYaml) commonService.setResultModel(commonService.setResultObject(resultMap, DeploymentsYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
