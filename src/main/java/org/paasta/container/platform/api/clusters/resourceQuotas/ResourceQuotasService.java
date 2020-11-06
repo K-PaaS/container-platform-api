@@ -180,14 +180,6 @@ public class ResourceQuotasService {
         Map YamlMetadata = YamlUtil.parsingYamlMap(yaml, "metadata");
         String createYamlResourceName = YamlMetadata.get("name").toString();
 
-        // ResourceQuotas DB Template name don't use when common create ResourceQuotas
-        if (Constants.DEFAULT_LOW_RESOURCE_QUOTA_NAME.equals(createYamlResourceName)
-                || Constants.DEFAULT_MEDIUM_RESOURCE_QUOTA_NAME.equals(createYamlResourceName)
-                || Constants.DEFAULT_HIGH_RESOURCE_QUOTA_NAME.equals(createYamlResourceName)) {
-            return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.CONFLICT.getMsg(),
-                    CommonStatusCode.CONFLICT.getCode(), CommonStatusCode.CONFLICT.getMsg(), null);
-        }
-
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
