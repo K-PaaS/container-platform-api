@@ -103,7 +103,6 @@ public class StorageClassesController {
     /**
      * StorageClasses YAML 조회(Get StorageClasses yaml)
      *
-     * @param namespace    the namespace
      * @param resourceName the resource name
      * @param isAdmin      the isAdmin
      * @return the storageClasses yaml
@@ -114,12 +113,11 @@ public class StorageClassesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Object getStorageClassesYaml(@PathVariable(value = "namespace") String namespace,
-                                        @PathVariable(value = "resourceName") String resourceName,
+    public Object getStorageClassesYaml(@PathVariable(value = "resourceName") String resourceName,
                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return storageClassesService.getStorageClassesYaml(namespace, resourceName, new HashMap<>());
+            return storageClassesService.getStorageClassesYaml(resourceName, new HashMap<>());
         }
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
