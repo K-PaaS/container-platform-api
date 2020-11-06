@@ -121,7 +121,7 @@ public class ReplicaSetsController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public ReplicaSets getReplicaSetsYaml(@PathVariable(value = "namespace") String namespace,
+    public ReplicaSetsYaml getReplicaSetsYaml(@PathVariable(value = "namespace") String namespace,
                                           @PathVariable(value = "resourceName") String resourceName) {
         return replicaSetsService.getReplicaSetsYaml(namespace, resourceName);
     }

@@ -114,7 +114,7 @@ public class ReplicaSetsService {
      * @param replicaSetsName the replicaSets name
      * @return the replicaSets yaml
      */
-    public ReplicaSets getReplicaSetsYaml(String namespace, String replicaSetsName) {
+    public ReplicaSetsYaml getReplicaSetsYaml(String namespace, String replicaSetsName) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListReplicaSetsGetUrl()
                         .replace("{namespace}", namespace)
@@ -124,7 +124,7 @@ public class ReplicaSetsService {
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (ReplicaSets) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSets.class), Constants.RESULT_STATUS_SUCCESS);
+        return (ReplicaSetsYaml) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSetsYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
