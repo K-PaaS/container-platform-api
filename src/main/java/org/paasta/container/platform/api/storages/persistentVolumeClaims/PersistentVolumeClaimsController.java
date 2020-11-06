@@ -118,7 +118,7 @@ public class PersistentVolumeClaimsController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public PersistentVolumeClaims getPersistentVolumeClaimsYaml(@PathVariable(value = "namespace") String namespace,
+    public PersistentVolumeClaimsYaml getPersistentVolumeClaimsYaml(@PathVariable(value = "namespace") String namespace,
                                                                 @PathVariable(value = "resourceName") String resourceName) {
         return persistentVolumeClaimsService.getPersistentVolumeClaimsYaml(namespace, resourceName, new HashMap<>());
     }
