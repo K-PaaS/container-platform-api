@@ -164,7 +164,7 @@ public class NamespacesService {
      * @param namespace the namespace
      * @return the namespaces yaml
      */
-    public Namespaces getNamespacesYaml(String namespace) {
+    public NamespacesYaml getNamespacesYaml(String namespace) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesGetUrl()
                         .replace("{namespace}", namespace), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
@@ -172,7 +172,7 @@ public class NamespacesService {
         HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (Namespaces) commonService.setResultModel(commonService.setResultObject(resultMap, Namespaces.class), Constants.RESULT_STATUS_SUCCESS);
+        return (NamespacesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, NamespacesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 //    /**
