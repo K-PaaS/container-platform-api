@@ -96,7 +96,7 @@ public class RolesService {
      * @param resultMap    the result map
      * @return the roles yaml
      */
-    public Roles getRolesYaml(String namespace, String resourceName, HashMap resultMap) {
+    public RolesYaml getRolesYaml(String namespace, String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListRolesGetUrl()
                         .replace("{namespace}", namespace)
@@ -104,7 +104,7 @@ public class RolesService {
 
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (Roles) commonService.setResultModel(commonService.setResultObject(resultMap, Roles.class), Constants.RESULT_STATUS_SUCCESS);
+        return (RolesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, RolesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 

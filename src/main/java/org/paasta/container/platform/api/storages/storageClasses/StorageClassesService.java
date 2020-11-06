@@ -100,20 +100,17 @@ public class StorageClassesService {
     /**
      * StorageClasses YAML 조회(Get StorageClasses yaml)
      *
-     * @param namespace    the namespace
      * @param resourceName the resource name
      * @param resultMap    the result map
      * @return the storageClasses yaml
      */
-    public StorageClasses getStorageClassesYaml(String namespace, String resourceName, HashMap resultMap) {
+    public StorageClassesYaml getStorageClassesYaml(String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListStorageClassesGetUrl()
-                        .replace("{namespace}", namespace)
-                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+                propertyService.getCpMasterApiListStorageClassesGetUrl().replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (StorageClasses) commonService.setResultModel(commonService.setResultObject(resultMap, StorageClasses.class), Constants.RESULT_STATUS_SUCCESS);
+        return (StorageClassesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, StorageClassesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

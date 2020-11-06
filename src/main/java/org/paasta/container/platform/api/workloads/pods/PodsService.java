@@ -223,14 +223,14 @@ public class PodsService {
      * @param resultMap the result map
      * @return the pods yaml
      */
-    public Pods getPodsYaml(String namespace, String podName, HashMap resultMap) {
+    public PodsYaml getPodsYaml(String namespace, String podName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsGetUrl().replace("{namespace}", namespace).replace("{name}", podName),
                 HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
         //noinspection unchecked
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (Pods) commonService.setResultModel(commonService.setResultObject(resultMap, Pods.class), Constants.RESULT_STATUS_SUCCESS);
+        return (PodsYaml) commonService.setResultModel(commonService.setResultObject(resultMap, PodsYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

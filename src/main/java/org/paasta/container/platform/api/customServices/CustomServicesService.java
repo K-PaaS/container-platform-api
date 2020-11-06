@@ -91,7 +91,7 @@ public class CustomServicesService {
      * @param resultMap    the result map
      * @return the services yaml
      */
-    public CustomServices getCustomServicesYaml(String namespace, String resourceName, HashMap resultMap) {
+    public CustomServicesYaml getCustomServicesYaml(String namespace, String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListServicesGetUrl()
                         .replace("{namespace}", namespace)
@@ -100,7 +100,7 @@ public class CustomServicesService {
         //noinspection unchecked
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (CustomServices) commonService.setResultModel(commonService.setResultObject(resultMap, CustomServices.class), Constants.RESULT_STATUS_SUCCESS);
+        return (CustomServicesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, CustomServicesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 

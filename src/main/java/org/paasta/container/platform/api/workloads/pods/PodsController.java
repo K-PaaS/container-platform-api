@@ -174,7 +174,7 @@ public class PodsController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Pods getPodsYaml(@PathVariable(value = "namespace") String namespace,
+    public PodsYaml getPodsYaml(@PathVariable(value = "namespace") String namespace,
                             @PathVariable(value = "resourceName") String resourceName) {
         return podsService.getPodsYaml(namespace, resourceName, new HashMap<>());
     }

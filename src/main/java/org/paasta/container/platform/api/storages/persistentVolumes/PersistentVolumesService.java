@@ -77,21 +77,19 @@ public class PersistentVolumesService {
     /**
      * PersistentVolumes YAML 조회(Get PersistentVolumes yaml)
      *
-     * @param namespace the namespace
      * @param resourceName the resource name
      * @param resultMap the result map
      * @return the persistentVolumes yaml
      */
-    public PersistentVolumes getPersistentVolumesYaml(String namespace, String resourceName, HashMap resultMap) {
-        String resulString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public PersistentVolumesYaml getPersistentVolumesYaml(String resourceName, HashMap resultMap) {
+        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesGetUrl()
-                        .replace("{namespace}", namespace)
                         .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
         //noinspection unchecked
-        resultMap.put("sourceTypeYaml", resulString);
+        resultMap.put("sourceTypeYaml", resultString);
 
-        return (PersistentVolumes) commonService.setResultModel(commonService.setResultObject(resultMap, PersistentVolumes.class), Constants.RESULT_STATUS_SUCCESS);
+        return (PersistentVolumesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, PersistentVolumesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

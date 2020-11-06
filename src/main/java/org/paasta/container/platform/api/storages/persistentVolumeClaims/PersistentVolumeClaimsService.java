@@ -149,7 +149,7 @@ public class PersistentVolumeClaimsService {
      * @param resultMap    the result map
      * @return the persistentVolumeClaims yaml
      */
-    public PersistentVolumeClaims getPersistentVolumeClaimsYaml(String namespace, String resourceName, HashMap resultMap) {
+    public PersistentVolumeClaimsYaml getPersistentVolumeClaimsYaml(String namespace, String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumeClaimsGetUrl()
                         .replace("{namespace}", namespace)
@@ -158,7 +158,7 @@ public class PersistentVolumeClaimsService {
         //noinspection unchecked
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (PersistentVolumeClaims) commonService.setResultModel(commonService.setResultObject(resultMap, PersistentVolumeClaims.class), Constants.RESULT_STATUS_SUCCESS);
+        return (PersistentVolumeClaimsYaml) commonService.setResultModel(commonService.setResultObject(resultMap, PersistentVolumeClaimsYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

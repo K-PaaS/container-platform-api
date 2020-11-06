@@ -157,16 +157,16 @@ public class ResourceQuotasService {
      * @param resultMap    the resultMap
      * @return the resourceQuotas yaml
      */
-    public ResourceQuotas getResourceQuotasYaml(String namespace, String resourceName, HashMap resultMap) {
-        String resulString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public ResourceQuotasYaml getResourceQuotasYaml(String namespace, String resourceName, HashMap resultMap) {
+        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
         //noinspection unchecked
-        resultMap.put("sourceTypeYaml", resulString);
+        resultMap.put("sourceTypeYaml", resultString);
 
-        return (ResourceQuotas) commonService.setResultModel(commonService.setResultObject(resultMap, ResourceQuotas.class), Constants.RESULT_STATUS_SUCCESS);
+        return (ResourceQuotasYaml) commonService.setResultModel(commonService.setResultObject(resultMap, ResourceQuotasYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

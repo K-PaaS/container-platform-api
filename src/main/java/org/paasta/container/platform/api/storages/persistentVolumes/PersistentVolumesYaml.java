@@ -1,0 +1,24 @@
+package org.paasta.container.platform.api.storages.persistentVolumes;
+
+import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsSpec;
+import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsStatus;
+
+import java.util.Map;
+
+/**
+ * PersistentVolumes Model 클래스
+ *
+ * @author jjy
+ * @version 1.0
+ * @since 2020.10.19
+ */
+@Data
+public class PersistentVolumesYaml {
+    private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
+    private String sourceTypeYaml;
+}
