@@ -336,14 +336,14 @@ public class CommonService {
 
         List resourceItemList = getField("items", resourceList);
 
-        if (searchName != null) {
+        if (searchName != null && !searchName.equals("")) {
             searchName = searchName.trim();
         }
 
         // 1. 키워드 match에 따른 리스트 필터
-        if (searchName != null || searchName.length() > 0) {
+        if (searchName != null && !searchName.equals("")) {
             resourceItemList = searchKeywordForResourceName(resourceItemList, searchName);
-        }
+    }
 
         // 2. 조건에 따른 리스트 정렬
         resourceItemList = sortingListByCondition(resourceItemList, orderBy, order);
