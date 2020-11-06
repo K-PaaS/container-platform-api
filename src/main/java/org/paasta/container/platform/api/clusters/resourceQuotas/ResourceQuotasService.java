@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.YamlUtil;
@@ -234,7 +235,7 @@ public class ResourceQuotasService {
      * @return the resourceQuotas list
      * @throws JsonProcessingException
      */
-    public Object getRqDefaultList(String namespace) throws JsonProcessingException {
+    public Object getRqDefaultList(String namespace, int offset, int limit, String orderBy, String order, String searchName) throws JsonProcessingException {
         ResourceQuotasListAdmin resourceQuotasList = (ResourceQuotasListAdmin) getResourceQuotasListAdmin(namespace, 0, 0, "creationTime", "desc", "");
         ResourceQuotasDefaultList resourceQuotasDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, ResourceQuotasDefaultList.class);
 
@@ -251,7 +252,14 @@ public class ResourceQuotasService {
             if (k8sRqNameList.contains(resourceQuotasDefault.getName())) {
                 yn = CHECK_Y;
             }
+
+            CommonMetaData metadata = new CommonMetaData();
+
+            metadata.setName(resourceQuotasDefault.getName());
+            metadata.setCreationTimestamp(resourceQuotasDefault.getCreationTimestamp());
+
             resourceQuotasDefault.setCheckYn(yn);
+            resourceQuotasDefault.setMetadata(metadata);
             quotasDefaultList.add(resourceQuotasDefault);
         }
 
@@ -261,17 +269,23 @@ public class ResourceQuotasService {
                 String status = mapper.writeValueAsString(i.getStatus());
 
                 if (!dbRqNameList.contains(i.getName())) {
-                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, CHECK_Y);
+                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, CHECK_Y, i.getMetadata());
                     quotasDefaultList.add(quotasDefault);
                 }
 
             }
 
             defaultList.setItems(quotasDefaultList);
+            defaultList = commonService.setResultObject(defaultList, ResourceQuotasDefaultList.class);
+            defaultList = commonService.resourceListProcessing(defaultList, offset, limit, orderBy, order, searchName, ResourceQuotasDefaultList.class);
+
             return commonService.setResultModel(defaultList, Constants.RESULT_STATUS_SUCCESS);
         }
 
         defaultList.setItems(quotasDefaultList);
+        defaultList = commonService.setResultObject(defaultList, ResourceQuotasDefaultList.class);
+        defaultList = commonService.resourceListProcessing(defaultList, offset, limit, orderBy, order, searchName, ResourceQuotasDefaultList.class);
+
         return commonService.setResultModel(defaultList, Constants.RESULT_STATUS_SUCCESS);
     }
 
