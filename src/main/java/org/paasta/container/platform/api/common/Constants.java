@@ -168,7 +168,9 @@ public class Constants {
 
     public static final String noName = "[-]";
     public static final String separatorString =  "," ;
+    public static final String blankString =  " " ;
 
+    public static final Integer EVENT_DEFAULT_LIMIT  = 5;
 
     /** 서비스 클래스의 Package */
     public static final String SERVICE_PACKAGE = "org.paasta.container.platform.api.";

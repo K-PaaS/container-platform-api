@@ -49,28 +49,48 @@ public class EventsService {
      */
     EventsList getEventsList(String namespace, String resourceUid, String type, int offset, int limit, String orderBy, String order, String searchName) {
 
-        String requestSelector = generateFieldSelector(resourceUid);
+        String requestSelector = generateFieldSelector(type, resourceUid);
         HashMap resultMap = null;
 
-        if (type != null) {
-            //node
-            requestSelector = "?fieldSelector=involvedObject.name=" + resourceUid;
 
-            resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                    propertyService.getCpMasterApiListEventsListAllNamespacesUrl() + requestSelector, HttpMethod.GET, null, Map.class);
-        } else {
-
-            resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                    propertyService.getCpMasterApiListEventsListUrl()
-                            .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
-
-        }
 
         EventsList eventsList = commonService.setResultObject(resultMap, EventsList.class);
         eventsList = commonService.resourceListProcessing(eventsList, offset, limit, orderBy, order, searchName, EventsList.class);
 
         return (EventsList) commonService.setResultModel(eventsList, Constants.RESULT_STATUS_SUCCESS);
     }
+
+
+
+    /**
+     * Resource 의 Events Admin 목록 조회(Get Events Admin list)
+     *
+     * @param namespace   the namespace
+     * @param resourceUid the resourceUid
+     * @param type        the type
+     * @return the events list
+     */
+    public Object getEventsListAdmin(String namespace, String resourceUid, String type) {
+        HashMap responseMap = null;
+
+        String fieldSelector = generateFieldSelector(type, resourceUid);
+        String cpMasterApiListEventsListUrl = generateCpMasterApiListEventsList(type, resourceUid);
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                cpMasterApiListEventsListUrl.replace("{namespace}", namespace) + generateLimitParam() + fieldSelector, HttpMethod.GET, null, Map.class);
+
+
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
+
+        EventsListAdmin eventsListAdmin = commonService.setResultObject(responseMap, EventsListAdmin.class);
+        return commonService.setResultModel(eventsListAdmin, Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
 
     /**
      * 특정 Namespace 의 전체 Events 목록 조회(Get Events list in a Namespace)
@@ -78,79 +98,29 @@ public class EventsService {
      * @param namespace the namespace
      * @return the events list
      */
-    EventsList getNamespaceEventsList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
+    public EventsList getNamespaceEventsList(String namespace) {
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListEventsListUrl()
-                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
+                        .replace("{namespace}", namespace) + generateLimitParam(), HttpMethod.GET, null, Map.class);
 
         EventsList eventsList = commonService.setResultObject(resultMap, EventsList.class);
-        eventsList = commonService.resourceListProcessing(eventsList, offset, limit, orderBy, order, searchName, EventsList.class);
-
         return (EventsList) commonService.setResultModel(eventsList, Constants.RESULT_STATUS_SUCCESS);
     }
 
-
-    /**
-     * Events Admin 목록 조회(Get Events Admin list)
-     *
-     * @param namespace   the namespace
-     * @param resourceUid the resourceUid
-     * @param offset      the offset
-     * @param limit       the limit
-     * @param orderBy     the orderBy
-     * @param order       the order
-     * @param searchName  the searchName
-     * @return the events list
-     */
-    public Object getEventsListAdmin(String namespace, String resourceUid, String type, int offset, int limit, String orderBy, String order, String searchName) {
-        Object response = null;
-        HashMap responseMap = null;
-
-        String param = generateFieldSelector(resourceUid);
-
-        if (type != null) {
-            //node
-            param = "?fieldSelector=involvedObject.name=" + resourceUid;
-
-            response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                    propertyService.getCpMasterApiListEventsListAllNamespacesUrl() + param, HttpMethod.GET, null, Map.class);
-        } else {
-
-            response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                    propertyService.getCpMasterApiListEventsListUrl()
-                            .replace("{namespace}", namespace) + param, HttpMethod.GET, null, Map.class);
-
-        }
-
-        try {
-            responseMap = (HashMap) response;
-        } catch (Exception e) {
-            return response;
-        }
-
-        EventsListAdmin eventsListAdmin = commonService.setResultObject(responseMap, EventsListAdmin.class);
-        eventsListAdmin = commonService.resourceListProcessing(eventsListAdmin, offset, limit, orderBy, order, searchName, EventsListAdmin.class);
-        return commonService.setResultModel(eventsListAdmin, Constants.RESULT_STATUS_SUCCESS);
-    }
 
 
     /**
      * 특정 Namespace 의 전체 Events Admin 목록 조회(Get Events Admin list in a Namespace)
      *
-     * @param namespace  the namespace
-     * @param offset     the offset
-     * @param limit      the limit
-     * @param orderBy    the orderBy
-     * @param order      the order
-     * @param searchName the searchName
+     * @param namespace the namespace
      * @return the events list
      */
-    public Object getNamespaceEventsListAdmin(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
+    public Object getNamespaceEventsListAdmin(String namespace) {
         HashMap responseMap = null;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListEventsListUrl()
-                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
+                propertyService.getCpMasterApiListEventsListUrl().replace("{namespace}", namespace) + generateLimitParam()
+                , HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
@@ -159,20 +129,47 @@ public class EventsService {
         }
 
         EventsListAdmin eventsListAdmin = commonService.setResultObject(responseMap, EventsListAdmin.class);
-        eventsListAdmin = commonService.resourceListProcessing(eventsListAdmin, offset, limit, orderBy, order, searchName, EventsListAdmin.class);
-
         return commonService.setResultModel(eventsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
-     * Field Selector Parameter 생성 ( Generate Field Selector Parameter )
+     * Field Selector Parameter 생성 (Generate Field Selector Parameter)
      *
      * @param resourceUid the namespace
      * @return the string
      */
-    public String generateFieldSelector(String resourceUid) {
-        return "?fieldSelector=involvedObject.uid=" + resourceUid;
+    public String generateFieldSelector(String type, String resourceUid) {
+
+        String fieldSelector = "&fieldSelector=involvedObject.uid=" + resourceUid;
+
+        if (type != null) {
+            // node
+            fieldSelector = "&fieldSelector=involvedObject.name=" + resourceUid;
+        }
+
+        return fieldSelector;
+    }
+
+    /**
+     * Node와 타 리소스의 Event 목록 조회 Endpoint 구분 (Separate Endpoints  from Nodes and Other Resources)
+     *
+     * @param resourceUid the namespace
+     * @return the string
+     */
+    public String generateCpMasterApiListEventsList(String type, String resourceUid) {
+
+        String cpMasterApiListEventsList = propertyService.getCpMasterApiListEventsListUrl();
+
+        if (type != null) {
+            // node
+            cpMasterApiListEventsList = propertyService.getCpMasterApiListEventsListAllNamespacesUrl();
+        }
+
+        return cpMasterApiListEventsList;
     }
 
 
+    public String generateLimitParam() {
+        return "?limit=" + Constants.EVENT_DEFAULT_LIMIT;
+    }
 }

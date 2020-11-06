@@ -11,9 +11,9 @@ import springfox.documentation.annotations.ApiIgnore;
 /**
  * Endpoints Controller 클래스
  *
- * @author hrjin
+ * @author kjhoon
  * @version 1.0
- * @since 2020.09.17
+ * @since 2020.11.06
  */
 @Api(value = "EndpointsController v1")
 @RestController
