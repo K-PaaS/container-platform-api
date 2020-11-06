@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -189,7 +190,7 @@ public class LimitRangesService {
      * @param namespace the namespace
      * @return the limitRanges template list
      */
-    public Object getLimitRangesTemplateList(String namespace) {
+    public Object getLimitRangesTemplateList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
         LimitRangesListAdmin limitRangesList = (LimitRangesListAdmin) getLimitRangesListAdmin(namespace, 0, 0, "creationTime", "desc", "");
         LimitRangesDefaultList defaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/limitRanges", HttpMethod.GET, null, LimitRangesDefaultList.class);
 
@@ -240,16 +241,24 @@ public class LimitRangesService {
                     serversItem.setName(i.getName());
                     serversItem.setLimits(list);
                     serversItem.setCheckYn(CHECK_Y);
+                    serversItem.setMetadata(i.getMetadata());
+                    serversItem.setSpec(i.getSpec());
 
                     serversItemList.add(serversItem);
                 }
             }
 
             serverList.setItems(serversItemList);
+            serverList = commonService.setResultObject(serverList, LimitRangesTemplateList.class);
+            serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
+
             return commonService.setResultModel(serverList, Constants.RESULT_STATUS_SUCCESS);
         }
 
         serverList.setItems(serversItemList);
+        serverList = commonService.setResultObject(serverList, LimitRangesTemplateList.class);
+        serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
+
         return commonService.setResultModel(serverList, Constants.RESULT_STATUS_SUCCESS);
     }
 
@@ -264,6 +273,7 @@ public class LimitRangesService {
         LimitRangesItem map = new LimitRangesItem();
         List<LimitRangesItem> list = new ArrayList<>();
         LimitRangesTemplateItem item = new LimitRangesTemplateItem();
+        CommonMetaData metadata = new CommonMetaData();
 
         map.setDefaultRequest(limitRangesDefault.getDefaultRequest());
         map.setMin(limitRangesDefault.getMin());
@@ -274,9 +284,13 @@ public class LimitRangesService {
 
         list.add(map);
 
+        metadata.setName(limitRangesDefault.getName());
+        metadata.setCreationTimestamp(limitRangesDefault.getCreationTimestamp());
+
         item.setName(limitRangesDefault.getName());
         item.setLimits(list);
         item.setCheckYn(yn);
+        item.setMetadata(metadata);
 
         return item;
     }
