@@ -111,18 +111,16 @@ public class UsersService {
             usersDetails = convert(users, UsersAdmin.UsersDetails.class);
             Object obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl().replace("{namespace}", usersDetails.getCpNamespace()).replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class);
 
-            if(obj instanceof ResultStatus) {
-                return obj;
+            if (!(obj instanceof ResultStatus)) {
+                // k8s에서 secret 정보 조회
+                Secrets secrets = (Secrets) commonService.setResultModel(commonService.setResultObject(obj, Secrets.class), Constants.RESULT_STATUS_SUCCESS);
+                usersDetails.setServiceAccountUid(secrets.getMetadata().getUid());
+                usersDetails.setSecrets(UsersAdmin.Secrets.builder()
+                        .saSecret(secrets.getMetadata().getName())
+                        .secretLabels(secrets.getMetadata().getLabels())
+                        .secretType(secrets.getType()).build());
+
             }
-
-            // k8s에서 secret 정보 조회
-            Secrets secrets = (Secrets) commonService.setResultModel(commonService.setResultObject(obj, Secrets.class), Constants.RESULT_STATUS_SUCCESS);
-            usersDetails.setServiceAccountUid(secrets.getMetadata().getUid());
-            usersDetails.setSecrets(UsersAdmin.Secrets.builder()
-                    .saSecret(secrets.getMetadata().getName())
-                    .secretLabels(secrets.getMetadata().getLabels())
-                    .secretType(secrets.getType()).build());
-
             usersDetailsList.add(usersDetails);
         }
 
