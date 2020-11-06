@@ -128,7 +128,7 @@ public class CustomServicesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public CustomServices getCustomServicesYaml(@PathVariable(value = "cluster") String cluster,
+    public CustomServicesYaml getCustomServicesYaml(@PathVariable(value = "cluster") String cluster,
                                                 @PathVariable(value = "namespace") String namespace,
                                                 @PathVariable(value = "resourceName") String resourceName) {
 
