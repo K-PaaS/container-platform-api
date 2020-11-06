@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.CodeSignature;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.InspectionUtil;
 import org.paasta.container.platform.api.common.util.YamlUtil;
@@ -154,14 +155,14 @@ public class MethodHandler {
             if (StringUtils.isNotEmpty(createYamlResourceName) && StringUtils.isNotEmpty(createYamlResourceNamespace)) {
                 if (createYamlResourceName.startsWith("kube") || createYamlResourceNamespace.startsWith("kube")) {
                     LOGGER.info("The prefix 'kube-' is not allowed.':::::::::error");
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The prefix 'kube-' is not allowed.", 422, "The prefix 'kube-' is not allowed.");
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW);
                 } else {
                     break;
                 }
             } else if (StringUtils.isNotEmpty(createYamlResourceName) && StringUtils.isEmpty(createYamlResourceNamespace)) {
                 if (createYamlResourceName.startsWith("kube")) {
                     LOGGER.info("The prefix 'kube-' is not allowed.':::::::::error");
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The prefix 'kube-' is not allowed.", 422, "The prefix 'kube-' is not allowed.");
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW);
                 } else {
                     break;
                 }
@@ -180,7 +181,8 @@ public class MethodHandler {
                     break;
                 } else {
                     LOGGER.info("the namespace of the provided object does not match the namespace sent on the request':::::::::error");
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, "BadRequest", 400, "the namespace of the provided object does not match the namespace sent on the request");
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.name(),
+                            CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NOT_MATCH_NAMESPACES);
                 }
             } else {
                 break;

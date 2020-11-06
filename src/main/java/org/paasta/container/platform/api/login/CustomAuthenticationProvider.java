@@ -1,6 +1,6 @@
 package org.paasta.container.platform.api.login;
 
-import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.MessageConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         if (authentication == null) {
-            throw new InternalAuthenticationServiceException(Constants.ID_PASSWORD_REQUIRED);
+            throw new InternalAuthenticationServiceException(MessageConstant.ID_PASSWORD_REQUIRED);
         }
 
         String username = authentication.getPrincipal().toString(); //USER ID
@@ -35,32 +35,32 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 
         if( username == null || username.length() < 1) {
-            throw new AuthenticationCredentialsNotFoundException(Constants.ID_REQUIRED);
+            throw new AuthenticationCredentialsNotFoundException(MessageConstant.ID_REQUIRED);
         }
 
         if( password == null || password.length() < 1) {
-            throw new AuthenticationCredentialsNotFoundException(Constants.PASSWORD_REQUIRED);
+            throw new AuthenticationCredentialsNotFoundException(MessageConstant.PASSWORD_REQUIRED);
         }
 
         UserDetails loadedUser = customUserDetailsService.loadUserByUsername(username);
 
         if (loadedUser == null) {
-            throw new InternalAuthenticationServiceException(Constants.NON_EXISTENT_ID);
+            throw new InternalAuthenticationServiceException(MessageConstant.NON_EXISTENT_ID);
         }
         if (!loadedUser.isAccountNonLocked()) {
-            throw new LockedException(Constants.UNAVAILABLE_ID);
+            throw new LockedException(MessageConstant.UNAVAILABLE_ID);
         }
         if (!loadedUser.isEnabled()) {
-            throw new DisabledException(Constants.UNAVAILABLE_ID);
+            throw new DisabledException(MessageConstant.UNAVAILABLE_ID);
         }
         if (!loadedUser.isAccountNonExpired()) {
-            throw new AccountExpiredException(Constants.UNAVAILABLE_ID);
+            throw new AccountExpiredException(MessageConstant.UNAVAILABLE_ID);
         }
         if (!passwordEncoder.matches(password, loadedUser.getPassword())) {
-            throw new BadCredentialsException(Constants.INVALID_PASSWORD);
+            throw new BadCredentialsException(MessageConstant.INVALID_PASSWORD);
         }
         if (!loadedUser.isCredentialsNonExpired()) {
-            throw new CredentialsExpiredException(Constants.UNAVAILABLE_ID);
+            throw new CredentialsExpiredException(MessageConstant.UNAVAILABLE_ID);
         }
         UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(loadedUser, null, loadedUser.getAuthorities());
         result.setDetails(authentication.getDetails());

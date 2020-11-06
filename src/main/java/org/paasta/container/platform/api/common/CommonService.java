@@ -8,8 +8,6 @@ import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -306,14 +304,14 @@ public class CommonService {
 
 
         if (limit < 0) {
-            throw new IllegalArgumentException(Constants.LIMIT_ILLEGALARGUMENT);
+            throw new IllegalArgumentException(MessageConstant.LIMIT_ILLEGALARGUMENT);
         }
         if (offset < 0) {
-            throw new IllegalArgumentException(Constants.OFFSET_ILLEGALARGUMENT);
+            throw new IllegalArgumentException(MessageConstant.OFFSET_ILLEGALARGUMENT);
         }
 
         if (offset > 0 && limit == 0) {
-            throw new IllegalArgumentException(Constants.OFFSET_REQUIRES_LIMIT_ILLEGALARGUMENT);
+            throw new IllegalArgumentException(MessageConstant.OFFSET_REQUIRES_LIMIT_ILLEGALARGUMENT);
         }
 
 

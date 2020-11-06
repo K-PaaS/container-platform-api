@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.login;
 
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.login.support.loginMetaDataItem;
@@ -60,7 +61,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             roles = Arrays.asList(new SimpleGrantedAuthority(user.getUserType()));
             return new User(user.getUserId(), user.getPassword(), roles);
         }
-        throw new UsernameNotFoundException(Constants.NON_EXISTENT_ID);
+        throw new UsernameNotFoundException(MessageConstant.NON_EXISTENT_ID);
     }
 
 
@@ -85,8 +86,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             Users user = usersService.getUsersDetailsForLogin(userdetails.getUsername(), "true");
 
-            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                    Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, null,  user.getClusterName());
+            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
+                    MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, null,  user.getClusterName());
         }
         // NAMESPACE_ADMIN, USER
         else {
@@ -96,11 +97,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             if (loginMetaData.size() == 0) {
                 //in-active user
-                return new ResultStatus(Constants.RESULT_STATUS_FAIL, Constants.LOGIN_FAIL, CommonStatusCode.FORBIDDEN.getCode(), Constants.INACTIVE_USER_ACCESS);
+                return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_FAIL, CommonStatusCode.FORBIDDEN.getCode(), MessageConstant.INACTIVE_USER_ACCESS);
             }
 
-            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, Constants.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                    Constants.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, null);
+            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
+                    MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, null);
 
         }
 

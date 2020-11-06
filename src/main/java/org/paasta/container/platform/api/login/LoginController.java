@@ -5,21 +5,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.config.NoAuth;
-import org.paasta.container.platform.api.login.support.loginMetaDataItem;
-import org.paasta.container.platform.api.users.Users;
-import org.paasta.container.platform.api.users.UsersList;
-import org.paasta.container.platform.api.users.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Login Controller 클래스
@@ -39,11 +32,6 @@ public class LoginController {
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    @Autowired
-    private UsersService userService;
-
-    @Autowired
-    private JwtUtil jwtUtil;
 
     /**
      * 사용자 로그인(User login)
@@ -61,12 +49,13 @@ public class LoginController {
     @ResponseBody
     public Object userLogin(@RequestBody AuthenticationRequest authRequest,
                             @RequestParam(required = true, name = "isAdmin", defaultValue = "false") String isAdmin) {
+
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                     authRequest.getUserId(), authRequest.getPassword()));
         } catch (Exception e) {
 
-            ResultStatus resultStatus = new ResultStatus(Constants.RESULT_STATUS_FAIL, Constants.LOGIN_FAIL,
+            ResultStatus resultStatus = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_FAIL,
                     CommonStatusCode.UNAUTHORIZED.getCode(), e.getMessage());
 
             return resultStatus;
