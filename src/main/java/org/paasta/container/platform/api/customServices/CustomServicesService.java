@@ -111,10 +111,10 @@ public class CustomServicesService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public Object createServices(String namespace, String yaml) {
+    public Object createServices(String namespace, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListServicesCreateUrl()
-                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_SERVICES);
@@ -126,13 +126,20 @@ public class CustomServicesService {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap    the result map
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
-    public ResultStatus deleteServices(String namespace, String resourceName, HashMap resultMap) {
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListServicesDeleteUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+    public ResultStatus deleteServices(String namespace, String resourceName, boolean isAdmin) {
+        ResultStatus resultStatus;
+        if(isAdmin) {
+            resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListServicesDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+        } else {
+            resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListServicesDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+        }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_SERVICES);
@@ -147,10 +154,10 @@ public class CustomServicesService {
      * @param yaml         the yaml
      * @return return is succeeded
      */
-    public Object updateServices(String namespace, String resourceName, String yaml) {
+    public Object updateServices(String namespace, String resourceName, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListServicesUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_SERVICES_DETAIL.replace("{serviceName:.+}", resourceName));

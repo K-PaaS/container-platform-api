@@ -49,7 +49,7 @@ public class AccessTokenService {
         String caCertToken;
         String userToken;
 
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListSecretsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", accessTokenName), HttpMethod.GET, null, Map.class);

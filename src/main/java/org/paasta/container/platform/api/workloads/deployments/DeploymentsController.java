@@ -149,13 +149,14 @@ public class DeploymentsController {
     @PostMapping
     public Object createDeployments(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
-                                    @RequestBody String yaml) throws Exception {
+                                    @RequestBody String yaml,
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
         if (yaml.contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, isAdmin);
             return object;
         }
 
-        return deploymentsService.createDeployments(namespace, yaml);
+        return deploymentsService.createDeployments(namespace, yaml, isAdmin);
 
     }
 
@@ -168,8 +169,9 @@ public class DeploymentsController {
      */
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deleteDeployments(@PathVariable(value = "namespace") String namespace,
-                                          @PathVariable(value = "resourceName") String resourceName) {
-        return deploymentsService.deleteDeployments(namespace, resourceName);
+                                          @PathVariable(value = "resourceName") String resourceName,
+                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        return deploymentsService.deleteDeployments(namespace, resourceName, isAdmin);
     }
 
     /**
@@ -185,8 +187,9 @@ public class DeploymentsController {
     public ResultStatus updateDeployments(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @PathVariable(value = "resourceName") String resourceName,
-                                          @RequestBody String yaml) {
-        return deploymentsService.updateDeployments(namespace, resourceName, yaml);
+                                          @RequestBody String yaml,
+                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        return deploymentsService.updateDeployments(namespace, resourceName, yaml, isAdmin);
     }
 
 

@@ -137,11 +137,11 @@ public class LimitRangesController {
         if (isAdmin) {
 
             if (yaml.contains("---")) {
-                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, true);
                 return object;
             }
 
-            return limitRangesService.createLimitRanges(namespace, yaml);
+            return limitRangesService.createLimitRanges(namespace, yaml, true);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

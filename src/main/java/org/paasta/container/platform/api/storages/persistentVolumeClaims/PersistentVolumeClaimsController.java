@@ -140,13 +140,14 @@ public class PersistentVolumeClaimsController {
     @PostMapping
     public Object createPersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
                                                @PathVariable(value = "namespace") String namespace,
-                                               @RequestBody String yaml) throws Exception {
+                                               @RequestBody String yaml,
+                                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
         if (yaml.contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, isAdmin);
             return object;
         }
 
-        return persistentVolumeClaimsService.createPersistentVolumeClaims(namespace, yaml);
+        return persistentVolumeClaimsService.createPersistentVolumeClaims(namespace, yaml, isAdmin);
     }
 
     /**
@@ -188,9 +189,10 @@ public class PersistentVolumeClaimsController {
     public Object updatePersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
                                                @PathVariable(value = "namespace") String namespace,
                                                @PathVariable(value = "resourceName") String resourceName,
-                                               @RequestBody String yaml) {
+                                               @RequestBody String yaml,
+                                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        return persistentVolumeClaimsService.updatePersistentVolumeClaims(namespace, resourceName, yaml);
+        return persistentVolumeClaimsService.updatePersistentVolumeClaims(namespace, resourceName, yaml, isAdmin);
     }
 
 }

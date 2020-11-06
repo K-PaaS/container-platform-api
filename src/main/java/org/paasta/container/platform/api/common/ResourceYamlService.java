@@ -56,7 +56,7 @@ public class ResourceYamlService {
         map.put("spaceName", namespace);
 
         String nsYaml = templateService.convert("create_namespace.ftl", map);
-        Object nameSpaceResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesCreateUrl(), HttpMethod.POST, nsYaml, Object.class);
+        Object nameSpaceResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesCreateUrl(), HttpMethod.POST, nsYaml, Object.class, true);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(nameSpaceResult, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);
@@ -72,7 +72,7 @@ public class ResourceYamlService {
      */
     public ResultStatus createServiceAccount(String username, String namespace) {
         String saYaml = templateService.convert("create_account.ftl", yamlMatch(username, namespace));
-        Object saResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, saYaml, Object.class);
+        Object saResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, saYaml, Object.class, true);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(saResult, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, null);
@@ -104,7 +104,7 @@ public class ResourceYamlService {
             roleBindingYaml = templateService.convert("create_roleBinding.ftl", map);
         }
 
-        Object rbResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, roleBindingYaml, Object.class);
+        Object rbResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, roleBindingYaml, Object.class, true);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rbResult, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, null);
@@ -123,7 +123,7 @@ public class ResourceYamlService {
         map.put("roleName", Constants.DEFAULT_NAMESPACE_INIT_ROLE);
         String initRoleYaml = templateService.convert("create_init_role.ftl", map);
 
-        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRolesCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, initRoleYaml, Object.class);
+        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRolesCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, initRoleYaml, Object.class, true);
     }
 
 
@@ -138,7 +138,7 @@ public class ResourceYamlService {
         map.put("roleName", Constants.DEFAULT_NAMESPACE_ADMIN_ROLE);
         String nsAdminRoleYaml = templateService.convert("create_admin_role.ftl", map);
 
-        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRolesCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, nsAdminRoleYaml, Object.class);
+        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRolesCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, nsAdminRoleYaml, Object.class, true);
     }
 
 
@@ -179,7 +179,7 @@ public class ResourceYamlService {
 
         resourceQuotaYaml = templateService.convert("create_resource_quota.ftl", model);
 
-        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListResourceQuotasCreateUrl().replace("{namespace}", reqNamespace), HttpMethod.POST, resourceQuotaYaml, Object.class);
+        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListResourceQuotasCreateUrl().replace("{namespace}", reqNamespace), HttpMethod.POST, resourceQuotaYaml, Object.class, true);
 
     }
 
@@ -218,7 +218,7 @@ public class ResourceYamlService {
 
         limitRangeYaml = templateService.convert("create_limit_range_" + resourceType + ".ftl", model);
 
-        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListLimitRangesCreateUrl().replace("{namespace}", reqNamespace), HttpMethod.POST, limitRangeYaml, Object.class);
+        restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListLimitRangesCreateUrl().replace("{namespace}", reqNamespace), HttpMethod.POST, limitRangeYaml, Object.class, true);
 
     }
 

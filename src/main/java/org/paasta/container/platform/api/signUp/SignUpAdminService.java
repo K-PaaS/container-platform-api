@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.signUp;
 
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.adminToken.AdminTokenService;
+import org.paasta.container.platform.api.clusters.clusters.ClustersService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
@@ -33,6 +34,7 @@ public class SignUpAdminService {
     private final UsersService usersService;
     private final ResourceYamlService resourceYamlService;
     private final AdminTokenService adminTokenService;
+    private final ClustersService clustersService;
 
     /**
      * Instantiates a new SignUpAdminService service
@@ -43,9 +45,10 @@ public class SignUpAdminService {
      * @param usersService the users service
      * @param resourceYamlService the resource yaml service
      * @param adminTokenService the admin token service
+     * @param clustersService the clusters service
      */
     @Autowired
-    public SignUpAdminService(PropertyService propertyService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService, AdminTokenService adminTokenService) {
+    public SignUpAdminService(PropertyService propertyService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService, AdminTokenService adminTokenService, ClustersService clustersService) {
         this.propertyService = propertyService;
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
@@ -53,6 +56,7 @@ public class SignUpAdminService {
         this.usersService = usersService;
         this.resourceYamlService = resourceYamlService;
         this.adminTokenService = adminTokenService;
+        this.clustersService = clustersService;
     }
 
 
@@ -89,7 +93,7 @@ public class SignUpAdminService {
 
         if(Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
             LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", username), HttpMethod.DELETE, null, Object.class);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", username), HttpMethod.DELETE, null, Object.class, true);
             return rbResult;
         }
 
@@ -105,10 +109,12 @@ public class SignUpAdminService {
 
         ResultStatus rsDb = usersService.createUsers(users);
 
+        clustersService.createClusters(users.getClusterApiUrl(), users.getClusterName(), users.getClusterToken());
+
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class);
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", "cluster-admin-" + username), HttpMethod.DELETE, null, Object.class);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class, true);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", "cluster-admin-" + username), HttpMethod.DELETE, null, Object.class, true);
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);

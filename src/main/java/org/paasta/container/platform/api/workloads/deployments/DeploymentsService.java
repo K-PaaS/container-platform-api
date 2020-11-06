@@ -167,10 +167,10 @@ public class DeploymentsService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public Object createDeployments(String namespace, String yaml) {
+    public Object createDeployments(String namespace, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsCreateUrl()
-                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_DEPLOYMENTS);
@@ -183,10 +183,18 @@ public class DeploymentsService {
      * @param name      the deployments name
      * @return return is succeeded
      */
-    public ResultStatus deleteDeployments(String namespace, String name) {
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListDeploymentsDeleteUrl()
-                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
+    public ResultStatus deleteDeployments(String namespace, String name, boolean isAdmin) {
+        ResultStatus resultStatus;
+
+        if(isAdmin) {
+            resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListDeploymentsDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
+        } else {
+            resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListDeploymentsDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
+        }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_DEPLOYMENTS);
     }
@@ -200,10 +208,10 @@ public class DeploymentsService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public ResultStatus updateDeployments(String namespace, String name, String yaml) {
+    public ResultStatus updateDeployments(String namespace, String name, String yaml, boolean isAdmin) {
         ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, ResultStatus.class);
+                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, ResultStatus.class, isAdmin);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_DEPLOYMENTS_DETAIL.replace("{deploymentName:.+}", name));

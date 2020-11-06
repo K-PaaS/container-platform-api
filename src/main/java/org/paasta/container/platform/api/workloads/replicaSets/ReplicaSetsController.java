@@ -165,13 +165,14 @@ public class ReplicaSetsController {
     @PostMapping
     public Object createReplicaSets(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
-                                    @RequestBody String yaml) throws Exception {
+                                    @RequestBody String yaml,
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
         if (yaml.contains("---")) {
-            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+            Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, isAdmin);
             return object;
         }
 
-        return replicaSetsService.createReplicaSets(namespace, yaml);
+        return replicaSetsService.createReplicaSets(namespace, yaml, isAdmin);
     }
 
 
@@ -189,8 +190,9 @@ public class ReplicaSetsController {
     })
     @DeleteMapping(value = "/{resourceName:.+}")
     public ResultStatus deleteReplicaSets(@PathVariable("namespace") String namespace,
-                                          @PathVariable("resourceName") String resourceName) {
-        return replicaSetsService.deleteReplicaSets(namespace, resourceName);
+                                          @PathVariable("resourceName") String resourceName,
+                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        return replicaSetsService.deleteReplicaSets(namespace, resourceName, isAdmin);
     }
 
 
@@ -214,8 +216,9 @@ public class ReplicaSetsController {
     public Object updateReplicaSets(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "namespace") String namespace,
                                     @PathVariable(value = "resourceName") String resourceName,
-                                    @RequestBody String yaml) {
-        return replicaSetsService.updateReplicaSets(namespace, resourceName, yaml);
+                                    @RequestBody String yaml,
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        return replicaSetsService.updateReplicaSets(namespace, resourceName, yaml, isAdmin);
     }
 
 

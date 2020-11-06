@@ -32,7 +32,7 @@ public class Constants {
     public static final String AUTH_USER = "USER";
 
     public static final String ALL_NAMESPACES = "all";
-
+    public static final String SINGLE_CLUSTER_NAME = "cp-cluster";
     public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
     public static final String NOT_ASSIGNED_ROLE = "NOT_ASSIGNED_ROLE";
     public static final String DEFAULT_NAMESPACE_INIT_ROLE = "ns-init-role";
@@ -66,6 +66,7 @@ public class Constants {
     static final String ACCEPT_TYPE_JSON = MediaType.APPLICATION_JSON_VALUE;
 
     public static final String URI_SIGN_UP = "/signUp";
+    public static final String CLUSTER_ROLE_URI = "users/resources";
 
     // COMMON API CALL URI
     public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";
@@ -197,7 +198,10 @@ public class Constants {
             CommonStatusCode.UNAUTHORIZED.getCode(),CommonStatusCode.UNAUTHORIZED.getMsg(), null );
 
     public static final ResultStatus FORBIDDEN_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.FORBIDDEN.getMsg(),
-            CommonStatusCode.FORBIDDEN.getCode(),CommonStatusCode.FORBIDDEN.getMsg(), null );
+            CommonStatusCode.FORBIDDEN.getCode(),CommonStatusCode.FORBIDDEN.getMsg());
+
+    public static final ResultStatus NOT_FOUND_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.NOT_FOUND.getMsg(),
+            CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg());
 
     public static final ResultStatus NOT_FOUND_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.NOT_FOUND.getMsg(),
             CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg(), null );

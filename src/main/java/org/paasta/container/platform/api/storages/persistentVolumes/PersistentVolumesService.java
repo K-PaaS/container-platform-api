@@ -101,10 +101,10 @@ public class PersistentVolumesService {
      * @param yaml the yaml
      * @return return is succeeded
      */
-    public Object createPersistentVolumes(String namespace, String yaml) {
+    public Object createPersistentVolumes(String namespace, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesCreateUrl()
-                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
@@ -115,11 +115,10 @@ public class PersistentVolumesService {
      *
      * @param namespace the namespace
      * @param resourceName the resource name
-     * @param resultMap the result map
      * @return return is succeeded
      */
-    public ResultStatus deletePersistentVolumes(String namespace, String resourceName, HashMap resultMap) {
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public ResultStatus deletePersistentVolumes(String namespace, String resourceName) {
+        ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesDeleteUrl()
                         .replace("{namesapce}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
@@ -138,7 +137,7 @@ public class PersistentVolumesService {
     public Object updatePersistentVolumes(String namespace, String resourceName, String yaml) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class);
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, PersistentVolumes.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{persistentVolumeName:.+}", resourceName));

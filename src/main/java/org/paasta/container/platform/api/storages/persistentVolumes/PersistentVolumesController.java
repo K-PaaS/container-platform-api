@@ -152,11 +152,11 @@ public class PersistentVolumesController {
         if (isAdmin) {
 
             if (yaml.contains("---")) {
-                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml);
+                Object object = ResourceExecuteManager.commonControllerExecute(namespace, yaml, true);
                 return object;
             }
 
-            return persistentVolumesService.createPersistentVolumes(namespace, yaml);
+            return persistentVolumesService.createPersistentVolumes(namespace, yaml, true);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
@@ -184,7 +184,7 @@ public class PersistentVolumesController {
                                                 @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return persistentVolumesService.deletePersistentVolumes(namespace, resourceName, new HashMap<>());
+            return persistentVolumesService.deletePersistentVolumes(namespace, resourceName);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

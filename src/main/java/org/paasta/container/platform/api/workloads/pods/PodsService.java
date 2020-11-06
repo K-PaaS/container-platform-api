@@ -124,7 +124,7 @@ public class PodsService {
      */
     public PodsListAdmin getPodListWithLabelSelectorAdmin(String namespace, String selector) {
         String requestSelector = "?labelSelector=" + selector;
-        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        HashMap resultMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
         PodsListAdmin podsListAdmin = commonService.setResultObject(resultMap, PodsListAdmin.class);
@@ -165,7 +165,7 @@ public class PodsService {
         String requestURL = propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace)
                 + "/?fieldSelector=spec.nodeName=" + nodeName;
 
-        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API, requestURL,
+        HashMap resultMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, requestURL,
                 HttpMethod.GET, null, Map.class);
 
         PodsListAdmin podsListAdmin = commonService.setResultObject(resultMap, PodsListAdmin.class);
@@ -240,10 +240,10 @@ public class PodsService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public Object createPods(String namespace, String yaml) {
+    public Object createPods(String namespace, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsCreateUrl()
-                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS);
@@ -254,13 +254,21 @@ public class PodsService {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap    the result map
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
-    public ResultStatus deletePods(String namespace, String resourceName, HashMap resultMap) {
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPodsDeleteUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+    public ResultStatus deletePods(String namespace, String resourceName, boolean isAdmin) {
+        ResultStatus resultStatus;
+
+        if(isAdmin) {
+            resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListPodsDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+        } else {
+            resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListPodsDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+        }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS);
     }
@@ -273,10 +281,10 @@ public class PodsService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public Object updatePods(String namespace, String name, String yaml) {
+    public Object updatePods(String namespace, String name, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, Object.class);
+                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS_DETAIL.replace("{podName:.+}", name));

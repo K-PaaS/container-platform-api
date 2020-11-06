@@ -158,7 +158,7 @@ public class ReplicaSetsService {
     public ReplicaSetsListAdmin getReplicaSetsListLabelSelectorAdmin(String namespace, String selectors) {
         String requestSelector = "?labelSelector=" + selectors;
 
-        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        HashMap resultMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListReplicaSetsListUrl()
                         .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
@@ -208,10 +208,10 @@ public class ReplicaSetsService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public Object createReplicaSets(String namespace, String yaml) {
+    public Object createReplicaSets(String namespace, String yaml, boolean isAdmin) {
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListReplicaSetsCreateUrl()
-                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class);
+                        .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS);
@@ -224,10 +224,18 @@ public class ReplicaSetsService {
      * @param name      the replicaSets name
      * @return return is succeeded
      */
-    public ResultStatus deleteReplicaSets(String namespace, String name) {
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicaSetsDeleteUrl()
-                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
+    public ResultStatus deleteReplicaSets(String namespace, String name, boolean isAdmin) {
+        ResultStatus resultStatus;
+
+        if(isAdmin) {
+            resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListReplicaSetsDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
+        } else {
+            resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListReplicaSetsDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
+        }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS);
@@ -241,10 +249,10 @@ public class ReplicaSetsService {
      * @param yaml      the yaml
      * @return return is succeeded
      */
-    public ResultStatus updateReplicaSets(String namespace, String name, String yaml) {
+    public ResultStatus updateReplicaSets(String namespace, String name, String yaml, boolean isAdmin) {
         ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListReplicaSetsUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, ResultStatus.class);
+                        .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, ResultStatus.class, isAdmin);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_REPLICA_SETS_DETAIL.replace("{replicaSetName:.+}", name));
