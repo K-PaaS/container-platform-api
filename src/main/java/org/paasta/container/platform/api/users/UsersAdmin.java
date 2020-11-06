@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Data;
 
@@ -29,7 +30,9 @@ public class UsersAdmin {
         public String serviceAccountName;
         public String created;
 
+        @JsonIgnore
         public String saSecret;
+        private String serviceAccountUid;
         public String cpNamespace;
         public String roleSetCode;
 
@@ -46,7 +49,7 @@ public class UsersAdmin {
     @Data
     @Builder
     public static class Secrets {
-        private String serviceAccountUid;
+        private String saSecret;
         private Object secretLabels;
         private String secretType;
     }

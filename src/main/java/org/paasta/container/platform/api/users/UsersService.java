@@ -117,9 +117,9 @@ public class UsersService {
 
             // k8s에서 secret 정보 조회
             Secrets secrets = (Secrets) commonService.setResultModel(commonService.setResultObject(obj, Secrets.class), Constants.RESULT_STATUS_SUCCESS);
-
+            usersDetails.setServiceAccountUid(secrets.getMetadata().getUid());
             usersDetails.setSecrets(UsersAdmin.Secrets.builder()
-                    .serviceAccountUid(secrets.getMetadata().getUid())
+                    .saSecret(secrets.getMetadata().getName())
                     .secretLabels(secrets.getMetadata().getLabels())
                     .secretType(secrets.getType()).build());
 
