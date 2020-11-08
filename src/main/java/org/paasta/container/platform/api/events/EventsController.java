@@ -85,7 +85,7 @@ public class EventsController {
             return eventsService.getEventsListAdmin(namespace, resourceUid, type);
         }
 
-        return eventsService.getNamespaceEventsList(namespace);
+        return eventsService.getEventsList(namespace, resourceUid, type);
     }
 
 }

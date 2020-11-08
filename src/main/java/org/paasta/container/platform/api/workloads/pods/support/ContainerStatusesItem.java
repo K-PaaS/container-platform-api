@@ -16,4 +16,5 @@ public class ContainerStatusesItem {
     private String name;
     private Map<String, Object> state;
     private String image;
+    private Integer restartCount;
 }

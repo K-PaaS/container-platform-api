@@ -29,6 +29,7 @@ public class PodsAdmin {
     private String creationTimestamp;
 
     private String nodes;
+    private String podStatus;
     private String ip;
     private String qosClass;
     private String restarts;
@@ -211,4 +212,8 @@ public class PodsAdmin {
     public void setStatus(CommonStatus status) {
         this.status = status;
     }
+
+    public String getPodStatus() { return status.getPhase(); }
+
+    public void setPodStatus(String podStatus) { this.podStatus = podStatus; }
 }

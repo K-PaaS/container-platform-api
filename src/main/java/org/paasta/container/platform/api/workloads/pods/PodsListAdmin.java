@@ -32,6 +32,7 @@ public class PodsListAdmin {
 class PodsListAdminList {
     private String name;
     private String namespace;
+    private Object labels;
     private String nodes;
     private String podStatus;
     private String restarts;
@@ -43,6 +44,7 @@ class PodsListAdminList {
     private CommonSpec spec;
     @JsonIgnore
     private PodsStatus status;
+
 
     public String getName() {
         return metadata.getName();
@@ -114,5 +116,13 @@ class PodsListAdminList {
 
     public void setStatus(PodsStatus status) {
         this.status = status;
+    }
+
+    public Object getLabels() {
+        return metadata.getLabels();
+    }
+
+    public void setLabels(Object labels) {
+        this.labels = labels;
     }
 }
