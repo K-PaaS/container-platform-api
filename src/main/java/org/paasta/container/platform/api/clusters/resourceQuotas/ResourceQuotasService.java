@@ -261,7 +261,7 @@ public class ResourceQuotasService {
                 String status = mapper.writeValueAsString(i.getStatus());
 
                 if (!dbRqNameList.contains(i.getName())) {
-                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, CHECK_Y, i.getMetadata());
+                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, CHECK_Y, i.getMetadata(), i.getCreationTimestamp());
                     quotasDefaultList.add(quotasDefault);
                 }
 

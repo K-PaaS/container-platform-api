@@ -34,6 +34,7 @@ class LimitRangesTemplateItem {
     private String name;
     private List<LimitRangesItem> limits;
     private String checkYn;
+    private String creationTimestamp;
 
     @JsonIgnore
     private CommonMetaData metadata;

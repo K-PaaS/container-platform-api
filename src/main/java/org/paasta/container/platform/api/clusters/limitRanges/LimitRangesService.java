@@ -263,7 +263,7 @@ public class LimitRangesService {
                     serversItem.setCheckYn(CHECK_Y);
                     serversItem.setMetadata(i.getMetadata());
                     serversItem.setSpec(i.getSpec());
-
+                    serversItem.setCreationTimestamp(i.getCreationTimestamp());
                     serversItemList.add(serversItem);
                 }
             }
@@ -311,7 +311,7 @@ public class LimitRangesService {
         item.setLimits(list);
         item.setCheckYn(yn);
         item.setMetadata(metadata);
-
+        item.setCreationTimestamp(limitRangesDefault.getCreationTimestamp());
         return item;
     }
 

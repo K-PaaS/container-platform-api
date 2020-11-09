@@ -39,10 +39,11 @@ public class ResourceQuotasDefault {
     @JsonIgnore
     private CommonSpec spec;
 
-    public ResourceQuotasDefault(String name, String status, String checkYn, CommonMetaData metadata) {
+    public ResourceQuotasDefault(String name, String status, String checkYn, CommonMetaData metadata, String creationTimestamp) {
         this.name = name;
         this.status = status;
         this.checkYn = checkYn;
         this.metadata = metadata;
+        this.creationTimestamp = creationTimestamp;
     }
 }
