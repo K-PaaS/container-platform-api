@@ -292,15 +292,14 @@ public class NamespacesService {
      * @param initTemplate the init template
      * @return return is succeeded
      */
-    public ResultStatus modifyInitNamespaces(String namespace, NamespacesInitTemplate initTemplate) {
+    public ResultStatus modifyInitNamespaces(String cluster, String namespace, NamespacesInitTemplate initTemplate) {
         ResultStatus resultStatus = new ResultStatus();
 
         modifyResourceQuotas(namespace, initTemplate.getResourceQuotasList());
         modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
 
-
         String nsAdminUserId = initTemplate.getNsAdminUserId();
-        Users nsAdminUser = usersService.getUsersByNamespaceAndNsAdmin(namespace);
+        Users nsAdminUser = usersService.getUsersByNamespaceAndNsAdmin(cluster, namespace);
 
         if (!nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
             usersService.deleteUsers(nsAdminUser);

@@ -195,7 +195,7 @@ public class NamespacesController {
                                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                              @RequestBody NamespacesInitTemplate initTemplate) {
         if (isAdmin) {
-            return namespacesService.modifyInitNamespaces(namespace, initTemplate);
+            return namespacesService.modifyInitNamespaces(cluster, namespace, initTemplate);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
