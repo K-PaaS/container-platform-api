@@ -109,7 +109,7 @@ public class OverviewService {
         overview.setPodsUsage(podsUsage);
         overview.setReplicaSetsUsage(replicaSetsUsage);
 
-        return (Overview) commonService.setResultModel(overview, Constants.RESULT_STATUS_SUCCESS);
+        return (Overview) commonService.setResultModelWithNextUrl(overview, Constants.RESULT_STATUS_SUCCESS, "EMPTY");
     }
 
 
