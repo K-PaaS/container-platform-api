@@ -245,8 +245,9 @@ public class UsersController {
      * @param isAdmin the isAdmin
      * @return return is succeeded
      */
-    @PutMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}/info")
+    @PutMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/{userId:.+}")
     public Object modifyUsersInfo(@PathVariable(value = "cluster") String cluster,
+                                  @PathVariable(value = "namespace") String namespace,
                                   @PathVariable(value = "userId") String userId,
                                   @RequestBody Users users,
                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
