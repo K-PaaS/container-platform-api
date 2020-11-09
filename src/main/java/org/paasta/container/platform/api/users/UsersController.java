@@ -50,10 +50,21 @@ public class UsersController {
     })
     @GetMapping(value = "/clusters/{cluster:.+}/users")
     public UsersListAdmin getUsersList(@PathVariable(value = "cluster") String cluster,
-                                       @RequestParam(name = "namespace") String namespace) {
+                                       @RequestParam(name = "namespace", required = false) String namespace,
+                                       @RequestParam(defaultValue = "administrator") String userType,
+                                       @RequestParam(required = false, defaultValue = "") String searchParam,
+                                       @RequestParam(required = false, defaultValue = "1") int limit,
+                                       @RequestParam(required = false, defaultValue = "0") int offset,
+                                       @RequestParam(required = false, defaultValue = "created") String orderBy,
+                                       @RequestParam(required = false, defaultValue = "desc") String order,
+                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if(isAdmin) {
+            return usersService.getUsersAllByCluster(cluster, userType, searchParam, limit, offset, orderBy, order);
+        }
+
         return usersService.getUsersAll(namespace);
     }
-
 
     /**
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
@@ -295,5 +306,24 @@ public class UsersController {
     public ResultStatus deleteUsers(@PathVariable(value = "cluster") String cluster,
                                     @PathVariable(value = "userId") String userId) {
         return usersService.deleteUsersByAllNamespaces(userId);
+    }
+
+
+    /**
+     * 특정 Namespace 관리자 판별이 포함된 Users Name 목록 조회(Get Users Name List containing Namespace Admin)
+     *
+     * @param cluster   the cluster
+     * @param namespace the namespace
+     * @return the UsersInNamespace
+     */
+    @ApiOperation(value = "특정 Namespace 관리자 판별이 포함된 Users Name 목록 조회(Get Users Name List containing Namespace Admin)", nickname = "getNsAdmin")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
+    })
+    @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/nsAdmin")
+    public UsersInNamespace getNsAdmin(@PathVariable(value = "cluster") String cluster,
+                                       @PathVariable(value = "namespace") String namespace) {
+        return usersService.getNsAdmin(cluster, namespace);
     }
 }

@@ -28,6 +28,8 @@ public class MessageConstant {
     public static final String LIMIT_ILLEGALARGUMENT = "limit(한 페이지에 가져올 리소스 최대 수) 는 반드시 0 이상이여아 합니다. limit >=0 ";
     public static final String OFFSET_ILLEGALARGUMENT = "offset(목록 시작지점) 은 반드시 0 이상이여아 합니다. offset >=0 ";
     public static final String OFFSET_REQUIRES_LIMIT_ILLEGALARGUMENT = "offset(목록 시작지점) 사용 시 limit(한 페이지에 가져올 리소스 최대 수) 값이 필요합니다.";
+    public static final String MYSQL_LIMIT_ILLEGALARGUMENT= "limit(한 페이지에 가져올 리소스 최대 수) 는 반드시 1 이상이여아 합니다. limit >=1 ";
 
-
+    // searching
+    public static final String USER_TYPE_ILLEGALARGUMENT = "사용자 유형 선택 목록에 없는 항목입니다.";
 }

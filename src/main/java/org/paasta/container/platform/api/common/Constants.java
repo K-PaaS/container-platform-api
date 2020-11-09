@@ -27,6 +27,9 @@ public class Constants {
 
     public static final String TOKEN_KEY = "cp_admin";
 
+    public static final String SELECTED_ADMINISTRATOR = "administrator";
+    public static final String SELECTED_USER = "user";
+
     public static final String AUTH_CLUSTER_ADMIN = "CLUSTER_ADMIN";
     public static final String AUTH_NAMESPACE_ADMIN = "NAMESPACE_ADMIN";
     public static final String AUTH_USER = "USER";
@@ -73,11 +76,12 @@ public class Constants {
     public static final String URI_COMMON_API_USERS = "/clusters/cp-cluster/namespaces/{namespace:.+}/users/{userId:.+}";
     public static final String URI_COMMON_API_USERS_DETAIL =  "/users/{userId:.+}";
     public static final String URI_COMMON_API_USERS_LIST =  "/users";
+    public static final String URI_COMMON_API_USERS_LIST_BY_CLUSTER = "/clusters/{cluster:.+}/users";
     public static final String URI_COMMON_API_USER_DETAIL_LOGIN =  "/users/login/{userId:.+}";
     public static final String URI_COMMON_API_USERS_LIST_BY_NAMESPACE = "/clusters/cp-cluster/namespaces/{namespace:.+}/users";
     public static final String URI_COMMON_API_USERS_NAMES_LIST = "/clusters/cp-cluster/namespaces/{namespace:.+}/users/names";
     public static final String URI_COMMON_API_USER_DELETE = "/users/";
-    public static final String URI_COMMON_API_USERS_BY_NAMESPACE_NS_ADMIN = "/clusters/cp-cluster/namespaces/{namespace:.+}";
+    public static final String URI_COMMON_API_USERS_BY_NAMESPACE_NS_ADMIN = "/clusters/{cluster:.+}/namespaces/{namespace:.+}";
     public static final String URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID = "/clusters/{cluster:.+}/users/{userId:.+}";
     public static final String URI_COMMON_API_CLUSTERS = "/clusters/{cluster:.+}/users/{userId:.+}";
 
@@ -144,8 +148,6 @@ public class Constants {
     public static final String RESOURCE_RESOURCEQUOTA = "ResourceQuota";
     public static final String RESOURCE_LIMITRANGE = "LimitRange";
     public static final String RESOURCE_ROLE = "Role";
-
-
 
     public static final String RESOURCE_NAME = "name";
     public static final String RESOURCE_CREATIONTIMESTAMP = "creationTimestamp";
