@@ -276,9 +276,14 @@ public class RolesController {
                                                          @RequestParam(required = false, defaultValue = "") String searchName,
                                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        if (isAdmin) {
-            return rolesService.getRolesListAllNamespacesAdminByUserId(cluster, namespace, userId, offset, limit, orderBy, order, searchName);
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            if (isAdmin) {
+                return rolesService.getRolesListAllNamespacesAdminByUserId(cluster, namespace, userId, offset, limit, orderBy, order, searchName);
+            } else {
+                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+            }
         }
+
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
 
     }

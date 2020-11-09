@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.paasta.container.platform.api.common.Constants.URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID;
@@ -247,6 +249,16 @@ public class RolesService {
         }
 
         RolesListAdmin rolesListAdmin = commonService.setResultObject(responseMap, RolesListAdmin.class);
+        List<RolesListAdminItem> rolesListAdminItems = new ArrayList<>();
+
+        for (RolesListAdminItem item:rolesListAdmin.getItems()) {
+            if(!Constants.DEFAULT_NAMESPACE_NAME.equals(item.getNamespace()) && !item.getNamespace().startsWith("kube") && !item.getNamespace().equals("default")) {
+                rolesListAdminItems.add(item);
+            }
+        }
+
+        rolesListAdmin.setItems(rolesListAdminItems);
+
         rolesListAdmin = commonService.resourceListProcessing(rolesListAdmin, offset, limit, orderBy, order, searchName, RolesListAdmin.class);
         return commonService.setResultModel(rolesListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -279,17 +291,33 @@ public class RolesService {
 
         RolesListAllNamespaces rolesListAllNamespaces = commonService.setResultObject(responseMap, RolesListAllNamespaces.class);
 
-        UsersList usersList = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID
-                .replace("{cluster:.+}", cluster)
-                .replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
+        List<RolesListAllNamespaces.RolesListAllNamespacesItem> rolesListAdminItems = new ArrayList<>();
 
-        for (Users user:usersList.getItems()) {
+        for (RolesListAllNamespaces.RolesListAllNamespacesItem item:rolesListAllNamespaces.getItems()) {
+            if(!Constants.DEFAULT_NAMESPACE_NAME.equals(item.getNamespace()) && !item.getNamespace().startsWith("kube") && !item.getNamespace().equals("default")) {
+                rolesListAdminItems.add(item);
+            }
+        }
+
+        rolesListAllNamespaces.setItems(rolesListAdminItems);
+
+        if(userId.equals("all")) {
             for (RolesListAllNamespaces.RolesListAllNamespacesItem item:rolesListAllNamespaces.getItems()) {
                 item.setCheckYn(Constants.CHECK_N);
                 item.setUserType(Constants.NOT_ASSIGNED_ROLE);
-                if(user.getCpNamespace().equals(item.getNamespace()) && user.getRoleSetCode().equals(item.getName())) {
-                    item.setCheckYn(Constants.CHECK_Y);
-                    item.setUserType(user.getUserType());
+            }
+        } else {
+            UsersList usersList = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID
+                    .replace("{cluster:.+}", cluster)
+                    .replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
+            for (RolesListAllNamespaces.RolesListAllNamespacesItem item:rolesListAllNamespaces.getItems()) {
+                    item.setCheckYn(Constants.CHECK_N);
+                    item.setUserType(Constants.NOT_ASSIGNED_ROLE);
+                for (Users user:usersList.getItems()) {
+                    if(user.getCpNamespace().equals(item.getNamespace()) && user.getRoleSetCode().equals(item.getName())) {
+                        item.setCheckYn(Constants.CHECK_Y);
+                        item.setUserType(user.getUserType());
+                    }
                 }
             }
         }
