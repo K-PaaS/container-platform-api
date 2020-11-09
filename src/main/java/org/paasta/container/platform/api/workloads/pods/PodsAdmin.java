@@ -32,11 +32,12 @@ public class PodsAdmin {
     private String podStatus;
     private String ip;
     private String qosClass;
-    private String restarts;
+    private int restarts;
     private String controllers;
     private String volumes;
     private String containersName;
     private String containersImage;
+
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -44,6 +45,17 @@ public class PodsAdmin {
     private CommonSpec spec;
     @JsonIgnore
     private CommonStatus status;
+
+    public int getRestarts() {
+
+        int restarts = (int) Math.floor(status.getContainerStatuses().get(0).getRestartCount());
+
+        return restarts;
+    }
+
+    public void setRestarts(int restarts) {
+        this.restarts = restarts;
+    }
 
     public String getResultCode() {
         return resultCode;
@@ -149,14 +161,6 @@ public class PodsAdmin {
         this.qosClass = qosClass;
     }
 
-    public String getRestarts() {
-        return spec.getRestartPolicy();
-    }
-
-    public void setRestarts(String restarts) {
-        this.restarts = restarts;
-    }
-
     public List<CommonOwnerReferences> getControllers() {
         return metadata.getOwnerReferences();
     }
@@ -216,4 +220,5 @@ public class PodsAdmin {
     public String getPodStatus() { return status.getPhase(); }
 
     public void setPodStatus(String podStatus) { this.podStatus = podStatus; }
+
 }
