@@ -4,7 +4,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.paasta.container.platform.api.common.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -55,9 +54,8 @@ public class NodesController {
             @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
     })
-    @GetMapping(value = "/namespaces/{namespace:.+}")
+    @GetMapping
     public Object getNodesList(@PathVariable(value = "cluster") String cluster,
-                               @PathVariable(value = "namespace") String namespace,
                                @RequestParam(required = false, defaultValue = "0") int offset,
                                @RequestParam(required = false, defaultValue = "0") int limit,
                                @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
@@ -85,9 +83,8 @@ public class NodesController {
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
     })
-    @GetMapping(value = "/{resourceName:.+}/namespaces/{namespace:.+}")
+    @GetMapping(value = "/{resourceName:.+}")
     public Object getNodes(@PathVariable(value = "cluster") String cluster,
-                           @PathVariable(value = "namespace") String namespace,
                            @PathVariable(value = "resourceName") String resourceName,
                            @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
@@ -110,16 +107,11 @@ public class NodesController {
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
     })
-    @GetMapping(value = "/{resourceName:.+}/yaml/namespaces/{namespace:.+}")
+    @GetMapping(value = "/{resourceName:.+}/yaml")
     public Object getNodesYaml(@PathVariable(value = "cluster") String cluster,
-                               @PathVariable(value = "namespace") String namespace,
                                @PathVariable(value = "resourceName") String resourceName,
                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        if (isAdmin) {
-            return nodesService.getNodesYaml(resourceName, new HashMap<>());
-        }
-
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return nodesService.getNodesYaml(resourceName, new HashMap<>());
     }
 }

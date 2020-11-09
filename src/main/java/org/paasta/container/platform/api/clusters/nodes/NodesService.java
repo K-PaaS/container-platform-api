@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class NodesService {
      */
     NodesList getNodesList(int offset, int limit, String orderBy, String order, String searchName) {
 
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNodesListUrl(),
                 HttpMethod.GET, null, Map.class);
 
@@ -98,7 +99,7 @@ public class NodesService {
      * @return the nodes
      */
     public Nodes getNodes(String resourceName) {
-        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNodesGetUrl()
                         .replace("{name}", resourceName)
                 , HttpMethod.GET, null, Map.class);
@@ -138,9 +139,9 @@ public class NodesService {
      * @return the nodes yaml
      */
     public Nodes getNodesYaml(String resourceName, HashMap resultMap) {
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+        String resultString = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNodesGetUrl()
-                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML, MediaType.APPLICATION_JSON_VALUE);
 
         resultMap.put("sourceTypeYaml", resultString);
 
