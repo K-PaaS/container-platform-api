@@ -19,7 +19,7 @@ public class CommonStatus {
     private int readyReplicas;
     private int replicas;
     private String phase;
-    private List containerStatuses;
+    private List<ContainerStatus> containerStatuses;
     private List<CommonCondition> conditions;
     private String podIP;
     private String qosClass;
