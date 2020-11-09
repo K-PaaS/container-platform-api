@@ -5,7 +5,6 @@ import lombok.Data;
 import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
 import org.paasta.container.platform.api.workloads.pods.support.PodsStatus;
 
 import java.util.List;
@@ -35,7 +34,7 @@ class PodsListAdminList {
     private Object labels;
     private String nodes;
     private String podStatus;
-    private String restarts;
+    private Integer restarts;
     private String creationTimestamp;
 
     @JsonIgnore
@@ -78,11 +77,11 @@ class PodsListAdminList {
         this.podStatus = podStatus;
     }
 
-    public String getRestarts() {
-        return spec.getRestartPolicy();
+    public Integer getRestarts() {
+        return status.getContainerStatuses().get(0).getRestartCount();
     }
 
-    public void setRestarts(String restarts) {
+    public void setRestarts(Integer restarts) {
         this.restarts = restarts;
     }
 
