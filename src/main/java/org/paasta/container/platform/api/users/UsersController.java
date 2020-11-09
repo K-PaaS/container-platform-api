@@ -316,14 +316,14 @@ public class UsersController {
      * @param namespace the namespace
      * @return the UsersInNamespace
      */
-    @ApiOperation(value = "특정 Namespace 관리자 판별이 포함된 Users Name 목록 조회(Get Users Name List containing Namespace Admin)", nickname = "getNsAdmin")
+    @ApiOperation(value = "특정 Namespace 관리자 판별이 포함된 Users Name 목록 조회(Get Users Name List containing Namespace Admin)", nickname = "getUsersNameListByNamespaceAdmin")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
     })
-    @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/nsAdmin")
-    public UsersInNamespace getNsAdmin(@PathVariable(value = "cluster") String cluster,
+    @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/adminCheck")
+    public UsersInNamespace getUsersNameListByNamespaceAdmin(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace) {
-        return usersService.getNsAdmin(cluster, namespace);
+        return usersService.getUsersNameListByNamespaceAdmin(cluster, namespace);
     }
 }

@@ -587,7 +587,7 @@ public class UsersService {
      * @param namespace the namespace
      * @return the UsersInNamespace
      */
-    public UsersInNamespace getNsAdmin(String cluster, String namespace){
+    public UsersInNamespace getUsersNameListByNamespaceAdmin(String cluster, String namespace){
         UsersInNamespace usersInNamespace = new UsersInNamespace();
         usersInNamespace.setNamespace(namespace);
 
