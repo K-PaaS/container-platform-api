@@ -26,7 +26,7 @@ public class RolesListAllNamespaces {
     private List<RolesListAllNamespacesItem> items;
 
 
-    class RolesListAllNamespacesItem {
+    public class RolesListAllNamespacesItem {
         private String name;
         private String namespace;
         private String checkYn;
