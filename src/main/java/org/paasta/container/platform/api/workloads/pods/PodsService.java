@@ -5,11 +5,14 @@ import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.workloads.pods.support.ContainerStatusesItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -315,6 +318,19 @@ public class PodsService {
 
         PodsListAdmin podsListAdminList = commonService.setResultObject(responseMap, PodsListAdmin.class);
         podsListAdminList = commonService.resourceListProcessing(podsListAdminList, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
+
+        for (PodsListAdminList po:podsListAdminList.getItems()) {
+
+            if(po.getStatus().getContainerStatuses() == null) {
+                List<ContainerStatusesItem> list = new ArrayList<>();
+                ContainerStatusesItem item = new ContainerStatusesItem();
+                item.setRestartCount(0);
+
+                list.add(item);
+
+                po.getStatus().setContainerStatuses(list);
+            }
+        }
 
         return commonService.setResultModel(podsListAdminList, Constants.RESULT_STATUS_SUCCESS);
     }

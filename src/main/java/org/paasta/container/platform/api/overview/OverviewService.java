@@ -252,11 +252,15 @@ public class OverviewService {
             if(status.getContainerStatuses() != null) {
                 ContainerStatusesItem item = status.getContainerStatuses().get(0);
                 // containerStatuses -> state: waiting
-                boolean result = item.getState().containsKey("waiting");
-                if(result) {
-                    failedCnt++;
+                if(item.getState() != null) {
+                    boolean result = item.getState().containsKey("waiting");
+                    if(result) {
+                        failedCnt++;
+                    } else {
+                        runningCnt++;
+                    }
                 } else {
-                    runningCnt++;
+                    failedCnt++;
                 }
 
             } else {
