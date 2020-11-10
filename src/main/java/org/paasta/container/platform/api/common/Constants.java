@@ -35,6 +35,7 @@ public class Constants {
     public static final String AUTH_USER = "USER";
 
     public static final String ALL_NAMESPACES = "all";
+    public static final String ALL_USER_ID = "all";
     public static final String SINGLE_CLUSTER_NAME = "cp-cluster";
     public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
     public static final String NOT_ASSIGNED_ROLE = "NOT_ASSIGNED_ROLE";
