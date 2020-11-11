@@ -128,9 +128,14 @@ public class CustomServicesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public CustomServicesYaml getCustomServicesYaml(@PathVariable(value = "cluster") String cluster,
-                                                @PathVariable(value = "namespace") String namespace,
-                                                @PathVariable(value = "resourceName") String resourceName) {
+    public Object getCustomServicesYaml(@PathVariable(value = "cluster") String cluster,
+                                                    @PathVariable(value = "namespace") String namespace,
+                                                    @PathVariable(value = "resourceName") String resourceName,
+                                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return customServicesService.getCustomServicesAdminYaml(namespace, resourceName, new HashMap<>());
+        }
 
         return customServicesService.getCustomServicesYaml(namespace, resourceName, new HashMap<>());
     }
