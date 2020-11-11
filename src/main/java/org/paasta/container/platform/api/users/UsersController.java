@@ -52,15 +52,15 @@ public class UsersController {
     public UsersListAdmin getUsersList(@PathVariable(value = "cluster") String cluster,
                                        @RequestParam(name = "namespace", required = false) String namespace,
                                        @RequestParam(defaultValue = "administrator") String userType,
-                                       @RequestParam(required = false, defaultValue = "") String searchParam,
-                                       @RequestParam(required = false, defaultValue = "1") int limit,
+                                       @RequestParam(required = false, defaultValue = "") String searchName,
+                                       @RequestParam(required = false, defaultValue = "0") int limit,
                                        @RequestParam(required = false, defaultValue = "0") int offset,
                                        @RequestParam(required = false, defaultValue = "created") String orderBy,
                                        @RequestParam(required = false, defaultValue = "desc") String order,
                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if(isAdmin) {
-            return usersService.getUsersAllByCluster(cluster, userType, searchParam, limit, offset, orderBy, order);
+            return usersService.getUsersAllByCluster(cluster, userType, searchName, limit, offset, orderBy, order);
         }
 
         return usersService.getUsersAll(namespace);
