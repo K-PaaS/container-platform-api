@@ -1,9 +1,7 @@
 package org.paasta.container.platform.api.storages.persistentVolumes;
 
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -29,8 +27,8 @@ public class PersistentVolumesService {
      * Instantiates a new PersistentVolumes service
      *
      * @param restTemplateService the rest template service
-     * @param commonService        the common service
-     * @param propertyService      the property service
+     * @param commonService       the common service
+     * @param propertyService     the property service
      */
     @Autowired
     public PersistentVolumesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService) {
@@ -42,7 +40,7 @@ public class PersistentVolumesService {
 
     /**
      * PersistentVolumes 목록 조회(Get PersistentVolumes list)
-     *(Admin Portal)
+     * (Admin Portal)
      *
      * @param namespace  the namespace
      * @param offset     the offset
@@ -78,25 +76,28 @@ public class PersistentVolumesService {
      * PersistentVolumes YAML 조회(Get PersistentVolumes yaml)
      *
      * @param resourceName the resource name
-     * @param resultMap the result map
+     * @param resultMap    the result map
      * @return the persistentVolumes yaml
      */
-    public PersistentVolumesYaml getPersistentVolumesYaml(String resourceName, HashMap resultMap) {
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public Object getPersistentVolumesAdminYaml(String resourceName, HashMap resultMap) {
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesGetUrl()
                         .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
         //noinspection unchecked
-        resultMap.put("sourceTypeYaml", resultString);
+        resultMap.put("sourceTypeYaml", response);
 
-        return (PersistentVolumesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, PersistentVolumesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return  commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
      * PersistentVolumes 생성(Create PersistentVolumes)
      *
      * @param namespace the namespace
-     * @param yaml the yaml
+     * @param yaml      the yaml
      * @return return is succeeded
      */
     public Object createPersistentVolumes(String namespace, String yaml, boolean isAdmin) {
@@ -111,7 +112,7 @@ public class PersistentVolumesService {
     /**
      * PersistentVolumes 삭제(Delete PersistentVolumes)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
      * @return return is succeeded
      */
@@ -127,9 +128,9 @@ public class PersistentVolumesService {
     /**
      * PersistentVolumes 수정(Update PersistentVolumes)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param yaml the yaml
+     * @param yaml         the yaml
      * @return return is succeeded
      */
     public Object updatePersistentVolumes(String namespace, String resourceName, String yaml) {
@@ -145,7 +146,7 @@ public class PersistentVolumesService {
      * PersistentVolumes 상세 조회(Get PersistentVolumes detail)
      * (Admin Portal)
      *
-     * @param namespace the namespace
+     * @param namespace             the namespace
      * @param persistentVolumesName the persistentVolumes name
      * @return the persistentVolumes detail
      */
