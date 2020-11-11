@@ -58,7 +58,7 @@ public class PersistentVolumesAdmin {
             String path = spec.getHostPath().getPath();
             String type = spec.getHostPath().getType();
 
-            if ((StringUtils.isNotEmpty(path)) && (StringUtils.isNotEmpty(type) || type.equals(""))) {
+            if ((StringUtils.isNotEmpty(path)) && (StringUtils.isNotEmpty(type)) || type.equals("")) {
                 spec.getHostPath().setType(PERSISTENT_VOLUME_TYPE);
             }
             return spec.getHostPath();
