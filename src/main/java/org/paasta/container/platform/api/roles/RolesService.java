@@ -1,9 +1,7 @@
 package org.paasta.container.platform.api.roles;
 
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
@@ -98,7 +96,7 @@ public class RolesService {
      * @param resultMap    the result map
      * @return the roles yaml
      */
-    public RolesYaml getRolesYaml(String namespace, String resourceName, HashMap resultMap) {
+    public Object getRolesYaml(String namespace, String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListRolesGetUrl()
                         .replace("{namespace}", namespace)
@@ -106,7 +104,30 @@ public class RolesService {
 
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (RolesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, RolesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return  commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+    /**
+     * Roles Admin YAML 조회(Get Roles Admin yaml)
+     *
+     * @param namespace    the namespace
+     * @param resourceName the resource name
+     * @param resultMap    the result map
+     * @return the roles yaml
+     */
+    public Object getRolesAdminYaml(String namespace, String resourceName, HashMap resultMap) {
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListRolesGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
+        resultMap.put("sourceTypeYaml", response);
+
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -251,8 +272,8 @@ public class RolesService {
         RolesListAdmin rolesListAdmin = commonService.setResultObject(responseMap, RolesListAdmin.class);
         List<RolesListAdminItem> rolesListAdminItems = new ArrayList<>();
 
-        for (RolesListAdminItem item:rolesListAdmin.getItems()) {
-            if(!Constants.DEFAULT_NAMESPACE_NAME.equals(item.getNamespace()) && !item.getNamespace().startsWith("kube") && !item.getNamespace().equals("default")) {
+        for (RolesListAdminItem item : rolesListAdmin.getItems()) {
+            if (!Constants.DEFAULT_NAMESPACE_NAME.equals(item.getNamespace()) && !item.getNamespace().startsWith("kube") && !item.getNamespace().equals("default")) {
                 rolesListAdminItems.add(item);
             }
         }
@@ -293,16 +314,16 @@ public class RolesService {
 
         List<RolesListAllNamespaces.RolesListAllNamespacesItem> rolesListAdminItems = new ArrayList<>();
 
-        for (RolesListAllNamespaces.RolesListAllNamespacesItem item:rolesListAllNamespaces.getItems()) {
-            if(!Constants.DEFAULT_NAMESPACE_NAME.equals(item.getNamespace()) && !item.getNamespace().startsWith("kube") && !item.getNamespace().equals("default")) {
+        for (RolesListAllNamespaces.RolesListAllNamespacesItem item : rolesListAllNamespaces.getItems()) {
+            if (!Constants.DEFAULT_NAMESPACE_NAME.equals(item.getNamespace()) && !item.getNamespace().startsWith("kube") && !item.getNamespace().equals("default")) {
                 rolesListAdminItems.add(item);
             }
         }
 
         rolesListAllNamespaces.setItems(rolesListAdminItems);
 
-        if(userId.equals(Constants.ALL_USER_ID)) {
-            for (RolesListAllNamespaces.RolesListAllNamespacesItem item:rolesListAllNamespaces.getItems()) {
+        if (userId.equals(Constants.ALL_USER_ID)) {
+            for (RolesListAllNamespaces.RolesListAllNamespacesItem item : rolesListAllNamespaces.getItems()) {
                 item.setCheckYn(Constants.CHECK_N);
                 item.setUserType(Constants.NOT_ASSIGNED_ROLE);
             }
@@ -310,11 +331,11 @@ public class RolesService {
             UsersList usersList = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID
                     .replace("{cluster:.+}", cluster)
                     .replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
-            for (RolesListAllNamespaces.RolesListAllNamespacesItem item:rolesListAllNamespaces.getItems()) {
+            for (RolesListAllNamespaces.RolesListAllNamespacesItem item : rolesListAllNamespaces.getItems()) {
                 item.setCheckYn(Constants.CHECK_N);
                 item.setUserType(Constants.NOT_ASSIGNED_ROLE);
-                for (Users user:usersList.getItems()) {
-                    if(user.getCpNamespace().equals(item.getNamespace()) && user.getRoleSetCode().equals(item.getName())) {
+                for (Users user : usersList.getItems()) {
+                    if (user.getCpNamespace().equals(item.getNamespace()) && user.getRoleSetCode().equals(item.getName())) {
                         item.setCheckYn(Constants.CHECK_Y);
                         item.setUserType(user.getUserType());
                     }

@@ -135,6 +135,10 @@ public class RolesController {
                                @PathVariable(value = "namespace") String namespace,
                                @PathVariable(value = "resourceName") String resourceName,
                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return rolesService.getRolesAdminYaml(namespace, resourceName, new HashMap<>());
+        }
+
         return rolesService.getRolesYaml(namespace, resourceName, new HashMap<>());
     }
 
