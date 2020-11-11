@@ -205,14 +205,22 @@ public class PersistentVolumeClaimsService {
      * PersistentVolumeClaims 삭제(Delete PersistentVolumeClaims)
      *
      * @param namespace    the namespace
-     * @param resourceName the resource name
-     * @param resultMap    the result map
+     * @param name the persistentVolumeClaims name
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
-    public ResultStatus deletePersistentVolumeClaims(String namespace, String resourceName, HashMap resultMap) {
-        ResultStatus resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentVolumeClaimsDeleteUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+    public ResultStatus deletePersistentVolumeClaims(String namespace, String name, boolean isAdmin) {
+        ResultStatus resultStatus;
+
+        if (isAdmin) {
+            resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListPersistentVolumeClaimsDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
+        } else {
+            resultStatus = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+                    propertyService.getCpMasterApiListPersistentVolumeClaimsDeleteUrl()
+                            .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
+        }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
