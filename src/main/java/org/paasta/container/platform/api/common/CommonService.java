@@ -401,7 +401,6 @@ public class CommonService {
         // remove last char (separator)
         fieldSelector = fieldSelector.replaceFirst(".$", "");
 
-        System.out.println("fieldSelector::::::::::::::" + fieldSelector);
         return fieldSelector;
     }
 
