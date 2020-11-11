@@ -295,7 +295,7 @@ public class ResourceQuotasService {
         HashMap responseMap;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListResourceQuotasListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace("ns")
+                propertyService.getCpMasterApiListResourceQuotasListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)
                 , HttpMethod.GET, null, Map.class);
 
         try {

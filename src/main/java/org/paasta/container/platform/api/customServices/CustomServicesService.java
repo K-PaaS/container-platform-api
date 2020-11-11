@@ -263,7 +263,7 @@ public class CustomServicesService {
         HashMap responseMap = null;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListServicesListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace("ns")
+                propertyService.getCpMasterApiListServicesListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)
                 , HttpMethod.GET, null, Map.class);
 
         try {

@@ -121,8 +121,8 @@ public class NamespacesService {
         HashMap responseMap = null;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNamespacesListUrl() + commonService.generateFieldSelectorForExceptNamespace("cluster"),
-                HttpMethod.GET, null, Map.class);
+                propertyService.getCpMasterApiListNamespacesListUrl() + commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_CLUSTER)
+                ,HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;

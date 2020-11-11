@@ -390,7 +390,7 @@ public class CommonService {
         String fieldSelector = "?fieldSelector=";
         String query = "metadata.namespace!=";
 
-        if (type.equals("cluster")) {
+        if (type.equals(Constants.RESOURCE_CLUSTER)) {
             query = "metadata.name!=";
         }
 

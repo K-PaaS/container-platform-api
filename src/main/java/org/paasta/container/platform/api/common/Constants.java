@@ -132,6 +132,7 @@ public class Constants {
     public static final String RESOURCE_EVENTS = "Events";
 
     //cluster
+    public static final String RESOURCE_CLUSTER = "Cluster";
     public static final String RESOURCE_NAMESPACE = "Namespace";
     public static final String RESOURCE_NODE = "Node";
 

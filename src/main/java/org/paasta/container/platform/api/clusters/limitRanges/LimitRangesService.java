@@ -89,7 +89,7 @@ public class LimitRangesService {
         HashMap responseMap = null;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListLimitRangesListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace("ns")
+                propertyService.getCpMasterApiListLimitRangesListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)
                 , HttpMethod.GET, null, Map.class);
 
         try {

@@ -261,7 +261,7 @@ public class RolesService {
         HashMap responseMap = null;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListRolesListAllNamespacesUrl()  + commonService.generateFieldSelectorForExceptNamespace("ns")
+                propertyService.getCpMasterApiListRolesListAllNamespacesUrl()  + commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)
                 , HttpMethod.GET, null, Map.class);
 
         try {
