@@ -162,6 +162,9 @@ public class Constants {
     public static final String blankString =  " " ;
 
     public static final Integer EVENT_DEFAULT_LIMIT  = 5;
+    public static final String PERSISTENT_VOLUME_TYPE = "Hostpath";
+
+    public static final String NULL_REPLACE_TEXT = "-";
 
     /** 서비스 클래스의 Package */
     public static final String SERVICE_PACKAGE = "org.paasta.container.platform.api.";
