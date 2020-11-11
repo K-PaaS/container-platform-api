@@ -250,7 +250,8 @@ public class PersistentVolumeClaimsService {
         HashMap responseMap;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentVolumeClaimsListAllNamespacesUrl(), HttpMethod.GET, null, Map.class);
+                propertyService.getCpMasterApiListPersistentVolumeClaimsListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace()
+                , HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
