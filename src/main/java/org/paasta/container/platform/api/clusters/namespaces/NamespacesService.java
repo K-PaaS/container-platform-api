@@ -266,6 +266,10 @@ public class NamespacesService {
     public ResultStatus modifyInitNamespaces(String cluster, String namespace, NamespacesInitTemplate initTemplate) {
         ResultStatus resultStatus = new ResultStatus();
 
+        if(!namespace.equals(initTemplate.getName())) {
+            return Constants.BAD_REQUEST_ACCESS_RESULT_STATUS;
+        }
+
         modifyResourceQuotas(namespace, initTemplate.getResourceQuotasList());
         modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
 
