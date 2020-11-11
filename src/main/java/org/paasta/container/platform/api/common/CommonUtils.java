@@ -133,4 +133,14 @@ public class CommonUtils {
       String result =  (resourceName == null) ? Constants.noName : resourceName;
       return result;
     }
+
+    public static boolean isInstanceCheck(Object object, Class<?> type) {
+        return type.isInstance(object);
+    }
+
+    public static boolean isResultStatusInstanceCheck(Object object) {
+        return ResultStatus.class.isInstance(object);
+    }
+
+
 }

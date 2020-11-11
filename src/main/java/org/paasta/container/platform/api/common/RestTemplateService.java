@@ -7,7 +7,6 @@ import com.google.gson.JsonParser;
 import org.paasta.container.platform.api.adminToken.AdminToken;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.exception.CpCommonAPIException;
 import org.paasta.container.platform.api.login.JwtUtil;
 import org.paasta.container.platform.api.users.Users;
@@ -103,6 +102,11 @@ public class RestTemplateService {
     public <T> T send(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, String acceptType) {
         return send(reqApi, reqUrl, httpMethod, bodyObject, responseType, acceptType, MediaType.APPLICATION_JSON_VALUE);
     }
+
+    public <T> T sendAdmin(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, String acceptType) {
+        return sendAdmin(reqApi, reqUrl, httpMethod, bodyObject, responseType, acceptType, MediaType.APPLICATION_JSON_VALUE);
+    }
+
 
 
     /**
