@@ -135,7 +135,7 @@ public class PersistentVolumesAdmin {
     }
 
     public String getPersistentVolumeStatus() {
-        return persistentVolumeStatus;
+        return status.getPhase();
     }
 
     public void setPersistentVolumeStatus(String persistentVolumeStatus) {
