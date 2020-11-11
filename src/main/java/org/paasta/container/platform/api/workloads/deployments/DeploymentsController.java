@@ -127,8 +127,14 @@ public class DeploymentsController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public DeploymentsYaml getDeploymentsYaml(@PathVariable(value = "namespace") String namespace,
-                                          @PathVariable(value = "resourceName") String resourceName) {
+    public Object getDeploymentsYaml(@PathVariable(value = "namespace") String namespace,
+                                     @PathVariable(value = "resourceName") String resourceName,
+                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        // For Admin
+        if (isAdmin) {
+            return deploymentsService.getDeploymentsAdminYaml(namespace, resourceName, new HashMap<>());
+        }
+
         return deploymentsService.getDeploymentsYaml(namespace, resourceName, new HashMap<>());
     }
 

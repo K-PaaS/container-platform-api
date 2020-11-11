@@ -94,7 +94,7 @@ public class PodsController {
      *
      * @param namespace the namespace
      * @param selector  the selector
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return the pods list
      */
     @ApiOperation(value = "Pods 목록 조회(Get Pods selector)", nickname = "getPodListBySelector")
@@ -111,7 +111,7 @@ public class PodsController {
         if (isAdmin) {
             return podsService.getPodListWithLabelSelectorAdmin(namespace, selector);
         } else
-        return podsService.getPodListWithLabelSelector(namespace, selector);
+            return podsService.getPodListWithLabelSelector(namespace, selector);
     }
 
     /**
@@ -119,7 +119,7 @@ public class PodsController {
      *
      * @param namespace the namespace
      * @param nodeName  the node name
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return the pods list
      */
     @ApiOperation(value = "Pods 목록 조회(Get Pods node)", nickname = "getPodListByNode")
@@ -174,8 +174,14 @@ public class PodsController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public PodsYaml getPodsYaml(@PathVariable(value = "namespace") String namespace,
-                            @PathVariable(value = "resourceName") String resourceName) {
+    public Object getPodsYaml(@PathVariable(value = "namespace") String namespace,
+                                @PathVariable(value = "resourceName") String resourceName,
+                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+
+        if (isAdmin) {
+            return podsService.getPodsAdminYaml(namespace, resourceName, new HashMap<>());
+        }
+
         return podsService.getPodsYaml(namespace, resourceName, new HashMap<>());
     }
 

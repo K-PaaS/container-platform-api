@@ -1,9 +1,7 @@
 package org.paasta.container.platform.api.customServices;
 
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -91,7 +89,7 @@ public class CustomServicesService {
      * @param resultMap    the result map
      * @return the services yaml
      */
-    public CustomServicesYaml getCustomServicesYaml(String namespace, String resourceName, HashMap resultMap) {
+    public Object getCustomServicesYaml(String namespace, String resourceName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListServicesGetUrl()
                         .replace("{namespace}", namespace)
@@ -100,7 +98,33 @@ public class CustomServicesService {
         //noinspection unchecked
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (CustomServicesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, CustomServicesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+
+    /**
+     * Services Admin YAML 조회(Get Services Admin yaml)
+     *
+     * @param namespace    the namespace
+     * @param resourceName the resource name
+     * @param resultMap    the result map
+     * @return the services yaml
+     */
+    public Object getCustomServicesAdminYaml(String namespace, String resourceName, HashMap resultMap) {
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListServicesGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
+        //noinspection unchecked
+        resultMap.put("sourceTypeYaml", response);
+
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 

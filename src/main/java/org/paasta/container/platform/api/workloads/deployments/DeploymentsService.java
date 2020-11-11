@@ -1,9 +1,7 @@
 package org.paasta.container.platform.api.workloads.deployments;
 
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -147,7 +145,7 @@ public class DeploymentsService {
      * @param resultMap      the result map
      * @return the deployments yaml
      */
-    public DeploymentsYaml getDeploymentsYaml(String namespace, String deploymentName, HashMap resultMap) {
+    public Object getDeploymentsYaml(String namespace, String deploymentName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListDeploymentsGetUrl()
                         .replace("{namespace}", namespace)
@@ -156,7 +154,32 @@ public class DeploymentsService {
         //noinspection unchecked
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (DeploymentsYaml) commonService.setResultModel(commonService.setResultObject(resultMap, DeploymentsYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+    /**
+     * Deployments Admin YAML 조회(Get Deployments Admin yaml)
+     *
+     * @param namespace      the namespace
+     * @param deploymentName the deployments name
+     * @param resultMap      the result map
+     * @return the deployments yaml
+     */
+    public Object getDeploymentsAdminYaml(String namespace, String deploymentName, HashMap resultMap) {
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListDeploymentsGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", deploymentName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
+        //noinspection unchecked
+        resultMap.put("sourceTypeYaml", response);
+
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -186,7 +209,7 @@ public class DeploymentsService {
     public ResultStatus deleteDeployments(String namespace, String name, boolean isAdmin) {
         ResultStatus resultStatus;
 
-        if(isAdmin) {
+        if (isAdmin) {
             resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiListDeploymentsDeleteUrl()
                             .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);

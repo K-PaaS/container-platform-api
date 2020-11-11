@@ -1,9 +1,7 @@
 package org.paasta.container.platform.api.workloads.pods;
 
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.workloads.pods.support.ContainerStatusesItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,9 +94,9 @@ public class PodsService {
         PodsListAdmin podsListAdmin = commonService.setResultObject(responseMap, PodsListAdmin.class);
         podsListAdmin = commonService.resourceListProcessing(podsListAdmin, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
 
-        for (PodsListAdminList po:podsListAdmin.getItems()) {
+        for (PodsListAdminList po : podsListAdmin.getItems()) {
 
-            if(po.getStatus().getContainerStatuses() == null) {
+            if (po.getStatus().getContainerStatuses() == null) {
                 List<ContainerStatusesItem> list = new ArrayList<>();
                 ContainerStatusesItem item = new ContainerStatusesItem();
                 item.setRestartCount(0);
@@ -239,15 +237,40 @@ public class PodsService {
      * @param resultMap the result map
      * @return the pods yaml
      */
-    public PodsYaml getPodsYaml(String namespace, String podName, HashMap resultMap) {
+    public Object getPodsYaml(String namespace, String podName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsGetUrl().replace("{namespace}", namespace).replace("{name}", podName),
                 HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
         //noinspection unchecked
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (PodsYaml) commonService.setResultModel(commonService.setResultObject(resultMap, PodsYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
+
+
+    /**
+     * Pods Admin YAML 조회(Get Pods Admin yaml)
+     *
+     * @param namespace the namespace
+     * @param podName   the pods name
+     * @param resultMap the result map
+     * @return the pods yaml
+     */
+    public Object getPodsAdminYaml(String namespace, String podName, HashMap resultMap) {
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListPodsGetUrl().replace("{namespace}", namespace).replace("{name}", podName),
+                HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
+
+        //noinspection unchecked
+        resultMap.put("sourceTypeYaml", response);
+
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
 
     /**
      * Pods 생성(Create Pods)
@@ -276,7 +299,7 @@ public class PodsService {
     public ResultStatus deletePods(String namespace, String resourceName, boolean isAdmin) {
         ResultStatus resultStatus;
 
-        if(isAdmin) {
+        if (isAdmin) {
             resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiListPodsDeleteUrl()
                             .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
@@ -332,9 +355,9 @@ public class PodsService {
         PodsListAdmin podsListAdminList = commonService.setResultObject(responseMap, PodsListAdmin.class);
         podsListAdminList = commonService.resourceListProcessing(podsListAdminList, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
 
-        for (PodsListAdminList po:podsListAdminList.getItems()) {
+        for (PodsListAdminList po : podsListAdminList.getItems()) {
 
-            if(po.getStatus().getContainerStatuses() == null) {
+            if (po.getStatus().getContainerStatuses() == null) {
                 List<ContainerStatusesItem> list = new ArrayList<>();
                 ContainerStatusesItem item = new ContainerStatusesItem();
                 item.setRestartCount(0);
