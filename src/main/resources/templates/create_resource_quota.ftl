@@ -2,9 +2,8 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: ${name}
+  namespace: ${namespace}
 spec:
   hard:
-    requests.cpu: ${request_cpu}
-    requests.memory: ${request_memory}
     limits.cpu: ${limits_cpu}
     limits.memory: ${limits_memory}

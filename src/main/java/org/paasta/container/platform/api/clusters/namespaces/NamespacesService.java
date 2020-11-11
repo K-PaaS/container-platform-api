@@ -175,19 +175,6 @@ public class NamespacesService {
         return (NamespacesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, NamespacesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
-//    /**
-//     * NameSpace 생성(Create NameSpaces)
-//     *
-//     * @param yaml the yaml
-//     * @return return is succeeded
-//     */
-//    public Object createNamespaces(String yaml) {
-//        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-//                propertyService.getCpMasterApiListNamespacesCreateUrl(), HttpMethod.POST, yaml, Object.class, true);
-//
-//        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
-//                Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
-//    }
 
     /**
      * NameSpaces 삭제(Delete NameSpaces)
@@ -202,22 +189,6 @@ public class NamespacesService {
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
     }
-
-//    /**
-//     * NameSpaces 수정(Update NameSpaces)
-//     *
-//     * @param namespace the namespace
-//     * @param yaml      the yaml
-//     * @return return is succeeded
-//     */
-//    public ResultStatus updateNamespaces(String namespace, String yaml) {
-//        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
-//                propertyService.getCpMasterApiListNamespacesUpdateUrl()
-//                        .replace("{name}", namespace), HttpMethod.PUT, yaml, ResultStatus.class, true);
-//        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
-//                Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
-//
-//    }
 
 
     /**

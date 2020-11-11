@@ -162,8 +162,6 @@ public class ResourceYamlService {
             }
 
             if (DEFAULT_RESOURCE_QUOTAS_LIST.contains(rqName) && d.getName().equals(rqName)) {
-                requestCpu = d.getRequestCpu();
-                requestMemory = d.getRequestMemory();
                 limitsCpu = d.getLimitCpu();
                 limitsMemory = d.getLimitMemory();
 
@@ -172,8 +170,7 @@ public class ResourceYamlService {
         }
         Map<String, Object> model = new HashMap<>();
         model.put("name", rqName);
-        model.put("request_cpu", requestCpu);
-        model.put("request_memory", requestMemory);
+        model.put("namespace", reqNamespace);
         model.put("limits_cpu", limitsCpu);
         model.put("limits_memory", limitsMemory);
 
@@ -193,19 +190,19 @@ public class ResourceYamlService {
     public void createDefaultLimitRanges(String reqNamespace, String lrName) {
         LimitRangesDefaultList limitRangesDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/limitRanges", HttpMethod.GET, null, LimitRangesDefaultList.class);
         String limitRangeYaml = "";
-        String requestMemory = "";
+        String limitsCpu = "";
         String limitsMemory = "";
-        String resourceType = "";
 
         for (LimitRangesDefault limitRanges:limitRangesDefaultList.getItems()) {
             if (lrName == null) {
-                lrName = DEFAULT_MEMORY_LIMIT_RANGE_NAME;
+                lrName = DEFAULT_LOW_LIMIT_RANGE_NAME;
             }
 
             if (DEFAULT_LIMIT_RANGES_LIST.contains(lrName) && limitRanges.getName().equals(lrName)) {
-                requestMemory = limitRanges.getDefaultRequest();
-                limitsMemory = limitRanges.getDefaultLimit();
-                resourceType = limitRanges.getResource();
+                String limitsLr = limitRanges.getDefaultLimit();
+                String[] limitsLrList = limitsLr.split("/");
+                limitsCpu = limitsLrList[0];
+                limitsMemory = limitsLrList[1];
 
                 break;
             }
@@ -213,10 +210,11 @@ public class ResourceYamlService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("name", lrName);
-        model.put("limit_" + resourceType, limitsMemory);
-        model.put("request_" + resourceType, requestMemory);
+        model.put("namespace", reqNamespace);
+        model.put("limit_cpu", limitsCpu);
+        model.put("limit_memory", limitsMemory);
 
-        limitRangeYaml = templateService.convert("create_limit_range_" + resourceType + ".ftl", model);
+        limitRangeYaml = templateService.convert("create_limit_range.ftl", model);
 
         restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListLimitRangesCreateUrl().replace("{namespace}", reqNamespace), HttpMethod.POST, limitRangeYaml, Object.class, true);
 

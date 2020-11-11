@@ -45,8 +45,9 @@ public class Constants {
     public static final String DEFAULT_LOW_RESOURCE_QUOTA_NAME = "cp-low-rq";
     public static final String DEFAULT_MEDIUM_RESOURCE_QUOTA_NAME = "cp-medium-rq";
     public static final String DEFAULT_HIGH_RESOURCE_QUOTA_NAME = "cp-high-rq";
-    public static final String DEFAULT_MEMORY_LIMIT_RANGE_NAME = "cp-memory-limit-range";
-    public static final String DEFAULT_CPU_LIMIT_RANGE_NAME = "cp-cpu-limit-range";
+    public static final String DEFAULT_LOW_LIMIT_RANGE_NAME = "cp-low-limit-range";
+    public static final String DEFAULT_MEDIUM_LIMIT_RANGE_NAME = "cp-medium-limit-range";
+    public static final String DEFAULT_HIGH_LIMIT_RANGE_NAME = "cp-high-limit-range";
 
     public static final List<String> DEFAULT_RESOURCE_QUOTAS_LIST = Collections.unmodifiableList(new ArrayList<String>(){
         {
@@ -58,8 +59,9 @@ public class Constants {
 
     public static final List<String> DEFAULT_LIMIT_RANGES_LIST = Collections.unmodifiableList(new ArrayList<String>(){
         {
-            add(DEFAULT_MEMORY_LIMIT_RANGE_NAME);
-            add(DEFAULT_CPU_LIMIT_RANGE_NAME);
+            add(DEFAULT_LOW_LIMIT_RANGE_NAME);
+            add(DEFAULT_MEDIUM_LIMIT_RANGE_NAME);
+            add(DEFAULT_HIGH_LIMIT_RANGE_NAME);
         }
     });
 

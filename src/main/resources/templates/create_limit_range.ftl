@@ -2,10 +2,10 @@ apiVersion: v1
 kind: LimitRange
 metadata:
   name: ${name}
+  namespace: ${namespace}
 spec:
   limits:
   - default:
       cpu: ${limit_cpu}
-    defaultRequest:
-      cpu: ${request_cpu}
+      memory: ${limit_memory}
     type: Container
