@@ -68,7 +68,7 @@ public class NamespacesController {
             return namespacesService.getNamespacesListAdmin(offset, limit, orderBy, order, searchName);
         }
 
-        return namespacesService.getNamespacesList(offset, limit, orderBy, order, searchName);
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
     /**

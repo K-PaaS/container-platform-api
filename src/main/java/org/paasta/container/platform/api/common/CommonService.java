@@ -8,6 +8,7 @@ import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -30,6 +31,9 @@ public class CommonService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonService.class);
     private final Gson gson;
+
+    @Value("${cpNamespace.ignoreNamespace}")
+    List<String> ignoreNamespaceList;
 
     /**
      * Instantiates a new Common service
@@ -341,7 +345,7 @@ public class CommonService {
         // 1. 키워드 match에 따른 리스트 필터
         if (searchName != null && !searchName.equals("")) {
             resourceItemList = searchKeywordForResourceName(resourceItemList, searchName);
-    }
+        }
 
         // 2. 조건에 따른 리스트 정렬
         resourceItemList = sortingListByCondition(resourceItemList, orderBy, order);
@@ -373,6 +377,32 @@ public class CommonService {
         resourceReturnList = setField("itemMetaData", resourceList, commonItemMetaData);
 
         return (T) resourceReturnList;
+    }
+
+
+    /**
+     * 리소스 목록조회 제외대상 네임스페이스 fieldSelector 생성 (Create Except Namespace Field Selector)
+     *
+     * @return the string
+     */
+    public String generateFieldSelectorForExceptNamespace(String type) {
+
+        String fieldSelector = "?fieldSelector=";
+        String query = "metadata.namespace!=";
+
+        if (type.equals("cluster")) {
+            query = "metadata.name!=";
+        }
+
+        for (String namespace : ignoreNamespaceList) {
+            fieldSelector += query + namespace + Constants.separatorString;
+        }
+
+        // remove last char (separator)
+        fieldSelector = fieldSelector.replaceFirst(".$", "");
+
+        System.out.println("fieldSelector::::::::::::::" + fieldSelector);
+        return fieldSelector;
     }
 
 }

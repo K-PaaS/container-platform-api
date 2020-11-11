@@ -70,14 +70,6 @@ public class PersistentVolumesController {
                                            @RequestParam(required = false, defaultValue = "") String searchName,
                                            @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
-            if (isAdmin) {
-                return persistentVolumesService.getPersistentVolumesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
-            } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
-            }
-        }
-
         if (isAdmin) {
             return persistentVolumesService.getPersistentVolumesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }

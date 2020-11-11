@@ -171,6 +171,7 @@ public class DeploymentsController {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @DeleteMapping("/{resourceName:.+}")

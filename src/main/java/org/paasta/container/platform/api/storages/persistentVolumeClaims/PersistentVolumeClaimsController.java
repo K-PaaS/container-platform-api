@@ -161,6 +161,7 @@ public class PersistentVolumeClaimsController {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "PersistentVolumeClaims 삭제(Delete PersistentVolumeClaims)", nickname = "deletePersistentVolumeClaims")
@@ -170,9 +171,10 @@ public class PersistentVolumeClaimsController {
     })
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deletePersistentVolumeClaims(@PathVariable(value = "namespace") String namespace,
-                                                     @PathVariable(value = "resourceName") String resourceName) {
+                                                     @PathVariable(value = "resourceName") String resourceName,
+                                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        return persistentVolumeClaimsService.deletePersistentVolumeClaims(namespace, resourceName, new HashMap<>());
+        return persistentVolumeClaimsService.deletePersistentVolumeClaims(namespace, resourceName, isAdmin);
     }
 
     /**

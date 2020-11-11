@@ -55,8 +55,8 @@ public class StorageClassesService {
         HashMap responseMap = null;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListStorageClassesListUrl()
-                        .replace("{namespace}", namespace), HttpMethod.GET, null, Map.class);
+                propertyService.getCpMasterApiListStorageClassesListUrl(),
+                HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
