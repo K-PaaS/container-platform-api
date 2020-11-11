@@ -134,7 +134,7 @@ public class LimitRangesController {
                                         @PathVariable(value = "resourceName") String resourceName,
                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
-            return limitRangesService.getLimitRangesYaml(namespace, resourceName, new HashMap<>());
+            return limitRangesService.getLimitRangesAdminYaml(namespace, resourceName, new HashMap<>());
         }
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }

@@ -2,12 +2,9 @@ package org.paasta.container.platform.api.clusters.limitRanges;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
-import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasYaml;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -134,23 +131,27 @@ public class LimitRangesService {
     }
 
     /**
-     * LimitRanges YAML 조회(Get v yaml)
+     * LimitRanges Admin YAML 조회(Get LimitRanges Admin yaml)
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param resultMap    the resultMap
      * @return the limitRanges yaml
      */
-    public LimitRangesYaml getLimitRangesYaml(String namespace, String resourceName, HashMap resultMap) {
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public Object getLimitRangesAdminYaml(String namespace, String resourceName, HashMap resultMap) {
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListLimitRangesGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
         //noinspection unchecked
-        resultMap.put("sourceTypeYaml", resultString);
+        resultMap.put("sourceTypeYaml", response);
 
-        return (LimitRangesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, LimitRangesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -225,7 +226,7 @@ public class LimitRangesService {
         for (LimitRangesDefault limitRangesDefault : defaultList.getItems()) {
             String yn = CHECK_N;
 
-            if(k8sLrNameList.contains(limitRangesDefault.getName())) {
+            if (k8sLrNameList.contains(limitRangesDefault.getName())) {
                 yn = CHECK_Y;
             }
             serversItemList.add(getLimitRangesDb(limitRangesDefault, yn));
@@ -235,7 +236,7 @@ public class LimitRangesService {
             for (LimitRangesListAdminItem i : adminItems) {
                 List<LimitRangesItem> list = new ArrayList<>();
 
-                if(!dbLrNameList.contains(i.getName())) {
+                if (!dbLrNameList.contains(i.getName())) {
                     LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
 
                     for (LimitRangesItem item : i.getSpec().getLimits()) {
@@ -247,8 +248,8 @@ public class LimitRangesService {
                         duplicateKeys.addAll(getKeyResource(objectToMap(item.getMin())));
                         duplicateKeys.addAll(getKeyResource(objectToMap(item.getMax())));
 
-                        for(String name:duplicateKeys) {
-                            if(!exclusiveKeys.contains(name)) {
+                        for (String name : duplicateKeys) {
+                            if (!exclusiveKeys.contains(name)) {
                                 exclusiveKeys.add(name);
                             }
                         }
@@ -337,9 +338,9 @@ public class LimitRangesService {
      */
     private List<String> getKeyResource(Map<String, Object> map) {
         List<String> keyList = new ArrayList<>();
-        if(map != null) {
+        if (map != null) {
             Iterator<String> keys = map.keySet().iterator();
-            while(keys.hasNext()) {
+            while (keys.hasNext()) {
                 keyList.add(keys.next());
             }
         }
