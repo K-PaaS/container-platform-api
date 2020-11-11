@@ -11,6 +11,7 @@ public class MessageConstant {
 
     public static final String PREFIX_KUBE_NOT_ALLOW = "'kube-' 접두사는 허용되지 않습니다.";
     public static final String NOT_MATCH_NAMESPACES = "현재 네임스페이스와 요청한 네임스페이스가 일치하지 않습니다.";
+    public static final String NOT_MATCH_USER_ID = "현재 User ID와 요청한 User ID가 일치하지 않습니다.";
 
     //login
     public static final String LOGIN_SUCCESS = "Login Successful.";
