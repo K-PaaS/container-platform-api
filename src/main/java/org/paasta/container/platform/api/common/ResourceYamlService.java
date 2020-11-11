@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.common;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesDefault;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesDefaultList;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasDefault;
@@ -187,7 +188,7 @@ public class ResourceYamlService {
      * @param reqNamespace the request namespace
      * @param lrName the request name
      */
-    public void createDefaultLimitRanges(String reqNamespace, String lrName) {
+    public void createDefaultLimitRanges(String reqNamespace, String lrName) throws JsonProcessingException {
         LimitRangesDefaultList limitRangesDefaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/limitRanges", HttpMethod.GET, null, LimitRangesDefaultList.class);
         String limitRangeYaml = "";
         String limitsCpu = "";
@@ -200,9 +201,10 @@ public class ResourceYamlService {
 
             if (DEFAULT_LIMIT_RANGES_LIST.contains(lrName) && limitRanges.getName().equals(lrName)) {
                 String limitsLr = limitRanges.getDefaultLimit();
-                String[] limitsLrList = limitsLr.split("/");
-                limitsCpu = limitsLrList[0];
-                limitsMemory = limitsLrList[1];
+                Map<String, Object> map = CommonUtils.jsonStringToMap(limitsLr);
+
+                limitsCpu = String.valueOf(map.get("cpu"));
+                limitsMemory = String.valueOf(map.get("memory"));
 
                 break;
             }

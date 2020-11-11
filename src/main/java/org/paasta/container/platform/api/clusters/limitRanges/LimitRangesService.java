@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.*;
@@ -212,7 +213,7 @@ public class LimitRangesService {
      * @param namespace the namespace
      * @return the limitRanges template list
      */
-    public Object getLimitRangesTemplateList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
+    public Object getLimitRangesTemplateList(String namespace, int offset, int limit, String orderBy, String order, String searchName) throws JsonProcessingException {
         LimitRangesListAdmin limitRangesList = (LimitRangesListAdmin) getLimitRangesListAdmin(namespace, 0, 0, "creationTime", "desc", "");
         LimitRangesDefaultList defaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/limitRanges", HttpMethod.GET, null, LimitRangesDefaultList.class);
 
@@ -291,7 +292,7 @@ public class LimitRangesService {
      * @param limitRangesDefault the limitRangesDefault
      * @return the limitRanges template item
      */
-    public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault, String yn) {
+    public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault, String yn) throws JsonProcessingException {
         LimitRangesItem map = new LimitRangesItem();
         List<LimitRangesItem> list = new ArrayList<>();
         LimitRangesTemplateItem item = new LimitRangesTemplateItem();
@@ -302,7 +303,7 @@ public class LimitRangesService {
         map.setMax(limitRangesDefault.getMax());
         map.setType(limitRangesDefault.getType());
         map.setResource(limitRangesDefault.getResource());
-        map.setDefaultLimit(limitRangesDefault.getDefaultLimit());
+        map.setDefaultLimit(CommonUtils.jsonStringToMap(limitRangesDefault.getDefaultLimit()));
 
         list.add(map);
 

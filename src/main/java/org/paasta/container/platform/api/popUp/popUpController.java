@@ -98,7 +98,7 @@ public class popUpController {
                                              @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
                                              @RequestParam(required = false, defaultValue = "") String order,
                                              @RequestParam(required = false, defaultValue = "") String searchName,
-                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws JsonProcessingException {
 
         if (isAdmin) {
             return limitRangesService.getLimitRangesTemplateList(namespace, offset, limit, orderBy, order, searchName);

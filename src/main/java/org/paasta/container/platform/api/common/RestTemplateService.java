@@ -143,7 +143,6 @@ public class RestTemplateService {
 
         if (resEntity.getBody() != null) {
             LOGGER.info("RESPONSE-TYPE: {}", resEntity.getBody().getClass());
-            return statusCodeDiscriminate(reqApi, resEntity, httpMethod);
         } else {
             LOGGER.error("RESPONSE-TYPE: RESPONSE BODY IS NULL");
         }

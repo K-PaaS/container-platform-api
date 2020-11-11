@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.clusters.namespaces;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -161,7 +162,7 @@ public class NamespacesController {
     @PostMapping
     public ResultStatus initNamespaces(@PathVariable(value = "cluster") String cluster,
                                        @RequestBody NamespacesInitTemplate initTemplate,
-                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws JsonProcessingException {
 
         if(initTemplate.getName().equals(Constants.ALL_NAMESPACES))
             return Constants.BAD_REQUEST_ACCESS_RESULT_STATUS;
@@ -193,7 +194,7 @@ public class NamespacesController {
     public ResultStatus modifyInitNamespaces(@PathVariable(value = "cluster") String cluster,
                                              @PathVariable(value = "namespace") String namespace,
                                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
-                                             @RequestBody NamespacesInitTemplate initTemplate) {
+                                             @RequestBody NamespacesInitTemplate initTemplate) throws JsonProcessingException {
         if (isAdmin) {
             return namespacesService.modifyInitNamespaces(cluster, namespace, initTemplate);
         }

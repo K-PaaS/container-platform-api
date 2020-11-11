@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.common;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
@@ -142,5 +143,9 @@ public class CommonUtils {
         return ResultStatus.class.isInstance(object);
     }
 
+    public static Map jsonStringToMap(String jsonString) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(jsonString, Map.class);
+    }
 
 }

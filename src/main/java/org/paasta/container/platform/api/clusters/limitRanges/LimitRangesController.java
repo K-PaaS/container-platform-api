@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -260,7 +261,7 @@ public class LimitRangesController {
                                              @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
                                              @RequestParam(required = false, defaultValue = "") String order,
                                              @RequestParam(required = false, defaultValue = "") String searchName,
-                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws JsonProcessingException {
 
         if (isAdmin) {
             return limitRangesService.getLimitRangesTemplateList(namespace, offset, limit, orderBy, order, searchName);
