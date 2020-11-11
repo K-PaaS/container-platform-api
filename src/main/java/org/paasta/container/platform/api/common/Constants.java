@@ -209,6 +209,12 @@ public class Constants {
     public static final ResultStatus UNPROCESSABLE_ENTITY_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.UNPROCESSABLE_ENTITY.getMsg(),
             CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(),CommonStatusCode.UNPROCESSABLE_ENTITY.getMsg(), null );
 
+    public static final ResultStatus NOT_MATCH_NAMESPACES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_NAMESPACES,
+            CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
+
+    public static final ResultStatus NOT_MATCH_USER_ID = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_USER_ID,
+            CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
+
     public Constants() {
         throw new IllegalStateException();
     }

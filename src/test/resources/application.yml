@@ -1,9 +1,6 @@
 spring:
   application:
     name: paas-ta-container-platform-api
-  #  security:
-  #    username: admin
-  #    password: PaaS-TA
   freemarker:
     template-loader-path: classpath:/templates/
 
@@ -59,6 +56,7 @@ cpMaster:
         create: "/api/v1/persistentvolumes"
         delete: "/api/v1/persistentvolumes/{name}"
         update: "/api/v1/persistentvolumes/{name}"
+        listAllNamespaces: "/api/v1/persistentvolumes"
       persistentVolumeClaims:
         list: "/api/v1/namespaces/{namespace}/persistentvolumeclaims"
         get: "/api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}"
@@ -140,6 +138,8 @@ logging:
 
 server:
   port: ${PORT:3333}
+  auth:
+    valid: N
 
 commonApi:
   url: http://localhost:3334
@@ -159,6 +159,8 @@ logging:
 
 server:
   port: ${PORT:3333}
+  auth:
+    valid: N
 
 commonApi:
   url: http://common-api-deployment.default.svc.cluster.local:3334

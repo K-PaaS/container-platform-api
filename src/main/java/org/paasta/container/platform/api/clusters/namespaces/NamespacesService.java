@@ -250,7 +250,7 @@ public class NamespacesService {
         ResultStatus resultStatus = new ResultStatus();
 
         if(!namespace.equals(initTemplate.getName())) {
-            return Constants.BAD_REQUEST_ACCESS_RESULT_STATUS;
+            return Constants.NOT_MATCH_NAMESPACES;
         }
 
         modifyResourceQuotas(namespace, initTemplate.getResourceQuotasList());
