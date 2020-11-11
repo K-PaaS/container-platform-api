@@ -10,6 +10,7 @@ import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
+import java.util.HashMap;
 
 /**
  * ReplicaSets Controller 클래스
@@ -121,9 +122,14 @@ public class ReplicaSetsController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
-    public ReplicaSetsYaml getReplicaSetsYaml(@PathVariable(value = "namespace") String namespace,
-                                          @PathVariable(value = "resourceName") String resourceName) {
-        return replicaSetsService.getReplicaSetsYaml(namespace, resourceName);
+    public Object getReplicaSetsYaml(@PathVariable(value = "namespace") String namespace,
+                                     @PathVariable(value = "resourceName") String resourceName,
+                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+        if (isAdmin) {
+            return replicaSetsService.getReplicaSetsAdminYaml(namespace, resourceName, new HashMap<>());
+        }
+
+        return replicaSetsService.getReplicaSetsYaml(namespace, resourceName, new HashMap<>());
     }
 
     /**

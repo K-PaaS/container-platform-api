@@ -1,9 +1,7 @@
 package org.paasta.container.platform.api.workloads.replicaSets;
 
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -114,17 +112,39 @@ public class ReplicaSetsService {
      * @param replicaSetsName the replicaSets name
      * @return the replicaSets yaml
      */
-    public ReplicaSetsYaml getReplicaSetsYaml(String namespace, String replicaSetsName) {
+    public Object getReplicaSetsYaml(String namespace, String replicaSetsName, HashMap resultMap) {
         String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListReplicaSetsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", replicaSetsName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
         //noinspection unchecked
-        HashMap<String, Object> resultMap = new HashMap<>();
         resultMap.put("sourceTypeYaml", resultString);
 
-        return (ReplicaSetsYaml) commonService.setResultModel(commonService.setResultObject(resultMap, ReplicaSetsYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+    }
+
+
+    /**
+     * ReplicaSets Admin YAML 조회(Get ReplicaSets Admin yaml)
+     *
+     * @param namespace       the namespace
+     * @param replicaSetsName the replicaSets name
+     * @return the replicaSets yaml
+     */
+    public Object getReplicaSetsAdminYaml(String namespace, String replicaSetsName, HashMap resultMap) {
+        Object response  = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                propertyService.getCpMasterApiListReplicaSetsGetUrl()
+                        .replace("{namespace}", namespace)
+                        .replace("{name}", replicaSetsName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
+
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
+        //noinspection unchecked
+        resultMap.put("sourceTypeYaml", response);
+
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
