@@ -596,7 +596,7 @@ public class UsersService {
         List<UsersInfo> usersInfos = new ArrayList<>();
 
         Map<String, List<String>> list = restTemplateService.send(TARGET_COMMON_API, "/users/names", HttpMethod.GET, null, Map.class);
-        List<String> names = list.get("users");
+        List<String> names = list.get(USERS);
 
         if(ALL_NAMESPACES.equals(namespace)) {
             for (String name:names) {

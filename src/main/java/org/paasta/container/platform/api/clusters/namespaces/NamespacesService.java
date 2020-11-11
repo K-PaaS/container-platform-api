@@ -187,6 +187,11 @@ public class NamespacesService {
                 propertyService.getCpMasterApiListNamespacesDeleteUrl()
                         .replace("{name}", namespace), HttpMethod.DELETE, null, ResultStatus.class);
 
+        List<String> userNamesList = usersService.getUsersNameListByNamespace(namespace).get(USERS);
+        for (String userId:userNamesList) {
+            usersService.deleteUsers(usersService.getUsers(namespace, userId));
+        }
+
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
     }
 

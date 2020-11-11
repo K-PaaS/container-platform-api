@@ -117,7 +117,7 @@ public class SignUpController {
      */
     public Boolean duplicatedUserIdCheck(Users users) {
         Boolean isDuplicated = false;
-        List<String> list = getUsersNameList().get("users");
+        List<String> list = getUsersNameList().get(Constants.USERS);
         for (String name:list) {
             if (name.equals(users.getUserId())) {
                 isDuplicated = true;
