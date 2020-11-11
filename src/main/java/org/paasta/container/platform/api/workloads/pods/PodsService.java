@@ -344,7 +344,7 @@ public class PodsService {
         HashMap responseMap;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPodsListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace()
+                propertyService.getCpMasterApiListPodsListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace("ns")
                 , HttpMethod.GET, null, Map.class);
 
         try {

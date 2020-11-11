@@ -293,7 +293,7 @@ public class ReplicaSetsService {
         HashMap responseMap;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListReplicaSetsListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace()
+                propertyService.getCpMasterApiListReplicaSetsListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace("ns")
                 , HttpMethod.GET, null, Map.class);
 
         try {

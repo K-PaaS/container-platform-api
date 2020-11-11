@@ -385,7 +385,7 @@ public class CommonService {
      *
      * @return the string
      */
-    public String generateFieldSelectorForExceptNamespace() {
+    public String generateFieldSelectorForExceptNamespace(String type) {
 
         String fieldSelector = "?fieldSelector=";
 

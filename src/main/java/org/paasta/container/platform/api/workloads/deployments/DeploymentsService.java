@@ -255,7 +255,7 @@ public class DeploymentsService {
         HashMap responseMap;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListDeploymentsListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace()
+                propertyService.getCpMasterApiListDeploymentsListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace("ns")
                 , HttpMethod.GET, null, Map.class);
 
         try {
