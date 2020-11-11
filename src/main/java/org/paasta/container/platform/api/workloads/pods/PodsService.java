@@ -96,6 +96,19 @@ public class PodsService {
         PodsListAdmin podsListAdmin = commonService.setResultObject(responseMap, PodsListAdmin.class);
         podsListAdmin = commonService.resourceListProcessing(podsListAdmin, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
 
+        for (PodsListAdminList po:podsListAdmin.getItems()) {
+
+            if(po.getStatus().getContainerStatuses() == null) {
+                List<ContainerStatusesItem> list = new ArrayList<>();
+                ContainerStatusesItem item = new ContainerStatusesItem();
+                item.setRestartCount(0);
+
+                list.add(item);
+
+                po.getStatus().setContainerStatuses(list);
+            }
+        }
+
         return commonService.setResultModel(podsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
