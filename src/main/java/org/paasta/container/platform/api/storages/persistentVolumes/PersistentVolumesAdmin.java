@@ -2,12 +2,16 @@ package org.paasta.container.platform.api.storages.persistentVolumes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.ObjectReference;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumesSpec;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumesStatus;
 
 import java.util.List;
+
+import static org.paasta.container.platform.api.common.Constants.NULL_REPLACE_TEXT;
+import static org.paasta.container.platform.api.common.Constants.PERSISTENT_VOLUME_TYPE;
 
 /**
  * PersistentVolumes Admin Model 클래스
@@ -47,7 +51,18 @@ public class PersistentVolumesAdmin {
     private PersistentVolumesStatus status;
 
     public Object getSource() {
-        return spec.getHostPath();
+
+        if (spec.getHostPath() == null) {
+            return NULL_REPLACE_TEXT;
+        } else {
+            String path = spec.getHostPath().getPath();
+            String type = spec.getHostPath().getType();
+
+            if ((StringUtils.isNotEmpty(path)) && (StringUtils.isNotEmpty(type) || type.equals(""))) {
+                spec.getHostPath().setType(PERSISTENT_VOLUME_TYPE);
+            }
+            return spec.getHostPath();
+        }
     }
 
     public void setSource(Object source) {
