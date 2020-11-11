@@ -388,13 +388,20 @@ public class CommonService {
     public String generateFieldSelectorForExceptNamespace(String type) {
 
         String fieldSelector = "?fieldSelector=";
+        String query = "metadata.namespace!=";
+
+        if (type.equals("cluster")) {
+            query = "metadata.name!=";
+        }
 
         for (String namespace : ignoreNamespaceList) {
-            fieldSelector += "metadata.namespace!=" + namespace + Constants.separatorString;
+            fieldSelector += query + namespace + Constants.separatorString;
         }
 
         // remove last char (separator)
         fieldSelector = fieldSelector.replaceFirst(".$", "");
+
+        System.out.println("fieldSelector::::::::::::::" + fieldSelector);
         return fieldSelector;
     }
 
