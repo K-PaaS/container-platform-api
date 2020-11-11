@@ -135,7 +135,7 @@ public class ResourceQuotasController {
                                         @PathVariable(value = "resourceName") String resourceName,
                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
-            return resourceQuotasService.getResourceQuotasYaml(namespace, resourceName, new HashMap<>());
+            return resourceQuotasService.getResourceQuotasAdminYaml(namespace, resourceName, new HashMap<>());
         }
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }

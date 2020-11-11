@@ -2,12 +2,9 @@ package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.YamlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,23 +147,26 @@ public class ResourceQuotasService {
     }
 
     /**
-     * ResourceQuotas YAML 조회(Get ResourceQuotas yaml)
+     * ResourceQuotas Admin YAML 조회(Get ResourceQuotas Admin yaml)
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param resultMap    the resultMap
      * @return the resourceQuotas yaml
      */
-    public ResourceQuotasYaml getResourceQuotasYaml(String namespace, String resourceName, HashMap resultMap) {
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public Object getResourceQuotasAdminYaml(String namespace, String resourceName, HashMap resultMap) {
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
         //noinspection unchecked
-        resultMap.put("sourceTypeYaml", resultString);
+        resultMap.put("sourceTypeYaml", response);
 
-        return (ResourceQuotasYaml) commonService.setResultModel(commonService.setResultObject(resultMap, ResourceQuotasYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return  commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
