@@ -279,7 +279,7 @@ public class UsersService {
             users.setIsActive(CHECK_Y);
 
             // DB에 저장
-            rsDb = createUsers(users);
+            rsDb = createUsers(commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, users));
 
             // DB 커밋에 실패했을 경우 k8s 에 만들어진 service account 삭제
             if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
