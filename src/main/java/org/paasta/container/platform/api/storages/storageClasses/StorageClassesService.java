@@ -1,9 +1,7 @@
 package org.paasta.container.platform.api.storages.storageClasses;
 
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -104,13 +102,17 @@ public class StorageClassesService {
      * @param resultMap    the result map
      * @return the storageClasses yaml
      */
-    public StorageClassesYaml getStorageClassesYaml(String resourceName, HashMap resultMap) {
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public Object getStorageClassesAdminYaml(String resourceName, HashMap resultMap) {
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListStorageClassesGetUrl().replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
-        resultMap.put("sourceTypeYaml", resultString);
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
 
-        return (StorageClassesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, StorageClassesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        resultMap.put("sourceTypeYaml", response);
+
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

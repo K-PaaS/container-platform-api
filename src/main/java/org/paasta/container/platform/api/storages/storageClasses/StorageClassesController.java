@@ -117,7 +117,7 @@ public class StorageClassesController {
                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return storageClassesService.getStorageClassesYaml(resourceName, new HashMap<>());
+            return storageClassesService.getStorageClassesAdminYaml(resourceName, new HashMap<>());
         }
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
