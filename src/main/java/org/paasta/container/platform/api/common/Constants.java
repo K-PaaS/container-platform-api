@@ -50,6 +50,10 @@ public class Constants {
     public static final String DEFAULT_MEDIUM_LIMIT_RANGE_NAME = "cp-medium-limit-range";
     public static final String DEFAULT_HIGH_LIMIT_RANGE_NAME = "cp-high-limit-range";
 
+
+    public static final String NOT_ALLOWED_POD_NAME_NODES = "nodes";
+    public static final String NOT_ALLOWED_POD_NAME_RESOURCES= "resources";
+
     public static final List<String> DEFAULT_RESOURCE_QUOTAS_LIST = Collections.unmodifiableList(new ArrayList<String>(){
         {
             add(DEFAULT_LOW_RESOURCE_QUOTA_NAME);
@@ -63,6 +67,13 @@ public class Constants {
             add(DEFAULT_LOW_LIMIT_RANGE_NAME);
             add(DEFAULT_MEDIUM_LIMIT_RANGE_NAME);
             add(DEFAULT_HIGH_LIMIT_RANGE_NAME);
+        }
+    });
+
+    public static final List<String> NOT_ALLOWED_POD_NAME_LIST = Collections.unmodifiableList(new ArrayList<String>(){
+        {
+            add(NOT_ALLOWED_POD_NAME_NODES);
+            add(NOT_ALLOWED_POD_NAME_RESOURCES);
         }
     });
 

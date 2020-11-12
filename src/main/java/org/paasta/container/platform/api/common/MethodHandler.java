@@ -6,6 +6,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.CodeSignature;
+import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesDefault;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.InspectionUtil;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
  * Method Handler 클래스
@@ -171,6 +174,25 @@ public class MethodHandler {
 
         for (String temp : yamlArray) {
             LOGGER.info("temp:::::::::" + temp);
+            String YamlKind = YamlUtil.parsingYaml(temp, "kind");
+            Map YamlMetadata = YamlUtil.parsingYamlMap(temp, "metadata");
+
+            String createYamlResourceName = YamlMetadata.get("name").toString();
+
+            if (YamlKind.equals(Constants.RESOURCE_POD)) {
+                for (String na : NOT_ALLOWED_POD_NAME_LIST) {
+                    if (createYamlResourceName.equals(na)) {
+                        LOGGER.info("This 'Pod' name is not allowed.':::::::::error");
+                        return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_POD_NAME, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.NOT_ALLOWED_POD_NAME);
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+
+        for (String temp : yamlArray) {
+            LOGGER.info("temp:::::::::" + temp);
             Map YamlMetadata = YamlUtil.parsingYamlMap(temp, "metadata");
             String createYamlResourceNamespace;
 
@@ -311,6 +333,25 @@ public class MethodHandler {
                 } else {
                     break;
                 }
+            }
+        }
+
+        for (String temp : yamlArray) {
+            LOGGER.info("temp:::::::::" + temp);
+            String YamlKind = YamlUtil.parsingYaml(temp, "kind");
+            Map YamlMetadata = YamlUtil.parsingYamlMap(temp, "metadata");
+
+            String createYamlResourceName = YamlMetadata.get("name").toString();
+
+            if (YamlKind.equals(Constants.RESOURCE_POD)) {
+                for (String na : NOT_ALLOWED_POD_NAME_LIST) {
+                    if (createYamlResourceName.equals(na)) {
+                        LOGGER.info("This 'Pod' name is not allowed.':::::::::error");
+                        return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_POD_NAME, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.NOT_ALLOWED_POD_NAME);
+                    }
+                }
+            } else {
+                break;
             }
         }
 
