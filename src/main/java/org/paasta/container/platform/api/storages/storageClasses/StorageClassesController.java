@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -158,6 +159,7 @@ public class StorageClassesController {
     /**
      * StorageClasses 삭제(Delete StorageClasses)
      *
+     * @param cluster      the cluster
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param isAdmin      the isAdmin
@@ -169,7 +171,8 @@ public class StorageClassesController {
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @DeleteMapping("/{resourceName:.+}")
-    public Object deleteStorageClasses(@PathVariable(value = "namespace") String namespace,
+    public ResultStatus deleteStorageClasses(@PathVariable(value = "cluster") String cluster,
+                                             @PathVariable(value = "namespace") String namespace,
                                              @PathVariable(value = "resourceName") String resourceName,
                                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
