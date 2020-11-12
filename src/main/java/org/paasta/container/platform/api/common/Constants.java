@@ -119,8 +119,6 @@ public class Constants {
     public static final String URI_SERVICES_DETAIL = "/container-platform/services/{serviceName:.+}";
 
     public static final String URI_STORAGES = "/container-platform/storages";
-    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIM = "/container-platform/storages/persistentVolumeClaims";
-    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIM_DETAIL = "/container-platform/storages/persistentVolumeClaims/{persistentVolumeClaimName:.+}";
     public static final String URI_STORAGES_DETAIL = "/container-platform/storages/{persistentVolumeClaimName:.+}";
 
     public static final String URI_USERS = "/container-platform/users";
