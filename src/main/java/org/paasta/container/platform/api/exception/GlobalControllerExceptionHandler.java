@@ -12,7 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Api Exception Handler 클래스
+ * GlobalController Exception Handler 클래스
  *
  * @author hrjin
  * @version 1.0

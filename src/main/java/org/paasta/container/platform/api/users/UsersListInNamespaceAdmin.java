@@ -9,7 +9,7 @@ import static org.paasta.container.platform.api.common.Constants.CHECK_N;
 import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
 
 /**
- * User List Admin Model 클래스
+ * User List In Namespace Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0

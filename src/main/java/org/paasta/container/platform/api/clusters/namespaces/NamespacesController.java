@@ -206,6 +206,7 @@ public class NamespacesController {
      * Namespaces SelectBox 를 위한 Namespaces 목록 조회(Get Namespaces list for SelectBox)
      *
      * @param cluster the cluster
+     * @param isAdmin the isAdmin
      * @return the namespaces list
      */
     @ApiOperation(value = "Namespaces selectbox를 위한 Namespace 목록 조회(Get Namespaces list for SelectBox)", nickname = "getNamespacesListForSelectBox")

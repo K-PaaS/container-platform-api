@@ -72,7 +72,8 @@ public class EventsController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceUid", value = "리소스 uid", required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceUid", value = "리소스 uid", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "type", value = "타입", required = true, dataType = "string", paramType = "query")
     })
     @GetMapping(value = "/resources/{resourceUid:.+}")
     public Object getEventsList(@PathVariable(value = "cluster") String cluster,

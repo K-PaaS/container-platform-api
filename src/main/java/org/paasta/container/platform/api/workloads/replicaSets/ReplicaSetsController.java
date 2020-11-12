@@ -114,6 +114,7 @@ public class ReplicaSetsController {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
+     * @param isAdmin      the isAdmin
      * @return the replicaSets yaml
      */
     @ApiOperation(value = "ReplicaSets YAML 조회(Get ReplicaSets yaml)", nickname = "getReplicaSetsYaml")
@@ -137,6 +138,7 @@ public class ReplicaSetsController {
      *
      * @param namespace namespace
      * @param selector  selector
+     * @param isAdmin   the isAdmin
      * @return the replicaSets list
      */
     @ApiOperation(value = "ReplicaSets 목록 조회(Get ReplicaSets selector)", nickname = "getReplicaSetsListLabelSelector")
@@ -160,6 +162,7 @@ public class ReplicaSetsController {
      * @param cluster   the cluster
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "ReplicaSets 생성(Create ReplicaSets)", nickname = "createReplicaSets")
@@ -187,12 +190,13 @@ public class ReplicaSetsController {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "ReplicaSets 삭제(Delete ReplicaSets)", nickname = "deleteReplicaSets")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @DeleteMapping(value = "/{resourceName:.+}")
     public ResultStatus deleteReplicaSets(@PathVariable("namespace") String namespace,
@@ -201,7 +205,6 @@ public class ReplicaSetsController {
         return replicaSetsService.deleteReplicaSets(namespace, resourceName, isAdmin);
     }
 
-
     /**
      * ReplicaSets 수정(Update ReplicaSets)
      *
@@ -209,6 +212,7 @@ public class ReplicaSetsController {
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param yaml         the yaml
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "ReplicaSets 수정(Update ReplicaSets)", nickname = "updateReplicaSets")
@@ -226,6 +230,4 @@ public class ReplicaSetsController {
                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         return replicaSetsService.updateReplicaSets(namespace, resourceName, yaml, isAdmin);
     }
-
-
 }

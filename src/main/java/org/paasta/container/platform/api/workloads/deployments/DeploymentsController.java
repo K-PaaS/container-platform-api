@@ -174,6 +174,11 @@ public class DeploymentsController {
      * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
+    @ApiOperation(value = "Deployments 삭제(Delete Deployments)", nickname = "deleteDeployments")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
+    })
     @DeleteMapping("/{resourceName:.+}")
     public ResultStatus deleteDeployments(@PathVariable(value = "namespace") String namespace,
                                           @PathVariable(value = "resourceName") String resourceName,
@@ -190,6 +195,13 @@ public class DeploymentsController {
      * @param yaml         the yaml
      * @return return is succeeded
      */
+    @ApiOperation(value = "Deployments 수정(Update Deployments)", nickname = "updateDeployments")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "yaml", value = "리소스 생성 yaml", required = true, dataType = "string", paramType = "body")
+    })
     @PutMapping("/{resourceName:.+}")
     public ResultStatus updateDeployments(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,

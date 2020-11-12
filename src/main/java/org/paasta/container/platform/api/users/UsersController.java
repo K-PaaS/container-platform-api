@@ -35,18 +35,30 @@ public class UsersController {
         this.usersService = usersService;
     }
 
-
     /**
      * Users 전체 목록 조회(Get Users all list)
      *
      * @param cluster    the cluster
-     * @param namespace the namespace
+     * @param namespace  the namespace
+     * @param searchName the searchName
+     * @param limit      the limit
+     * @param offset     the offset
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param isAdmin    the isAdmin
      * @return the users list
      */
     @ApiOperation(value = "Users 전체 목록 조회(Get Users list)", nickname = "getUsersList")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "userType", value = "유저 타입", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+
     })
     @GetMapping(value = "/clusters/{cluster:.+}/users")
     public UsersListAdmin getUsersList(@PathVariable(value = "cluster") String cluster,
@@ -70,8 +82,8 @@ public class UsersController {
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
      * @param cluster    the cluster
-     * @param namespace the namespace
-     * @param isAdmin the isAdmin
+     * @param namespace  the namespace
+     * @param isAdmin    the isAdmin
      * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 Users 목록 조회(Get Users namespace list)", nickname = "getUsersListByNamespace")
@@ -94,8 +106,8 @@ public class UsersController {
      * Namespace 상세 Users 목록 조회(Get Users in namespace list)
      *
      * @param cluster    the cluster
-     * @param namespace the namespace
-     * @param isAdmin the isAdmin
+     * @param namespace  the namespace
+     * @param isAdmin    the isAdmin
      * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 Users 목록 조회(Get Users namespace list)", nickname = "getUsersListInNamespace")
@@ -113,8 +125,6 @@ public class UsersController {
         }
         return usersService.getUsersListByNamespace(namespace);
     }
-
-
 
     /**
      * 각 Namespace 별 Users 상세 조회(Get Users namespace detail)
@@ -162,7 +172,7 @@ public class UsersController {
      * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
      *
      * @param cluster    the cluster
-     * @param namespace the namespace
+     * @param namespace  the namespace
      * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)", nickname = "getUsersNameList")
@@ -183,7 +193,7 @@ public class UsersController {
      * 복수개의 Namespace 에 속할 수 있음
      *
      * @param cluster    the cluster
-     * @param users the users
+     * @param users      the users
      * @return return is succeeded
      */
     @ApiOperation(value = "Users 생성 (Create Users)", nickname = "registerUsers")
@@ -196,7 +206,6 @@ public class UsersController {
                                       @RequestBody Users users) {
         return usersService.registerUsers(users);
     }
-
 
     /**
      * Users 수정(Update Users)
@@ -237,14 +246,22 @@ public class UsersController {
 
 
     /**
-     * 운영자 정보 수정
+     * 운영자 정보 수정 (Update admin info)
      *
      * @param cluster the cluster
+     * @param namespace  the namespace
      * @param userId the user id
      * @param users the users
      * @param isAdmin the isAdmin
      * @return return is succeeded
      */
+    @ApiOperation(value = "Users 수정(Update Users)", nickname = "modifyUsers")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "userId", value = "유저 Id", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "users", value = "유저", required = true, dataType = "Users", paramType = "body")
+    })
     @PutMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/{userId:.+}")
     public Object modifyUsersInfo(@PathVariable(value = "cluster") String cluster,
                                   @PathVariable(value = "namespace") String namespace,

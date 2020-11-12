@@ -147,6 +147,7 @@ public class CustomServicesController {
      * @param cluster   the cluster
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
 
@@ -176,6 +177,7 @@ public class CustomServicesController {
      * @param cluster      the cluster
      * @param namespace    the namespace
      * @param resourceName the resource name
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
 
@@ -202,6 +204,7 @@ public class CustomServicesController {
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param yaml         the yaml
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Services 수정(Update Services)", nickname = "updateServices")

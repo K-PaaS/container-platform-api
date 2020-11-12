@@ -239,7 +239,12 @@ public class LimitRangesController {
      *
      * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin   the isAdmin
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @param isAdmin    the isAdmin
      * @return the limitRangesDefault list
      */
     @ApiOperation(value = "LimitRanges Template 목록 조회(Get LimitRanges Template list)", nickname = "getLimitRangesTemplateList")

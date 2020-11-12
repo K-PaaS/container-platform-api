@@ -11,7 +11,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.HashMap;
 
 /**
- * PersistentVolumeClaims Admin Controller 클래스
+ * PersistentVolumeClaims Controller 클래스
  *
  * @author hrjin
  * @version 1.0
@@ -110,6 +110,7 @@ public class PersistentVolumeClaimsController {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
+     * @param isAdmin      the isAdmin
      * @return the persistentVolumeClaims yaml
      */
     @ApiOperation(value = "PersistentVolumeClaims YAML 조회(Get PersistentVolumeClaims yaml)", nickname = "getPersistentVolumeClaimsYaml")
@@ -135,6 +136,7 @@ public class PersistentVolumeClaimsController {
      * @param cluster   the cluster
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "PersistentVolumeClaims 생성(Create PersistentVolumeClaims)", nickname = "createPersistentVolumeClaims")
@@ -184,6 +186,7 @@ public class PersistentVolumeClaimsController {
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param yaml         the yaml
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "PersistentVolumeClaims 수정(Update PersistentVolumeClaims)", nickname = "updatePersistentVolumeClaims")

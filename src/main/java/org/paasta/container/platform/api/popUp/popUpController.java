@@ -38,9 +38,14 @@ public class popUpController {
     /**
      * ResourceQuotas Default Template 목록 조회 (Get ResourceQoutas Default Template list)
      *
-     * @param cluster   the cluster
-     * @param namespace the namespace
-     * @param isAdmin   the isAdmin
+     * @param cluster    the cluster
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @param isAdmin    the isAdmin
      * @return the resourceQuota list
      * @throws JsonProcessingException
      */
@@ -77,7 +82,12 @@ public class popUpController {
      *
      * @param cluster   the cluster
      * @param namespace the namespace
-     * @param isAdmin   the isAdmin
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @param isAdmin    the isAdmin
      * @return the limitRangesDefault list
      */
     @ApiOperation(value = "LimitRanges Template 목록 조회(Get LimitRanges Template list)", nickname = "getLimitRangesTemplateList")
@@ -106,8 +116,6 @@ public class popUpController {
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
-
-
 
     /**
      * User가 속해 있는 Namespace와 Role 목록 조회(Get Namespace and Roles List to which User belongs)

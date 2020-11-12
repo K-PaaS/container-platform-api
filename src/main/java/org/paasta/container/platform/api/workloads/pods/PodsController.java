@@ -125,7 +125,7 @@ public class PodsController {
     @ApiOperation(value = "Pods 목록 조회(Get Pods node)", nickname = "getPodListByNode")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "nodeName", value = "노드 명", required = true, dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "nodeName", value = "노드 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/nodes/{nodeName:.+}")
     public Object getPodListByNode(@PathVariable(value = "namespace") String namespace,
@@ -191,6 +191,7 @@ public class PodsController {
      * @param cluster   the cluster
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Pods 생성(Create Pods)", nickname = "createPods")
@@ -218,6 +219,7 @@ public class PodsController {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Pods 삭제(Delete Pods)", nickname = "deletePods")
@@ -239,6 +241,7 @@ public class PodsController {
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param yaml         the yaml
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Pods 수정(Update Pods)", nickname = "updatePods")

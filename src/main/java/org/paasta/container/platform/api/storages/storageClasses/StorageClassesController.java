@@ -110,7 +110,6 @@ public class StorageClassesController {
      */
     @ApiOperation(value = "StorageClasses YAML 조회(Get StorageClasses yaml)", nickname = "getStorageClassesYaml")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")

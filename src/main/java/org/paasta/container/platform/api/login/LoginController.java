@@ -37,9 +37,10 @@ public class LoginController {
      * 사용자 로그인(User login)
      *
      * @param authRequest the AuthenticationRequest
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
-    @ApiOperation(value = "사용자 로그인(User login)", nickname = "generateToken")
+    @ApiOperation(value = "사용자 로그인(User login)", nickname = "userLogin")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authRequest", value = "로그인을 위한 사용자 정보", required = true, dataType = "object", paramType = "body"),
             @ApiImplicitParam(name = "isAdmin", value = "관리자 여부 (true/false)", required = true, dataType = "string", paramType = "query")

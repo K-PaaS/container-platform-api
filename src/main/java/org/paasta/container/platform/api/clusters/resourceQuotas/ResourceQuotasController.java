@@ -234,9 +234,14 @@ public class ResourceQuotasController {
     /**
      * ResourceQuotas Default Template 목록 조회 (Get ResourceQoutas Default Template list)
      *
-     * @param cluster   the cluster
-     * @param namespace the namespace
-     * @param isAdmin   the isAdmin
+     * @param cluster    the cluster
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @param isAdmin    the isAdmin
      * @return the resourceQuota list
      * @throws JsonProcessingException
      */
