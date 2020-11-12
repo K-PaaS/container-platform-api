@@ -118,7 +118,7 @@ public class PersistentVolumesService {
     public ResultStatus deletePersistentVolumes(String namespace, String resourceName) {
         ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesDeleteUrl()
-                        .replace("{namesapce}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+                       .replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);

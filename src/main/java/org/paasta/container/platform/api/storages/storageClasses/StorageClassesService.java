@@ -127,8 +127,8 @@ public class StorageClassesService {
                 propertyService.getCpMasterApiListStorageClassesCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
-        return commonService.setResultModel(commonService.setResultObject(map, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
     }
 
     /**
@@ -138,13 +138,13 @@ public class StorageClassesService {
      * @param resourceName the resource name
      * @return return is succeeded
      */
-    public Object deleteStorageClasses(String namespace, String resourceName) {
+    public ResultStatus deleteStorageClasses(String namespace, String resourceName) {
         ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListStorageClassesDeleteUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+                        .replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
-        return commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS);
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
     }
 
     /**
@@ -160,7 +160,8 @@ public class StorageClassesService {
                 propertyService.getCpMasterApiListStorageClassesUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
 
-        return commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{storageClassName:.+}", resourceName));
     }
 
 
