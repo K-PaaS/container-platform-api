@@ -356,18 +356,6 @@ public class NamespacesService {
     }
 
 
-//    /**
-//     * 변경할 Resource 목록 값 비교
-//     *
-//     * @param defaultList the default list
-//     * @param compareList the compare list
-//     * @return the ArrayList
-//     */
-//    private ArrayList<String> compareArrayList(List<String> defaultList, List<String> compareList) {
-//        return (ArrayList<String>) defaultList.stream().filter(x -> !compareList.contains(x)).collect(Collectors.toList());
-//    }
-
-
     /**
      * Namespace Selectbox를 위한 전체 목록 조회
      *
