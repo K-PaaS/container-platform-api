@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -40,7 +39,7 @@ public class LimitRangesController {
     @Autowired
     public LimitRangesController(LimitRangesService limitRangesService) {
         this.limitRangesService = limitRangesService;
-}
+    }
 
     /**
      * LimitRanges 목록 조회(Get LimitRanges list)
@@ -78,7 +77,7 @@ public class LimitRangesController {
         if (isAdmin) {
             if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
                 //all namespace
-               return limitRangesService.getLimitRangesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+                return limitRangesService.getLimitRangesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
             }
             return limitRangesService.getLimitRangesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
@@ -131,9 +130,9 @@ public class LimitRangesController {
     })
     @GetMapping(value = "{resourceName:.+}/yaml")
     public Object getLimitRangesYaml(@PathVariable(value = "cluster") String cluster,
-                                        @PathVariable(value = "namespace") String namespace,
-                                        @PathVariable(value = "resourceName") String resourceName,
-                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                     @PathVariable(value = "namespace") String namespace,
+                                     @PathVariable(value = "resourceName") String resourceName,
+                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
         if (isAdmin) {
             return limitRangesService.getLimitRangesAdminYaml(namespace, resourceName, new HashMap<>());
         }
@@ -261,7 +260,7 @@ public class LimitRangesController {
                                              @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
                                              @RequestParam(required = false, defaultValue = "") String order,
                                              @RequestParam(required = false, defaultValue = "") String searchName,
-                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws JsonProcessingException {
+                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return limitRangesService.getLimitRangesTemplateList(namespace, offset, limit, orderBy, order, searchName);

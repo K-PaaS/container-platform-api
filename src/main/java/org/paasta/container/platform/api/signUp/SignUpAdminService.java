@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.signUp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.adminToken.AdminTokenService;
 import org.paasta.container.platform.api.clusters.clusters.ClustersService;
@@ -67,7 +66,7 @@ public class SignUpAdminService {
      * @param users the user
      * @return the resultStatus
      */
-    public ResultStatus signUpAdminUsers(Users users) throws JsonProcessingException {
+    public ResultStatus signUpAdminUsers(Users users) {
         String namespace = users.getCpNamespace();
         String username = users.getUserId();
 

@@ -98,7 +98,7 @@ public class popUpController {
                                              @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
                                              @RequestParam(required = false, defaultValue = "") String order,
                                              @RequestParam(required = false, defaultValue = "") String searchName,
-                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws JsonProcessingException {
+                                             @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return limitRangesService.getLimitRangesTemplateList(namespace, offset, limit, orderBy, order, searchName);
@@ -136,14 +136,14 @@ public class popUpController {
     })
     @GetMapping("/users/{userId:.+}/namespacesRolesList")
     public Object getNamespacesRolesTemplateList(@PathVariable(value = "cluster") String cluster,
-                                                         @PathVariable(value = "namespace") String namespace,
-                                                         @PathVariable(value = "userId") String userId,
-                                                         @RequestParam(required = false, defaultValue = "0") int offset,
-                                                         @RequestParam(required = false, defaultValue = "0") int limit,
-                                                         @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                                         @RequestParam(required = false, defaultValue = "") String order,
-                                                         @RequestParam(required = false, defaultValue = "") String searchName,
-                                                         @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                                 @PathVariable(value = "namespace") String namespace,
+                                                 @PathVariable(value = "userId") String userId,
+                                                 @RequestParam(required = false, defaultValue = "0") int offset,
+                                                 @RequestParam(required = false, defaultValue = "0") int limit,
+                                                 @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
+                                                 @RequestParam(required = false, defaultValue = "") String order,
+                                                 @RequestParam(required = false, defaultValue = "") String searchName,
+                                                 @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
             if (isAdmin) {

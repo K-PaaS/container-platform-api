@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.clusters.namespaces;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesList;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesService;
@@ -181,7 +180,7 @@ public class NamespacesService {
      * @param initTemplate the initTemplate
      * @return return is succeeded
      */
-    public ResultStatus createInitNamespaces(NamespacesInitTemplate initTemplate) throws JsonProcessingException {
+    public ResultStatus createInitNamespaces(NamespacesInitTemplate initTemplate) {
         String namespace = initTemplate.getName();
         String nsAdminUserId = initTemplate.getNsAdminUserId();
 
@@ -248,7 +247,7 @@ public class NamespacesService {
      * @param initTemplate the init template
      * @return return is succeeded
      */
-    public ResultStatus modifyInitNamespaces(String cluster, String namespace, NamespacesInitTemplate initTemplate) throws JsonProcessingException {
+    public ResultStatus modifyInitNamespaces(String cluster, String namespace, NamespacesInitTemplate initTemplate) {
         ResultStatus resultStatus = new ResultStatus();
 
         if(!namespace.equals(initTemplate.getName())) {
@@ -330,7 +329,7 @@ public class NamespacesService {
      * @param namespace            the namespace
      * @param requestUpdatedLrList the request update limitRanges list
      */
-    private void modifyLimitRanges(String namespace, List<String> requestUpdatedLrList) throws JsonProcessingException {
+    private void modifyLimitRanges(String namespace, List<String> requestUpdatedLrList) {
         LimitRangesList limitRangesList = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListLimitRangesListUrl().replace("{namespace}", namespace),
                 HttpMethod.GET, null, LimitRangesList.class);

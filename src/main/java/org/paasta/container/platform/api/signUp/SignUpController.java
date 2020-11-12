@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.signUp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -57,11 +56,11 @@ public class SignUpController {
      */
     @ApiOperation(value = "회원가입(Sign Up)", nickname = "signUpUsers")
     @ApiImplicitParams({
-           @ApiImplicitParam(name = "requestUsers", value = "요청한 유저", required = true, dataType = "Object", paramType = "body")
+            @ApiImplicitParam(name = "requestUsers", value = "요청한 유저", required = true, dataType = "Object", paramType = "body")
     })
     @NoAuth
     @PostMapping(value = Constants.URI_SIGN_UP)
-    public ResultStatus signUpUsers(@RequestBody Object requestUsers) throws JsonProcessingException {
+    public ResultStatus signUpUsers(@RequestBody Object requestUsers) {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> map = objectMapper.convertValue(requestUsers, Map.class);
 

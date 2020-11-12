@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.*;
@@ -213,7 +212,7 @@ public class LimitRangesService {
      * @param namespace the namespace
      * @return the limitRanges template list
      */
-    public Object getLimitRangesTemplateList(String namespace, int offset, int limit, String orderBy, String order, String searchName) throws JsonProcessingException {
+    public Object getLimitRangesTemplateList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
         LimitRangesListAdmin limitRangesList = (LimitRangesListAdmin) getLimitRangesListAdmin(namespace, 0, 0, "creationTime", "desc", "");
         LimitRangesDefaultList defaultList = restTemplateService.send(Constants.TARGET_COMMON_API, "/limitRanges", HttpMethod.GET, null, LimitRangesDefaultList.class);
 
@@ -292,18 +291,27 @@ public class LimitRangesService {
      * @param limitRangesDefault the limitRangesDefault
      * @return the limitRanges template item
      */
-    public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault, String yn) throws JsonProcessingException {
+    public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault, String yn) {
         LimitRangesItem map = new LimitRangesItem();
         List<LimitRangesItem> list = new ArrayList<>();
         LimitRangesTemplateItem item = new LimitRangesTemplateItem();
         CommonMetaData metadata = new CommonMetaData();
+
+
+        String limitsLr = limitRangesDefault.getDefaultLimit();
+        String[] limitsLrList = limitsLr.split(",");
+
+        Map<String, String> limitMap = new HashMap();
+        limitMap.put(limitsLrList[0].split(":")[0], limitsLrList[0].split(":")[1]);
+        limitMap.put(limitsLrList[1].split(":")[0].trim(), limitsLrList[1].split(":")[1]);
+
 
         map.setDefaultRequest(limitRangesDefault.getDefaultRequest());
         map.setMin(limitRangesDefault.getMin());
         map.setMax(limitRangesDefault.getMax());
         map.setType(limitRangesDefault.getType());
         map.setResource(limitRangesDefault.getResource());
-        map.setDefaultLimit(CommonUtils.jsonStringToMap(limitRangesDefault.getDefaultLimit()));
+        map.setDefaultLimit(limitMap);
 
         list.add(map);
 
