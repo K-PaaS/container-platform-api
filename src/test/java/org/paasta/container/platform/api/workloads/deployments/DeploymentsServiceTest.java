@@ -5,10 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
@@ -30,6 +27,7 @@ public class DeploymentsServiceTest {
     private static final String NAMESPACE = "cp-namespace";
     private static final String DEPLOYMENT_NAME = "test-deployment-name";
     private static final String YAML_STRING = "test-yaml-string";
+    private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
 
     private static final int OFFSET = 0;
     private static final int LIMIT = 0;
@@ -49,7 +47,6 @@ public class DeploymentsServiceTest {
 
     private static Deployments gResultModel = null;
     private static Deployments gFinalResultModel = null;
-    private static Deployments gFinalResultFailModel = null;
 
     private static DeploymentsListAdmin gResultListAdminModel = null;
     private static DeploymentsListAdmin gFinalResultListAdminModel = null;
@@ -63,6 +60,7 @@ public class DeploymentsServiceTest {
     private static CommonResourcesYaml gFinalResultYamlModel = null;
 
     private static ResultStatus gResultStatusModel = null;
+    private static ResultStatus gResultFailModel = null;
     private static ResultStatus gFinalResultStatusModel = null;
 
     @Mock
@@ -109,8 +107,11 @@ public class DeploymentsServiceTest {
         gFinalResultModel = new Deployments();
         gFinalResultModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
-        gFinalResultFailModel = new Deployments();
-        gFinalResultFailModel.setResultCode(Constants.RESULT_STATUS_FAIL);
+        gResultFailModel = new ResultStatus();
+        gResultFailModel.setResultCode(Constants.RESULT_STATUS_FAIL);
+        gResultFailModel.setResultMessage(Constants.RESULT_STATUS_FAIL);
+        gResultFailModel.setHttpStatusCode(CommonStatusCode.NOT_FOUND.getCode());
+        gResultFailModel.setDetailMessage(CommonStatusCode.NOT_FOUND.getMsg());
 
         gResultYamlModel = new CommonResourcesYaml();
         gFinalResultYamlModel = new CommonResourcesYaml();
@@ -248,6 +249,24 @@ public class DeploymentsServiceTest {
 
     }
 
+    @Test
+    public void getDeploymentsAdmin_Yaml_Valid_ReturnModel() {
+
+        //when
+        when(propertyService.getCpMasterApiListDeploymentsGetUrl()).thenReturn("/apis/apps/v1/namespaces/{namespace}/deployments/{name}");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/apps/v1/namespaces/" + NAMESPACE + "/deployments/" + DEPLOYMENT_NAME, HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML)).thenReturn(YAML_STRING);
+        when(commonService.setResultObject(gResultMap, CommonResourcesYaml.class)).thenReturn(gResultYamlModel);
+        when(commonService.setResultModel(gResultYamlModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultYamlModel);
+
+        //call method
+        CommonResourcesYaml result = (CommonResourcesYaml) deploymentsService.getDeploymentsAdminYaml(NAMESPACE, DEPLOYMENT_NAME, gResultMap);
+
+        //compare result
+        assertEquals(YAML_STRING, result.getSourceTypeYaml());
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+
+    }
+
 
     @Test
     public void createDeployments() {
@@ -316,7 +335,10 @@ public class DeploymentsServiceTest {
     public void getDeploymentsListAllNamespacesAdmin() {
         //when
         when(propertyService.getCpMasterApiListDeploymentsListAllNamespacesUrl()).thenReturn("/apis/apps/v1/deployments");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/apps/v1/deployments", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
+
+        // ?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace
+        when(commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)).thenReturn(FIELD_SELECTOR);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/apps/v1/deployments?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
         when(commonService.setResultObject(gResultAdminMap, DeploymentsListAdmin.class)).thenReturn(gResultListAdminModel);
         when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, DeploymentsListAdmin.class)).thenReturn(gResultListAdminModel);
         when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
