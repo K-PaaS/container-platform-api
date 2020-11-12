@@ -315,8 +315,8 @@ public class NamespacesService {
 
         List<String> k8sResourceQuotasList = resourceQuotasList.getItems().stream().map(a -> a.getMetadata().getName()).collect(Collectors.toList());
 
-        ArrayList<String> toBeDelete = compareArrayList(k8sResourceQuotasList, requestUpdatedRqList);
-        ArrayList<String> toBeAdd = compareArrayList(requestUpdatedRqList, k8sResourceQuotasList);
+        ArrayList<String> toBeDelete = commonService.compareArrayList(k8sResourceQuotasList, requestUpdatedRqList);
+        ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedRqList, k8sResourceQuotasList);
 
         // delete
         for (String deleteRqName : toBeDelete) {
@@ -343,8 +343,8 @@ public class NamespacesService {
 
         List<String> k8sLimitRangesList = limitRangesList.getItems().stream().map(lr -> lr.getMetadata().getName()).collect(Collectors.toList());
 
-        ArrayList<String> toBeDelete = compareArrayList(k8sLimitRangesList, requestUpdatedLrList);
-        ArrayList<String> toBeAdd = compareArrayList(requestUpdatedLrList, k8sLimitRangesList);
+        ArrayList<String> toBeDelete = commonService.compareArrayList(k8sLimitRangesList, requestUpdatedLrList);
+        ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedLrList, k8sLimitRangesList);
 
         for (String lrName : toBeAdd) {
             resourceYamlService.createDefaultLimitRanges(namespace, lrName);
@@ -356,16 +356,16 @@ public class NamespacesService {
     }
 
 
-    /**
-     * 변경할 Resource 목록 값 비교
-     *
-     * @param defaultList the default list
-     * @param compareList the compare list
-     * @return the ArrayList
-     */
-    private ArrayList<String> compareArrayList(List<String> defaultList, List<String> compareList) {
-        return (ArrayList<String>) defaultList.stream().filter(x -> !compareList.contains(x)).collect(Collectors.toList());
-    }
+//    /**
+//     * 변경할 Resource 목록 값 비교
+//     *
+//     * @param defaultList the default list
+//     * @param compareList the compare list
+//     * @return the ArrayList
+//     */
+//    private ArrayList<String> compareArrayList(List<String> defaultList, List<String> compareList) {
+//        return (ArrayList<String>) defaultList.stream().filter(x -> !compareList.contains(x)).collect(Collectors.toList());
+//    }
 
 
     /**

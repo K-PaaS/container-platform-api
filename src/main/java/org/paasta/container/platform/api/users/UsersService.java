@@ -5,7 +5,6 @@ import org.paasta.container.platform.api.clusters.clusters.Clusters;
 import org.paasta.container.platform.api.clusters.clusters.ClustersService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.roles.RolesListAllNamespaces;
 import org.paasta.container.platform.api.secret.Secrets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -140,20 +138,22 @@ public class UsersService {
         List<UsersAdmin.UsersDetails> usersDetailsList = new ArrayList<>();
 
         for(Users users:list.getItems()) {
-            usersDetails = convert(users, UsersAdmin.UsersDetails.class);
-            Object obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl().replace("{namespace}", usersDetails.getCpNamespace()).replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class);
+            if(!propertyService.getIgnoreNamespaceList().contains(users.getCpNamespace())) {
+                usersDetails = convert(users, UsersAdmin.UsersDetails.class);
+                Object obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl().replace("{namespace}", usersDetails.getCpNamespace()).replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class);
 
-            if (!(obj instanceof ResultStatus)) {
-                // k8s에서 secret 정보 조회
-                Secrets secrets = (Secrets) commonService.setResultModel(commonService.setResultObject(obj, Secrets.class), Constants.RESULT_STATUS_SUCCESS);
-                usersDetails.setServiceAccountUid(secrets.getMetadata().getUid());
-                usersDetails.setSecrets(UsersAdmin.Secrets.builder()
-                        .saSecret(secrets.getMetadata().getName())
-                        .secretLabels(secrets.getMetadata().getLabels())
-                        .secretType(secrets.getType()).build());
+                if (!(obj instanceof ResultStatus)) {
+                    // k8s에서 secret 정보 조회
+                    Secrets secrets = (Secrets) commonService.setResultModel(commonService.setResultObject(obj, Secrets.class), Constants.RESULT_STATUS_SUCCESS);
+                    usersDetails.setServiceAccountUid(secrets.getMetadata().getUid());
+                    usersDetails.setSecrets(UsersAdmin.Secrets.builder()
+                            .saSecret(secrets.getMetadata().getName())
+                            .secretLabels(secrets.getMetadata().getLabels())
+                            .secretType(secrets.getType()).build());
 
+                }
+                usersDetailsList.add(usersDetails);
             }
-            usersDetailsList.add(usersDetails);
         }
 
         usersAdmin.setUsersDetail(usersDetailsList);
@@ -313,80 +313,93 @@ public class UsersService {
         // 넘어온 새로운 select value 중 namespace list
         List<String> newNsList = selectValues.stream().map(Users.NamespaceRole::getNamespace).collect(Collectors.toList());
 
-        // 새로운 것 기준
-        for (UsersAdmin.UsersDetails details:usersDetails) {
-            // 기존 namespace와 겹치는 namespace일 경우
-            if(newNsList.contains(details.getCpNamespace())) {
-                // role 까지 같은 지 확인
-                // 같으면 그대로, 다르면 기존 role binding 지운뒤 새롭게 role binding
-                for (Users.NamespaceRole nsRole:selectValues) {
-                    String namespace = nsRole.getNamespace();
-                    String role = nsRole.getRole();
+        ArrayList<String> asIs = commonService.equalArrayList(defaultNsList, newNsList);
+        ArrayList<String> toBeDelete = commonService.compareArrayList(defaultNsList, newNsList);
+        ArrayList<String> toBeAdd = commonService.compareArrayList(newNsList, defaultNsList);
 
-                    // 기존 DB update
-                    Users updateUser = getUsers(namespace, users.getServiceAccountName());
+        List<Users.NamespaceRole> asIsNamespaces = new ArrayList<>();
+        List<Users.NamespaceRole> toBeAddNamespace = new ArrayList<>();
 
-                    // role이 다를 경우
-                    if(details.getCpNamespace().equalsIgnoreCase(namespace) && !details.getRoleSetCode().equalsIgnoreCase(role)) {
-                        LOGGER.info("Same Namespace >> {}, Default Role >> {}, New Role >> {}", namespace, details.getRoleSetCode(), role);
-                        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + "-" + details.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
-                        resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, role);
 
-                        updateUser.setPassword(users.getPassword());
-                        updateUser.setEmail(users.getEmail());
-                        updateUser.setRoleSetCode(role);
-                        updateUser.setSaToken(accessTokenService.getSecrets(namespace, updateUser.getSaSecret()).getUserAccessToken());
+        for(Users.NamespaceRole namespaceRole : selectValues) {
+            Users.NamespaceRole namespaceRole2 = new Users.NamespaceRole();
+            for (String name : asIs) {
+                if(namespaceRole.getNamespace().equals(name)) {
+                    namespaceRole2.setNamespace(namespaceRole.getNamespace());
+                    namespaceRole2.setRole(namespaceRole.getRole());
 
-                    } else if(details.getCpNamespace().equalsIgnoreCase(namespace) && details.getRoleSetCode().equalsIgnoreCase(role)){  // namespace, role 모두 같을 경우
-                        updateUser.setPassword(users.getPassword());
-                        updateUser.setEmail(users.getEmail());
-                    }
-
-                    rsDb = createUsers(updateUser);
+                    asIsNamespaces.add(namespaceRole2);
                 }
+            }
 
+            for (String name : toBeAdd) {
+                if(namespaceRole.getNamespace().equals(name)) {
+                    namespaceRole2.setNamespace(namespaceRole.getNamespace());
+                    namespaceRole2.setRole(namespaceRole.getRole());
+
+                    toBeAddNamespace.add(namespaceRole2);
+                }
+            }
+        }
+
+        for(Users.NamespaceRole nr : asIsNamespaces) {
+            Users updateUser = getUsers(nr.getNamespace(), users.getServiceAccountName());
+            String namespace = nr.getNamespace();
+            String newRole = nr.getRole();
+            String defaultRole = updateUser.getRoleSetCode();
+
+            if(!updateUser.getRoleSetCode().equals(nr.getRole())) {
+                LOGGER.info("Same Namespace >> {}, Default Role >> {}, New Role >> {}", namespace, defaultRole, newRole);
+                restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + "-" + defaultRole + "-binding"), HttpMethod.DELETE, null, Object.class, true);
+                resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, newRole);
+
+                updateUser.setUserId(users.getUserId());
+                updateUser.setPassword(users.getPassword());
+                updateUser.setEmail(users.getEmail());
+                updateUser.setRoleSetCode(newRole);
+                updateUser.setSaToken(accessTokenService.getSecrets(namespace, updateUser.getSaSecret()).getUserAccessToken());
             } else {
-                LOGGER.info("Default Namespace's service account delete >> " + details.getCpNamespace());
-                Users deleteUser = getUsers(details.getCpNamespace(), users.getServiceAccountName());
-                deleteUsers(deleteUser);
+                updateUser.setUserId(users.getUserId());
+                updateUser.setPassword(users.getPassword());
+                updateUser.setEmail(users.getEmail());
             }
 
+            rsDb = createUsers(updateUser);
         }
 
 
-        // 기존 것 기준
-        for (Users.NamespaceRole namespaceRole:selectValues) {
-            String newNamespace = namespaceRole.getNamespace();
-            String newSa = users.getServiceAccountName();
-
-            // 기존에는 없는 namespace일 경우
-            if(!defaultNsList.contains(newNamespace)) {
-                LOGGER.info("New Namespace create >> {}, New Role >> {}", newNamespace, namespaceRole.getRole());
-
-                // 새로운 namespace에 sa create
-                resourceYamlService.createServiceAccount(newSa, newNamespace);
-
-                // 새로운 namespace에 role binding
-                resourceYamlService.createRoleBinding(newSa, newNamespace, namespaceRole.getRole());
-
-                String saSecretName = restTemplateService.getSecretName(newNamespace, newSa);
-
-                // DB 새로 insert
-                Users newUser = users;
-
-                newUser.setCpNamespace(namespaceRole.getNamespace());
-                newUser.setRoleSetCode(namespaceRole.getRole());
-                newUser.setIsActive(CHECK_Y);
-                newUser.setSaSecret(saSecretName);
-                newUser.setSaToken(accessTokenService.getSecrets(newNamespace, saSecretName).getUserAccessToken());
-                newUser.setUserType("USER");
-
-                rsDb = createUsers(newUser);
-            }
+        for(String deleteSa : toBeDelete) {
+            LOGGER.info("Default Namespace's service account delete >> " + deleteSa);
+            Users deleteUser = getUsers(deleteSa, users.getServiceAccountName());
+            deleteUsers(deleteUser);
         }
 
-        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS_DETAIL.replace("{userId:.+}", users.getServiceAccountName()));
+
+        for(Users.NamespaceRole nr : toBeAddNamespace) {
+            String addInNamespace = nr.getNamespace();
+            String addRole = nr.getRole();
+            String sa = users.getServiceAccountName();
+
+            LOGGER.info("New Namespace create >> {}, New Role >> {}", addInNamespace, addRole);
+
+            resourceYamlService.createServiceAccount(sa, addInNamespace);
+            resourceYamlService.createRoleBinding(sa, addInNamespace, addRole);
+
+            String saSecretName = restTemplateService.getSecretName(addInNamespace, sa);
+
+            Users newUser = users;
+            newUser.setId(0);
+            newUser.setCpNamespace(addInNamespace);
+            newUser.setRoleSetCode(addRole);
+            newUser.setIsActive(CHECK_Y);
+            newUser.setSaSecret(saSecretName);
+            newUser.setSaToken(accessTokenService.getSecrets(addInNamespace, saSecretName).getUserAccessToken());
+            newUser.setUserType("USER");
+
+            rsDb = createUsers(commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newUser));
+        }
+
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS_DETAIL.replace("{userId:.+}", users.getServiceAccountName()));
     }
 
 

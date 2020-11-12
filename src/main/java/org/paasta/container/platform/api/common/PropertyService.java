@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Property Service 클래스
  *
@@ -20,6 +22,9 @@ public class PropertyService {
 
     @Value("${commonApi.url}")
     private String commonApiUrl;
+
+    @Value("${cpNamespace.ignoreNamespace}")
+    List<String> ignoreNamespaceList;
 
     //service
     @Value("${cpMaster.api.list.services.list}")

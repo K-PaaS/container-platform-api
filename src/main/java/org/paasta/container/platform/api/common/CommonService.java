@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -403,5 +404,30 @@ public class CommonService {
 
         return fieldSelector;
     }
+
+
+    /**
+     * 변경할 Resource 목록 값 비교
+     *
+     * @param defaultList the default list
+     * @param compareList the compare list
+     * @return the ArrayList
+     */
+    public ArrayList<String> compareArrayList(List<String> defaultList, List<String> compareList) {
+        return (ArrayList<String>) defaultList.stream().filter(x -> !compareList.contains(x)).collect(Collectors.toList());
+    }
+
+
+    /**
+     * 같은 Resource인지 목록 값 비교
+     *
+     * @param defaultList the default list
+     * @param compareList the compare list
+     * @return the ArrayList
+     */
+    public ArrayList<String> equalArrayList(List<String> defaultList, List<String> compareList) {
+        return (ArrayList<String>) defaultList.stream().filter(x -> compareList.contains(x)).collect(Collectors.toList());
+    }
+
 
 }
