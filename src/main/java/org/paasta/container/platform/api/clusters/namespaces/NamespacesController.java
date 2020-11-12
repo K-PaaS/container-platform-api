@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.HashMap;
+
 /**
  * Namespaces Controller 클래스
  *
@@ -114,7 +116,7 @@ public class NamespacesController {
                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return namespacesService.getNamespacesYaml(namespace);
+            return namespacesService.getNamespacesAdminYaml(namespace, new HashMap<>());
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
@@ -163,7 +165,7 @@ public class NamespacesController {
                                        @RequestBody NamespacesInitTemplate initTemplate,
                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        if(initTemplate.getName().equals(Constants.ALL_NAMESPACES))
+        if (initTemplate.getName().equals(Constants.ALL_NAMESPACES))
             return Constants.BAD_REQUEST_ACCESS_RESULT_STATUS;
 
         if (isAdmin) {

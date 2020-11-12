@@ -7,6 +7,7 @@ import org.paasta.container.platform.api.clusters.namespaces.support.NamespacesL
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasList;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
 import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersService;
@@ -106,7 +107,6 @@ public class NamespacesService {
     }
 
 
-
     /**
      * NameSpaces Admin 목록 조회(Get NameSpaces Admin list)
      *
@@ -122,7 +122,7 @@ public class NamespacesService {
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesListUrl() + commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_CLUSTER)
-                ,HttpMethod.GET, null, Map.class);
+                , HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
@@ -137,20 +137,27 @@ public class NamespacesService {
     }
 
     /**
-     * NameSpaces YAML 조회(Get NameSpaces yaml)
+     * NameSpaces Admin YAML 조회(Get NameSpaces yaml)
      *
-     * @param namespace the namespace
+     * @param namespace    the namespace
+     * @param resultMap    the result map
      * @return the namespaces yaml
      */
-    public NamespacesYaml getNamespacesYaml(String namespace) {
-        String resultString = restTemplateService.send(Constants.TARGET_CP_MASTER_API,
+    public Object getNamespacesAdminYaml(String namespace, HashMap resultMap) {
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesGetUrl()
                         .replace("{namespace}", namespace), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
 
-        HashMap<String, Object> resultMap = new HashMap<>();
-        resultMap.put("sourceTypeYaml", resultString);
 
-        return (NamespacesYaml) commonService.setResultModel(commonService.setResultObject(resultMap, NamespacesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        if (CommonUtils.isResultStatusInstanceCheck(response)) {
+            return response;
+        }
+
+        //noinspection unchecked
+        resultMap.put("sourceTypeYaml", response);
+
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -166,7 +173,7 @@ public class NamespacesService {
                         .replace("{name}", namespace), HttpMethod.DELETE, null, ResultStatus.class);
 
         List<String> userNamesList = usersService.getUsersNameListByNamespace(namespace).get(USERS);
-        for (String userId:userNamesList) {
+        for (String userId : userNamesList) {
             usersService.deleteUsers(usersService.getUsers(namespace, userId));
         }
 
@@ -250,7 +257,7 @@ public class NamespacesService {
     public ResultStatus modifyInitNamespaces(String cluster, String namespace, NamespacesInitTemplate initTemplate) {
         ResultStatus resultStatus = new ResultStatus();
 
-        if(!namespace.equals(initTemplate.getName())) {
+        if (!namespace.equals(initTemplate.getName())) {
             return Constants.NOT_MATCH_NAMESPACES;
         }
 
