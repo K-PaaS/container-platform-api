@@ -47,4 +47,5 @@ PaaS-TA 컨테이너 플랫폼 API의 개발 환경은 다음과 같습니다.
 
 ## 라이선스
 PaaS-TA 컨테이너 플랫폼 API 프로젝트는 다음과 같은 라이선스의 오픈 소스를 사용합니다.
+
 [Apache-2.0 License](http://www.apache.org/licenses/LICENSE-2.0)
