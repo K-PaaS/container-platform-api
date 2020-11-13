@@ -284,7 +284,7 @@ public class PodsService {
                 propertyService.getCpMasterApiListPodsCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS);
     }
 
@@ -325,7 +325,7 @@ public class PodsService {
                 propertyService.getCpMasterApiListPodsUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.PUT, yaml, Object.class, isAdmin);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Pods.class),
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_WORKLOAD_PODS_DETAIL.replace("{podName:.+}", name));
     }
 
