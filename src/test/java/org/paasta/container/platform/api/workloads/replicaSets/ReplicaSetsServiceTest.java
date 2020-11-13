@@ -2,51 +2,54 @@ package org.paasta.container.platform.api.workloads.replicaSets;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpMethod;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.workloads.pods.Pods;
+import org.paasta.container.platform.api.workloads.pods.PodsAdmin;
+import org.paasta.container.platform.api.workloads.pods.PodsList;
+import org.paasta.container.platform.api.workloads.pods.PodsListAdmin;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
-import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-/**
- * The type ReplicaSets test.
- */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @TestPropertySource("classpath:application.yml")
 public class ReplicaSetsServiceTest {
-
-    private static final String NAMESPACE = "test-namespace";
-    private static final String SERVICE_NAME = "test-service-name";
-    private static final String LIST_URL = "test-list-url";
-    private static final String GET_URL = "test-get-url";
+    private static final String CLUSTER = "cp-cluster";
+    private static final String NAMESPACE = "cp-namespace";
+    private static final String SERVICE_NAME = "cp-service-name";
     private static final String YAML_STRING = "test-yaml-string";
-    private static final String LABEL_SELECTOR = "test-label-selector";
+
 
 
     private static HashMap gResultMap = null;
-    private static ReplicaSetsList gResultListModel = null;
-    private static ReplicaSetsList gFinalResultListModel = null;
-    private static ReplicaSets gResultModel = null;
-    private static ReplicaSets gFinalResultModel = null;
 
+    private static PodsList gResultListModel = null;
+    private static PodsList gFinalResultListModel = null;
+
+    private static PodsListAdmin gResultListAdminModel = null;
+    private static PodsListAdmin gFinalResultListAdminModel = null;
+
+    private static Pods gResultModel = null;
+    private static Pods gFinalResultModel = null;
+
+    private static PodsAdmin gResultAdminModel = null;
+    private static PodsAdmin gFinalResultAdminModel = null;
+
+    private static CommonResourcesYaml gResultYamlModel = null;
+    private static CommonResourcesYaml gFinalResultYamlModel = null;
+
+    private static ResultStatus gResultStatusModel = null;
+    private static ResultStatus gResultFailModel = null;
+    private static ResultStatus gFinalResultStatusModel = null;
 
     @Mock
     private RestTemplateService restTemplateService;
@@ -60,56 +63,170 @@ public class ReplicaSetsServiceTest {
     @InjectMocks
     private ReplicaSetsService replicaSetsService;
 
-
-    /**
-     * Sets up.
-     */
     @Before
     public void setUp() {
         gResultMap = new HashMap();
-        gResultMap.put("sourceTypeYaml", YAML_STRING);
-        gResultListModel = new ReplicaSetsList();
-        gFinalResultListModel = new ReplicaSetsList();
-        gFinalResultListModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
-        gResultModel = new ReplicaSets();
-        gFinalResultModel = new ReplicaSets();
-        gFinalResultModel.setSourceTypeYaml(YAML_STRING);
-        gFinalResultModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
     }
 
-
-    /**
-     * Tear down.
-     */
     @After
     public void tearDown() {
     }
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    //////////////////// MethodName_StateUnderTest_ExpectedBehavior
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
     /**
-     * Gets custom services list valid return model.
+     * ReplicaSets 목록 조회(Get ReplicaSets list) Test
      */
     @Test
     public void getReplicaSetsList_Valid_ReturnModel() {
-        // CONDITION
-        when(propertyService.getCpMasterApiListReplicaSetsListUrl()).thenReturn(LIST_URL);
-        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, LIST_URL
-                .replace("{namespace}", NAMESPACE), HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
-        when(commonService.setResultObject(gResultMap, ReplicaSetsList.class)).thenReturn(gResultListModel);
-        when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
+        // given
 
-        // TEST
-        ReplicaSetsList resultModel = replicaSetsService.getReplicaSetsList(NAMESPACE, 0, 0, "creationTime", "desc", "");
+        // when
 
-        // VERIFY
-        assertThat(resultModel).isNotNull();
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultModel.getResultCode());
+        // then
+
     }
 
+    /**
+     * ReplicaSets 상세 조회(Get ReplicaSets detail) Test
+     */
+    @Test
+    public void getReplicaSets_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * ReplicaSets 상세 조회(Get ReplicaSets detail) Test
+     * (Admin Portal)
+     */
+    @Test
+    public void getReplicaSetsAdmin_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * ReplicaSets YAML 조회(Get ReplicaSets yaml) Test
+     */
+    @Test
+    public void getReplicaSetsYaml_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * ReplicaSets Admin YAML 조회(Get ReplicaSets Admin yaml) Test
+     */
+    @Test
+    public void getReplicaSetsAdminYaml_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * ReplicaSets 목록 조회(Get ReplicaSets Selector) Test
+     */
+    @Test
+    public void getReplicaSetsListLabelSelector_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * ReplicaSets 목록 조회(Get ReplicaSets Selector) Test
+     */
+    @Test
+    public void getReplicaSetsListLabelSelectorAdmin_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * ReplicaSets 목록 조회(Get ReplicaSets list) Test
+     */
+    @Test
+    public void getReplicaSetsListAdmin_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * ReplicaSets 생성(Create ReplicaSets) Test
+     */
+    @Test
+    public void createReplicaSets_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * ReplicaSets 삭제(Delete ReplicaSets) Test
+     */
+    @Test
+    public void deleteReplicaSets_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * ReplicaSets 수정(Update ReplicaSets) Test
+     */
+    @Test
+    public void updateReplicaSets_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
+
+    /**
+     * 전체 Namespaces 의 ReplicaSets Admin 목록 조회(Get ReplicaSets Admin list in all namespaces) Test
+     */
+    @Test
+    public void getReplicaSetsListAllNamespacesAdmin_Valid_ReturnModel() {
+        // given
+
+        // when
+
+        // then
+
+    }
 }
