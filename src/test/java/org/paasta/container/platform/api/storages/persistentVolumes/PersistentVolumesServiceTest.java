@@ -12,11 +12,6 @@ import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.PersistentVolumeClaims;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.PersistentVolumeClaimsAdmin;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.PersistentVolumeClaimsList;
-import org.paasta.container.platform.api.storages.persistentVolumeClaims.PersistentVolumeClaimsListAdmin;
-import org.paasta.container.platform.api.workloads.deployments.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -200,7 +195,7 @@ public class PersistentVolumesServiceTest {
     @Test
     public void createPersistentVolumes() {
         //when
-        when(propertyService.getCpMasterApiListDeploymentsCreateUrl()).thenReturn("/api/v1/persistentvolumes");
+        when(propertyService.getCpMasterApiListPersistentVolumesCreateUrl()).thenReturn("/api/v1/persistentvolumes");
         when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/api/v1/persistentvolumes", HttpMethod.POST, YAML_STRING, Object.class, isAdmin)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES)).thenReturn(gFinalResultStatusModel);

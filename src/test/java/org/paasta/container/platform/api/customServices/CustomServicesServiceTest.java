@@ -13,7 +13,6 @@ import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.workloads.deployments.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -95,7 +94,7 @@ public class CustomServicesServiceTest {
         gFinalResultStatusModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
         gFinalResultStatusModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gFinalResultStatusModel.setDetailMessage(CommonStatusCode.OK.getMsg());
-        gFinalResultStatusModel.setNextActionUrl(Constants.URI_WORKLOAD_DEPLOYMENTS);
+        gFinalResultStatusModel.setNextActionUrl(Constants.URI_SERVICES);
 
         // 리스트가져옴
         gResultListModel = new CustomServicesList();
@@ -305,7 +304,7 @@ public class CustomServicesServiceTest {
     @Test
     public void getCustomServicesAdmin() {
         //when
-        when(propertyService.getCpMasterApiListDeploymentsGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/services/{name}");
+        when(propertyService.getCpMasterApiListServicesGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/services/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/services/" + SERVICE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, CustomServicesAdmin.class)).thenReturn(gResultAdminModel);
         when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);

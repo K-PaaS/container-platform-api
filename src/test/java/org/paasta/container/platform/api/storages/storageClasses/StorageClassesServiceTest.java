@@ -12,7 +12,6 @@ import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.workloads.deployments.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -45,10 +44,6 @@ public class StorageClassesServiceTest {
     private static HashMap gResultMap = null;
     private static HashMap gResultAdminMap = null;
     private static HashMap gResultAdminFailMap = null;
-
-    /*private static StorageClassesList gResultListModel = null;
-    private static Stor gFinalResultListModel = null;
-    private static DeploymentsList gFinalResultListFailModel = null;*/
 
     private static StorageClasses gResultModel = null;
     private static StorageClasses gFinalResultModel = null;
@@ -96,16 +91,7 @@ public class StorageClassesServiceTest {
         gFinalResultStatusModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
         gFinalResultStatusModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gFinalResultStatusModel.setDetailMessage(CommonStatusCode.OK.getMsg());
-        gFinalResultStatusModel.setNextActionUrl(Constants.URI_WORKLOAD_DEPLOYMENTS);
-
-        // 리스트가져옴
-        /*gResultListModel = new Storagclass();
-
-        gFinalResultListModel = new DeploymentsList();
-        gFinalResultListModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
-
-        gFinalResultListFailModel = new DeploymentsList();
-        gFinalResultListFailModel.setResultCode(Constants.RESULT_STATUS_FAIL);*/
+        gFinalResultStatusModel.setNextActionUrl(Constants.URI_STORAGES);
 
         // 하나만 가져옴
         gResultModel = new StorageClasses();
@@ -197,7 +183,7 @@ public class StorageClassesServiceTest {
     @Test
     public void getStorageClasses_Yaml_Valid_ReturnModel() {
         //when
-        when(propertyService.getCpMasterApiListDeploymentsGetUrl()).thenReturn("/apis/storage.k8s.io/v1/storageclasses/{name}");
+        when(propertyService.getCpMasterApiListStorageClassesGetUrl()).thenReturn("/apis/storage.k8s.io/v1/storageclasses/{name}");
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/apis/storage.k8s.io/v1/storageclasses/{name}" + STORAGE_CLASS_NAME, HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML)).thenReturn(YAML_STRING);
         when(commonService.setResultObject(gResultMap, CommonResourcesYaml.class)).thenReturn(gResultYamlModel);
         when(commonService.setResultModel(gResultYamlModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultYamlModel);
