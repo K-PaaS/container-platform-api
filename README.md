@@ -1,6 +1,6 @@
 # paas-ta-container-platform-api
 
-PaaS-TA 에서 제공하는 컨테이너 플랫폼 API로 컨테이너 플랫폼 서비스를 제어하기 위한 REST API를 제공합니다.
+PaaS-TA 에서 제공하는 컨테이너 플랫폼 API로 컨테이너 플랫폼 애플리케이션을 제어하기 위한 REST API를 제공합니다.
 
 - [시작하기](#시작하기)
   - [컨테이너 플랫폼 API 빌드 방법](#컨테이너-플랫폼-API-빌드-방법)
@@ -9,7 +9,7 @@ PaaS-TA 에서 제공하는 컨테이너 플랫폼 API로 컨테이너 플랫폼
 - [라이센스](#라이센스)
 
 ## 시작하기
-PaaS-TA 컨테이너 플랫폼 API가 수행하는 서비스 관리 작업은 다음과 같습니다.
+PaaS-TA 컨테이너 플랫폼 API가 수행하는 애플리케이션 관리 작업은 다음과 같습니다.
 
 - 컨테이너 플랫폼 자원 관리 API
 - 권한 관리 API
@@ -24,7 +24,7 @@ $ gradle build
 
 ## 문서
 - 전체 컨테이너 플랫폼 관련 문서를 보려면 http://www.paas-ta.co.kr 을 참조하십시오.
-- 컨테이너 플랫폼 활용에 대한 정보는 https://github.com/PaaS-TA/service-deployment 의 README를 참조하십시오.
+- 컨테이너 플랫폼 활용에 대한 정보는 https://github.com/PaaS-TA/paas-ta-container-platform 의 README를 참조하십시오.
 
 
 ## 개발 환경
