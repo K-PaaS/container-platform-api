@@ -1,12 +1,12 @@
 # paas-ta-container-platform-api
 
-PaaS-TA 에서 제공하는 컨테이너 플랫폼 API로 컨테이너 플랫폼을 제어하기 위한 REST API를 제공합니다.
+PaaS-TA에서 제공하는 컨테이너 플랫폼 API로 컨테이너 플랫폼을 제어하기 위한 REST API를 제공합니다.
 
 - [시작하기](#시작하기)
   - [컨테이너 플랫폼 API 빌드 방법](#컨테이너-플랫폼-API-빌드-방법)
 - [문서](#문서)
 - [개발 환경](#개발-환경)
-- [라이센스](#라이센스)
+- [라이선스](#라이선스)
 
 ## 시작하기
 PaaS-TA 컨테이너 플랫폼 API가 수행하는 관리 작업은 다음과 같습니다.
@@ -44,6 +44,6 @@ $ gradle build
 
 
 
-## 라이센스
+## 라이선스
 
 [Apache-2.0 License](http://www.apache.org/licenses/LICENSE-2.0)
