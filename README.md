@@ -1,6 +1,6 @@
 # paas-ta-container-platform-api
 
-PaaS-TA에서 제공하는 컨테이너 플랫폼 API로 컨테이너 플랫폼을 제어하기 위한 REST API를 제공합니다.
+PaaS-TA에서 제공하는 컨테이너 플랫폼 제어에 필요한 REST API를 제공합니다.
 
 - [시작하기](#시작하기)
   - [컨테이너 플랫폼 API 빌드 방법](#컨테이너-플랫폼-API-빌드-방법)
