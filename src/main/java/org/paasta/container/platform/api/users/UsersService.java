@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.paasta.container.platform.api.common.CommonService.convert;
 import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
@@ -95,7 +94,6 @@ public class UsersService {
         }
 
         String reqUrlParam = "?userType=" + userType + "&searchParam=" + searchParam + "&limit=" + limit + "&offset=" + offset + "&orderBy=" + orderBy + "&order=" + order;
-
         UsersListAdmin rsDb = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", cluster) + reqUrlParam, HttpMethod.GET, null, UsersListAdmin.class);
 
         return (UsersListAdmin) commonService.setResultModel(commonService.setResultObject(rsDb, UsersListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
@@ -130,7 +128,7 @@ public class UsersService {
      * @param userId the userId
      * @return the users detail
      */
-    public Object getUsers(String userId) throws Exception {
+    public Object getUsersInMultiNamespace(String userId) throws Exception {
         UsersList list = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
 
         UsersAdmin usersAdmin = new UsersAdmin();
@@ -139,7 +137,7 @@ public class UsersService {
 
         for(Users users:list.getItems()) {
             if(!propertyService.getIgnoreNamespaceList().contains(users.getCpNamespace())) {
-                usersDetails = convert(users, UsersAdmin.UsersDetails.class);
+                usersDetails = commonService.convert(users, UsersAdmin.UsersDetails.class);
                 Object obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl().replace("{namespace}", usersDetails.getCpNamespace()).replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class);
 
                 if (!(obj instanceof ResultStatus)) {
@@ -304,7 +302,7 @@ public class UsersService {
     public ResultStatus modifyUsersAdmin(String userId, Users users) throws Exception {
         ResultStatus rsDb = new ResultStatus();
 
-        List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsers(users.getServiceAccountName())).getUsersDetail();
+        List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(users.getServiceAccountName())).getUsersDetail();
         List<Users.NamespaceRole> selectValues = users.getSelectValues();
 
         // 기존 namespace list

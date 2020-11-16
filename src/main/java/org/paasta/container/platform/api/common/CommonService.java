@@ -169,7 +169,7 @@ public class CommonService {
      * @return the b
      * @throws Exception
      */
-    public static <A, B> B convert(A instance, Class<B> targetClass) throws Exception {
+    public <A, B> B convert(A instance, Class<B> targetClass) throws Exception {
         B target = targetClass.newInstance();
 
         for (Field targetField : targetClass.getDeclaredFields()) {
