@@ -157,7 +157,7 @@ public class CommonUtils {
     }
 
     /**
-     * procReplaceNullValue :: replace null value
+     * replace null value
      * @param reqObject request Object
      * @return Object
      */
