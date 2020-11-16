@@ -271,16 +271,6 @@ public class RolesService {
         }
 
         RolesListAdmin rolesListAdmin = commonService.setResultObject(responseMap, RolesListAdmin.class);
-        List<RolesListAdminItem> rolesListAdminItems = new ArrayList<>();
-
-        for (RolesListAdminItem item : rolesListAdmin.getItems()) {
-            if (!Constants.DEFAULT_NAMESPACE_NAME.equals(item.getNamespace()) && !item.getNamespace().startsWith("kube") && !item.getNamespace().equals("default")) {
-                rolesListAdminItems.add(item);
-            }
-        }
-
-        rolesListAdmin.setItems(rolesListAdminItems);
-
         rolesListAdmin = commonService.resourceListProcessing(rolesListAdmin, offset, limit, orderBy, order, searchName, RolesListAdmin.class);
         return commonService.setResultModel(rolesListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
