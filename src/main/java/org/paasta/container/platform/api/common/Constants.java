@@ -38,37 +38,11 @@ public class Constants {
     public static final String ALL_USER_ID = "all";
     public static final String USERS = "users";
     public static final String SINGLE_CLUSTER_NAME = "cp-cluster";
-    public static final String DEFAULT_NAMESPACE_NAME = "temp-namespace";
     public static final String NOT_ASSIGNED_ROLE = "NOT_ASSIGNED_ROLE";
-    public static final String DEFAULT_NAMESPACE_INIT_ROLE = "ns-init-role";
-    public static final String DEFAULT_NAMESPACE_ADMIN_ROLE = "ns-admin-role";
     public static final String DEFAULT_CLUSTER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name
-    public static final String DEFAULT_LOW_RESOURCE_QUOTA_NAME = "cp-low-rq";
-    public static final String DEFAULT_MEDIUM_RESOURCE_QUOTA_NAME = "cp-medium-rq";
-    public static final String DEFAULT_HIGH_RESOURCE_QUOTA_NAME = "cp-high-rq";
-    public static final String DEFAULT_LOW_LIMIT_RANGE_NAME = "cp-low-limit-range";
-    public static final String DEFAULT_MEDIUM_LIMIT_RANGE_NAME = "cp-medium-limit-range";
-    public static final String DEFAULT_HIGH_LIMIT_RANGE_NAME = "cp-high-limit-range";
-
 
     public static final String NOT_ALLOWED_POD_NAME_NODES = "nodes";
     public static final String NOT_ALLOWED_POD_NAME_RESOURCES= "resources";
-
-    public static final List<String> DEFAULT_RESOURCE_QUOTAS_LIST = Collections.unmodifiableList(new ArrayList<String>(){
-        {
-            add(DEFAULT_LOW_RESOURCE_QUOTA_NAME);
-            add(DEFAULT_MEDIUM_RESOURCE_QUOTA_NAME);
-            add(DEFAULT_HIGH_RESOURCE_QUOTA_NAME);
-        }
-    });
-
-    public static final List<String> DEFAULT_LIMIT_RANGES_LIST = Collections.unmodifiableList(new ArrayList<String>(){
-        {
-            add(DEFAULT_LOW_LIMIT_RANGE_NAME);
-            add(DEFAULT_MEDIUM_LIMIT_RANGE_NAME);
-            add(DEFAULT_HIGH_LIMIT_RANGE_NAME);
-        }
-    });
 
     public static final List<String> NOT_ALLOWED_POD_NAME_LIST = Collections.unmodifiableList(new ArrayList<String>(){
         {
@@ -88,13 +62,14 @@ public class Constants {
 
     // COMMON API CALL URI
     public static final String URI_COMMON_API_ADMIN_TOKEN_DETAIL = "/adminToken/{tokenName:.+}";
-    public static final String URI_COMMON_API_USERS = "/clusters/cp-cluster/namespaces/{namespace:.+}/users/{userId:.+}";
+    public static final String URI_COMMON_API_USERS = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/{userId:.+}";
     public static final String URI_COMMON_API_USERS_DETAIL =  "/users/{userId:.+}";
     public static final String URI_COMMON_API_USERS_LIST =  "/users";
+    public static final String URI_COMMON_API_USERS_NAMES =  "/users/names";
     public static final String URI_COMMON_API_USERS_LIST_BY_CLUSTER = "/clusters/{cluster:.+}/users";
     public static final String URI_COMMON_API_USER_DETAIL_LOGIN =  "/users/login/{userId:.+}";
-    public static final String URI_COMMON_API_USERS_LIST_BY_NAMESPACE = "/clusters/cp-cluster/namespaces/{namespace:.+}/users";
-    public static final String URI_COMMON_API_USERS_NAMES_LIST = "/clusters/cp-cluster/namespaces/{namespace:.+}/users/names";
+    public static final String URI_COMMON_API_USERS_LIST_BY_NAMESPACE = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users";
+    public static final String URI_COMMON_API_USERS_NAMES_LIST = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/names";
     public static final String URI_COMMON_API_USER_DELETE = "/users/";
     public static final String URI_COMMON_API_USERS_BY_NAMESPACE_NS_ADMIN = "/clusters/{cluster:.+}/namespaces/{namespace:.+}";
     public static final String URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID = "/clusters/{cluster:.+}/users/{userId:.+}";

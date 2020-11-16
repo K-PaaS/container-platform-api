@@ -63,7 +63,7 @@ public class SignUpUserService {
      * @return the resultStatus
      */
     public ResultStatus signUpUsers(Users users) {
-        String namespace = Constants.DEFAULT_NAMESPACE_NAME;
+        String namespace = propertyService.getDefaultNamespace();
         String username = users.getUserId();
 
         // default namespace
@@ -75,7 +75,7 @@ public class SignUpUserService {
 
         String saSecretName = restTemplateService.getSecretName(namespace, username);
 
-        users.setCpNamespace(Constants.DEFAULT_NAMESPACE_NAME);
+        users.setCpNamespace(propertyService.getDefaultNamespace());
         users.setServiceAccountName(username);
         users.setRoleSetCode(NOT_ASSIGNED_ROLE);
         users.setSaSecret(saSecretName);
@@ -86,7 +86,7 @@ public class SignUpUserService {
 
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", Constants.DEFAULT_NAMESPACE_NAME).replace("{name}", users.getUserId()), HttpMethod.DELETE, null, Object.class, true);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", propertyService.getDefaultNamespace()).replace("{name}", users.getUserId()), HttpMethod.DELETE, null, Object.class, true);
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "/");

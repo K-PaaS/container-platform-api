@@ -185,17 +185,17 @@ public class UsersServiceTest {
 
     @Test
     public void getUsersListByNamespaceAdmin() {
-        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", NAMESPACE) , HttpMethod.GET, null, UsersListAdmin.class)).thenReturn(usersListAdmin);
+        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{cluster:.+}", CLUSTER).replace("{namespace:.+}", NAMESPACE) , HttpMethod.GET, null, UsersListAdmin.class)).thenReturn(usersListAdmin);
 
-        UsersListAdmin resultList = usersService.getUsersListByNamespaceAdmin(NAMESPACE);
+        UsersListAdmin resultList = usersService.getUsersListByNamespaceAdmin(CLUSTER, NAMESPACE);
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
     }
 
     @Test
     public void getUsersListByNamespace() {
-        when(restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", NAMESPACE) , HttpMethod.GET, null, UsersList.class)).thenReturn(usersList);
+        when(restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{cluster:.+}", CLUSTER).replace("{namespace:.+}", NAMESPACE) , HttpMethod.GET, null, UsersList.class)).thenReturn(usersList);
 
-        UsersList resultList = usersService.getUsersListByNamespace(NAMESPACE);
+        UsersList resultList = usersService.getUsersListByNamespace(CLUSTER, NAMESPACE);
     }
 
     @Test
@@ -269,9 +269,11 @@ public class UsersServiceTest {
 
     @Test
     public void getUsersNameListByNamespace() {
-        when(restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES_LIST.replace("{namespace:.+}", NAMESPACE), HttpMethod.GET, null, Map.class)).thenReturn(gResultNamesMap);
+        when(restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES_LIST
+                .replace("{cluster:.+}", CLUSTER)
+                .replace("{namespace:.+}", NAMESPACE), HttpMethod.GET, null, Map.class)).thenReturn(gResultNamesMap);
 
-        Map<String, List> resultMap = usersService.getUsersNameListByNamespace(NAMESPACE);
+        Map<String, List> resultMap = usersService.getUsersNameListByNamespace(CLUSTER, NAMESPACE);
         assertEquals(resultMap.get("users"), gResultNamesMap.get("users"));
     }
 
@@ -307,10 +309,10 @@ public class UsersServiceTest {
 
     @Test
     public void getUsers() {
-        when(restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{namespace:.+}", NAMESPACE).replace("{userId:.+}", USER_ID), HttpMethod.GET, null, Users.class)).thenReturn(users);
+        when(restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{cluster:.+}", CLUSTER).replace("{namespace:.+}", NAMESPACE).replace("{userId:.+}", USER_ID), HttpMethod.GET, null, Users.class)).thenReturn(users);
         when(commonService.setResultModel(users, Constants.RESULT_STATUS_SUCCESS)).thenReturn(users);
 
-        Users result = usersService.getUsers(NAMESPACE, USER_ID);
+        Users result = usersService.getUsers(CLUSTER, NAMESPACE, USER_ID);
         assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 
@@ -448,8 +450,8 @@ public class UsersServiceTest {
         finalRs.setHttpStatusCode(CommonStatusCode.OK.getCode());
         finalRs.setDetailMessage(CommonStatusCode.OK.getMsg());
 
-        when(usersService.getUsersListByNamespace(NAMESPACE)).thenReturn(modifyUsersList);
-        when(usersService.getUsers(NAMESPACE, USER_ID)).thenReturn(users);
+        when(usersService.getUsersListByNamespace(CLUSTER, NAMESPACE)).thenReturn(modifyUsersList);
+        when(usersService.getUsers(CLUSTER, NAMESPACE, USER_ID)).thenReturn(users);
         when(propertyService.getCpMasterApiListRoleBindingsDeleteUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}");
         when(restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", NAMESPACE).replace("{name}", usersUpdateRole.getServiceAccountName() + "-" + usersUpdateRole.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true)).thenReturn(gResultStatusModel);
 
@@ -459,7 +461,7 @@ public class UsersServiceTest {
 
         ReflectionTestUtils.invokeMethod(usersService, "updateSetRoleUser", NAMESPACE, USER_ID, ADMIN_ROLE, usersUpdateRole);
 
-        usersService.modifyUsersConfig(NAMESPACE, usersArrayList);
+        usersService.modifyUsersConfig(CLUSTER, NAMESPACE, usersArrayList);
     }
 
     @Test
@@ -478,12 +480,12 @@ public class UsersServiceTest {
         listInNamespaceAdmin.setItems(detailList);
         listInNamespaceAdmin.setResultCode(RESULT_STATUS_SUCCESS);
 
-        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", NAMESPACE), HttpMethod.GET, null, UsersListInNamespaceAdmin.class)).thenReturn(listInNamespaceAdmin);
+        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{cluster:.+}", CLUSTER).replace("{namespace:.+}", NAMESPACE), HttpMethod.GET, null, UsersListInNamespaceAdmin.class)).thenReturn(listInNamespaceAdmin);
 
         when(commonService.setResultObject(gResultStatusModel, UsersListInNamespaceAdmin.class)).thenReturn(listInNamespaceAdmin);
         when(commonService.setResultModel(listInNamespaceAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(listInNamespaceAdmin);
 
-        usersService.getUsersListInNamespaceAdmin(NAMESPACE);
+        usersService.getUsersListInNamespaceAdmin(CLUSTER, NAMESPACE);
     }
 
     @Test

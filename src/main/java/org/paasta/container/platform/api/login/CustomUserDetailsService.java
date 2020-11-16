@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.login;
 
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.MessageConstant;
+import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.login.support.loginMetaDataItem;
@@ -30,16 +31,17 @@ import java.util.List;
  */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-
-
     @Autowired
+    private final PropertyService propertyService;
+
     private final UsersService usersService;
 
     @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
-    public CustomUserDetailsService(UsersService usersService) {
+    public CustomUserDetailsService(PropertyService propertyService, UsersService usersService) {
+        this.propertyService = propertyService;
         this.usersService = usersService;
     }
 
@@ -118,7 +120,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             if (!user.getUserType().equals(Constants.AUTH_CLUSTER_ADMIN)) {
 
-                if (!user.getCpNamespace().equals(Constants.DEFAULT_NAMESPACE_NAME)) {
+                if (!user.getCpNamespace().equals(propertyService.getDefaultNamespace())) {
                     loginMetaData.add(new loginMetaDataItem(user.getCpNamespace(), user.getUserType()));
                 }
 

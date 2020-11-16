@@ -97,9 +97,9 @@ public class UsersController {
                                           @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return usersService.getUsersListByNamespaceAdmin(namespace);
+            return usersService.getUsersListByNamespaceAdmin(cluster, namespace);
         }
-        return usersService.getUsersListByNamespace(namespace);
+        return usersService.getUsersListByNamespace(cluster, namespace);
     }
 
     /**
@@ -121,9 +121,9 @@ public class UsersController {
                                           @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return usersService.getUsersListInNamespaceAdmin(namespace);
+            return usersService.getUsersListInNamespaceAdmin(cluster, namespace);
         }
-        return usersService.getUsersListByNamespace(namespace);
+        return usersService.getUsersListByNamespace(cluster, namespace);
     }
 
     /**
@@ -145,7 +145,7 @@ public class UsersController {
                                       @PathVariable(value = "namespace") String namespace,
                                       @PathVariable(value = "userId") String userId) {
 
-        return usersService.getUsers(namespace, userId);
+        return usersService.getUsers(cluster, namespace, userId);
     }
 
 
@@ -183,7 +183,7 @@ public class UsersController {
     @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/names")
     public Map<String, List> getUsersNameList(@PathVariable(value = "cluster") String cluster,
                                               @PathVariable(value = "namespace") String namespace) {
-        return usersService.getUsersNameListByNamespace(namespace);
+        return usersService.getUsersNameListByNamespace(cluster, namespace);
     }
 
 
@@ -238,7 +238,7 @@ public class UsersController {
 
         // For Admin
         if(isAdmin) {
-            return usersService.modifyUsersAdmin(userId, users);
+            return usersService.modifyUsersAdmin(cluster, userId, users);
         }
 
         return usersService.modifyUsers(userId, users);
@@ -303,7 +303,7 @@ public class UsersController {
     public ResultStatus modifyUsersConfig(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @RequestBody List<Users> users) {
-        return usersService.modifyUsersConfig(namespace, users);
+        return usersService.modifyUsersConfig(cluster, namespace, users);
     }
 
 

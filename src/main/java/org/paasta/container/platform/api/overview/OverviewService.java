@@ -4,6 +4,7 @@ import org.paasta.container.platform.api.clusters.namespaces.NamespacesListAdmin
 import org.paasta.container.platform.api.clusters.namespaces.NamespacesService;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonStatus;
 import org.paasta.container.platform.api.users.UsersList;
@@ -45,25 +46,27 @@ public class OverviewService {
     private final ReplicaSetsService replicaSetsService;
     private final UsersService usersService;
     private final CommonService commonService;
+    private final PropertyService propertyService;
 
     /**
      * Instantiates a new Overview service
-     *
-     * @param namespacesService  the namespaces service
+     *  @param namespacesService  the namespaces service
      * @param deploymentsService the deployments service
      * @param podsService        the pods service
      * @param replicaSetsService the replicaSets service
      * @param usersService       the users service
-     * @param commonService
+     * @param commonService      the common service
+     * @param propertyService    the property service
      */
     @Autowired
-    public OverviewService(NamespacesService namespacesService, DeploymentsService deploymentsService, PodsService podsService, ReplicaSetsService replicaSetsService, UsersService usersService, CommonService commonService) {
+    public OverviewService(NamespacesService namespacesService, DeploymentsService deploymentsService, PodsService podsService, ReplicaSetsService replicaSetsService, UsersService usersService, CommonService commonService, PropertyService propertyService) {
         this.namespacesService = namespacesService;
         this.deploymentsService = deploymentsService;
         this.podsService = podsService;
         this.replicaSetsService = replicaSetsService;
         this.usersService = usersService;
         this.commonService = commonService;
+        this.propertyService = propertyService;
     }
 
 
@@ -72,7 +75,7 @@ public class OverviewService {
      *
      * @return the overview
      */
-    public Overview getOverviewAll() {
+    public Overview getOverviewAll(String cluster) {
         Overview overview = new Overview();
 
         // namespaces count
@@ -89,7 +92,7 @@ public class OverviewService {
 
 
         // users count
-        UsersList usersList = usersService.getUsersListByNamespace(Constants.DEFAULT_NAMESPACE_NAME);
+        UsersList usersList = usersService.getUsersListByNamespace(cluster, propertyService.getDefaultNamespace());
         int usersCnt = usersList.getItems().size();
 
         // deployments usage
@@ -119,7 +122,7 @@ public class OverviewService {
      * @param namespace the namespace
      * @return the overview
      */
-    public Overview getOverview(String namespace) {
+    public Overview getOverview(String cluster, String namespace) {
         Overview overview = new Overview();
 
         // deployments count
@@ -132,7 +135,7 @@ public class OverviewService {
         ReplicaSetsListAdmin replicaSetsList = getReplicaSetsList(namespace);
 
         // users count
-        UsersList usersList = usersService.getUsersListByNamespace(namespace);
+        UsersList usersList = usersService.getUsersListByNamespace(cluster, namespace);
         int usersCnt = usersList.getItems().size();
 
         // deployments usage

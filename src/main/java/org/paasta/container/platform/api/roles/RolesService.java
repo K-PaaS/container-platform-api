@@ -274,7 +274,7 @@ public class RolesService {
         List<RolesListAdminItem> rolesListAdminItems = new ArrayList<>();
 
         for (RolesListAdminItem item : rolesListAdmin.getItems()) {
-            if (!Constants.DEFAULT_NAMESPACE_NAME.equals(item.getNamespace()) && !item.getNamespace().startsWith("kube") && !item.getNamespace().equals("default")) {
+            if (!propertyService.getDefaultNamespace().equals(item.getNamespace()) && !item.getNamespace().startsWith("kube") && !item.getNamespace().equals("default")) {
                 rolesListAdminItems.add(item);
             }
         }

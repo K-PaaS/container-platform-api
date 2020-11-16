@@ -26,6 +26,39 @@ public class PropertyService {
     @Value("${cpNamespace.ignoreNamespace}")
     List<String> ignoreNamespaceList;
 
+    @Value("${cpNamespace.defaultNamespace}")
+    private String defaultNamespace;
+
+    @Value("${cpNamespace.role.init}")
+    private String initRole;
+
+    @Value("${cpNamespace.role.admin}")
+    private String adminRole;
+
+    @Value("${cpNamespace.resourceQuotas.list}")
+    List<String> resourceQuotasList;
+
+    @Value("${cpNamespace.resourceQuotas.low}")
+    private String lowResourceQuotas;
+
+    @Value("${cpNamespace.resourceQuotas.medium}")
+    private String mediumResourceQuotas;
+
+    @Value("${cpNamespace.resourceQuotas.high}")
+    private String highResourceQuotas;
+
+    @Value("${cpNamespace.limitRanges.list}")
+    List<String> limitRangesList;
+
+    @Value("${cpNamespace.limitRanges.low}")
+    private String lowLimitRanges;
+
+    @Value("${cpNamespace.limitRanges.medium}")
+    private String mediumLimitRanges;
+
+    @Value("${cpNamespace.limitRanges.high}")
+    private String highLimitRanges;
+
     //service
     @Value("${cpMaster.api.list.services.list}")
     private String cpMasterApiListServicesListUrl;

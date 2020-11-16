@@ -107,8 +107,10 @@ public class UsersService {
      * @param namespace the namespace
      * @return the users list
      */
-    public UsersListAdmin getUsersListByNamespaceAdmin(String namespace) {
-        return restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersListAdmin.class);
+    public UsersListAdmin getUsersListByNamespaceAdmin(String cluster, String namespace) {
+        return restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
+                .replace("{cluster:.+}", cluster)
+                .replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersListAdmin.class);
     }
 
     /**
@@ -117,8 +119,10 @@ public class UsersService {
      * @param namespace the namespace
      * @return the user list
      */
-    public UsersList getUsersListByNamespace(String namespace) {
-        return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersList.class);
+    public UsersList getUsersListByNamespace(String cluster, String namespace) {
+        return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
+                .replace("{cluster:.+}", cluster)
+                .replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersList.class);
     }
 
 
@@ -166,8 +170,10 @@ public class UsersService {
      * @param namespace the namespace
      * @return the users list
      */
-    public Map<String, List> getUsersNameListByNamespace(String namespace) {
-        return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES_LIST.replace("{namespace:.+}", namespace), HttpMethod.GET, null, Map.class);
+    public Map<String, List> getUsersNameListByNamespace(String cluster, String namespace) {
+        return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES_LIST
+                .replace("{cluster:.+}", cluster)
+                .replace("{namespace:.+}", namespace), HttpMethod.GET, null, Map.class);
     }
 
 
@@ -216,8 +222,11 @@ public class UsersService {
      * @param userId the userId
      * @return the users detail
      */
-    public Users getUsers(String namespace, String userId) {
-        Users users = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{namespace:.+}", namespace).replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
+    public Users getUsers(String cluster, String namespace, String userId) {
+        Users users = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS
+                .replace("{cluster:.+}", cluster)
+                .replace("{namespace:.+}", namespace)
+                .replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
         return (Users) commonService.setResultModel(users, Constants.RESULT_STATUS_SUCCESS);
     }
 
@@ -299,7 +308,7 @@ public class UsersService {
      * @param users the users
      * @return return is succeeded
      */
-    public ResultStatus modifyUsersAdmin(String userId, Users users) throws Exception {
+    public ResultStatus modifyUsersAdmin(String cluster, String userId, Users users) throws Exception {
         ResultStatus rsDb = new ResultStatus();
 
         List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(users.getServiceAccountName())).getUsersDetail();
@@ -341,7 +350,7 @@ public class UsersService {
         }
 
         for(Users.NamespaceRole nr : asIsNamespaces) {
-            Users updateUser = getUsers(nr.getNamespace(), users.getServiceAccountName());
+            Users updateUser = getUsers(cluster, nr.getNamespace(), users.getServiceAccountName());
             String namespace = nr.getNamespace();
             String newRole = nr.getRole();
             String defaultRole = updateUser.getRoleSetCode();
@@ -368,7 +377,7 @@ public class UsersService {
 
         for(String deleteSa : toBeDelete) {
             LOGGER.info("Default Namespace's service account delete >> " + deleteSa);
-            Users deleteUser = getUsers(deleteSa, users.getServiceAccountName());
+            Users deleteUser = getUsers(cluster, deleteSa, users.getServiceAccountName());
             deleteUsers(deleteUser);
         }
 
@@ -462,10 +471,10 @@ public class UsersService {
      * @param users the users
      * @return return is succeeded
      */
-    public ResultStatus modifyUsersConfig(String namespace, List<Users> users) {
+    public ResultStatus modifyUsersConfig(String cluster, String namespace, List<Users> users) {
         ResultStatus rsDb = null;
 
-        List<Users> defaultUserList = getUsersListByNamespace(namespace).getItems();
+        List<Users> defaultUserList = getUsersListByNamespace(cluster, namespace).getItems();
 
         List<String> defaultUserNameList = defaultUserList.stream().map(Users::getServiceAccountName).collect(Collectors.toList());
         List<String> newUserNameList = users.stream().map(Users::getServiceAccountName).collect(Collectors.toList());
@@ -482,7 +491,7 @@ public class UsersService {
                     if(!value.getRoleSetCode().equals(role)) {
                         LOGGER.info("Update >>> sa :: {}, role :: {}", sa, role);
 
-                        Users updatedUser = getUsers(namespace, sa);
+                        Users updatedUser = getUsers(cluster, namespace, sa);
 
                         // remove default roleBinding, add new roleBinding
                         restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", sa + "-" + value.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
@@ -504,7 +513,7 @@ public class UsersService {
                     restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class, true);
                     restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + "-" + roleName + "-binding"), HttpMethod.DELETE, null, Object.class, true);
 
-                    rsDb = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{namespace:.+}", namespace).replace("{userId:.+}", saName), HttpMethod.DELETE, null, ResultStatus.class);
+                    rsDb = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{cluster:.+}", cluster).replace("{namespace:.+}", namespace).replace("{userId:.+}", saName), HttpMethod.DELETE, null, ResultStatus.class);
                 }
             }
         }
@@ -568,8 +577,10 @@ public class UsersService {
      * @param namespace the namespace
      * @return the users list
    */
-    public Object getUsersListInNamespaceAdmin(String namespace) {
-        UsersListInNamespaceAdmin listInNamespaceAdmin = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersListInNamespaceAdmin.class);
+    public Object getUsersListInNamespaceAdmin(String cluster, String namespace) {
+        UsersListInNamespaceAdmin listInNamespaceAdmin = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
+                .replace("{cluster:.+}", cluster)
+                .replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersListInNamespaceAdmin.class);
 
         return commonService.setResultModel(commonService.setResultObject(listInNamespaceAdmin, UsersListInNamespaceAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
@@ -606,7 +617,7 @@ public class UsersService {
 
         List<UsersInfo> usersInfos = new ArrayList<>();
 
-        Map<String, List<String>> list = restTemplateService.send(TARGET_COMMON_API, "/users/names", HttpMethod.GET, null, Map.class);
+        Map<String, List<String>> list = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES, HttpMethod.GET, null, Map.class);
         List<String> names = list.get(USERS);
 
         if(ALL_NAMESPACES.equals(namespace)) {

@@ -301,23 +301,6 @@ public class RestTemplateService {
         return adminToken;
     }
 
-    /**
-     * User Token 상세 정보를 조회(Get the User Token Detail)
-     *
-     * @return the UserToken
-     */
-    public String getSaToken(String userId, String namespace) {
-        this.setApiUrlAuthorization(TARGET_COMMON_API);
-        String reqUrl = Constants.URI_COMMON_API_USERS.replace("{userId:.+}", userId).replace("{namespace:.+}",namespace);
-        Users user = this.send(TARGET_COMMON_API, reqUrl, HttpMethod.GET, null, Users.class);
-
-        if(Constants.RESULT_STATUS_FAIL.equals(user.getResultCode())) {
-            throw new CpCommonAPIException(user.getResultCode(), CommonStatusCode.NOT_FOUND.getMsg(), user.getHttpStatusCode(), user.getResultMessage());
-        }
-
-        return user.getSaToken();
-    }
-
 
     /**
      * 사용자가 보낸 YAML 그대로 REST API Call 하는 메소드(Call the Rest Api)

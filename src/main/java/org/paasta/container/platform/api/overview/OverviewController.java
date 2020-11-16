@@ -54,9 +54,9 @@ public class OverviewController {
 
         if(isAdmin) {
             if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
-                return overviewService.getOverviewAll();
+                return overviewService.getOverviewAll(cluster);
             }
-            return overviewService.getOverview(namespace);
+            return overviewService.getOverview(cluster, namespace);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

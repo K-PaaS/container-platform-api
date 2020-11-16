@@ -141,7 +141,7 @@ public class NamespacesController {
                                          @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return namespacesService.deleteNamespaces(namespace);
+            return namespacesService.deleteNamespaces(cluster, namespace);
         }
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
@@ -169,7 +169,7 @@ public class NamespacesController {
             return Constants.BAD_REQUEST_ACCESS_RESULT_STATUS;
 
         if (isAdmin) {
-            return namespacesService.createInitNamespaces(initTemplate);
+            return namespacesService.createInitNamespaces(cluster, initTemplate);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

@@ -167,14 +167,14 @@ public class NamespacesService {
      * @param namespace the namespace
      * @return return is succeeded
      */
-    public ResultStatus deleteNamespaces(String namespace) {
+    public ResultStatus deleteNamespaces(String cluster, String namespace) {
         ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNamespacesDeleteUrl()
                         .replace("{name}", namespace), HttpMethod.DELETE, null, ResultStatus.class);
 
-        List<String> userNamesList = usersService.getUsersNameListByNamespace(namespace).get(USERS);
+        List<String> userNamesList = usersService.getUsersNameListByNamespace(cluster, namespace).get(USERS);
         for (String userId : userNamesList) {
-            usersService.deleteUsers(usersService.getUsers(namespace, userId));
+            usersService.deleteUsers(usersService.getUsers(cluster, namespace, userId));
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES);
@@ -187,7 +187,7 @@ public class NamespacesService {
      * @param initTemplate the initTemplate
      * @return return is succeeded
      */
-    public ResultStatus createInitNamespaces(NamespacesInitTemplate initTemplate) {
+    public ResultStatus createInitNamespaces(String cluster, NamespacesInitTemplate initTemplate) {
         String namespace = initTemplate.getName();
         String nsAdminUserId = initTemplate.getNsAdminUserId();
 
@@ -202,7 +202,7 @@ public class NamespacesService {
             return saResult;
         }
 
-        ResultStatus rbResult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, Constants.DEFAULT_NAMESPACE_ADMIN_ROLE);
+        ResultStatus rbResult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, propertyService.getAdminRole());
 
         if (Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
             LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
@@ -212,23 +212,23 @@ public class NamespacesService {
 
 
         for (String rq : initTemplate.getResourceQuotasList()) {
-            if (DEFAULT_RESOURCE_QUOTAS_LIST.contains(rq)) {
+            if (propertyService.getResourceQuotasList().contains(rq)) {
                 resourceYamlService.createDefaultResourceQuota(namespace, rq);
             }
         }
 
         for (String lr : initTemplate.getLimitRangesList()) {
-            if (DEFAULT_LIMIT_RANGES_LIST.contains(lr)) {
+            if (propertyService.getLimitRangesList().contains(lr)) {
                 resourceYamlService.createDefaultLimitRanges(namespace, lr);
             }
         }
 
         String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
 
-        Users newNsUser = usersService.getUsers(DEFAULT_NAMESPACE_NAME, nsAdminUserId);
+        Users newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
         newNsUser.setId(0);
         newNsUser.setCpNamespace(namespace);
-        newNsUser.setRoleSetCode(DEFAULT_NAMESPACE_ADMIN_ROLE);
+        newNsUser.setRoleSetCode(propertyService.getAdminRole());
         newNsUser.setSaSecret(saSecretName);
         newNsUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
         newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
@@ -239,11 +239,10 @@ public class NamespacesService {
         if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
             restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class, true);
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId + "-" + DEFAULT_NAMESPACE_ADMIN_ROLE + "-binding"), HttpMethod.DELETE, null, Object.class, true);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId + "-" + propertyService.getAdminRole() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE");
-
     }
 
 
@@ -276,7 +275,7 @@ public class NamespacesService {
                 return saResult;
             }
 
-            ResultStatus rbResult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, Constants.DEFAULT_NAMESPACE_ADMIN_ROLE);
+            ResultStatus rbResult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, propertyService.getAdminRole());
 
             if (Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
                 LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
@@ -285,10 +284,10 @@ public class NamespacesService {
             }
             String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
 
-            Users newNsUser = usersService.getUsers(DEFAULT_NAMESPACE_NAME, nsAdminUserId);
+            Users newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
             newNsUser.setId(0);
             newNsUser.setCpNamespace(namespace);
-            newNsUser.setRoleSetCode(DEFAULT_NAMESPACE_ADMIN_ROLE);
+            newNsUser.setRoleSetCode(propertyService.getAdminRole());
             newNsUser.setSaSecret(saSecretName);
             newNsUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
             newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);

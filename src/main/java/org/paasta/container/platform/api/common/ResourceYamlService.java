@@ -120,7 +120,7 @@ public class ResourceYamlService {
         // init role 생성
         Map<String, Object> map = new HashMap();
         map.put("spaceName", namespace);
-        map.put("roleName", Constants.DEFAULT_NAMESPACE_INIT_ROLE);
+        map.put("roleName", propertyService.getInitRole());
         String initRoleYaml = templateService.convert("create_init_role.ftl", map);
 
         restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRolesCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, initRoleYaml, Object.class, true);
@@ -135,7 +135,7 @@ public class ResourceYamlService {
     public void createNsAdminRole(String namespace) {
         Map<String, Object> map = new HashMap();
         map.put("spaceName", namespace);
-        map.put("roleName", Constants.DEFAULT_NAMESPACE_ADMIN_ROLE);
+        map.put("roleName", propertyService.getAdminRole());
         String nsAdminRoleYaml = templateService.convert("create_admin_role.ftl", map);
 
         restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRolesCreateUrl().replace("{namespace}", namespace), HttpMethod.POST, nsAdminRoleYaml, Object.class, true);
@@ -158,10 +158,10 @@ public class ResourceYamlService {
 
         for (ResourceQuotasDefault d:resourceQuotasDefaultList.getItems()) {
             if (rqName == null) {
-                rqName = DEFAULT_LOW_RESOURCE_QUOTA_NAME;
+                rqName = propertyService.getLowResourceQuotas();
             }
 
-            if (DEFAULT_RESOURCE_QUOTAS_LIST.contains(rqName) && d.getName().equals(rqName)) {
+            if (propertyService.getResourceQuotasList().contains(rqName) && d.getName().equals(rqName)) {
                 limitsCpu = d.getLimitCpu();
                 limitsMemory = d.getLimitMemory();
 
@@ -195,10 +195,10 @@ public class ResourceYamlService {
 
         for (LimitRangesDefault limitRanges:limitRangesDefaultList.getItems()) {
             if (lrName == null) {
-                lrName = DEFAULT_LOW_LIMIT_RANGE_NAME;
+                lrName = propertyService.getLowLimitRanges();
             }
 
-            if (DEFAULT_LIMIT_RANGES_LIST.contains(lrName) && limitRanges.getName().equals(lrName)) {
+            if (propertyService.getLimitRangesList().contains(lrName) && limitRanges.getName().equals(lrName)) {
                 String limitsLr = limitRanges.getDefaultLimit();
                 String[] limitsLrList = limitsLr.split(",");
                 limitsCpu = limitsLrList[0].split(":")[1];
