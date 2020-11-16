@@ -86,6 +86,8 @@ test {
 	jacocoTestReport {
 		report {
 			xml.enabled true
+			xml.destination
+			file("$buildDir/jacoco/jacocoTest.xml")
 		}
 	}
 }
