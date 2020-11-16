@@ -76,7 +76,7 @@ dependencies {
 
 jacoco {
 	toolVersion = "${jacocoVersion}"
-	reportsDir = file("$buildDir/jacocoReportDir")
+	reportsDir = file("$buildDir/jacocoReport")
 }
 
 test {
@@ -89,8 +89,6 @@ test {
 
 jacocoTestReport {
 	reports {
-		html.enabled true
-		csv.enabled true
 		xml.enabled true
 	}
 }
