@@ -94,24 +94,4 @@ public class NodesController {
         return nodesService.getNodes(resourceName);
     }
 
-    /**
-     * Nodes YAML 조회(Get Nodes yaml)
-     *
-     * @param cluster the cluster
-     * @param resourceName the resource name
-     * @param isAdmin the isAdmin
-     * @return the nodes yaml
-     */
-    @ApiOperation(value = "Nodes YAML 조회(Get Nodes yaml)", nickname = "getNodesYaml")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
-    })
-    @GetMapping(value = "/{resourceName:.+}/yaml")
-    public Object getNodesYaml(@PathVariable(value = "cluster") String cluster,
-                               @PathVariable(value = "resourceName") String resourceName,
-                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
-
-        return nodesService.getNodesYaml(resourceName, new HashMap<>());
-    }
 }

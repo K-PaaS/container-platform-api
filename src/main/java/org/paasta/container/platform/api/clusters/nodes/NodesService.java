@@ -51,9 +51,9 @@ public class NodesService {
      * @param searchName the searchName
      * @return the nodes list
      */
-    NodesList getNodesList(int offset, int limit, String orderBy, String order, String searchName) {
+    public NodesList getNodesList(int offset, int limit, String orderBy, String order, String searchName) {
 
-        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNodesListUrl(),
                 HttpMethod.GET, null, Map.class);
 
@@ -99,7 +99,7 @@ public class NodesService {
      * @return the nodes
      */
     public Nodes getNodes(String resourceName) {
-        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListNodesGetUrl()
                         .replace("{name}", resourceName)
                 , HttpMethod.GET, null, Map.class);
@@ -131,20 +131,4 @@ public class NodesService {
         return commonService.setResultModel(commonService.setResultObject(responseMap, NodesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
-    /**
-     * Nodes YAML 조회(Get Nodes yaml)
-     *
-     * @param resourceName the resource name
-     * @param resultMap    the result map
-     * @return the nodes yaml
-     */
-    public Nodes getNodesYaml(String resourceName, HashMap resultMap) {
-        String resultString = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListNodesGetUrl()
-                        .replace("{name}", resourceName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML, MediaType.APPLICATION_JSON_VALUE);
-
-        resultMap.put("sourceTypeYaml", resultString);
-
-        return (Nodes) commonService.setResultModel(commonService.setResultObject(resultMap, Nodes.class), Constants.RESULT_STATUS_SUCCESS);
-    }
 }
