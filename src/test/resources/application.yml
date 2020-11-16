@@ -18,6 +18,21 @@ management:
     #Actuator endpoint(health,info..)의 인증여부
     enabled: false
 
+cpNamespace:
+  ignoreNamespace: kubernetes-dashboard, kube-node-lease, kube-public, kube-system, default, paas-ta-container-platform-temp-namespace
+  defaultNamespace: temp-namespace         #paas-ta-container-platform-temp-namespace
+  role:
+    init: paas-ta-container-platform-init-role
+    admin: paas-ta-container-platform-admin-role
+  resourceQuotas:
+    low: paas-ta-container-platform-low-rq
+    medium: paas-ta-container-platform-medium-rq
+    high: paas-ta-container-platform-high-rq
+  limitRanges:
+    low: paas-ta-container-platform-low-limit-range
+    medium: paas-ta-container-platform-medium-limit-range
+    high: paas-ta-container-platform-high-limit-range
+
 cpMaster:
   api:
     url: TEST-ONLY.DUMMY.COM:6443
