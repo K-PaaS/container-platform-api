@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.paasta.container.platform.api.common.CommonService;
@@ -12,6 +13,8 @@ import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.http.HttpMethod;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
+@RunWith(SpringRunner.class)
+@TestPropertySource("classpath:application.yml")
 public class ResourceQuotasServiceTest {
 
     private static final String CLUSTER = "cp-cluster";
@@ -191,7 +196,7 @@ public class ResourceQuotasServiceTest {
     @Test
     public void getResourceQuotas_Valid_ReturnModel() {
         //when
-        when(propertyService.getCpMasterApiListResourceQuotasGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas{name}");
+        when(propertyService.getCpMasterApiListResourceQuotasGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas/{name}");
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas/" + RESOURCE_QUOTA_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, ResourceQuotas.class)).thenReturn(gResultModel);
         when(commonService.setResultModel(gResultModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultModel);
@@ -207,7 +212,7 @@ public class ResourceQuotasServiceTest {
     @Test
     public void getResourceQuotasAdmin_Valid_ReturnModel() {
         //when
-        when(propertyService.getCpMasterApiListResourceQuotasGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas{name}");
+        when(propertyService.getCpMasterApiListResourceQuotasGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas/" + RESOURCE_QUOTA_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, ResourceQuotasAdmin.class)).thenReturn(gResultAdminModel);
         when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
@@ -240,7 +245,7 @@ public class ResourceQuotasServiceTest {
     public void createResourceQuotas() {
         //when
         when(propertyService.getCpMasterApiListResourceQuotasCreateUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas");
-        when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/apis/apps/v1/namespaces/" + NAMESPACE + "/resourcequotas", HttpMethod.POST, YAML_STRING, Object.class, isAdmin)).thenReturn(gResultStatusModel);
+        when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas", HttpMethod.POST, YAML_STRING, Object.class, isAdmin)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_RESOURCE_QUOTAS)).thenReturn(gFinalResultStatusModel);
 
@@ -292,7 +297,7 @@ public class ResourceQuotasServiceTest {
 
         // ?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace
         when(commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)).thenReturn(FIELD_SELECTOR);
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/apps/v1/resourcequotas?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/resourcequotas?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
         when(commonService.setResultObject(gResultAdminMap, ResourceQuotasListAdmin.class)).thenReturn(gResultListAdminModel);
         when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, ResourceQuotasListAdmin.class)).thenReturn(gResultListAdminModel);
         when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);

@@ -162,7 +162,7 @@ public class PersistentVolumeClaimsServiceTest {
 
         //when
         when(propertyService.getCpMasterApiListPersistentVolumeClaimsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/persistentvolumeclaims");
-        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/apis/v1/namespaces/" + NAMESPACE + "/persistentvolumeclaims", HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/persistentvolumeclaims", HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, PersistentVolumeClaimsList.class)).thenReturn(gResultListModel);
         when(commonService.resourceListProcessing(gResultListModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PersistentVolumeClaimsList.class)).thenReturn(gResultListModel);
         when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
@@ -178,7 +178,7 @@ public class PersistentVolumeClaimsServiceTest {
     @Test
     public void getPersistentVolumeClaimsListAdmin_Valid_ReturnModel() {
         //when
-        when(propertyService.getCpMasterApiListPersistentVolumesListUrl()).thenReturn("/api/v1/namespaces/{namespace}/persistentvolumeclaims");
+        when(propertyService.getCpMasterApiListPersistentVolumeClaimsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/persistentvolumeclaims");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/persistentvolumeclaims", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
 
 
@@ -263,7 +263,7 @@ public class PersistentVolumeClaimsServiceTest {
     public void deletePersistentVolumeClaims_Admin_Valid() {
         //when
         when(propertyService.getCpMasterApiListPersistentVolumeClaimsDeleteUrl()).thenReturn("/api/v1/namespaces/{namespace}/persistentvolumeclaims/{name}");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/{namespace}/" + NAMESPACE + "/persistentvolumeclaims/" + PERSISTENT_VOLUME_CLAIM_NAME, HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/persistentvolumeclaims/" + PERSISTENT_VOLUME_CLAIM_NAME, HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES)).thenReturn(gFinalResultStatusModel);
 

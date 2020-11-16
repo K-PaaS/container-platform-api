@@ -76,18 +76,21 @@ dependencies {
 
 jacoco {
 	toolVersion = "${jacocoVersion}"
+	reportsDir = file("$buildDir/jacocoReportDir")
 }
 
 test {
-	ignoreFailures=true
+	ignoreFailures = true
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacoco-overall.exec")
 	}
-	jacocoTestReport {
-		report {
-			xml.enabled true
-			xml.destination
-			file("$buildDir/jacoco/jacocoTest.xml")
-		}
+	finalizedBy("jacocoTestReport")
+}
+
+jacocoTestReport {
+	reports {
+		html.enabled true
+		csv.enabled true
+		xml.enabled true
 	}
 }

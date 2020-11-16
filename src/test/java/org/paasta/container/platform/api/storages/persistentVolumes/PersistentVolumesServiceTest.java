@@ -93,7 +93,7 @@ public class PersistentVolumesServiceTest {
         gFinalResultStatusModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
         gFinalResultStatusModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gFinalResultStatusModel.setDetailMessage(CommonStatusCode.OK.getMsg());
-        gFinalResultStatusModel.setNextActionUrl(Constants.URI_STORAGES);
+        gFinalResultStatusModel.setNextActionUrl(Constants.URI_STORAGES_PERSISTENT_VOLUMES);
 
         // 리스트가져옴
         gResultListModel = new PersistentVolumesList();
