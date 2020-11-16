@@ -40,7 +40,6 @@ public class UsersAdmin {
 
         // Cluster Info
         public String clusterApiUrl;
-        public String clusterServiceAccountName;
         public String clusterToken;
 
     }
