@@ -161,7 +161,7 @@ public class LimitRangesServiceTest {
     public void getLimitRangesListAdmin_Valid_ReturnModel() {
         //when
         when(propertyService.getCpMasterApiListLimitRangesListUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/{" + NAMESPACE + "/limitranges", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
 
 
         when(commonService.setResultObject(gResultAdminMap, LimitRangesListAdmin.class)).thenReturn(gResultListAdminModel);

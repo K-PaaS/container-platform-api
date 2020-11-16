@@ -285,7 +285,7 @@ public class CustomServicesServiceTest {
     @Test
     public void getCustomServicesListAdmin_Valid_ReturnModel() {
         //when
-        when(propertyService.getCpMasterApiListServicesListUrl()).thenReturn("/api/v1/namespaces/{namespace}/services/{name}");
+        when(propertyService.getCpMasterApiListServicesListUrl()).thenReturn("/api/v1/namespaces/{namespace}/services");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/services", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
 
 

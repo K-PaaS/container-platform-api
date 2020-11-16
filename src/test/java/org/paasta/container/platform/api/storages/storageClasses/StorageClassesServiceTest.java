@@ -202,7 +202,7 @@ public class StorageClassesServiceTest {
         when(propertyService.getCpMasterApiListStorageClassesCreateUrl()).thenReturn("/apis/storage.k8s.io/v1/storageclasses");
         when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/apis/storage.k8s.io/v1/storageclasses", HttpMethod.POST, YAML_STRING, Object.class, isAdmin)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
-        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES)).thenReturn(gFinalResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_STORAGE_CLASSES)).thenReturn(gFinalResultStatusModel);
 
         ResultStatus result = (ResultStatus) storageClassesService.createStorageClasses(NAMESPACE, YAML_STRING, isAdmin);
 
@@ -215,9 +215,9 @@ public class StorageClassesServiceTest {
 
         //when
         when(propertyService.getCpMasterApiListStorageClassesDeleteUrl()).thenReturn("/apis/storage.k8s.io/v1/storageclasses/{name}");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/storage.k8s.io/v1/storageclasses" + STORAGE_CLASS_NAME, HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/storage.k8s.io/v1/storageclasses/" + STORAGE_CLASS_NAME, HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
-        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES)).thenReturn(gFinalResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_STORAGE_CLASSES)).thenReturn(gFinalResultStatusModel);
 
         ResultStatus result = storageClassesService.deleteStorageClasses(NAMESPACE, STORAGE_CLASS_NAME);
 
@@ -227,12 +227,12 @@ public class StorageClassesServiceTest {
 
     @Test
     public void updateStorageClasses() {
-        String nextUrl = Constants.URI_STORAGES_DETAIL.replace("{storageClassName:.+}", STORAGE_CLASS_NAME);
+        String nextUrl = Constants.URI_STORAGES_STORAGE_CLASSES_DETAIL.replace("{storageClassName:.+}", STORAGE_CLASS_NAME);
         gFinalResultStatusModel.setNextActionUrl(nextUrl);
 
         //when
         when(propertyService.getCpMasterApiListStorageClassesUpdateUrl()).thenReturn("/apis/storage.k8s.io/v1/storageclasses/{name}");
-        when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/apis/storage.k8s.io/v1/storageclasses" + STORAGE_CLASS_NAME, HttpMethod.PUT, YAML_STRING, ResultStatus.class, isAdmin)).thenReturn(gResultStatusModel);
+        when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/apis/storage.k8s.io/v1/storageclasses/" + STORAGE_CLASS_NAME, HttpMethod.PUT, YAML_STRING, ResultStatus.class, isAdmin)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, nextUrl)).thenReturn(gFinalResultStatusModel);
 
