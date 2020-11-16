@@ -65,7 +65,7 @@ public class UsersController {
                                        @RequestParam(name = "namespace", required = false) String namespace,
                                        @RequestParam(defaultValue = "administrator") String userType,
                                        @RequestParam(required = false, defaultValue = "") String searchName,
-                                       @RequestParam(required = false, defaultValue = "0") int limit,
+                                       @RequestParam(required = false, defaultValue = "1") int limit,
                                        @RequestParam(required = false, defaultValue = "0") int offset,
                                        @RequestParam(required = false, defaultValue = "created") String orderBy,
                                        @RequestParam(required = false, defaultValue = "desc") String order,
@@ -164,7 +164,7 @@ public class UsersController {
     @GetMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}")
     public Object getUsers(@PathVariable(value = "cluster") String cluster,
                            @PathVariable(value = "userId") String userId) throws Exception {
-        return usersService.getUsers(userId);
+        return usersService.getUsersInMultiNamespace(userId);
     }
 
 
