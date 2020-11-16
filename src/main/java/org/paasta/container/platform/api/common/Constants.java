@@ -135,10 +135,10 @@ public class Constants {
     public static final String URI_ROLES = "/container-platform/roles";
 
     public static final String URI_RESOURCE_QUOTAS = "/container-platform";
-    public static final String URI_RESOURCE_QUOTAS_DETAIL = "/container-platform/{resourceQuotaName}";
+    public static final String URI_RESOURCE_QUOTAS_DETAIL = "/container-platform/{resourceQuotaName:.+}";
 
-    public static final String URI_LIMITRANGES = "/container-platform";
-    public static final String URI_LIMITRANGES_DETAIL = "/container-platform/{limitRangeName:.+}";
+    public static final String URI_LIMIT_RANGES = "/container-platform";
+    public static final String URI_LIMIT_RANGES_DETAIL = "/container-platform/{limitRangeName:.+}";
 
 
     /** 서비스 요청시 처리 메소드 kind 매핑 정보 */
