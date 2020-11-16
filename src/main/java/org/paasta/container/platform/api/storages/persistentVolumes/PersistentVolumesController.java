@@ -205,14 +205,14 @@ public class PersistentVolumesController {
             @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
     })
     @PutMapping("/{resourceName:.+}")
-    public Object updatePersistentVolumes(@PathVariable(value = "cluster") String cluster,
+    public ResultStatus updatePersistentVolumes(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
                                           @PathVariable(value = "resourceName") String resourceName,
                                           @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
                                           @RequestBody String yaml) {
 
         if (isAdmin) {
-            return persistentVolumesService.updatePersistentVolumes(namespace, resourceName, yaml);
+            return persistentVolumesService.updatePersistentVolumes(resourceName, yaml);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

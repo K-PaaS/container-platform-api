@@ -271,7 +271,7 @@ public class ResourceQuotasServiceTest {
 
     @Test
     public void updateResourceQuotas() {
-        String nextUrl = Constants.URI_RESOURCE_QUOTAS.replace("{resourceQuotaName:.+}", RESOURCE_QUOTA_NAME);
+        String nextUrl = Constants.URI_RESOURCE_QUOTAS_DETAIL.replace("{resourceQuotaName:.+}", RESOURCE_QUOTA_NAME);
         gFinalResultStatusModel.setNextActionUrl(nextUrl);
 
         //when
@@ -280,7 +280,7 @@ public class ResourceQuotasServiceTest {
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, nextUrl)).thenReturn(gFinalResultStatusModel);
 
-        ResultStatus result = (ResultStatus) resourceQuotasService.updateResourceQuotas(NAMESPACE, RESOURCE_QUOTA_NAME, YAML_STRING);
+        ResultStatus result = resourceQuotasService.updateResourceQuotas(NAMESPACE, RESOURCE_QUOTA_NAME, YAML_STRING);
 
         //compare result
         assertEquals(gFinalResultStatusModel, result);

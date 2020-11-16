@@ -154,12 +154,12 @@ public class StorageClassesService {
      * @param yaml         the yaml
      * @return return is succeeded
      */
-    public Object updateStorageClasses(String namespace, String resourceName, String yaml) {
-        Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+    public ResultStatus updateStorageClasses(String resourceName, String yaml) {
+        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListStorageClassesUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
+                        .replace("{name}", resourceName), HttpMethod.PUT, yaml, ResultStatus.class, true);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_STORAGE_CLASSES_DETAIL.replace("{storageClassName:.+}", resourceName));
     }
 

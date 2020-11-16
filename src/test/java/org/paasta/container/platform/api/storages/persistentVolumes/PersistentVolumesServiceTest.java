@@ -232,7 +232,7 @@ public class PersistentVolumesServiceTest {
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, nextUrl)).thenReturn(gFinalResultStatusModel);
 
-        ResultStatus result = (ResultStatus) persistentVolumesService.updatePersistentVolumes(NAMESPACE, PERSISTENT_VOLUME_NAME, YAML_STRING);
+        ResultStatus result = persistentVolumesService.updatePersistentVolumes(PERSISTENT_VOLUME_NAME, YAML_STRING);
 
         //compare result
         assertEquals(gFinalResultStatusModel, result);

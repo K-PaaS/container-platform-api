@@ -236,7 +236,7 @@ public class StorageClassesServiceTest {
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, nextUrl)).thenReturn(gFinalResultStatusModel);
 
-        ResultStatus result = (ResultStatus) storageClassesService.updateStorageClasses(NAMESPACE, STORAGE_CLASS_NAME, YAML_STRING);
+        ResultStatus result = (ResultStatus) storageClassesService.updateStorageClasses(STORAGE_CLASS_NAME, YAML_STRING);
 
         //compare result
         assertEquals(gFinalResultStatusModel, result);
