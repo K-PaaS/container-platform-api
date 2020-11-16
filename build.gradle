@@ -83,4 +83,11 @@ test {
 	jacoco {
 		destinationFile = file("$buildDir/jacoco/jacoco-overall.exec")
 	}
+	jacocoTestReport {
+		report {
+			xml.enabled true
+			xml.destination
+			file("$buildDir/jacoco/jacocoTest.xml")
+		}
+	}
 }
