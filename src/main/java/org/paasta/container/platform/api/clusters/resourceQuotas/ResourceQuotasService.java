@@ -216,7 +216,8 @@ public class ResourceQuotasService {
                 propertyService.getCpMasterApiListResourceQuotasUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_RESOURCE_QUOTAS_DETAIL);
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS,
+                Constants.URI_RESOURCE_QUOTAS_DETAIL.replace("{resourceQuotaName:.+}", resourceName));
     }
 
 
