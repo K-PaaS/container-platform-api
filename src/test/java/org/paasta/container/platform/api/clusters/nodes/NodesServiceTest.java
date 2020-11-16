@@ -222,19 +222,4 @@ public class NodesServiceTest {
         assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 
-    @Test
-    public void getNodesYaml() {
-        //when
-        when(propertyService.getCpMasterApiListNodesGetUrl()).thenReturn("/api/v1/nodes/{name}");
-        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/nodes/" + NODE_NAME, HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML)).thenReturn(YAML_STRING);
-        when(commonService.setResultObject(gResultMap, CommonResourcesYaml.class)).thenReturn(gResultYamlModel);
-        when(commonService.setResultModel(gResultYamlModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultYamlModel);
-
-        //call method
-        Nodes result = nodesService.getNodesYaml(NODE_NAME, gResultMap);
-
-        //compare result
-        assertEquals(YAML_STRING, result.getSourceTypeYaml());
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
-    }
 }

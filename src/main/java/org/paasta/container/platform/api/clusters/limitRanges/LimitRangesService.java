@@ -159,7 +159,7 @@ public class LimitRangesService {
      * LimitRanges 생성(Create LimitRanges)
      *
      * @param namespace the namespace
-     * @param yaml      the yaml
+     * @param yaml      the yamlc
      * @return return is succeeded
      */
     public Object createLimitRanges(String namespace, String yaml, boolean isAdmin) {
@@ -168,7 +168,7 @@ public class LimitRangesService {
                 propertyService.getCpMasterApiListLimitRangesCreateUrl().replace("{namespace}", namespace),
                 HttpMethod.POST, yaml, Object.class, isAdmin);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMITRANGES);
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMIT_RANGES);
     }
 
 
@@ -184,7 +184,7 @@ public class LimitRangesService {
                 propertyService.getCpMasterApiListLimitRangesDeleteUrl().replace("{namespace}", namespace).replace("{name}", resourceName),
                 HttpMethod.DELETE, null, ResultStatus.class);
 
-        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMITRANGES);
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMIT_RANGES);
     }
 
 
@@ -202,7 +202,7 @@ public class LimitRangesService {
                 HttpMethod.PUT, yaml, ResultStatus.class, true);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMITRANGES_DETAIL.replace("{limitRangeName:.+}", resourceName));
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMIT_RANGES_DETAIL.replace("{limitRangeName:.+}", resourceName));
     }
 
 
