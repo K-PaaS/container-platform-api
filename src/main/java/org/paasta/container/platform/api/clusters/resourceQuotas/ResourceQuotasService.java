@@ -177,15 +177,15 @@ public class ResourceQuotasService {
      * @return return is succeeded
      */
     public Object createResourceQuotas(String namespace, String yaml, boolean isAdmin) {
-        Map YamlMetadata = YamlUtil.parsingYamlMap(yaml, "metadata");
-        String createYamlResourceName = YamlMetadata.get("name").toString();
+        /*Map YamlMetadata = YamlUtil.parsingYamlMap(yaml, "metadata");
+        String createYamlResourceName = YamlMetadata.get("name").toString();*/
 
         Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasCreateUrl()
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
-        return commonService.setResultModel(commonService.setResultObject(map, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_RESOURCE_QUOTAS);
     }
 
     /**
@@ -216,7 +216,7 @@ public class ResourceQuotasService {
                 propertyService.getCpMasterApiListResourceQuotasUpdateUrl()
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
 
-        return commonService.setResultModel(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_RESOURCE_QUOTAS_DETAIL);
     }
 
 

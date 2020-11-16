@@ -135,6 +135,7 @@ public class Constants {
     public static final String URI_ROLES = "/container-platform/roles";
 
     public static final String URI_RESOURCE_QUOTAS = "/container-platform";
+    public static final String URI_RESOURCE_QUOTAS_DETAIL = "/container-platform/{resourceQuotaName}";
 
     public static final String URI_LIMITRANGES = "/container-platform";
     public static final String URI_LIMITRANGES_DETAIL = "/container-platform/{limitRangeName:.+}";

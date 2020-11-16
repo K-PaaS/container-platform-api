@@ -91,7 +91,7 @@ public class StorageClassesServiceTest {
         gFinalResultStatusModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
         gFinalResultStatusModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gFinalResultStatusModel.setDetailMessage(CommonStatusCode.OK.getMsg());
-        gFinalResultStatusModel.setNextActionUrl(Constants.URI_STORAGES);
+        gFinalResultStatusModel.setNextActionUrl(Constants.URI_STORAGES_STORAGE_CLASSES);
 
         // 하나만 가져옴
         gResultModel = new StorageClasses();

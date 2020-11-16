@@ -178,7 +178,7 @@ public class CustomServicesServiceTest {
     public void getCustomServices_Valid_ReturnModel() {
         //when
         when(propertyService.getCpMasterApiListServicesGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/services/{name}");
-        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/apis/apps/v1/namespaces/" + NAMESPACE + "/services/" + SERVICE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/services/" + SERVICE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, CustomServices.class)).thenReturn(gResultModel);
         when(commonService.setResultModel(gResultModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultModel);
 
