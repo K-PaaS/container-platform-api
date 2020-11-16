@@ -121,6 +121,13 @@ public class Constants {
     public static final String URI_STORAGES = "/container-platform/storages";
     public static final String URI_STORAGES_DETAIL = "/container-platform/storages/{persistentVolumeClaimName:.+}";
 
+    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIMS = "/container-platform/storages/persistentVolumeClaims";
+    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIMS_DETAIL = "/container-platform/storages/persistentVolumeClaims/{persistentVolumeClaimName:.+}";
+    public static final String URI_STORAGES_PERSISTENT_VOLUMES = "/container-platform/storages/persistentVolumes";
+    public static final String URI_STORAGES_PERSISTENT_VOLUMES_DETAIL = "/container-platform/storages/persistentVolumes/{persistentVolumeName:.+}";
+    public static final String URI_STORAGES_STORAGE_CLASSES = "/container-platform/storages/storageClasses";
+    public static final String URI_STORAGES_STORAGE_CLASSES_DETAIL = "/container-platform/storages/storageClasses/{storageClassName:.+}";
+
     public static final String URI_USERS = "/container-platform/users";
     public static final String URI_USERS_DETAIL = "/container-platform/users/{userId:.+}";
     public static final String URI_USERS_CONFIG = "/container-platform/users/config";
