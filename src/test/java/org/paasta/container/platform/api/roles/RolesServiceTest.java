@@ -238,7 +238,7 @@ public class RolesServiceTest {
         when(propertyService.getCpMasterApiListRolesDeleteUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles/" + ROLE_NAME, HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
-        when(commonService.setResultObject(gResultMap, CommonResourcesYaml.class)).thenReturn(gResultYamlModel);
+        when(commonService.setResultObject(gResultMap, Roles.class)).thenReturn(gResultModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_ROLES)).thenReturn(gFinalResultStatusModel);
 
         ResultStatus result = rolesService.deleteRoles(NAMESPACE, ROLE_NAME, gResultMap);
