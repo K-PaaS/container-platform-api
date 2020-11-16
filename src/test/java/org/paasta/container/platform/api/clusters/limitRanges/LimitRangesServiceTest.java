@@ -94,7 +94,7 @@ public class LimitRangesServiceTest {
         gFinalResultStatusModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
         gFinalResultStatusModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gFinalResultStatusModel.setDetailMessage(CommonStatusCode.OK.getMsg());
-        gFinalResultStatusModel.setNextActionUrl(Constants.URI_LIMITRANGES);
+        gFinalResultStatusModel.setNextActionUrl(Constants.URI_LIMIT_RANGES);
 
         // 리스트가져옴
         gResultListModel = new LimitRangesList();
@@ -237,7 +237,7 @@ public class LimitRangesServiceTest {
         when(propertyService.getCpMasterApiListLimitRangesCreateUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges");
         when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges", HttpMethod.POST, YAML_STRING, Object.class, isAdmin)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
-        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMITRANGES)).thenReturn(gFinalResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMIT_RANGES)).thenReturn(gFinalResultStatusModel);
 
         ResultStatus result = (ResultStatus) limitRangesService.createLimitRanges(NAMESPACE, YAML_STRING, isAdmin);
 
@@ -251,7 +251,7 @@ public class LimitRangesServiceTest {
         when(propertyService.getCpMasterApiListLimitRangesDeleteUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges/" + LIMIT_RANGE_NAME, HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
-        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMITRANGES)).thenReturn(gFinalResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_LIMIT_RANGES)).thenReturn(gFinalResultStatusModel);
 
         ResultStatus result = limitRangesService.deleteLimitRanges(NAMESPACE, LIMIT_RANGE_NAME);
 
@@ -261,12 +261,12 @@ public class LimitRangesServiceTest {
 
     @Test
     public void updateLimitRanges() {
-        String nextUrl = Constants.URI_LIMITRANGES_DETAIL.replace("{limitRangeName:.+}", LIMIT_RANGE_NAME);
+        String nextUrl = Constants.URI_LIMIT_RANGES_DETAIL.replace("{limitRangeName:.+}", LIMIT_RANGE_NAME);
         gFinalResultStatusModel.setNextActionUrl(nextUrl);
 
         //when
         when(propertyService.getCpMasterApiListLimitRangesUpdateUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges/{name}");
-        when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces" + NAMESPACE + "/limitranges/" + LIMIT_RANGE_NAME, HttpMethod.PUT, YAML_STRING, ResultStatus.class, isAdmin)).thenReturn(gResultStatusModel);
+        when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges/" + LIMIT_RANGE_NAME, HttpMethod.PUT, YAML_STRING, ResultStatus.class, isAdmin)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, nextUrl)).thenReturn(gFinalResultStatusModel);
 
