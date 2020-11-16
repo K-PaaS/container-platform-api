@@ -207,7 +207,7 @@ public class StorageClassesController {
                                        @RequestBody String yaml) {
 
         if (isAdmin) {
-            return storageClassesService.updateStorageClasses(namespace, resourceName, yaml);
+            return storageClassesService.updateStorageClasses(resourceName, yaml);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;

@@ -271,7 +271,7 @@ public class ResourceQuotasServiceTest {
 
     @Test
     public void updateResourceQuotas() {
-        String nextUrl = Constants.URI_RESOURCE_QUOTAS.replace("{resourceQuotaName:.+}", RESOURCE_QUOTA_NAME);
+        String nextUrl = Constants.URI_RESOURCE_QUOTAS_DETAIL.replace("{resourceQuotaName:.+}", RESOURCE_QUOTA_NAME);
         gFinalResultStatusModel.setNextActionUrl(nextUrl);
 
         //when
