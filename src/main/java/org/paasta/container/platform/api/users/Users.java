@@ -27,7 +27,6 @@ public class Users {
     public String email;
     public String clusterName;
     public String clusterApiUrl;
-    public String clusterServiceAccountName;
     public String clusterToken;
     public String cpNamespace;
     public String cpAccountTokenName;
