@@ -178,12 +178,12 @@ public class CustomServicesService {
      * @param yaml         the yaml
      * @return return is succeeded
      */
-    public Object updateServices(String namespace, String resourceName, String yaml, boolean isAdmin) {
-        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+    public ResultStatus updateServices(String namespace, String resourceName, String yaml, boolean isAdmin) {
+        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListServicesUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, isAdmin);
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, ResultStatus.class, isAdmin);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, CustomServices.class),
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_SERVICES_DETAIL.replace("{serviceName:.+}", resourceName));
     }
 
