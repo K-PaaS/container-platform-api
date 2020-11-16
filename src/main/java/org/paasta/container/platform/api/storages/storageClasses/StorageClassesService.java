@@ -128,7 +128,7 @@ public class StorageClassesService {
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_STORAGE_CLASSES);
     }
 
     /**
@@ -144,13 +144,12 @@ public class StorageClassesService {
                         .replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_STORAGE_CLASSES);
     }
 
     /**
      * StorageClasses 수정(Update StorageClasses)
      *
-     * @param namespace    the namespace
      * @param resourceName the resource name
      * @param yaml         the yaml
      * @return return is succeeded
@@ -161,7 +160,7 @@ public class StorageClassesService {
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{storageClassName:.+}", resourceName));
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_STORAGE_CLASSES_DETAIL.replace("{storageClassName:.+}", resourceName));
     }
 
 

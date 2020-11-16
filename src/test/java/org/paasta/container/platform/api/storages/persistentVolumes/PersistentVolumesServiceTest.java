@@ -198,7 +198,7 @@ public class PersistentVolumesServiceTest {
         when(propertyService.getCpMasterApiListPersistentVolumesCreateUrl()).thenReturn("/api/v1/persistentvolumes");
         when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/api/v1/persistentvolumes", HttpMethod.POST, YAML_STRING, Object.class, isAdmin)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
-        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES)).thenReturn(gFinalResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUMES)).thenReturn(gFinalResultStatusModel);
 
         ResultStatus result = (ResultStatus) persistentVolumesService.createPersistentVolumes(NAMESPACE, YAML_STRING, isAdmin);
 
@@ -212,7 +212,7 @@ public class PersistentVolumesServiceTest {
         when(propertyService.getCpMasterApiListPersistentVolumesDeleteUrl()).thenReturn("/api/v1/persistentvolumes/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/persistentvolumes/" + PERSISTENT_VOLUME_NAME, HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
-        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES)).thenReturn(gFinalResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUMES)).thenReturn(gFinalResultStatusModel);
 
         ResultStatus result = persistentVolumesService.deletePersistentVolumes(NAMESPACE, PERSISTENT_VOLUME_NAME);
 
@@ -223,7 +223,7 @@ public class PersistentVolumesServiceTest {
 
     @Test
     public void updatePersistentVolumes() {
-        String nextUrl = Constants.URI_STORAGES_DETAIL.replace("{persistentVolumeName:.+}", PERSISTENT_VOLUME_NAME);
+        String nextUrl = Constants.URI_STORAGES_PERSISTENT_VOLUMES_DETAIL.replace("{persistentVolumeName:.+}", PERSISTENT_VOLUME_NAME);
         gFinalResultStatusModel.setNextActionUrl(nextUrl);
 
         //when
@@ -243,7 +243,7 @@ public class PersistentVolumesServiceTest {
 
         //when
         when(propertyService.getCpMasterApiListPersistentVolumesGetUrl()).thenReturn("/api/v1/persistentvolumes/{name}");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/persistentvolumes" + PERSISTENT_VOLUME_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/persistentvolumes/" + PERSISTENT_VOLUME_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, PersistentVolumesAdmin.class)).thenReturn(gResultAdminModel);
         when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
 

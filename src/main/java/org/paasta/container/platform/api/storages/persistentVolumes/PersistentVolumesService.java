@@ -105,7 +105,7 @@ public class PersistentVolumesService {
                         .replace("{namespace}", namespace), HttpMethod.POST, yaml, Object.class, isAdmin);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUMES);
     }
 
     /**
@@ -121,7 +121,7 @@ public class PersistentVolumesService {
                        .replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES);
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUMES);
     }
 
     /**
@@ -138,7 +138,7 @@ public class PersistentVolumesService {
                         .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
 
         return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, PersistentVolumes.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_DETAIL.replace("{persistentVolumeName:.+}", resourceName));
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUMES_DETAIL.replace("{persistentVolumeName:.+}", resourceName));
     }
 
     /**
