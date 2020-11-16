@@ -13,11 +13,13 @@ import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersService;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -258,19 +260,45 @@ public class NamespacesServiceTest {
 
     @Test
     public void deleteNamespaces() {
-
+        Users users = new Users();
+        users.setId(0);
+        users.setUserId("paasta");
+        users.setServiceAccountName("paasta");
+        users.setRoleSetCode("paas-ta-container-platform-init-role");
+        users.setIsActive("Y");
+        users.setDescription("aaaa");
+        users.setEmail("paasta@gmail.com");
+        users.setPassword("paasta");
+        users.setCpNamespace("cp-namespace");
+        users.setSaSecret("paasta-token-jqrx4");
+        users.setSaToken("eyJhbGciOiJSUzI1NiIsImtpZCI6IktNWmgxVXB3ajgwS0NxZjFWaVZJVGVvTXJoWnZ5dG0tMGExdzNGZjBKX00ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZW1wLW5hbWVzcGFjZSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJ0ZXN0LXRva2VuLWpxcng0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6InRlc3QiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI3Y2Q0Nzk4OC01YWViLTQ1ODQtYmNmOS04OTkwZTUzNWEzZGIiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6dGVtcC1uYW1lc3BhY2U6dGVzdCJ9.ZEwhnscTtPW6WrQ5I7fFWcsLWEqnilw7I8i7C4aSXElFHd583OQqTYGk8RUJU7UM6b2T8oKstejkLWE9xP3TchYyG5T-omZBCMe00JZIof4tp0MRZLgBhXizYXGvLb2bcMdlcWg2bCCVRO92Hjik-r-vqfaGbsRGx4dT2dk1sI4RA-XDnMsVFJS94V9P58cBupT1gRMrwWStrqlXrbiwgfIlGbU9GXnA07JUCMy-1wUYdMmRaICdj-Q7eNZ5BmKCNsFBcJKaDl5diNw-gSka2F61sywpezU-30sWAtRHYIYZt6PaAaZ4caAdR8f43Yq1m142RWsr3tunLgQ768UNtQ");
+        users.setUserType("CLUSTER_ADMIN");
+        users.setCreated("2020-10-13");
+        users.setLastModified("2020-10-13");
+        users.setClusterApiUrl("111.111.111.111:6443");
+        users.setClusterToken("eyJhbGciOiJSUzI1NiIsImtpZCI6IktNWmgxVXB3ajgwS0NxZjFWaVZJVGVvTXJoWnZ5dG0tMGExdzNGZjBKX00ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwYWFzLWYxMGU3ZTg4LTQ4YTUtNGUyYy04Yjk5LTZhYmIzY2ZjN2Y2Zi1jYWFzIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6InN1cGVyLWFkbWluLXRva2VuLWtzbXo1Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6InN1cGVyLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMjMwZWQ1OGQtNzc0MC00MDI4LTk0MTEtYTM1MzVhMWM0NjU4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBhYXMtZjEwZTdlODgtNDhhNS00ZTJjLThiOTktNmFiYjNjZmM3ZjZmLWNhYXM6c3VwZXItYWRtaW4ifQ.nxnIJCOH_XVMK71s0gF8bgzSxA7g6_y7hGdboLvSqIAGf9J9AgG1DouP29uShK19fMsl9IdbGODPvtuiBz4QyGLPARZldmlzEyFG3k08UMNay1xX_oK-Fe7atMlYgvoGzyM_5-Zp5dyvnxE2skk524htMGHqW1ZwnHLVxtBg8AuGfMwLW1xahmktsNZDG7pRMasPsj73E85lfavMobBlcs4hwVcZU82gAg0SK1QVe7-Uc2ip_9doNo6_9rGW3FwHdVgUNAeCvPRGV0W1dKJv0IX5e_7fIPIznj2xXcZoHf3BnKfDayDIKJOCdsEsy_2NGi1tiD3UvzDDzZpz02T2sg");
+        users.setClusterName("cp-cluster");
 
         when(propertyService.getCpMasterApiListNamespacesDeleteUrl()).thenReturn("/api/v1/namespaces/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE,  HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
 
-     /*   when(usersService.getUsersNameListByNamespace(NAMESPACE).get(USERS)).thenReturn(gResultList);
-        when(usersService.deleteUsers(usersService.getUsers(NAMESPACE, USER_ID))).thenReturn(gResultStatusModel);
+        Map<String, List> userNameList = new HashMap<>();
+        List<String> aaa = new ArrayList<>();
+        aaa.add("paasta");
+        aaa.add("test");
+
+        userNameList.put("users", aaa);
+
+        when(usersService.getUsersNameListByNamespace(CLUSTER, NAMESPACE)).thenReturn(userNameList);
+
+        when(usersService.getUsers(CLUSTER, NAMESPACE, USER_ID)).thenReturn(users);
+        when(usersService.deleteUsers(users)).thenReturn(gResultStatusModel);
 
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_CLUSTER_NAMESPACES)).thenReturn(gFinalResultStatusModel);
 
-        ResultStatus result = namespacesService.deleteNamespaces(NAMESPACE);
-        assertEquals(gFinalResultStatusModel, result);*/
+        ResultStatus rs = namespacesService.deleteNamespaces(CLUSTER, NAMESPACE);
+
     }
 
 
