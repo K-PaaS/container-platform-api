@@ -200,7 +200,7 @@ public class RolesController {
                                     @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return rolesService.deleteRoles(namespace, resourceName, new HashMap<>());
+            return rolesService.deleteRoles(namespace, resourceName);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
@@ -225,7 +225,7 @@ public class RolesController {
             @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
     })
     @PutMapping("/{resourceName:.+}")
-    public Object updateRoles(@PathVariable(value = "cluster") String cluster,
+    public ResultStatus updateRoles(@PathVariable(value = "cluster") String cluster,
                               @PathVariable(value = "namespace") String namespace,
                               @PathVariable(value = "resourceName") String resourceName,
                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,

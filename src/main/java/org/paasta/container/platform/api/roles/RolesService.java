@@ -153,15 +153,14 @@ public class RolesService {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param resultMap    the result map
      * @return return is succeeded
      */
-    public ResultStatus deleteRoles(String namespace, String resourceName, HashMap resultMap) {
-        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+    public ResultStatus deleteRoles(String namespace, String resourceName) {
+        ResultStatus resultStatus =  restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListRolesDeleteUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
-                , HttpMethod.DELETE, null, ResultStatus.class, true);
+                , HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_ROLES);
@@ -176,14 +175,14 @@ public class RolesService {
      * @param yaml         the yaml
      * @return return is succeeded
      */
-    public Object updateRoles(String namespace, String resourceName, String yaml) {
-        Object map = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+    public ResultStatus updateRoles(String namespace, String resourceName, String yaml) {
+        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListRolesUpdateUrl()
                         .replace("{namespace}", namespace)
-                        .replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
+                        .replace("{name}", resourceName), HttpMethod.PUT, yaml, ResultStatus.class, true);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(map, Roles.class),
-                Constants.RESULT_STATUS_SUCCESS, Constants.URI_SERVICES_DETAIL.replace("{roleName:.+}", resourceName));
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, Constants.URI_ROLES_DETAIL.replace("{roleName:.+}", resourceName));
     }
 
 
