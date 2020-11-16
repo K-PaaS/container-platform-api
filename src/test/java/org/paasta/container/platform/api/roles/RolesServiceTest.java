@@ -238,10 +238,9 @@ public class RolesServiceTest {
         when(propertyService.getCpMasterApiListRolesDeleteUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles/" + ROLE_NAME, HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
-        when(commonService.setResultObject(gResultMap, Roles.class)).thenReturn(gResultModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_ROLES)).thenReturn(gFinalResultStatusModel);
 
-        ResultStatus result = rolesService.deleteRoles(NAMESPACE, ROLE_NAME, gResultMap);
+        ResultStatus result = rolesService.deleteRoles(NAMESPACE, ROLE_NAME);
 
         //compare result
         assertEquals(gFinalResultStatusModel, result);
@@ -249,7 +248,7 @@ public class RolesServiceTest {
 
     @Test
     public void updateRoles() {
-        String nextUrl = Constants.URI_ROLES.replace("{roleName:.+}", ROLE_NAME);
+        String nextUrl = Constants.URI_ROLES_DETAIL.replace("{roleName:.+}", ROLE_NAME);
         gFinalResultStatusModel.setNextActionUrl(nextUrl);
 
         //when
@@ -258,7 +257,7 @@ public class RolesServiceTest {
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, nextUrl)).thenReturn(gFinalResultStatusModel);
 
-        ResultStatus result = (ResultStatus) rolesService.updateRoles(NAMESPACE, ROLE_NAME, YAML_STRING);
+        ResultStatus result = rolesService.updateRoles(NAMESPACE, ROLE_NAME, YAML_STRING);
 
         //compare result
         assertEquals(gFinalResultStatusModel, result);

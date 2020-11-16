@@ -108,6 +108,7 @@ public class Constants {
     public static final String URI_USERS_CONFIG = "/container-platform/users/config";
 
     public static final String URI_ROLES = "/container-platform/roles";
+    public static final String URI_ROLES_DETAIL = "/container-platform/roles/{roleName:.+}";
 
     public static final String URI_RESOURCE_QUOTAS = "/container-platform";
     public static final String URI_RESOURCE_QUOTAS_DETAIL = "/container-platform/{resourceQuotaName:.+}";

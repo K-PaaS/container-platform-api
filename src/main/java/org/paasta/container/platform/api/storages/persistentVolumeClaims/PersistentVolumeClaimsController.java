@@ -197,7 +197,7 @@ public class PersistentVolumeClaimsController {
             @ApiImplicitParam(name = "yaml", value = "리소스 수정 yaml", required = true, dataType = "string", paramType = "body")
     })
     @PutMapping("/{resourceName:.+}")
-    public Object updatePersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
+    public ResultStatus updatePersistentVolumeClaims(@PathVariable(value = "cluster") String cluster,
                                                @PathVariable(value = "namespace") String namespace,
                                                @PathVariable(value = "resourceName") String resourceName,
                                                @RequestBody String yaml,

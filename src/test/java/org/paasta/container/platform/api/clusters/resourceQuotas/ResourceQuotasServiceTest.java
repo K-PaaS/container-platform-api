@@ -280,7 +280,7 @@ public class ResourceQuotasServiceTest {
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, nextUrl)).thenReturn(gFinalResultStatusModel);
 
-        ResultStatus result = (ResultStatus) resourceQuotasService.updateResourceQuotas(NAMESPACE, RESOURCE_QUOTA_NAME, YAML_STRING);
+        ResultStatus result = resourceQuotasService.updateResourceQuotas(NAMESPACE, RESOURCE_QUOTA_NAME, YAML_STRING);
 
         //compare result
         assertEquals(gFinalResultStatusModel, result);
