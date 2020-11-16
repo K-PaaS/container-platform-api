@@ -211,12 +211,12 @@ public class ResourceQuotasService {
      * @param yaml         the yaml
      * @return return is succeeded
      */
-    public Object updateResourceQuotas(String namespace, String resourceName, String yaml) {
-        Object resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
+    public ResultStatus updateResourceQuotas(String namespace, String resourceName, String yaml) {
+        ResultStatus resultStatus = restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListResourceQuotasUpdateUrl()
-                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, Object.class, true);
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.PUT, yaml, ResultStatus.class, true);
 
-        return commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS,
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS,
                 Constants.URI_RESOURCE_QUOTAS_DETAIL.replace("{resourceQuotaName:.+}", resourceName));
     }
 
