@@ -407,6 +407,19 @@ public class CommonService {
 
 
     /**
+     * Nodes명에 따른 Pods 목록조회 fieldSelector 생성 (Create Field Selector For pods By NodeNames )
+     *
+     * @return the string
+     */
+    public String generateFieldSelectorForPodsByNode(String prefix, String nodeName) {
+        if (prefix.equals(Constants.PARAM_QUERY_FIRST)) {
+            return prefix + "fieldSelector=spec.nodeName=" + nodeName;
+        } else {
+            return ",spec.nodeName=" + nodeName;
+        }
+    }
+
+    /**
      * 변경할 Resource 목록 값 비교
      *
      * @param defaultList the default list

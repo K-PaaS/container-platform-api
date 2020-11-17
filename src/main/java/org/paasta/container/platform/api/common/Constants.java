@@ -161,6 +161,8 @@ public class Constants {
     public static final String NULL_REPLACE_TEXT = "-";
 
     public static final String PARAM_NODE = "node";
+    public static final String PARAM_QUERY_FIRST ="?" ;
+    public static final String PARAM_QUERY_AND = "&";
 
     /** 서비스 클래스의 Package */
     public static final String SERVICE_PACKAGE = "org.paasta.container.platform.api.";
