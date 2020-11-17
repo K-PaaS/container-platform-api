@@ -115,25 +115,43 @@ public class PodsController {
     }
 
     /**
-     * Pods 목록 조회(Get Pods node)
+     * Node명에 따른 Pods 목록 조회(Get Pods By node)
      *
-     * @param namespace the namespace
-     * @param nodeName  the node name
-     * @param isAdmin   the isAdmin
+     * @param cluster    the cluster
+     * @param namespace  the namespace
+     * @param nodeName   the nodeName
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
+     * @param isAdmin    the isAdmin
      * @return the pods list
      */
-    @ApiOperation(value = "Pods 목록 조회(Get Pods node)", nickname = "getPodListByNode")
+    @ApiOperation(value = "Node명에 따른 Pods 목록 조회(Get Pods By node)", nickname = "getPodListByNode")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "nodeName", value = "노드 명", required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "nodeName", value = "노드 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
     })
     @GetMapping(value = "/nodes/{nodeName:.+}")
-    public Object getPodListByNode(@PathVariable(value = "namespace") String namespace,
+    public Object getPodListByNode(@PathVariable(value = "cluster") String cluster,
+                                   @PathVariable(value = "namespace") String namespace,
                                    @PathVariable(value = "nodeName") String nodeName,
+                                   @RequestParam(required = false, defaultValue = "0") int offset,
+                                   @RequestParam(required = false, defaultValue = "0") int limit,
+                                   @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
+                                   @RequestParam(required = false, defaultValue = "") String order,
+                                   @RequestParam(required = false, defaultValue = "") String searchName,
                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return podsService.getPodListByNodeAdmin(namespace, nodeName);
+            return podsService.getPodsListByNodeAdmin(namespace, nodeName, offset, limit, orderBy, order, searchName);
         }
         return podsService.getPodListByNode(namespace, nodeName);
     }
@@ -175,8 +193,8 @@ public class PodsController {
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
     public Object getPodsYaml(@PathVariable(value = "namespace") String namespace,
-                                @PathVariable(value = "resourceName") String resourceName,
-                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                              @PathVariable(value = "resourceName") String resourceName,
+                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return podsService.getPodsAdminYaml(namespace, resourceName, new HashMap<>());
@@ -219,7 +237,7 @@ public class PodsController {
      *
      * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin   the isAdmin
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Pods 삭제(Delete Pods)", nickname = "deletePods")
