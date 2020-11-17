@@ -236,167 +236,31 @@ public class LimitRangesService {
 
         if (adminItems.size() > 0) {
             for (LimitRangesListAdminItem i : adminItems) {
-
-                // i = kjh-limit-range
                 if (!dbLrNameList.contains(i.getName())) {
-                    // item 3개 있음
-                    // -> Pod 2개(cpu, memory),
-                    // -> Container 2개(cpu, memory),
-                    // -> PVC 1개(storage)
                     for (LimitRangesItem item : i.getSpec().getLimits()) {
-                        // cpu, memory
                         List<String> typeList = Constants.LIMIT_RANGE_TYPE_LIST;
 
                         for (String type : typeList) {
                             if(type.equals(item.getType())) {
-                                LinkedTreeMap<String, String> defaultLimit = (LinkedTreeMap) item.getDefaultLimit();
-                                LinkedTreeMap<String, String> defaultRequest = (LinkedTreeMap) item.getDefaultRequest();
-                                LinkedTreeMap<String, String> max = (LinkedTreeMap) item.getMax();
-                                LinkedTreeMap<String, String> min = (LinkedTreeMap) item.getMin();
-
-                                // type이 pod나 container일 때 cpu 체크, memory 체크
                                 if(Constants.LIMIT_RANGE_TYPE_CONTAINER.equals(type) || Constants.LIMIT_RANGE_TYPE_POD.equals(type)) {
-
-                                    // cpu 끼리, memory 끼리
                                     for (String resourceType : Constants.SUPPORTED_RESOURCE_LIST) {
-                                        LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
-
-                                        serversItem.setName(i.getName());
-                                        serversItem.setType(type);
-                                        serversItem.setResource(resourceType);
-                                        serversItem.setCheckYn(CHECK_Y);
-                                        serversItem.setCreationTimestamp(i.getCreationTimestamp());
-
-                                        if(defaultLimit != null) {
-                                            for (String mapKey : defaultLimit.keySet()) {
-                                                if(resourceType.equals(mapKey)) {
-                                                    serversItem.setDefaultLimit(defaultLimit.get(mapKey));
-                                                    break;
-                                                } else {
-                                                    serversItem.setDefaultLimit("-");
-                                                }
-                                            }
-                                        } else {
-                                            serversItem.setDefaultLimit("-");
-                                        }
-
-                                        if(defaultRequest != null) {
-                                            for (String mapKey : defaultRequest.keySet()) {
-                                                if(resourceType.equals(mapKey)) {
-                                                    serversItem.setDefaultRequest(defaultRequest.get(mapKey));
-                                                    break;
-                                                } else {
-                                                    serversItem.setDefaultRequest("-");
-                                                }
-                                            }
-                                        } else {
-                                            serversItem.setDefaultRequest("-");
-                                        }
-
-                                        if(min != null) {
-                                            for (String mapKey : min.keySet()) {
-                                                if(resourceType.equals(mapKey)) {
-                                                    serversItem.setMin(min.get(mapKey));
-                                                    break;
-                                                } else {
-                                                    serversItem.setMin("-");
-                                                }
-                                            }
-                                        } else {
-                                            serversItem.setMin("-");
-                                        }
-
-                                        if(max != null) {
-                                            for (String mapKey : max.keySet()) {
-                                                if(resourceType.equals(mapKey)) {
-                                                    serversItem.setMax(max.get(mapKey));
-                                                    break;
-                                                } else {
-                                                    serversItem.setMax("-");
-                                                }
-                                            }
-                                        } else {
-                                            serversItem.setMax("-");
-                                        }
+                                        LimitRangesTemplateItem serversItem = getLimitRangesTemplateItem(i, type, resourceType, item);
 
                                         if(!serversItem.getDefaultLimit().equals("-") || !serversItem.getDefaultRequest().equals("-") || !serversItem.getMax().equals("-") || !serversItem.getMin().equals("-")) {
                                             serversItemList.add(serversItem);
                                         }
                                     }
-
                                 } else {
                                     String resourceType = Constants.SUPPORTED_RESOURCE_STORAGE;
-
-                                    LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
-
-                                    serversItem.setName(i.getName());
-                                    serversItem.setType(type);
-                                    serversItem.setResource(resourceType);
-                                    serversItem.setCheckYn(CHECK_Y);
-                                    serversItem.setCreationTimestamp(i.getCreationTimestamp());
-
-                                    if(defaultLimit != null) {
-                                        for (String mapKey : defaultLimit.keySet()) {
-                                            if(resourceType.equals(mapKey)) {
-                                                serversItem.setDefaultLimit(defaultLimit.get(mapKey));
-                                                break;
-                                            } else {
-                                                serversItem.setDefaultLimit("-");
-                                            }
-                                        }
-                                    } else {
-                                        serversItem.setDefaultLimit("-");
-                                    }
-
-                                    if(defaultRequest != null) {
-                                        for (String mapKey : defaultRequest.keySet()) {
-                                            if(resourceType.equals(mapKey)) {
-                                                serversItem.setDefaultRequest(defaultRequest.get(mapKey));
-                                                break;
-                                            } else {
-                                                serversItem.setDefaultRequest("-");
-                                            }
-                                        }
-                                    } else {
-                                        serversItem.setDefaultRequest("-");
-                                    }
-
-                                    if(min != null) {
-                                        for (String mapKey : min.keySet()) {
-                                            if(resourceType.equals(mapKey)) {
-                                                serversItem.setMin(min.get(mapKey));
-                                                break;
-                                            } else {
-                                                serversItem.setMin("-");
-                                            }
-                                        }
-                                    } else {
-                                        serversItem.setMin("-");
-                                    }
-
-                                    if(max != null) {
-                                        for (String mapKey : max.keySet()) {
-                                            if(resourceType.equals(mapKey)) {
-                                                serversItem.setMax(max.get(mapKey));
-                                                break;
-                                            } else {
-                                                serversItem.setMax("-");
-                                            }
-                                        }
-                                    } else {
-                                        serversItem.setMax("-");
-                                    }
+                                    LimitRangesTemplateItem serversItem = getLimitRangesTemplateItem(i, type, resourceType, item);
 
                                     if(!serversItem.getDefaultLimit().equals("-") || !serversItem.getDefaultRequest().equals("-") || !serversItem.getMax().equals("-") || !serversItem.getMin().equals("-")) {
                                         serversItemList.add(serversItem);
                                     }
                                 }
-
                             }
-
                         }
                     }
-
                 }
             }
 
@@ -470,5 +334,83 @@ public class LimitRangesService {
         return keyList;
     }
 
+
+    /**
+     * 존재하는 각 Type과 Resource Type별로 LimitRanges 자원 설정 값 셋팅
+     *
+     * @param listAdminItem the list admin item
+     * @param type          the type
+     * @param resourceType  the resource type
+     * @param item          the item
+     * @return the limitRangesTemplateItem
+     */
+    private LimitRangesTemplateItem getLimitRangesTemplateItem(LimitRangesListAdminItem listAdminItem, String type, String resourceType, LimitRangesItem item) {
+        LinkedTreeMap<String, String> defaultLimit = (LinkedTreeMap) item.getDefaultLimit();
+        LinkedTreeMap<String, String> defaultRequest = (LinkedTreeMap) item.getDefaultRequest();
+        LinkedTreeMap<String, String> max = (LinkedTreeMap) item.getMax();
+        LinkedTreeMap<String, String> min = (LinkedTreeMap) item.getMin();
+
+        LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
+
+        serversItem.setName(listAdminItem.getName());
+        serversItem.setType(type);
+        serversItem.setResource(resourceType);
+        serversItem.setCheckYn(CHECK_Y);
+        serversItem.setCreationTimestamp(listAdminItem.getCreationTimestamp());
+
+        if(defaultLimit != null) {
+            for (String mapKey : defaultLimit.keySet()) {
+                if(resourceType.equals(mapKey)) {
+                    serversItem.setDefaultLimit(defaultLimit.get(mapKey));
+                    break;
+                } else {
+                    serversItem.setDefaultLimit("-");
+                }
+            }
+        } else {
+            serversItem.setDefaultLimit("-");
+        }
+
+        if(defaultRequest != null) {
+            for (String mapKey : defaultRequest.keySet()) {
+                if(resourceType.equals(mapKey)) {
+                    serversItem.setDefaultRequest(defaultRequest.get(mapKey));
+                    break;
+                } else {
+                    serversItem.setDefaultRequest("-");
+                }
+            }
+        } else {
+            serversItem.setDefaultRequest("-");
+        }
+
+        if(min != null) {
+            for (String mapKey : min.keySet()) {
+                if(resourceType.equals(mapKey)) {
+                    serversItem.setMin(min.get(mapKey));
+                    break;
+                } else {
+                    serversItem.setMin("-");
+                }
+            }
+        } else {
+            serversItem.setMin("-");
+        }
+
+        if(max != null) {
+            for (String mapKey : max.keySet()) {
+                if(resourceType.equals(mapKey)) {
+                    serversItem.setMax(max.get(mapKey));
+                    break;
+                } else {
+                    serversItem.setMax("-");
+                }
+            }
+        } else {
+            serversItem.setMax("-");
+        }
+
+        return serversItem;
+    }
 
 }
