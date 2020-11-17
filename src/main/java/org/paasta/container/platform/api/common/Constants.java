@@ -44,6 +44,29 @@ public class Constants {
     public static final String NOT_ALLOWED_POD_NAME_NODES = "nodes";
     public static final String NOT_ALLOWED_POD_NAME_RESOURCES= "resources";
 
+    public static final String LIMIT_RANGE_TYPE_POD = "Pod";
+    public static final String LIMIT_RANGE_TYPE_CONTAINER = "Container";
+    public static final String LIMIT_RANGE_TYPE_PVC = "PersistentVolumeClaim";
+
+    public static final String SUPPORTED_RESOURCE_CPU = "cpu";
+    public static final String SUPPORTED_RESOURCE_MEMORY = "memory";
+    public static final String SUPPORTED_RESOURCE_STORAGE = "storage";
+
+    public static final List<String> LIMIT_RANGE_TYPE_LIST = Collections.unmodifiableList(new ArrayList<String>(){
+        {
+            add(LIMIT_RANGE_TYPE_POD);
+            add(LIMIT_RANGE_TYPE_CONTAINER);
+            add(LIMIT_RANGE_TYPE_PVC);
+        }
+    });
+
+    public static final List<String> SUPPORTED_RESOURCE_LIST = Collections.unmodifiableList(new ArrayList<String>(){
+        {
+            add(SUPPORTED_RESOURCE_CPU);
+            add(SUPPORTED_RESOURCE_MEMORY);
+        }
+    });
+
     public static final List<String> NOT_ALLOWED_POD_NAME_LIST = Collections.unmodifiableList(new ArrayList<String>(){
         {
             add(NOT_ALLOWED_POD_NAME_NODES);

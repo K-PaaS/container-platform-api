@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.internal.LinkedTreeMap;
 import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
@@ -235,51 +236,180 @@ public class LimitRangesService {
 
         if (adminItems.size() > 0) {
             for (LimitRangesListAdminItem i : adminItems) {
-                List<LimitRangesItem> list = new ArrayList<>();
 
+                // i = kjh-limit-range
                 if (!dbLrNameList.contains(i.getName())) {
-                    LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
-
+                    // item 3개 있음
+                    // -> Pod 2개(cpu, memory),
+                    // -> Container 2개(cpu, memory),
+                    // -> PVC 1개(storage)
                     for (LimitRangesItem item : i.getSpec().getLimits()) {
+                        // cpu, memory
+                        List<String> typeList = Constants.LIMIT_RANGE_TYPE_LIST;
 
-                        List<String> duplicateKeys = new ArrayList<>();
-                        List<String> exclusiveKeys = new ArrayList<>();
-                        duplicateKeys.addAll(getKeyResource(objectToMap(item.getDefaultLimit())));
-                        duplicateKeys.addAll(getKeyResource(objectToMap(item.getDefaultRequest())));
-                        duplicateKeys.addAll(getKeyResource(objectToMap(item.getMin())));
-                        duplicateKeys.addAll(getKeyResource(objectToMap(item.getMax())));
+                        for (String type : typeList) {
+                            if(type.equals(item.getType())) {
+                                LinkedTreeMap<String, String> defaultLimit = (LinkedTreeMap) item.getDefaultLimit();
+                                LinkedTreeMap<String, String> defaultRequest = (LinkedTreeMap) item.getDefaultRequest();
+                                LinkedTreeMap<String, String> max = (LinkedTreeMap) item.getMax();
+                                LinkedTreeMap<String, String> min = (LinkedTreeMap) item.getMin();
 
-                        for (String name : duplicateKeys) {
-                            if (!exclusiveKeys.contains(name)) {
-                                exclusiveKeys.add(name);
+                                // type이 pod나 container일 때 cpu 체크, memory 체크
+                                if(Constants.LIMIT_RANGE_TYPE_CONTAINER.equals(type) || Constants.LIMIT_RANGE_TYPE_POD.equals(type)) {
+
+                                    // cpu 끼리, memory 끼리
+                                    for (String resourceType : Constants.SUPPORTED_RESOURCE_LIST) {
+                                        LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
+
+                                        serversItem.setName(i.getName());
+                                        serversItem.setType(type);
+                                        serversItem.setResource(resourceType);
+                                        serversItem.setCheckYn(CHECK_Y);
+                                        serversItem.setCreationTimestamp(i.getCreationTimestamp());
+
+                                        if(defaultLimit != null) {
+                                            for (String mapKey : defaultLimit.keySet()) {
+                                                if(resourceType.equals(mapKey)) {
+                                                    serversItem.setDefaultLimit(defaultLimit.get(mapKey));
+                                                    break;
+                                                } else {
+                                                    serversItem.setDefaultLimit("-");
+                                                }
+                                            }
+                                        } else {
+                                            serversItem.setDefaultLimit("-");
+                                        }
+
+                                        if(defaultRequest != null) {
+                                            for (String mapKey : defaultRequest.keySet()) {
+                                                if(resourceType.equals(mapKey)) {
+                                                    serversItem.setDefaultRequest(defaultRequest.get(mapKey));
+                                                    break;
+                                                } else {
+                                                    serversItem.setDefaultRequest("-");
+                                                }
+                                            }
+                                        } else {
+                                            serversItem.setDefaultRequest("-");
+                                        }
+
+                                        if(min != null) {
+                                            for (String mapKey : min.keySet()) {
+                                                if(resourceType.equals(mapKey)) {
+                                                    serversItem.setMin(min.get(mapKey));
+                                                    break;
+                                                } else {
+                                                    serversItem.setMin("-");
+                                                }
+                                            }
+                                        } else {
+                                            serversItem.setMin("-");
+                                        }
+
+                                        if(max != null) {
+                                            for (String mapKey : max.keySet()) {
+                                                if(resourceType.equals(mapKey)) {
+                                                    serversItem.setMax(max.get(mapKey));
+                                                    break;
+                                                } else {
+                                                    serversItem.setMax("-");
+                                                }
+                                            }
+                                        } else {
+                                            serversItem.setMax("-");
+                                        }
+
+                                        if(!serversItem.getDefaultLimit().equals("-") || !serversItem.getDefaultRequest().equals("-") || !serversItem.getMax().equals("-") || !serversItem.getMin().equals("-")) {
+                                            serversItemList.add(serversItem);
+                                        }
+                                    }
+
+                                } else {
+                                    String resourceType = Constants.SUPPORTED_RESOURCE_STORAGE;
+
+                                    LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
+
+                                    serversItem.setName(i.getName());
+                                    serversItem.setType(type);
+                                    serversItem.setResource(resourceType);
+                                    serversItem.setCheckYn(CHECK_Y);
+                                    serversItem.setCreationTimestamp(i.getCreationTimestamp());
+
+                                    if(defaultLimit != null) {
+                                        for (String mapKey : defaultLimit.keySet()) {
+                                            if(resourceType.equals(mapKey)) {
+                                                serversItem.setDefaultLimit(defaultLimit.get(mapKey));
+                                                break;
+                                            } else {
+                                                serversItem.setDefaultLimit("-");
+                                            }
+                                        }
+                                    } else {
+                                        serversItem.setDefaultLimit("-");
+                                    }
+
+                                    if(defaultRequest != null) {
+                                        for (String mapKey : defaultRequest.keySet()) {
+                                            if(resourceType.equals(mapKey)) {
+                                                serversItem.setDefaultRequest(defaultRequest.get(mapKey));
+                                                break;
+                                            } else {
+                                                serversItem.setDefaultRequest("-");
+                                            }
+                                        }
+                                    } else {
+                                        serversItem.setDefaultRequest("-");
+                                    }
+
+                                    if(min != null) {
+                                        for (String mapKey : min.keySet()) {
+                                            if(resourceType.equals(mapKey)) {
+                                                serversItem.setMin(min.get(mapKey));
+                                                break;
+                                            } else {
+                                                serversItem.setMin("-");
+                                            }
+                                        }
+                                    } else {
+                                        serversItem.setMin("-");
+                                    }
+
+                                    if(max != null) {
+                                        for (String mapKey : max.keySet()) {
+                                            if(resourceType.equals(mapKey)) {
+                                                serversItem.setMax(max.get(mapKey));
+                                                break;
+                                            } else {
+                                                serversItem.setMax("-");
+                                            }
+                                        }
+                                    } else {
+                                        serversItem.setMax("-");
+                                    }
+
+                                    if(!serversItem.getDefaultLimit().equals("-") || !serversItem.getDefaultRequest().equals("-") || !serversItem.getMax().equals("-") || !serversItem.getMin().equals("-")) {
+                                        serversItemList.add(serversItem);
+                                    }
+                                }
+
                             }
+
                         }
-
-                        String result = String.join(", ", exclusiveKeys);
-
-                        item.setResource(result);
-                        list.add(item);
                     }
-                    serversItem.setName(i.getName());
-                    serversItem.setLimits(list);
-                    serversItem.setCheckYn(CHECK_Y);
-                    serversItem.setMetadata(i.getMetadata());
-                    serversItem.setSpec(i.getSpec());
-                    serversItem.setCreationTimestamp(i.getCreationTimestamp());
-                    serversItemList.add(serversItem);
+
                 }
             }
 
             serverList.setItems(serversItemList);
             serverList = commonService.setResultObject(serverList, LimitRangesTemplateList.class);
-            serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
+            //serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
 
             return commonService.setResultModel(serverList, Constants.RESULT_STATUS_SUCCESS);
         }
 
         serverList.setItems(serversItemList);
         serverList = commonService.setResultObject(serverList, LimitRangesTemplateList.class);
-        serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
+        //serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
 
         return commonService.setResultModel(serverList, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -292,34 +422,16 @@ public class LimitRangesService {
      * @return the limitRanges template item
      */
     public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault, String yn) {
-        LimitRangesItem map = new LimitRangesItem();
-        List<LimitRangesItem> list = new ArrayList<>();
         LimitRangesTemplateItem item = new LimitRangesTemplateItem();
         CommonMetaData metadata = new CommonMetaData();
 
-
-        String limitsLr = limitRangesDefault.getDefaultLimit();
-        String[] limitsLrList = limitsLr.split(",");
-
-        Map<String, String> limitMap = new HashMap();
-        limitMap.put(limitsLrList[0].split(":")[0], limitsLrList[0].split(":")[1]);
-        limitMap.put(limitsLrList[1].split(":")[0].trim(), limitsLrList[1].split(":")[1]);
-
-
-        map.setDefaultRequest(limitRangesDefault.getDefaultRequest());
-        map.setMin(limitRangesDefault.getMin());
-        map.setMax(limitRangesDefault.getMax());
-        map.setType(limitRangesDefault.getType());
-        map.setResource(limitRangesDefault.getResource());
-        map.setDefaultLimit(limitMap);
-
-        list.add(map);
-
-        metadata.setName(limitRangesDefault.getName());
-        metadata.setCreationTimestamp(limitRangesDefault.getCreationTimestamp());
-
         item.setName(limitRangesDefault.getName());
-        item.setLimits(list);
+        item.setType(limitRangesDefault.getType());
+        item.setResource(limitRangesDefault.getResource());
+        item.setMin(limitRangesDefault.getMin());
+        item.setMax(limitRangesDefault.getMax());
+        item.setDefaultRequest(limitRangesDefault.getDefaultRequest());
+        item.setDefaultLimit(limitRangesDefault.getDefaultLimit());
         item.setCheckYn(yn);
         item.setMetadata(metadata);
         item.setCreationTimestamp(limitRangesDefault.getCreationTimestamp());
