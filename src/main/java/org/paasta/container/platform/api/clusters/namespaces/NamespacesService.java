@@ -1,21 +1,9 @@
 package org.paasta.container.platform.api.clusters.namespaces;
 
-import org.paasta.container.platform.api.accessInfo.AccessTokenService;
-import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesList;
-import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesService;
-import org.paasta.container.platform.api.clusters.namespaces.support.NamespacesListSupport;
-import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasList;
-import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
-import org.paasta.container.platform.api.common.*;
-import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
-import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.users.Users;
-import org.paasta.container.platform.api.users.UsersService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
+import static org.paasta.container.platform.api.common.Constants.AUTH_NAMESPACE_ADMIN;
+import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
+import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
+import static org.paasta.container.platform.api.common.Constants.USERS;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +11,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.paasta.container.platform.api.common.Constants.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+
+import org.paasta.container.platform.api.accessInfo.AccessTokenService;
+import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesList;
+import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesService;
+import org.paasta.container.platform.api.clusters.namespaces.support.NamespacesListSupport;
+import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasList;
+import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
+import org.paasta.container.platform.api.common.CommonService;
+import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.PropertyService;
+import org.paasta.container.platform.api.common.ResourceYamlService;
+import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersService;
 
 /**
  * Namespaces Service 클래스
@@ -239,7 +249,7 @@ public class NamespacesService {
         if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
             restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class, true);
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId + "-" + propertyService.getAdminRole() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
+            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId + Constants.NULL_REPLACE_TEXT + propertyService.getAdminRole() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE");

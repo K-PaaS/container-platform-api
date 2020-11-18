@@ -1,20 +1,30 @@
 package org.paasta.container.platform.api.common;
 
+import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.paasta.container.platform.api.adminToken.AdminToken;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.exception.CpCommonAPIException;
-import org.paasta.container.platform.api.login.JwtUtil;
-import org.paasta.container.platform.api.users.Users;
+
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -22,11 +32,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-
-import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
+import org.paasta.container.platform.api.adminToken.AdminToken;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.exception.CpCommonAPIException;
+import org.paasta.container.platform.api.login.JwtUtil;
 
 /**
  * Rest Template Service 클래스
@@ -216,7 +226,7 @@ public class RestTemplateService {
             namespace = getNs(requestUri);
             saUserToken = jwtUtil.extractJwtFromRequest(request);
             apiUrl = propertyService.getCpMasterApiUrl();
-            if(namespace.equals("-"))
+            if(namespace.equals(Constants.NULL_REPLACE_TEXT))
                 authorization = "Bearer " + this.getAdminToken().getTokenValue();
             else
                 authorization = "Bearer " + jwtUtil.getSaTokenFromToken(saUserToken, namespace);
@@ -264,7 +274,7 @@ public class RestTemplateService {
      * @param URI the requestURI
      */
     public String getNs(String URI) {
-        String namespace = "-";
+        String namespace = Constants.NULL_REPLACE_TEXT;
         int nsOrder = 0;
         try {
             if (URI.indexOf("namespaces") > 0) {

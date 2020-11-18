@@ -1,23 +1,39 @@
 package org.paasta.container.platform.api.users;
 
-import org.paasta.container.platform.api.accessInfo.AccessTokenService;
-import org.paasta.container.platform.api.clusters.clusters.Clusters;
-import org.paasta.container.platform.api.clusters.clusters.ClustersService;
-import org.paasta.container.platform.api.common.*;
-import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.secret.Secrets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
+import static org.paasta.container.platform.api.common.Constants.ALL_NAMESPACES;
+import static org.paasta.container.platform.api.common.Constants.AUTH_CLUSTER_ADMIN;
+import static org.paasta.container.platform.api.common.Constants.AUTH_USER;
+import static org.paasta.container.platform.api.common.Constants.CHECK_N;
+import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
+import static org.paasta.container.platform.api.common.Constants.SELECTED_ADMINISTRATOR;
+import static org.paasta.container.platform.api.common.Constants.SELECTED_USER;
+import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
+import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
+import static org.paasta.container.platform.api.common.Constants.USERS;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.paasta.container.platform.api.common.Constants.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+
+import org.paasta.container.platform.api.accessInfo.AccessTokenService;
+import org.paasta.container.platform.api.clusters.clusters.Clusters;
+import org.paasta.container.platform.api.clusters.clusters.ClustersService;
+import org.paasta.container.platform.api.common.CommonService;
+import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.MessageConstant;
+import org.paasta.container.platform.api.common.PropertyService;
+import org.paasta.container.platform.api.common.ResourceYamlService;
+import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.secret.Secrets;
 
 /**
  * User Service 클래스
@@ -357,7 +373,7 @@ public class UsersService {
 
             if(!updateUser.getRoleSetCode().equals(nr.getRole())) {
                 LOGGER.info("Same Namespace >> {}, Default Role >> {}, New Role >> {}", namespace, defaultRole, newRole);
-                restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + "-" + defaultRole + "-binding"), HttpMethod.DELETE, null, Object.class, true);
+                restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + Constants.NULL_REPLACE_TEXT + defaultRole + "-binding"), HttpMethod.DELETE, null, Object.class, true);
                 resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, newRole);
 
                 updateUser.setUserId(users.getUserId());
@@ -425,7 +441,7 @@ public class UsersService {
         restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class, true);
 
         // role binding 삭제
-        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + "-" + role + "-binding"), HttpMethod.DELETE, null, Object.class, true);
+        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + Constants.NULL_REPLACE_TEXT + role + "-binding"), HttpMethod.DELETE, null, Object.class, true);
 
         // DB delete
         ResultStatus rsDb = (ResultStatus) restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DELETE + users.getId(), HttpMethod.DELETE, null, Object.class);
@@ -494,7 +510,7 @@ public class UsersService {
                         Users updatedUser = getUsers(cluster, namespace, sa);
 
                         // remove default roleBinding, add new roleBinding
-                        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", sa + "-" + value.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
+                        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", sa + Constants.NULL_REPLACE_TEXT + value.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
 
                         updateSetRoleUser(namespace, sa, role, updatedUser);
                         updatedUser.setRoleSetCode(role);
@@ -511,7 +527,7 @@ public class UsersService {
                     LOGGER.info("Delete >>> sa :: {}, role :: {}", saName, roleName);
 
                     restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class, true);
-                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + "-" + roleName + "-binding"), HttpMethod.DELETE, null, Object.class, true);
+                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + Constants.NULL_REPLACE_TEXT + roleName + "-binding"), HttpMethod.DELETE, null, Object.class, true);
 
                     rsDb = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{cluster:.+}", cluster).replace("{namespace:.+}", namespace).replace("{userId:.+}", saName), HttpMethod.DELETE, null, ResultStatus.class);
                 }

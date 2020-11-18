@@ -1,32 +1,48 @@
 package org.paasta.container.platform.api.users;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import static org.paasta.container.platform.api.common.Constants.AUTH_CLUSTER_ADMIN;
+import static org.paasta.container.platform.api.common.Constants.AUTH_USER;
+import static org.paasta.container.platform.api.common.Constants.RESULT_STATUS_SUCCESS;
+import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
+import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.paasta.container.platform.api.accessInfo.AccessToken;
-import org.paasta.container.platform.api.accessInfo.AccessTokenService;
-import org.paasta.container.platform.api.clusters.clusters.Clusters;
-import org.paasta.container.platform.api.clusters.clusters.ClustersService;
-import org.paasta.container.platform.api.common.*;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.secret.Secrets;
+
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.paasta.container.platform.api.common.Constants.*;
+import org.paasta.container.platform.api.accessInfo.AccessToken;
+import org.paasta.container.platform.api.accessInfo.AccessTokenService;
+import org.paasta.container.platform.api.clusters.clusters.Clusters;
+import org.paasta.container.platform.api.clusters.clusters.ClustersService;
+import org.paasta.container.platform.api.common.CommonService;
+import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.MessageConstant;
+import org.paasta.container.platform.api.common.PropertyService;
+import org.paasta.container.platform.api.common.ResourceYamlService;
+import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.secret.Secrets;
 
 /**
  *  Users Service Test 클래스
@@ -388,7 +404,7 @@ public class UsersServiceTest {
         when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/serviceaccounts/" + USER_ID, HttpMethod.DELETE, null, Object.class, isAdmin)).thenReturn(gResultStatusModel);
 
         when(propertyService.getCpMasterApiListRoleBindingsDeleteUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}");
-        when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/rolebindings/" + USER_ID + "-" + ROLE + "-binding", HttpMethod.DELETE, null, Object.class, isAdmin)).thenReturn(gResultStatusModel);
+        when(restTemplateService.sendYaml(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/rolebindings/" + USER_ID + Constants.NULL_REPLACE_TEXT + ROLE + "-binding", HttpMethod.DELETE, null, Object.class, isAdmin)).thenReturn(gResultStatusModel);
 
         when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DELETE + UsersModel.getResultUser().getId(), HttpMethod.DELETE, null, Object.class)).thenReturn(gResultStatusModel);
 
@@ -453,7 +469,7 @@ public class UsersServiceTest {
         when(usersService.getUsersListByNamespace(CLUSTER, NAMESPACE)).thenReturn(modifyUsersList);
         when(usersService.getUsers(CLUSTER, NAMESPACE, USER_ID)).thenReturn(users);
         when(propertyService.getCpMasterApiListRoleBindingsDeleteUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/rolebindings/{name}");
-        when(restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", NAMESPACE).replace("{name}", usersUpdateRole.getServiceAccountName() + "-" + usersUpdateRole.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true)).thenReturn(gResultStatusModel);
+        when(restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", NAMESPACE).replace("{name}", usersUpdateRole.getServiceAccountName() + Constants.NULL_REPLACE_TEXT + usersUpdateRole.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true)).thenReturn(gResultStatusModel);
 
         when(resourceYamlService.createRoleBinding(USER_ID, NAMESPACE, ADMIN_ROLE)).thenReturn(finalRs);
         doReturn(SECRET_NAME).when(restTemplateService).getSecretName(NAMESPACE, USER_ID);

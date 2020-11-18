@@ -1,21 +1,31 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
+import static org.paasta.container.platform.api.common.Constants.CHECK_N;
+import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.internal.LinkedTreeMap;
-import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
-import org.paasta.container.platform.api.common.*;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
-import org.paasta.container.platform.api.common.model.ResultStatus;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.paasta.container.platform.api.common.Constants.CHECK_N;
-import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
+import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
+import org.paasta.container.platform.api.common.CommonService;
+import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.PropertyService;
+import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 
 /**
  * LimitRanges Service 클래스
@@ -269,7 +279,7 @@ public class LimitRangesService {
                                     for (String resourceType : Constants.SUPPORTED_RESOURCE_LIST) {
                                         LimitRangesTemplateItem serversItem = getLimitRangesTemplateItem(i, type, resourceType, item);
 
-                                        if(!serversItem.getDefaultLimit().equals("-") || !serversItem.getDefaultRequest().equals("-") || !serversItem.getMax().equals("-") || !serversItem.getMin().equals("-")) {
+                                        if(!serversItem.getDefaultLimit().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getDefaultRequest().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMax().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMin().equals(Constants.NULL_REPLACE_TEXT)) {
                                             serversItemList.add(serversItem);
                                         }
                                     }
@@ -277,7 +287,7 @@ public class LimitRangesService {
                                     String resourceType = Constants.SUPPORTED_RESOURCE_STORAGE;
                                     LimitRangesTemplateItem serversItem = getLimitRangesTemplateItem(i, type, resourceType, item);
 
-                                    if(!serversItem.getDefaultLimit().equals("-") || !serversItem.getDefaultRequest().equals("-") || !serversItem.getMax().equals("-") || !serversItem.getMin().equals("-")) {
+                                    if(!serversItem.getDefaultLimit().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getDefaultRequest().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMax().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMin().equals(Constants.NULL_REPLACE_TEXT)) {
                                         serversItemList.add(serversItem);
                                     }
                                 }
@@ -387,11 +397,11 @@ public class LimitRangesService {
                     serversItem.setDefaultLimit(defaultLimit.get(mapKey));
                     break;
                 } else {
-                    serversItem.setDefaultLimit("-");
+                    serversItem.setDefaultLimit(Constants.NULL_REPLACE_TEXT);
                 }
             }
         } else {
-            serversItem.setDefaultLimit("-");
+            serversItem.setDefaultLimit(Constants.NULL_REPLACE_TEXT);
         }
 
         if(defaultRequest != null) {
@@ -400,11 +410,11 @@ public class LimitRangesService {
                     serversItem.setDefaultRequest(defaultRequest.get(mapKey));
                     break;
                 } else {
-                    serversItem.setDefaultRequest("-");
+                    serversItem.setDefaultRequest(Constants.NULL_REPLACE_TEXT);
                 }
             }
         } else {
-            serversItem.setDefaultRequest("-");
+            serversItem.setDefaultRequest(Constants.NULL_REPLACE_TEXT);
         }
 
         if(min != null) {
@@ -413,11 +423,11 @@ public class LimitRangesService {
                     serversItem.setMin(min.get(mapKey));
                     break;
                 } else {
-                    serversItem.setMin("-");
+                    serversItem.setMin(Constants.NULL_REPLACE_TEXT);
                 }
             }
         } else {
-            serversItem.setMin("-");
+            serversItem.setMin(Constants.NULL_REPLACE_TEXT);
         }
 
         if(max != null) {
@@ -426,11 +436,11 @@ public class LimitRangesService {
                     serversItem.setMax(max.get(mapKey));
                     break;
                 } else {
-                    serversItem.setMax("-");
+                    serversItem.setMax(Constants.NULL_REPLACE_TEXT);
                 }
             }
         } else {
-            serversItem.setMax("-");
+            serversItem.setMax(Constants.NULL_REPLACE_TEXT);
         }
 
         return serversItem;
