@@ -219,7 +219,7 @@ public class PodsServiceTest {
         when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
 
         // when
-        PodsListAdmin resultList = podsService.getPodListByNodeAdmin(NAMESPACE, NODE_NAME);
+        PodsListAdmin resultList = (PodsListAdmin) podsService.getPodsListByNodeAdmin(NAMESPACE, NODE_NAME, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
 
         // then
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
