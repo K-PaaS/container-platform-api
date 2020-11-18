@@ -1,11 +1,13 @@
 package org.paasta.container.platform.api.clusters.nodes;
 
+import java.util.Map;
+
 import lombok.Data;
+
 import org.paasta.container.platform.api.clusters.nodes.support.NodesStatus;
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
-
-import java.util.Map;
 
 /**
  * Nodes Model 클래스
@@ -28,4 +30,8 @@ public class Nodes {
 
     private Map<String, Object> source;
     private String sourceTypeYaml;
+
+    public String getNextActionUrl() {
+        return CommonUtils.procReplaceNullValue(nextActionUrl);
+    }
 }

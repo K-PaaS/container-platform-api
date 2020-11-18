@@ -1,11 +1,13 @@
 package org.paasta.container.platform.api.storages.persistentVolumes;
 
+import java.util.Map;
+
 import lombok.Data;
+
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsSpec;
 import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsStatus;
-
-import java.util.Map;
 
 /**
  * PersistentVolumes Model 클래스
@@ -28,4 +30,8 @@ public class PersistentVolumes {
 
     private Map<String, Object> source;
     private String sourceTypeYaml;
+
+    public String getNextActionUrl() {
+        return CommonUtils.procReplaceNullValue(nextActionUrl);
+    }
 }

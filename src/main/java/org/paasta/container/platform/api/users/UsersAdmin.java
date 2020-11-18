@@ -1,10 +1,16 @@
 package org.paasta.container.platform.api.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.List;
+
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
+import org.springframework.util.StringUtils;
+
+import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.Constants;
 
 /**
  * User Admin Model 클래스
@@ -32,16 +38,24 @@ public class UsersAdmin {
 
         @JsonIgnore
         public String saSecret;
-        private String serviceAccountUid;
         public String cpNamespace;
         public String roleSetCode;
-
         public Secrets secrets;
 
         // Cluster Info
         public String clusterApiUrl;
         public String clusterToken;
+        private String serviceAccountUid;
 
+        public String getServiceAccountUid() {
+            return CommonUtils.procReplaceNullValue(serviceAccountUid);
+        }
+
+        public Secrets getSecrets() {
+            return (StringUtils.isEmpty(secrets)) ? new UsersAdmin.Secrets(Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT) {{
+                setSaSecret(Constants.NULL_REPLACE_TEXT);
+            }} : secrets;
+        }
     }
 
     // Secrets
@@ -51,7 +65,10 @@ public class UsersAdmin {
         private String saSecret;
         private Object secretLabels;
         private String secretType;
-    }
 
+        public Object getSecretLabels() {
+            return CommonUtils.procReplaceNullValue(secretLabels);
+        }
+    }
 
 }

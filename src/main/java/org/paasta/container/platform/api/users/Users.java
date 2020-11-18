@@ -1,10 +1,14 @@
 package org.paasta.container.platform.api.users;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Data;
 
-import java.beans.Transient;
-import java.util.List;
-import java.util.Map;
+import org.springframework.util.StringUtils;
+
+import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.Constants;
 
 /**
  * User Model 클래스
@@ -50,5 +54,30 @@ public class Users {
     public static class NamespaceRole {
         private String namespace;
         private String role;
+    }
+
+    public String getCpAccountTokenName() {
+        return CommonUtils.procReplaceNullValue(cpAccountTokenName);
+    }
+
+    public String getDescription() {
+        return CommonUtils.procReplaceNullValue(description);
+    }
+
+    public String getBrowser() {
+        return CommonUtils.procReplaceNullValue(browser);
+    }
+
+    public String getClientIp() {
+        return CommonUtils.procReplaceNullValue(clientIp);
+    }
+
+    public List<NamespaceRole> getSelectValues() {
+        return (StringUtils.isEmpty(selectValues)) ? new ArrayList<NamespaceRole>() {{
+            add(new Users.NamespaceRole() {{
+                setNamespace(Constants.NULL_REPLACE_TEXT);
+                setRole(Constants.NULL_REPLACE_TEXT);
+            }});
+        }} : selectValues;
     }
 }

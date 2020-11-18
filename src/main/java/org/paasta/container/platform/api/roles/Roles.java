@@ -1,9 +1,12 @@
 package org.paasta.container.platform.api.roles;
 
 
-import lombok.Data;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
 import java.util.ArrayList;
+
+import lombok.Data;
+
+import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
 
 
 /**
@@ -27,4 +30,7 @@ public class Roles {
 
     private String sourceTypeYaml;
 
+    public String getNextActionUrl() {
+        return CommonUtils.procReplaceNullValue(nextActionUrl);
+    }
 }

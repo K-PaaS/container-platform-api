@@ -3,6 +3,8 @@ package org.paasta.container.platform.api.common.model;
 import lombok.Builder;
 import lombok.Data;
 
+import org.paasta.container.platform.api.common.CommonUtils;
+
 /**
  * Result Status model 클래스
  *
@@ -37,4 +39,7 @@ public class ResultStatus {
         this.nextActionUrl = nextActionUrl;
     }
 
+    public String getNextActionUrl() {
+        return CommonUtils.procReplaceNullValue(nextActionUrl);
+    }
 }

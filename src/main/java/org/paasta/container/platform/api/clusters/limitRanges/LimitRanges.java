@@ -1,6 +1,8 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
 import lombok.Data;
+
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 
 /**
@@ -20,4 +22,8 @@ public class LimitRanges {
 
     private CommonMetaData metadata;
     private String sourceTypeYaml;
+
+    public String getNextActionUrl() {
+        return CommonUtils.procReplaceNullValue(nextActionUrl);
+    }
 }

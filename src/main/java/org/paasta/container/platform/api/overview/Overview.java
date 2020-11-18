@@ -1,8 +1,10 @@
 package org.paasta.container.platform.api.overview;
 
+import java.util.Map;
+
 import lombok.Data;
 
-import java.util.Map;
+import org.paasta.container.platform.api.common.CommonUtils;
 
 /**
  * Overview Model 클래스
@@ -28,5 +30,7 @@ public class Overview {
     private Map<String, Object> podsUsage;
     private Map<String, Object> replicaSetsUsage;
 
-
+    public String getNextActionUrl() {
+        return CommonUtils.procReplaceNullValue(nextActionUrl);
+    }
 }

@@ -1,11 +1,13 @@
 package org.paasta.container.platform.api.workloads.pods;
 
+import java.util.Map;
+
 import lombok.Data;
+
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
-
-import java.util.Map;
 
 /**
  * Pods Model 클래스
@@ -29,4 +31,8 @@ public class Pods {
 
     private Map<String, Object> source;
     private String sourceTypeYaml;
+
+    public String getNextActionUrl() {
+        return CommonUtils.procReplaceNullValue(nextActionUrl);
+    }
 }
