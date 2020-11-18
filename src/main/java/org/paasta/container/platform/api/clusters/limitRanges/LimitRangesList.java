@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 
 import java.util.List;
 
@@ -17,6 +18,6 @@ public class LimitRangesList {
     private String resultMessage;
     private Integer httpStatusCode;
     private String detailMessage;
-
+    private CommonItemMetaData itemMetaData;
     private List<LimitRanges> items;
 }

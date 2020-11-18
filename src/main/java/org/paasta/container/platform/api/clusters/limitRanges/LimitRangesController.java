@@ -74,15 +74,19 @@ public class LimitRangesController {
                                      @RequestParam(required = false, defaultValue = "") String searchName,
                                      @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        if (isAdmin) {
-            if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
-                //all namespace
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            if (isAdmin) {
                 return limitRangesService.getLimitRangesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
+            } else {
+                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
             }
+        }
+
+        if (isAdmin) {
             return limitRangesService.getLimitRangesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return limitRangesService.getLimitRangesList(namespace, offset, limit, orderBy, order, searchName);
     }
 
 
