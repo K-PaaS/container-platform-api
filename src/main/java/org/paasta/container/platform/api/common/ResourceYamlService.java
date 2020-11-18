@@ -199,12 +199,11 @@ public class ResourceYamlService {
             }
 
             if (propertyService.getLimitRangesList().contains(lrName) && limitRanges.getName().equals(lrName)) {
-                String limitsLr = limitRanges.getDefaultLimit();
-                String[] limitsLrList = limitsLr.split(",");
-                limitsCpu = limitsLrList[0].split(":")[1];
-                limitsMemory = limitsLrList[1].split(":")[1];
-
-                break;
+                if(Constants.SUPPORTED_RESOURCE_CPU.equals(limitRanges.getResource())) {
+                    limitsCpu = limitRanges.getDefaultLimit();
+                } else {
+                    limitsMemory = limitRanges.getDefaultLimit();
+                }
             }
         }
 

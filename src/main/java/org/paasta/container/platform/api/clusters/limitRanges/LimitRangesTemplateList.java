@@ -2,7 +2,6 @@ package org.paasta.container.platform.api.clusters.limitRanges;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
@@ -32,7 +31,13 @@ public class LimitRangesTemplateList {
 @Data
 class LimitRangesTemplateItem {
     private String name;
-    private List<LimitRangesItem> limits;
+    private String type;
+    private String resource;
+    private String min;
+    private String max;
+    private String defaultRequest;
+    private String defaultLimit;
+
     private String checkYn;
     private String creationTimestamp;
 
@@ -48,14 +53,6 @@ class LimitRangesTemplateItem {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<LimitRangesItem> getLimits() {
-        return limits;
-    }
-
-    public void setLimits(List<LimitRangesItem> limits) {
-        this.limits = limits;
     }
 
     public String getCheckYn() {
