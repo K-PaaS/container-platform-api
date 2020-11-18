@@ -1,6 +1,6 @@
 package org.paasta.container.platform.api.workloads.pods;
 
-import org.apache.tomcat.util.bcel.Const;
+
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
@@ -8,7 +8,7 @@ import org.paasta.container.platform.api.workloads.pods.support.ContainerStatuse
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.scanner.Constant;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,15 +156,16 @@ public class PodsService {
      * @param nodeName  the node name
      * @return the pods list
      */
-    PodsList getPodListByNode(String namespace, String nodeName) {
+    PodsList getPodListByNode(String namespace, String nodeName, int offset, int limit, String orderBy, String order, String searchName) {
         String requestURL = propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace)
                 + "/?fieldSelector=spec.nodeName=" + nodeName;
 
-        HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API, requestURL,
+        HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API, requestURL,
                 HttpMethod.GET, null, Map.class);
 
-        PodsList podsList = commonService.setResultObject(resultMap, PodsList.class);
-        podsList = commonService.setCommonItemMetaDataBySelector(podsList, PodsList.class);
+
+        PodsList podsList = commonService.setResultObject(responseMap, PodsList.class);
+        podsList = commonService.resourceListProcessing(podsList, offset, limit, orderBy, order, searchName, PodsList.class);
 
         return (PodsList) commonService.setResultModel(podsList, Constants.RESULT_STATUS_SUCCESS);
     }

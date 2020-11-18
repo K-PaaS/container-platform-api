@@ -153,7 +153,7 @@ public class PodsController {
         if (isAdmin) {
             return podsService.getPodsListByNodeAdmin(namespace, nodeName, offset, limit, orderBy, order, searchName);
         }
-        return podsService.getPodListByNode(namespace, nodeName);
+        return podsService.getPodListByNode(namespace, nodeName,offset, limit, orderBy, order, searchName);
     }
 
     /**
