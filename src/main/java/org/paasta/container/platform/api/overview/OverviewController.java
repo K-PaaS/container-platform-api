@@ -59,7 +59,8 @@ public class OverviewController {
             return overviewService.getOverview(cluster, namespace);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        //return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return overviewService.getOverview(cluster, namespace);
     }
 
 }

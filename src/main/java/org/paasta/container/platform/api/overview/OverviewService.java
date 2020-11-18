@@ -319,8 +319,8 @@ public class OverviewService {
         String formedRunningPercent = Double.isNaN(runningPercent)? "0" :format.format(runningPercent);
         String formedFailedPercent = Double.isNaN(failedPercent)? "0" :format.format(failedPercent);
 
-        map.put("running", formedRunningPercent + "%");
-        map.put("failed", formedFailedPercent + "%");
+        map.put("running", formedRunningPercent);
+        map.put("failed", formedFailedPercent);
 
         return map;
     }

@@ -63,7 +63,6 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 						jwtTokenUtil.getRolesFromToken(jwtToken));
 
 				String tokenIp = jwtTokenUtil.getClientIpFromToken(jwtToken);
-				LOGGER.error("agent: {} || clientIp: {} || tokenIp {}", agent, clientIp, tokenIp);
 
 				if(AuthTokenValid.equals(CHECK_Y)) {
 					if (clientIp.equals(tokenIp) && agent.indexOf("Java") >= 0) {
