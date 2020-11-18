@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -134,19 +135,40 @@ public class PodsService {
      * Pods 목록 조회(Get Pods selector)
      * (Admin portal)
      *
-     * @param namespace the namespace
-     * @param selector  the selector
+     * @param namespace          the namespace
+     * @param selector           the nodeName
+     * @param type               the type
+     * @param ownerReferencesUid the ownerReferencesUid
+     * @param offset             the offset
+     * @param limit              the limit
+     * @param orderBy            the orderBy
+     * @param order              the order
+     * @param searchName         the searchName
      * @return the pods list
      */
-    public PodsListAdmin getPodListWithLabelSelectorAdmin(String namespace, String selector) {
+    public Object getPodListWithLabelSelectorAdmin(String namespace, String selector, String type, String ownerReferencesUid, int offset, int limit, String orderBy, String order, String searchName) {
+        HashMap responseMap = null;
+
         String requestSelector = "?labelSelector=" + selector;
-        HashMap resultMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
-        PodsListAdmin podsListAdmin = commonService.setResultObject(resultMap, PodsListAdmin.class);
-        podsListAdmin = commonService.setCommonItemMetaDataBySelector(podsListAdmin, PodsListAdmin.class);
+        try {
+            responseMap = (HashMap) response;
+        } catch (Exception e) {
+            return response;
+        }
 
-        return (PodsListAdmin) commonService.setResultModel(podsListAdmin, Constants.RESULT_STATUS_SUCCESS);
+        PodsListAdmin podsListAdmin = commonService.setResultObject(responseMap, PodsListAdmin.class);
+
+        if (type.equals(Constants.REPLICASETS_FOR_SELECTOR)) {
+            podsListAdmin = podsFIlterWithOwnerReferences(podsListAdmin, ownerReferencesUid);
+        }
+        podsListAdmin = commonService.resourceListProcessing(podsListAdmin, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
+        podsListAdmin = restartprocessing(podsListAdmin);
+
+        return commonService.setResultModel(podsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -415,5 +437,17 @@ public class PodsService {
 
         return podsListAdmin;
     }
+
+
+    public PodsListAdmin podsFIlterWithOwnerReferences(PodsListAdmin podsListAdmin, String ownerReferencesUid) {
+
+        List<PodsListAdminList> podsItem;
+
+        podsItem = podsListAdmin.getItems().stream().filter(x -> x.getMetadata().getOwnerReferences().get(0).getUid().matches(ownerReferencesUid)).collect(Collectors.toList());
+        podsListAdmin.setItems(podsItem);
+
+        return podsListAdmin;
+    }
+
 
 }

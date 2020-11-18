@@ -181,6 +181,7 @@ public class Constants {
     public static final Integer EVENT_DEFAULT_LIMIT  = 5;
     public static final String PERSISTENT_VOLUME_TYPE = "Hostpath";
 
+    public static final String REPLICASETS_FOR_SELECTOR = "replicaSets";
     public static final String NULL_REPLACE_TEXT = "-";
 
     public static final String PARAM_NODE = "node";

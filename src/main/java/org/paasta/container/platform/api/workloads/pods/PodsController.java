@@ -89,27 +89,54 @@ public class PodsController {
         return podsService.getPodsList(namespace, offset, limit, orderBy, order, searchName);
     }
 
+
+
     /**
-     * Pods 목록 조회(Get Pods selector)
+     * Selector 값에 따른 Pods 목록 조회(Get Pods By selector)
      *
-     * @param namespace the namespace
-     * @param selector  the selector
-     * @param isAdmin   the isAdmin
+     * @param cluster            the cluster
+     * @param namespace          the namespace
+     * @param selector           the nodeName
+     * @param type               the type
+     * @param ownerReferencesUid the ownerReferencesUid
+     * @param offset             the offset
+     * @param limit              the limit
+     * @param orderBy            the orderBy
+     * @param order              the order
+     * @param searchName         the searchName
+     * @param isAdmin            the isAdmin
      * @return the pods list
      */
-    @ApiOperation(value = "Pods 목록 조회(Get Pods selector)", nickname = "getPodListBySelector")
+    @ApiOperation(value = "Selector 값에 따른 Pods 목록 조회(Get Pods By selector)", nickname = "getPodListBySelector")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "selector", value = "셀렉터", required = true, dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "selector", value = "셀렉터", required = true, dataType = "string", paramType = "query"),
+
+            @ApiImplicitParam(name = "type", value = "리소스 타입", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "ownerReferences", value = "참조 리소스 정보", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
     })
     @GetMapping(value = "/resources")
     @ResponseBody
-    public Object getPodListBySelector(@PathVariable(value = "namespace") String namespace,
+    public Object getPodListBySelector(@PathVariable(value = "cluster") String cluster,
+                                       @PathVariable(value = "namespace") String namespace,
                                        @RequestParam(name = "selector", required = true, defaultValue = "") String selector,
+                                       @RequestParam(required = false, defaultValue = "default") String type,
+                                       @RequestParam(required = false, defaultValue = "") String ownerReferencesUid,
+                                       @RequestParam(required = false, defaultValue = "0") int offset,
+                                       @RequestParam(required = false, defaultValue = "0") int limit,
+                                       @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
+                                       @RequestParam(required = false, defaultValue = "") String order,
+                                       @RequestParam(required = false, defaultValue = "") String searchName,
                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return podsService.getPodListWithLabelSelectorAdmin(namespace, selector);
+            return podsService.getPodListWithLabelSelectorAdmin(namespace, selector, type, ownerReferencesUid, offset, limit, orderBy, order, searchName);
         } else
             return podsService.getPodListWithLabelSelector(namespace, selector);
     }
@@ -153,7 +180,7 @@ public class PodsController {
         if (isAdmin) {
             return podsService.getPodsListByNodeAdmin(namespace, nodeName, offset, limit, orderBy, order, searchName);
         }
-        return podsService.getPodListByNode(namespace, nodeName,offset, limit, orderBy, order, searchName);
+        return podsService.getPodListByNode(namespace, nodeName, offset, limit, orderBy, order, searchName);
     }
 
     /**

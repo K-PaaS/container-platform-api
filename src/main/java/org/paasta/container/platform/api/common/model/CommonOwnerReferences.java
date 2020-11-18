@@ -13,5 +13,6 @@ import lombok.Data;
 public
 class CommonOwnerReferences {
     private String name;
+    private String uid;
     private boolean controller;
 }

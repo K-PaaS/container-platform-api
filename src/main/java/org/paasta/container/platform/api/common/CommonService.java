@@ -443,4 +443,24 @@ public class CommonService {
     }
 
 
+    public <T> T userListProcessing(Object resourceList, int offset, int limit, String orderBy, String order, String searchName, Class<T> requestClass) {
+
+        Object resourceReturnList = null;
+
+        List resourceItemList = getField("items", resourceList);
+
+        // 1. commonItemMetaData 추가
+        CommonItemMetaData commonItemMetaData = setCommonItemMetaData(resourceItemList, offset, limit);
+        resourceReturnList = setField("itemMetaData", resourceList, commonItemMetaData);
+
+
+        // 2. offset, limit에 따른 리스트 subLIst
+        resourceItemList = subListforLimit(resourceItemList, offset, limit);
+        resourceReturnList = setField("items", resourceReturnList, resourceItemList);
+
+
+        return (T) resourceReturnList;
+    }
+
+
 }
