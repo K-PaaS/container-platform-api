@@ -209,6 +209,9 @@ public class Constants {
 
     });
 
+    public static final ResultStatus SUCCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_SUCCESS, CommonStatusCode.OK.getMsg(),
+            CommonStatusCode.OK.getCode(),CommonStatusCode.OK.getMsg(), null );
+
     public static final ResultStatus BAD_REQUEST_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.getMsg(),
             CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
 
