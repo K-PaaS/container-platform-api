@@ -289,14 +289,14 @@ public class LimitRangesService {
 
             serverList.setItems(serversItemList);
             serverList = commonService.setResultObject(serverList, LimitRangesTemplateList.class);
-            //serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
+            serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
 
             return commonService.setResultModel(serverList, Constants.RESULT_STATUS_SUCCESS);
         }
 
         serverList.setItems(serversItemList);
         serverList = commonService.setResultObject(serverList, LimitRangesTemplateList.class);
-        //serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
+        serverList = commonService.resourceListProcessing(serverList, offset, limit, orderBy, order, searchName, LimitRangesTemplateList.class);
 
         return commonService.setResultModel(serverList, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -320,6 +320,7 @@ public class LimitRangesService {
         item.setDefaultRequest(limitRangesDefault.getDefaultRequest());
         item.setDefaultLimit(limitRangesDefault.getDefaultLimit());
         item.setCheckYn(yn);
+        metadata.setCreationTimestamp(limitRangesDefault.getCreationTimestamp());
         item.setMetadata(metadata);
         item.setCreationTimestamp(limitRangesDefault.getCreationTimestamp());
         return item;
@@ -374,12 +375,14 @@ public class LimitRangesService {
         LinkedTreeMap<String, String> min = (LinkedTreeMap) item.getMin();
 
         LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
-
+        CommonMetaData metadata = new CommonMetaData();
+        metadata.setCreationTimestamp(listAdminItem.getCreationTimestamp());
         serversItem.setName(listAdminItem.getName());
         serversItem.setType(type);
         serversItem.setResource(resourceType);
         serversItem.setCheckYn(CHECK_Y);
         serversItem.setCreationTimestamp(listAdminItem.getCreationTimestamp());
+        serversItem.setMetadata(metadata);
 
         if(defaultLimit != null) {
             for (String mapKey : defaultLimit.keySet()) {
