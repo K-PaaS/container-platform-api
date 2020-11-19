@@ -1,10 +1,5 @@
 package org.paasta.container.platform.api.clusters.namespaces;
 
-import static org.paasta.container.platform.api.common.Constants.AUTH_NAMESPACE_ADMIN;
-import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
-import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
-import static org.paasta.container.platform.api.common.Constants.USERS;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +29,8 @@ import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersService;
+
+import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
  * Namespaces Service 클래스
