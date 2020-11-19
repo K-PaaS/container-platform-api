@@ -167,7 +167,7 @@ public class OverviewService {
      */
     private int getCommonCnt(Object resourceList) {
         CommonItemMetaData itemMetadata = commonService.getField("itemMetaData", resourceList);
-        return itemMetadata.getAllItemCount();
+        return itemMetadata == null? 0 : itemMetadata.getAllItemCount();
     }
 
 
