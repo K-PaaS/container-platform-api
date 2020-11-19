@@ -5,7 +5,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.CommonService;
+import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.PropertyService;
+import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.http.HttpMethod;
@@ -13,10 +16,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +29,8 @@ public class PodsServiceTest {
     private static final String PODS_NAME = "test-pod";
     private static final String YAML_STRING = "test-yaml-string";
 
+    private static final String TYPE = "replicaSets";
+    private static final String OWNER_REFERENCES_UID = "";
     private static final String SELECTOR = "test-selector";
     private static final String NODE_NAME = "test-node";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
@@ -139,8 +142,6 @@ public class PodsServiceTest {
         when(commonService.setResultObject(gResultMap, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
         when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
 
-        // for test case need?
-
         // when
         PodsListAdmin resultList = (PodsListAdmin) podsService.getPodsListAdmin(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
 
@@ -176,7 +177,9 @@ public class PodsServiceTest {
         when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods?labelSelector=" + SELECTOR, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(commonService.setCommonItemMetaDataBySelector(gResultListAdminModel, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
+        when(podsService.podsFIlterWithOwnerReferences(gResultListAdminModel, OWNER_REFERENCES_UID)).thenReturn(gResultListAdminModel);
+        when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
+        when(podsService.restartprocessing(gResultListAdminModel));
         when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
 
         // when
