@@ -8,6 +8,7 @@ import lombok.Data;
 
 import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasSpec;
 import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatus;
+import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatusItem;
 import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
@@ -30,6 +31,10 @@ public class ResourceQuotasAdmin {
     private String namespace;
     private List<String> scopes;
     private String creationTimestamp;
+
+    private List<ResourceQuotasStatusItem> items;
+
+    @JsonIgnore
     private ResourceQuotasStatus status;
 
     @JsonIgnore

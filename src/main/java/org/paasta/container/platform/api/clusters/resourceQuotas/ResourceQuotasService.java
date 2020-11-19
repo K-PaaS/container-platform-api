@@ -2,11 +2,11 @@ package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatusItem;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.common.util.YamlUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -143,7 +143,26 @@ public class ResourceQuotasService {
             return obj;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, ResourceQuotasAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        ResourceQuotasAdmin resourceQuotasAdmin = commonService.setResultObject(responseMap, ResourceQuotasAdmin.class);
+
+        // resource, hards, useds set
+        Map<String, String> hards = resourceQuotasAdmin.getStatus().getHard();
+        Map<String, String> useds = resourceQuotasAdmin.getStatus().getUsed();
+
+        List<ResourceQuotasStatusItem> items = new ArrayList<>();
+
+        for (String key : hards.keySet()) {
+            ResourceQuotasStatusItem resourceQuotasStatusItem = new ResourceQuotasStatusItem();
+            resourceQuotasStatusItem.setResource(key);
+            resourceQuotasStatusItem.setHard(hards.get(key));
+            resourceQuotasStatusItem.setUsed(useds.get(key));
+
+            items.add(resourceQuotasStatusItem);
+        }
+
+        resourceQuotasAdmin.setItems(items);
+
+        return commonService.setResultModel(resourceQuotasAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -166,7 +185,7 @@ public class ResourceQuotasService {
         //noinspection unchecked
         resultMap.put("sourceTypeYaml", response);
 
-        return  commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -239,7 +258,7 @@ public class ResourceQuotasService {
         List<String> k8sRqNameList = resourceQuotasList.getItems().stream().map(ResourceQuotasListAdminItem::getName).collect(Collectors.toList());
         List<String> dbRqNameList = resourceQuotasDefaultList.getItems().stream().map(ResourceQuotasDefault::getName).collect(Collectors.toList());
 
-        for(ResourceQuotasDefault resourceQuotasDefault : resourceQuotasDefaultList.getItems()) {
+        for (ResourceQuotasDefault resourceQuotasDefault : resourceQuotasDefaultList.getItems()) {
             String yn = CHECK_N;
 
             if (k8sRqNameList.contains(resourceQuotasDefault.getName())) {
