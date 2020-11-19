@@ -120,12 +120,20 @@ public class PodsService {
      * @param selector  the selector
      * @return the pods list
      */
-    PodsList getPodListWithLabelSelector(String namespace, String selector) {
+    PodsList getPodListWithLabelSelector(String namespace, String selector, String type, String ownerReferencesUid) {
         String requestSelector = "?labelSelector=" + selector;
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
         PodsList podsList = commonService.setResultObject(resultMap, PodsList.class);
+
+        // by replicaSets
+        if (type.equals(Constants.REPLICASETS_FOR_SELECTOR)) {
+            List<Pods> podsItem;
+            podsItem = podsList.getItems().stream().filter(x -> x.getMetadata().getOwnerReferences().get(0).getUid().matches(ownerReferencesUid)).collect(Collectors.toList());
+            podsList.setItems(podsItem);
+        }
+
         podsList = commonService.setCommonItemMetaDataBySelector(podsList, PodsList.class);
 
         return (PodsList) commonService.setResultModel(podsList, Constants.RESULT_STATUS_SUCCESS);

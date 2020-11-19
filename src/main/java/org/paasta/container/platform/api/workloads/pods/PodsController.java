@@ -90,7 +90,6 @@ public class PodsController {
     }
 
 
-
     /**
      * Selector 값에 따른 Pods 목록 조회(Get Pods By selector)
      *
@@ -112,9 +111,8 @@ public class PodsController {
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "selector", value = "셀렉터", required = true, dataType = "string", paramType = "query"),
-
             @ApiImplicitParam(name = "type", value = "리소스 타입", required = false, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "ownerReferences", value = "참조 리소스 정보", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "ownerReferencesUid", value = "참조 리소스의 UID", required = false, dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
@@ -123,7 +121,7 @@ public class PodsController {
     })
     @GetMapping(value = "/resources")
     @ResponseBody
-    public Object getPodListBySelector(@PathVariable(value = "cluster") String cluster,
+    public Object getPodsListBySelector(@PathVariable(value = "cluster") String cluster,
                                        @PathVariable(value = "namespace") String namespace,
                                        @RequestParam(name = "selector", required = true, defaultValue = "") String selector,
                                        @RequestParam(required = false, defaultValue = "default") String type,
@@ -138,7 +136,7 @@ public class PodsController {
         if (isAdmin) {
             return podsService.getPodListWithLabelSelectorAdmin(namespace, selector, type, ownerReferencesUid, offset, limit, orderBy, order, searchName);
         } else
-            return podsService.getPodListWithLabelSelector(namespace, selector);
+            return podsService.getPodListWithLabelSelector(namespace, selector, type, ownerReferencesUid);
     }
 
     /**
@@ -167,7 +165,7 @@ public class PodsController {
             @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query")
     })
     @GetMapping(value = "/nodes/{nodeName:.+}")
-    public Object getPodListByNode(@PathVariable(value = "cluster") String cluster,
+    public Object getPodsListByNode(@PathVariable(value = "cluster") String cluster,
                                    @PathVariable(value = "namespace") String namespace,
                                    @PathVariable(value = "nodeName") String nodeName,
                                    @RequestParam(required = false, defaultValue = "0") int offset,
