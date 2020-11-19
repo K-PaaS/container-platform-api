@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.Builder;
 import lombok.Data;
+import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 
 import org.springframework.util.StringUtils;
 
@@ -27,25 +28,32 @@ public class UsersAdmin {
     private Integer httpStatusCode;
     private String detailMessage;
 
-    private List<UsersDetails> UsersDetail;
+    //User Info
+    public String userId;
+    public String serviceAccountName;
+    public String created;
+
+    // Cluster Info
+    public String clusterName;
+    public String clusterApiUrl;
+    public String clusterToken;
+
+
+    private CommonItemMetaData itemMetaData;
+    private List<UsersDetails> items;
 
     // Details
     @Data
     public static class UsersDetails {
-        public String userId;
-        public String serviceAccountName;
-        public String created;
 
-        @JsonIgnore
-        public String saSecret;
+        private String serviceAccountUid;
+
         public String cpNamespace;
         public String roleSetCode;
         public Secrets secrets;
 
-        // Cluster Info
-        public String clusterApiUrl;
-        public String clusterToken;
-        private String serviceAccountUid;
+        @JsonIgnore
+        public String saSecret;
 
         public String getServiceAccountUid() {
             return CommonUtils.procReplaceNullValue(serviceAccountUid);

@@ -161,7 +161,7 @@ public class PodsServiceTest {
         when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
 
         // when
-        PodsList resultList = podsService.getPodListWithLabelSelector(NAMESPACE, SELECTOR);
+        PodsList resultList = podsService.getPodListWithLabelSelector(NAMESPACE, SELECTOR, "","");
 
         // then
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());

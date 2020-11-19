@@ -71,7 +71,7 @@ public class UsersController {
                                        @RequestParam(required = false, defaultValue = "desc") String order,
                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        if(isAdmin) {
+        if (isAdmin) {
             return usersService.getUsersAllByCluster(cluster, userType, searchName, limit, offset, orderBy, order);
         }
 
@@ -81,9 +81,9 @@ public class UsersController {
     /**
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
-     * @param cluster    the cluster
-     * @param namespace  the namespace
-     * @param isAdmin    the isAdmin
+     * @param cluster   the cluster
+     * @param namespace the namespace
+     * @param isAdmin   the isAdmin
      * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 Users 목록 조회(Get Users namespace list)", nickname = "getUsersListByNamespace")
@@ -102,36 +102,55 @@ public class UsersController {
         return usersService.getUsersListByNamespace(cluster, namespace);
     }
 
+
+
     /**
      * Namespace 상세 Users 목록 조회(Get Users in namespace list)
      *
      * @param cluster    the cluster
      * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @param isAdmin    the isAdmin
      * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 Users 목록 조회(Get Users namespace list)", nickname = "getUsersListInNamespace")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 created(생성날짜)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "searchName", value = "userId 검색", required = false, dataType = "string", paramType = "query")
     })
     @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/namespace")
     public Object getUsersListInNamespace(@PathVariable(value = "cluster") String cluster,
                                           @PathVariable(value = "namespace") String namespace,
+                                          @RequestParam(required = false, defaultValue = "0") int offset,
+                                          @RequestParam(required = false, defaultValue = "0") int limit,
+                                          @RequestParam(required = false, defaultValue = "created") String orderBy,
+                                          @RequestParam(required = false, defaultValue = "desc") String order,
+                                          @RequestParam(required = false, defaultValue = "") String searchName,
                                           @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return usersService.getUsersListInNamespaceAdmin(cluster, namespace);
+            return usersService.getUsersListInNamespaceAdmin(cluster, namespace, offset, limit, orderBy, order, searchName);
         }
         return usersService.getUsersListByNamespace(cluster, namespace);
     }
 
+
+
     /**
      * 각 Namespace 별 Users 상세 조회(Get Users namespace detail)
      *
-     * @param cluster    the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param userId the userId
+     * @param userId    the userId
      * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 Users 상세 조회(Get Users namespace detail)", nickname = "getUsersByNamespace")
@@ -149,30 +168,38 @@ public class UsersController {
     }
 
 
+
     /**
      * 하나의 Cluster 내 여러 Namespace 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)
      *
-     * @param cluster    the cluster
-     * @param userId the userId
+     * @param cluster the cluster
+     * @param userId  the userId
+     * @param limit   the limit
+     * @param offset  the offset
      * @return the users detail
      */
     @ApiOperation(value = "하나의 Cluster 내 여러 Namespace 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)", nickname = "getUsers")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "userId", value = "유저 Id", required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "userId", value = "유저 Id", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query")
     })
     @GetMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}")
     public Object getUsers(@PathVariable(value = "cluster") String cluster,
-                           @PathVariable(value = "userId") String userId) throws Exception {
-        return usersService.getUsersInMultiNamespace(userId);
+                           @PathVariable(value = "userId") String userId,
+                           @RequestParam(required = false, defaultValue = "0") int limit,
+                           @RequestParam(required = false, defaultValue = "0") int offset) throws Exception {
+        return usersService.getUsersInMultiNamespace(cluster, userId, limit, offset);
     }
+
 
 
     /**
      * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
      *
-     * @param cluster    the cluster
-     * @param namespace  the namespace
+     * @param cluster   the cluster
+     * @param namespace the namespace
      * @return the users list
      */
     @ApiOperation(value = "각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)", nickname = "getUsersNameList")
@@ -192,8 +219,8 @@ public class UsersController {
      * (Admin Portal)
      * 복수개의 Namespace 에 속할 수 있음
      *
-     * @param cluster    the cluster
-     * @param users      the users
+     * @param cluster the cluster
+     * @param users   the users
      * @return return is succeeded
      */
     @ApiOperation(value = "Users 생성 (Create Users)", nickname = "registerUsers")
@@ -210,9 +237,9 @@ public class UsersController {
     /**
      * Users 수정(Update Users)
      *
-     * @param cluster    the cluster
-     * @param userId the userId
-     * @param users the users
+     * @param cluster the cluster
+     * @param userId  the userId
+     * @param users   the users
      * @param isAdmin the isAdmin
      * @return return is succeeded
      */
@@ -229,7 +256,7 @@ public class UsersController {
                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
 
         // input parameter regex
-        if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
+        if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
             return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
                     .resultMessage("입력 값을 다시 확인해 주세요.")
                     .httpStatusCode(400)
@@ -237,7 +264,7 @@ public class UsersController {
         }
 
         // For Admin
-        if(isAdmin) {
+        if (isAdmin) {
             return usersService.modifyUsersAdmin(cluster, userId, users);
         }
 
@@ -248,11 +275,11 @@ public class UsersController {
     /**
      * 운영자 정보 수정 (Update admin info)
      *
-     * @param cluster the cluster
-     * @param namespace  the namespace
-     * @param userId the user id
-     * @param users the users
-     * @param isAdmin the isAdmin
+     * @param cluster   the cluster
+     * @param namespace the namespace
+     * @param userId    the user id
+     * @param users     the users
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Users 수정(Update Users)", nickname = "modifyUsers")
@@ -270,14 +297,14 @@ public class UsersController {
                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         // input parameter regex
-        if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
+        if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
             return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
                     .resultMessage("입력 값을 다시 확인해 주세요.")
                     .httpStatusCode(400)
                     .detailMessage(regexMatch(users)).build();
         }
 
-        if(isAdmin) {
+        if (isAdmin) {
             return usersService.modifyUsers(userId, users);
         }
 
@@ -288,9 +315,9 @@ public class UsersController {
     /**
      * Users 권한 설정(Set Users authority)
      *
-     * @param cluster the cluster
+     * @param cluster   the cluster
      * @param namespace the namespace
-     * @param users the users
+     * @param users     the users
      * @return return is succeeded
      */
     @ApiOperation(value = "Users 권한 설정(Set Users authority)", nickname = "modifyUsersConfig")
@@ -312,7 +339,7 @@ public class UsersController {
      * (All Namespaces)
      *
      * @param cluster the cluster
-     * @param userId the user id
+     * @param userId  the user id
      * @return return is succeeded
      */
     @ApiOperation(value = "Users 삭제(Delete Users)", nickname = "deleteUsers")
@@ -341,7 +368,7 @@ public class UsersController {
     })
     @GetMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/adminCheck")
     public UsersInNamespace getUsersNameListByNamespaceAdmin(@PathVariable(value = "cluster") String cluster,
-                                       @PathVariable(value = "namespace") String namespace) {
+                                                             @PathVariable(value = "namespace") String namespace) {
         return usersService.getUsersNameListByNamespaceAdmin(cluster, namespace);
     }
 
