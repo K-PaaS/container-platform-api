@@ -51,7 +51,8 @@ public class AdminTokenServiceTest {
     @Test
     public void getSecrets() {
 
-        when(restTemplateService.send(Constants.TARGET_COMMON_API, "/adminToken", HttpMethod.POST, gParamModel, AdminToken.class)).thenReturn(gFinalResultModel);
+        when(restTemplateService.send(Constants.TARGET_COMMON_API, "/adminToken", HttpMethod.POST, gParamModel, AdminToken.class))
+                .thenReturn(gFinalResultModel);
 
         AdminToken adminToken = adminTokenService.saveAdminToken(TOKEN_VALUE);
 
