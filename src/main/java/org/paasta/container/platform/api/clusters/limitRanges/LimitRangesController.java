@@ -271,10 +271,10 @@ public class LimitRangesController {
                                              @RequestParam(required = false, defaultValue = "") String searchName,
                                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
-        if (isAdmin) {
+        /*if (isAdmin) {
             return limitRangesService.getLimitRangesTemplateList(namespace, offset, limit, orderBy, order, searchName);
-        }
+        }*/
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return limitRangesService.getLimitRangesTemplateList(namespace, offset, limit, orderBy, order, searchName);
     }
 }
