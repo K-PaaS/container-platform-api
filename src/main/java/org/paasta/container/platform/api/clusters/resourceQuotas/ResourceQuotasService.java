@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasConvertStatus;
 import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatusItem;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
@@ -11,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.paasta.container.platform.api.common.Constants.CHECK_N;
@@ -99,6 +97,27 @@ public class ResourceQuotasService {
 
         ResourceQuotasListAdmin resourceQuotasListAdmin = commonService.setResultObject(responseMap, ResourceQuotasListAdmin.class);
         resourceQuotasListAdmin = commonService.resourceListProcessing(resourceQuotasListAdmin, offset, limit, orderBy, order, searchName, ResourceQuotasListAdmin.class);
+
+        //convert Status
+        for(ResourceQuotasListAdminItem rq : resourceQuotasListAdmin.getItems()) {
+
+            Map<String, String> hards = rq.getStatus().getHard();
+            Map<String, String> useds = rq.getStatus().getUsed();
+
+            HashMap<String, Object> convertStatus = new HashMap<>();
+
+            for (String key : hards.keySet()) {
+                ResourceQuotasConvertStatus resourceQuotasConvertStatus = new ResourceQuotasConvertStatus();
+                resourceQuotasConvertStatus.setHard(hards.get(key));
+                resourceQuotasConvertStatus.setUsed(useds.get(key));
+
+                convertStatus.put(key,resourceQuotasConvertStatus );
+            }
+
+            Map<String, Object> convertStatusMap = new TreeMap<>(convertStatus);
+            rq.setConvertStatus(convertStatusMap);
+
+        }
 
         return commonService.setResultModel(resourceQuotasListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -278,7 +297,7 @@ public class ResourceQuotasService {
         if (resourceQuotasList.getItems().size() > 0) {
             for (ResourceQuotasListAdminItem i : resourceQuotasList.getItems()) {
                 ObjectMapper mapper = new ObjectMapper();
-                String status = mapper.writeValueAsString(i.getStatus());
+                String status = mapper.writeValueAsString(i.getConvertStatus());
 
                 if (!dbRqNameList.contains(i.getName())) {
                     quotasDefault = new ResourceQuotasDefault(i.getName(), status, CHECK_Y, i.getMetadata(), i.getCreationTimestamp());

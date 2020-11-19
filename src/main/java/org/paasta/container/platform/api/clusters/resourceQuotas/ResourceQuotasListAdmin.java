@@ -2,7 +2,10 @@ package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
 import java.util.List;
+import java.util.Map;
+
 
 import lombok.Data;
 
@@ -39,6 +42,10 @@ class ResourceQuotasListAdminItem {
     private String name;
     private String namespace;
     private String creationTimestamp;
+
+    @JsonIgnore
+    private Map<String, Object> convertStatus;
+
     @JsonIgnore
     private CommonMetaData metadata;
 
