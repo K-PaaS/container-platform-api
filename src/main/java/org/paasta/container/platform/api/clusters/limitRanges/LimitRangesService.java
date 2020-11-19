@@ -379,10 +379,26 @@ public class LimitRangesService {
      * @return the limitRangesTemplateItem
      */
     private LimitRangesTemplateItem getLimitRangesTemplateItem(LimitRangesListAdminItem listAdminItem, String type, String resourceType, LimitRangesItem item) {
-        LinkedTreeMap<String, String> defaultLimit = (LinkedTreeMap) item.getDefaultLimit();
-        LinkedTreeMap<String, String> defaultRequest = (LinkedTreeMap) item.getDefaultRequest();
-        LinkedTreeMap<String, String> max = (LinkedTreeMap) item.getMax();
-        LinkedTreeMap<String, String> min = (LinkedTreeMap) item.getMin();
+        LinkedTreeMap<String, String> defaultLimit = null;
+        LinkedTreeMap<String, String> defaultRequest = null;
+        LinkedTreeMap<String, String> max = null;
+        LinkedTreeMap<String, String> min = null;
+
+        if(!item.getDefaultRequest().equals("-")) {
+            defaultLimit = (LinkedTreeMap) item.getDefaultRequest();
+        }
+
+        if(!item.getDefaultLimit().equals("-")) {
+            defaultRequest = (LinkedTreeMap) item.getDefaultLimit();
+        }
+
+        if(!item.getMax().equals("-")) {
+            max = (LinkedTreeMap) item.getMax();
+        }
+
+        if(!item.getMin().equals("-")) {
+            min = (LinkedTreeMap) item.getMin();
+        }
 
         LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
         CommonMetaData metadata = new CommonMetaData();

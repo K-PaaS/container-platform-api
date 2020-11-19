@@ -304,7 +304,7 @@ public class NamespacesService {
 
         }
 
-        return (ResultStatus) commonService.setResultModelWithNextUrl(SUCCESS_RESULT_STATUS, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_DETAIL_PAGE");
+        return (ResultStatus) commonService.setResultModelWithNextUrl(Constants.SUCCESS_RESULT_STATUS, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_DETAIL_PAGE");
     }
 
 
