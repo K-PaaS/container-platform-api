@@ -101,9 +101,9 @@ public class UsersService {
             throw new IllegalArgumentException(MessageConstant.OFFSET_ILLEGALARGUMENT);
         }
 
-        if(SELECTED_ADMINISTRATOR.toLowerCase().equals(userType.toLowerCase())) {
+        if (SELECTED_ADMINISTRATOR.toLowerCase().equals(userType.toLowerCase())) {
             userType = AUTH_CLUSTER_ADMIN;
-        } else if(SELECTED_USER.toLowerCase().equals(userType.toLowerCase())){
+        } else if (SELECTED_USER.toLowerCase().equals(userType.toLowerCase())) {
             userType = AUTH_USER;
         } else {
             throw new IllegalArgumentException(MessageConstant.USER_TYPE_ILLEGALARGUMENT);
@@ -142,21 +142,53 @@ public class UsersService {
     }
 
 
+
+
     /**
      * 하나의 Cluster 내 여러 Namespaces 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)
      *
+     * @param cluster the cluster
      * @param userId the userId
+     * @param limit the limit
+     * @param offset the offset
      * @return the users detail
      */
-    public Object getUsersInMultiNamespace(String userId) throws Exception {
-        UsersList list = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
+    public Object getUsersInMultiNamespace(String cluster, String userId, int limit,  int offset) throws Exception {
 
         UsersAdmin usersAdmin = new UsersAdmin();
+        Users usersByDefaultNamespace = null;
+
+        try {
+            //temp-namespace user info get
+          usersByDefaultNamespace = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS
+                    .replace("{cluster:.+}", cluster)
+                    .replace("{namespace:.+}", propertyService.getDefaultNamespace())
+                    .replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
+        }
+        catch(Exception e) {
+            return Constants.NOT_FOUND_RESULT_STATUS;
+        }
+
+        //set user info
+        usersAdmin.setUserId(usersByDefaultNamespace.getUserId());
+        usersAdmin.setServiceAccountName(usersByDefaultNamespace.getServiceAccountName());
+        usersAdmin.setCreated(usersByDefaultNamespace.getCreated());
+
+        //set cluster info
+        usersAdmin.setClusterName(usersByDefaultNamespace.getClusterName());
+        usersAdmin.setClusterApiUrl(usersByDefaultNamespace.getClusterApiUrl());
+        usersAdmin.setClusterToken(usersByDefaultNamespace.getClusterToken());
+
+
+        UsersList list = restTemplateService.send(TARGET_COMMON_API,
+                Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
+
+
         UsersAdmin.UsersDetails usersDetails;
         List<UsersAdmin.UsersDetails> usersDetailsList = new ArrayList<>();
 
-        for(Users users:list.getItems()) {
-            if(!propertyService.getIgnoreNamespaceList().contains(users.getCpNamespace())) {
+        for (Users users : list.getItems()) {
+            if (!propertyService.getIgnoreNamespaceList().contains(users.getCpNamespace())) {
                 usersDetails = commonService.convert(users, UsersAdmin.UsersDetails.class);
                 Object obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl().replace("{namespace}", usersDetails.getCpNamespace()).replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class);
 
@@ -174,10 +206,12 @@ public class UsersService {
             }
         }
 
-        usersAdmin.setUsersDetail(usersDetailsList);
+        usersAdmin.setItems(usersDetailsList);
+        usersAdmin = commonService.userListProcessing(usersAdmin, offset, limit, "", "", "", UsersAdmin.class );
 
         return commonService.setResultModel(commonService.setResultObject(usersAdmin, UsersAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
+
 
 
     /**
@@ -196,11 +230,11 @@ public class UsersService {
     /**
      * Users 로그인을 위한 상세 조회(Get Users for login)
      *
-     * @param userId the userId
+     * @param userId  the userId
      * @param isAdmin the isAdmin
      * @return the users detail
      */
-    public Users getUsersDetailsForLogin (String userId, String isAdmin) {
+    public Users getUsersDetailsForLogin(String userId, String isAdmin) {
         return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USER_DETAIL_LOGIN.replace("{userId:.+}", userId)
                         + "?isAdmin=" + isAdmin
                 , HttpMethod.GET, null, Users.class);
@@ -214,7 +248,7 @@ public class UsersService {
      * @param namespace the namespace
      * @return the users detail
      */
-    public Users getUsersByNamespaceAndNsAdmin (String cluster, String namespace) {
+    public Users getUsersByNamespaceAndNsAdmin(String cluster, String namespace) {
         return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_BY_NAMESPACE_NS_ADMIN.replace("{cluster:.+}", cluster).replace("{namespace:.+}", namespace)
                 , HttpMethod.GET, null, Users.class);
     }
@@ -226,7 +260,7 @@ public class UsersService {
      * @param userId the userId
      * @return the users detail
      */
-    public UsersList getUsersDetails (String userId) {
+    public UsersList getUsersDetails(String userId) {
         return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
     }
 
@@ -235,7 +269,7 @@ public class UsersService {
      * Namespace 와 userId로 사용자 단 건 상세 조회(Get Users userId namespace)
      *
      * @param namespace the namespace
-     * @param userId the userId
+     * @param userId    the userId
      * @return the users detail
      */
     public Users getUsers(String cluster, String namespace, String userId) {
@@ -279,7 +313,7 @@ public class UsersService {
         List<Users.NamespaceRole> list = users.getSelectValues();
         ResultStatus rsDb = new ResultStatus();
 
-        for (Users.NamespaceRole nsRole:list) {
+        for (Users.NamespaceRole nsRole : list) {
             String namespace = nsRole.getNamespace();
             String role = nsRole.getRole();
 
@@ -305,7 +339,7 @@ public class UsersService {
             rsDb = createUsers(commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, users));
 
             // DB 커밋에 실패했을 경우 k8s 에 만들어진 service account 삭제
-            if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
+            if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
                 LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
                 restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", userName), HttpMethod.DELETE, null, Object.class, true);
                 return rsDb;
@@ -321,13 +355,13 @@ public class UsersService {
      * (Admin Portal)
      *
      * @param userId the userId
-     * @param users the users
+     * @param users  the users
      * @return return is succeeded
      */
     public ResultStatus modifyUsersAdmin(String cluster, String userId, Users users) throws Exception {
         ResultStatus rsDb = new ResultStatus();
 
-        List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(users.getServiceAccountName())).getUsersDetail();
+        List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(cluster, users.getServiceAccountName(), 0,0)).getItems();
         List<Users.NamespaceRole> selectValues = users.getSelectValues();
 
         // 기존 namespace list
@@ -344,10 +378,10 @@ public class UsersService {
         List<Users.NamespaceRole> toBeAddNamespace = new ArrayList<>();
 
 
-        for(Users.NamespaceRole namespaceRole : selectValues) {
+        for (Users.NamespaceRole namespaceRole : selectValues) {
             Users.NamespaceRole namespaceRole2 = new Users.NamespaceRole();
             for (String name : asIs) {
-                if(namespaceRole.getNamespace().equals(name)) {
+                if (namespaceRole.getNamespace().equals(name)) {
                     namespaceRole2.setNamespace(namespaceRole.getNamespace());
                     namespaceRole2.setRole(namespaceRole.getRole());
 
@@ -356,7 +390,7 @@ public class UsersService {
             }
 
             for (String name : toBeAdd) {
-                if(namespaceRole.getNamespace().equals(name)) {
+                if (namespaceRole.getNamespace().equals(name)) {
                     namespaceRole2.setNamespace(namespaceRole.getNamespace());
                     namespaceRole2.setRole(namespaceRole.getRole());
 
@@ -365,13 +399,13 @@ public class UsersService {
             }
         }
 
-        for(Users.NamespaceRole nr : asIsNamespaces) {
+        for (Users.NamespaceRole nr : asIsNamespaces) {
             Users updateUser = getUsers(cluster, nr.getNamespace(), users.getServiceAccountName());
             String namespace = nr.getNamespace();
             String newRole = nr.getRole();
             String defaultRole = updateUser.getRoleSetCode();
 
-            if(!updateUser.getRoleSetCode().equals(nr.getRole())) {
+            if (!updateUser.getRoleSetCode().equals(nr.getRole())) {
                 LOGGER.info("Same Namespace >> {}, Default Role >> {}, New Role >> {}", namespace, defaultRole, newRole);
                 restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + Constants.NULL_REPLACE_TEXT + defaultRole + "-binding"), HttpMethod.DELETE, null, Object.class, true);
                 resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, newRole);
@@ -391,14 +425,14 @@ public class UsersService {
         }
 
 
-        for(String deleteSa : toBeDelete) {
+        for (String deleteSa : toBeDelete) {
             LOGGER.info("Default Namespace's service account delete >> " + deleteSa);
             Users deleteUser = getUsers(cluster, deleteSa, users.getServiceAccountName());
             deleteUsers(deleteUser);
         }
 
 
-        for(Users.NamespaceRole nr : toBeAddNamespace) {
+        for (Users.NamespaceRole nr : toBeAddNamespace) {
             String addInNamespace = nr.getNamespace();
             String addRole = nr.getRole();
             String sa = users.getServiceAccountName();
@@ -465,14 +499,14 @@ public class UsersService {
      * Users 삭제(Delete Users)
      * (All Namespaces)
      *
-     * @param userId   the user id
+     * @param userId the user id
      * @return return is succeeded
      */
     public ResultStatus deleteUsersByAllNamespaces(String userId) {
         UsersList users = getUsersDetails(userId);
 
         ResultStatus rs = new ResultStatus();
-        for(Users user:users.getItems()) {
+        for (Users user : users.getItems()) {
             rs = deleteUsers(user);
         }
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rs, ResultStatus.class),
@@ -484,7 +518,7 @@ public class UsersService {
      * Users 권한 설정(Set Users authority)
      *
      * @param namespace the namespace
-     * @param users the users
+     * @param users     the users
      * @return return is succeeded
      */
     public ResultStatus modifyUsersConfig(String cluster, String namespace, List<Users> users) {
@@ -495,16 +529,16 @@ public class UsersService {
         List<String> defaultUserNameList = defaultUserList.stream().map(Users::getServiceAccountName).collect(Collectors.toList());
         List<String> newUserNameList = users.stream().map(Users::getServiceAccountName).collect(Collectors.toList());
 
-        ArrayList<String> toBeDelete = (ArrayList<String>) defaultUserNameList.stream().filter(x-> !newUserNameList.contains(x)).collect(Collectors.toList());
-        ArrayList<String> toBeAdd = (ArrayList<String>) newUserNameList.stream().filter(x-> !defaultUserNameList.contains(x)).collect(Collectors.toList());
+        ArrayList<String> toBeDelete = (ArrayList<String>) defaultUserNameList.stream().filter(x -> !newUserNameList.contains(x)).collect(Collectors.toList());
+        ArrayList<String> toBeAdd = (ArrayList<String>) newUserNameList.stream().filter(x -> !defaultUserNameList.contains(x)).collect(Collectors.toList());
 
         for (Users value : defaultUserList) {
-            for(Users u:users) {
+            for (Users u : users) {
                 String sa = u.getServiceAccountName();
                 String role = u.getRoleSetCode();
 
-                if(value.getServiceAccountName().equals(sa)) {
-                    if(!value.getRoleSetCode().equals(role)) {
+                if (value.getServiceAccountName().equals(sa)) {
+                    if (!value.getRoleSetCode().equals(role)) {
                         LOGGER.info("Update >>> sa :: {}, role :: {}", sa, role);
 
                         Users updatedUser = getUsers(cluster, namespace, sa);
@@ -569,12 +603,12 @@ public class UsersService {
      * Role 에 따른 사용자 권한 설정(Setting Role to User)
      *
      * @param namespace the namespace
-     * @param saName the service account name
-     * @param roleName the role name
-     * @param newUser the new User object
+     * @param saName    the service account name
+     * @param roleName  the role name
+     * @param newUser   the new User object
      */
     private void updateSetRoleUser(String namespace, String saName, String roleName, Users newUser) {
-        if(!Constants.NOT_ASSIGNED_ROLE.equals(roleName)) {
+        if (!Constants.NOT_ASSIGNED_ROLE.equals(roleName)) {
             resourceYamlService.createRoleBinding(saName, namespace, roleName);
             String saSecretName = restTemplateService.getSecretName(namespace, saName);
             newUser.setSaSecret(saSecretName);
@@ -586,19 +620,25 @@ public class UsersService {
 
     }
 
+
     /**
      * Namespace 상세 Users 목록 조회(Get Users namespace list)
      * (Admin portal)
      *
      * @param namespace the namespace
      * @return the users list
-   */
-    public Object getUsersListInNamespaceAdmin(String cluster, String namespace) {
-        UsersListInNamespaceAdmin listInNamespaceAdmin = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
-                .replace("{cluster:.+}", cluster)
-                .replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersListInNamespaceAdmin.class);
+     */
+    public Object getUsersListInNamespaceAdmin(String cluster, String namespace, int offset, int limit, String orderBy, String order, String searchName) {
 
-        return commonService.setResultModel(commonService.setResultObject(listInNamespaceAdmin, UsersListInNamespaceAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+         String param ="?orderBy=" + orderBy + "&order=" + order + "&searchName=" + searchName;
+
+        UsersListInNamespaceAdmin usersListInNamespaceAdmin = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
+                .replace("{cluster:.+}", cluster)
+                .replace("{namespace:.+}", namespace) + param, HttpMethod.GET, null, UsersListInNamespaceAdmin.class);
+
+        //users list paging
+        usersListInNamespaceAdmin = commonService.userListProcessing(usersListInNamespaceAdmin, offset, limit, orderBy, order, searchName, UsersListInNamespaceAdmin.class);
+        return commonService.setResultModel(commonService.setResultObject(usersListInNamespaceAdmin, UsersListInNamespaceAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -606,7 +646,7 @@ public class UsersService {
      * 해당 클러스터 정보의 값을 사용자에 저장
      *
      * @param clusterName the cluster name
-     * @param users the users
+     * @param users       the users
      * @return the users
      */
     public Users commonSaveClusterInfo(String clusterName, Users users) {
@@ -627,7 +667,7 @@ public class UsersService {
      * @param namespace the namespace
      * @return the UsersInNamespace
      */
-    public UsersInNamespace getUsersNameListByNamespaceAdmin(String cluster, String namespace){
+    public UsersInNamespace getUsersNameListByNamespaceAdmin(String cluster, String namespace) {
         UsersInNamespace usersInNamespace = new UsersInNamespace();
         usersInNamespace.setNamespace(namespace);
 
@@ -636,8 +676,8 @@ public class UsersService {
         Map<String, List<String>> list = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES, HttpMethod.GET, null, Map.class);
         List<String> names = list.get(USERS);
 
-        if(ALL_NAMESPACES.equals(namespace)) {
-            for (String name:names) {
+        if (ALL_NAMESPACES.equals(namespace)) {
+            for (String name : names) {
                 UsersInfo usersInfo = new UsersInfo();
                 usersInfo.setUserId(name);
                 usersInfo.setIsNsAdmin(CHECK_N);
@@ -647,11 +687,11 @@ public class UsersService {
         } else {
             Users user = getUsersByNamespaceAndNsAdmin(cluster, namespace);
 
-            for (String name:names) {
+            for (String name : names) {
                 UsersInfo usersInfo = new UsersInfo();
                 usersInfo.setUserId(name);
                 usersInfo.setIsNsAdmin(CHECK_N);
-                if(name.contains(user.getUserId())) {
+                if (name.contains(user.getUserId())) {
                     usersInfo.setIsNsAdmin(CHECK_Y);
                 }
 
