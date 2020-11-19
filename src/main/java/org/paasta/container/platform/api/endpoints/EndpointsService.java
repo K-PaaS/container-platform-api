@@ -1,21 +1,26 @@
 package org.paasta.container.platform.api.endpoints;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+
 import org.paasta.container.platform.api.clusters.nodes.NodesAdmin;
 import org.paasta.container.platform.api.clusters.nodes.NodesService;
-import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.CommonService;
+import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.PropertyService;
+import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonCondition;
 import org.paasta.container.platform.api.endpoints.support.EndPointsDetailsItemAdmin;
 import org.paasta.container.platform.api.endpoints.support.EndpointAddress;
 import org.paasta.container.platform.api.endpoints.support.EndpointPort;
 import org.paasta.container.platform.api.endpoints.support.EndpointSubset;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Endpoints Service 클래스
@@ -142,7 +147,7 @@ public class EndpointsService {
                         List<CommonCondition> nodeConditionList = nodesDetails.getStatus().getConditions();
 
                         for (CommonCondition condition : nodeConditionList) {
-                            if (condition.getType().equals("Ready")) {
+                            if (condition.getType().equals(Constants.STRING_CONDITION_READY)) {
                                 nodeReady = condition.getStatus();
                             }
                         }

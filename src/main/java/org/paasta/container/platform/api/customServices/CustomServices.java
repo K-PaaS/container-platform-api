@@ -1,6 +1,8 @@
 package org.paasta.container.platform.api.customServices;
 
 import lombok.Data;
+
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
@@ -26,4 +28,7 @@ public class CustomServices {
     private CommonStatus status;
     private String sourceTypeYaml;
 
+    public String getNextActionUrl() {
+        return CommonUtils.procReplaceNullValue(nextActionUrl);
+    }
 }

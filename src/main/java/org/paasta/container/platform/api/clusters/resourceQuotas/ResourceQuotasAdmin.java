@@ -1,12 +1,16 @@
 package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasSpec;
-import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatus;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
 
 import java.util.List;
+
+import lombok.Data;
+
+import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasSpec;
+import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatus;
+import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
 
 /**
  * ResourceQuotas Admin Model 클래스
@@ -17,108 +21,36 @@ import java.util.List;
  */
 @Data
 public class ResourceQuotasAdmin {
-  private String resultCode;
-  private String resultMessage;
-  private Integer httpStatusCode;
-  private String detailMessage;
+    private String resultCode;
+    private String resultMessage;
+    private Integer httpStatusCode;
+    private String detailMessage;
 
-  private String name;
-  private String namespace;
-  private List<String> scopes;
-  private String creationTimestamp;
-  private ResourceQuotasStatus status;
+    private String name;
+    private String namespace;
+    private List<String> scopes;
+    private String creationTimestamp;
+    private ResourceQuotasStatus status;
 
-  @JsonIgnore
-  private CommonMetaData metadata;
-  @JsonIgnore
-  private ResourceQuotasSpec spec;
+    @JsonIgnore
+    private CommonMetaData metadata;
 
-  public String getNamespace() {
-    return metadata.getNamespace();
-  }
+    @JsonIgnore
+    private ResourceQuotasSpec spec;
 
-  public void setNamespace(String namespace) {
-    this.namespace = namespace;
-  }
+    public String getNamespace() {
+        return metadata.getNamespace();
+    }
 
-  public String getResultCode() {
-    return resultCode;
-  }
+    public String getName() {
+        return name = metadata.getName();
+    }
 
-  public void setResultCode(String resultCode) {
-    this.resultCode = resultCode;
-  }
+    public List<?> getScopes() {
+        return CommonUtils.procReplaceNullValue(spec.getScopes(), Constants.ListObjectType.STRING);
+    }
 
-  public String getResultMessage() {
-    return resultMessage;
-  }
-
-  public void setResultMessage(String resultMessage) {
-    this.resultMessage = resultMessage;
-  }
-
-  public Integer getHttpStatusCode() {
-    return httpStatusCode;
-  }
-
-  public void setHttpStatusCode(Integer httpStatusCode) {
-    this.httpStatusCode = httpStatusCode;
-  }
-
-  public String getDetailMessage() {
-    return detailMessage;
-  }
-
-  public void setDetailMessage(String detailMessage) {
-    this.detailMessage = detailMessage;
-  }
-
-  public String getName() {
-    return name = metadata.getName();
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public List<String> getScopes() {
-    return scopes = spec.getScopes();
-  }
-
-  public void setScopes(List<String> scopes) {
-    this.scopes = scopes;
-  }
-
-  public String getCreationTimestamp() {
-    return creationTimestamp = metadata.getCreationTimestamp();
-  }
-
-  public void setCreationTimestamp(String creationTimestamp) {
-    this.creationTimestamp = creationTimestamp;
-  }
-
-  public CommonMetaData getMetadata() {
-    return metadata;
-  }
-
-  public void setMetadata(CommonMetaData metadata) {
-    this.metadata = metadata;
-  }
-
-  public ResourceQuotasSpec getSpec() {
-    return spec;
-  }
-
-  public void setSpec(ResourceQuotasSpec spec) {
-    this.spec = spec;
-  }
-
-  public ResourceQuotasStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(ResourceQuotasStatus status) {
-    this.status = status;
-  }
+    public String getCreationTimestamp() {
+        return creationTimestamp = metadata.getCreationTimestamp();
+    }
 }
-

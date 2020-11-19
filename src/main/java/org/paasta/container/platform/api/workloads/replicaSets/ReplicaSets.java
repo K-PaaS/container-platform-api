@@ -1,11 +1,13 @@
 package org.paasta.container.platform.api.workloads.replicaSets;
 
+import java.util.Map;
+
 import lombok.Data;
+
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
-
-import java.util.Map;
 
 /**
  * ReplicaSets Model 클래스
@@ -29,4 +31,7 @@ public class ReplicaSets {
     private Map<String, Object> source;
     private String sourceTypeYaml;
 
+    public String getNextActionUrl() {
+        return CommonUtils.procReplaceNullValue(nextActionUrl);
+    }
 }

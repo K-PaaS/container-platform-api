@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.Data;
 
 import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonCondition;
 import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
@@ -29,6 +30,7 @@ public class NodesListAdmin {
     private List<NodesListAdminItem> items;
 }
 
+@Data
 class NodesListAdminItem {
     private String name;
     private Object labels;
@@ -45,23 +47,14 @@ class NodesListAdminItem {
         return name = metadata.getName();
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Object getLabels() {
-        // MODIFIED BY REX
         return CommonUtils.procReplaceNullValue(metadata.getLabels());
-    }
-
-    public void setLabels(Object labels) {
-        this.labels = labels;
     }
 
     public String getReady() {
         List<CommonCondition> conditions = status.getConditions();
         for (CommonCondition c : conditions) {
-            if (c.getType().equals("Ready")) {
+            if (c.getType().equals(Constants.STRING_CONDITION_READY)) {
                 ready = c.getStatus();
             }
         }
@@ -69,31 +62,7 @@ class NodesListAdminItem {
         return ready;
     }
 
-    public void setReady(String ready) {
-        this.ready = ready;
-    }
-
     public String getCreationTimestamp() {
         return creationTimestamp = metadata.getCreationTimestamp();
-    }
-
-    public void setCreationTimestamp(String creationTimestamp) {
-        this.creationTimestamp = creationTimestamp;
-    }
-
-    public CommonMetaData getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(CommonMetaData metadata) {
-        this.metadata = metadata;
-    }
-
-    public CommonStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(CommonStatus status) {
-        this.status = status;
     }
 }

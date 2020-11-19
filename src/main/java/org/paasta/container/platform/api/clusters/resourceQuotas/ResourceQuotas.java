@@ -1,8 +1,10 @@
 package org.paasta.container.platform.api.clusters.resourceQuotas;
 
 import lombok.Data;
+
 import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasSpec;
 import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatus;
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 /**
  * ResourceQuotas Model 클래스
@@ -24,5 +26,7 @@ public class ResourceQuotas {
   private ResourceQuotasSpec spec;
   private ResourceQuotasStatus status;
 
+  public String getNextActionUrl() {
+    return CommonUtils.procReplaceNullValue(nextActionUrl);
+  }
 }
-

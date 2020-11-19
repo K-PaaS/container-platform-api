@@ -15,7 +15,9 @@ import java.util.regex.Pattern;
 
 import org.springframework.util.StringUtils;
 
+import org.paasta.container.platform.api.common.model.CommonOwnerReferences;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.storages.persistentVolumes.support.ObjectReference;
 import org.paasta.container.platform.api.users.Users;
 
 /**
@@ -85,7 +87,13 @@ public class CommonUtils {
         return objectMapper.convertValue(map, Users.class);
     }
 
-
+    /**
+     * Yaml match map.
+     *
+     * @param username  the username
+     * @param namespace the namespace
+     * @return the map
+     */
     public static Map yamlMatch(String username, String namespace) {
         Map<String, Object> model = new HashMap<>();
         model.put("userName", username);
@@ -138,31 +146,129 @@ public class CommonUtils {
 
     }
 
+    /**
+     * Resource name check string.
+     *
+     * @param resourceName the resource name
+     * @return the string
+     */
     public static String resourceNameCheck(String resourceName) {
-        String result = (resourceName == null) ? Constants.noName : resourceName;
-        return result;
+        return (resourceName == null) ? Constants.noName : resourceName;
     }
 
+    /**
+     * Is instance check boolean.
+     *
+     * @param object the object
+     * @param type   the type
+     * @return the boolean
+     */
     public static boolean isInstanceCheck(Object object, Class<?> type) {
         return type.isInstance(object);
     }
 
+    /**
+     * Is result status instance check boolean.
+     *
+     * @param object the object
+     * @return the boolean
+     */
     public static boolean isResultStatusInstanceCheck(Object object) {
         return object instanceof ResultStatus;
     }
 
+    /**
+     * Json string to map map.
+     *
+     * @param jsonString the json string
+     * @return the map
+     * @throws JsonProcessingException the json processing exception
+     */
     public static Map jsonStringToMap(String jsonString) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(jsonString, Map.class);
     }
 
+
     /**
-     * replace null value
-     * @param reqObject request Object
-     * @return Object
+     * Proc replace null value object.
+     *
+     * @param requestObject the request object
+     * @return object
      */
-    public static Object procReplaceNullValue(Object reqObject) {
-        // ADDED BY REX
-        return (StringUtils.isEmpty(reqObject)) ? "-" : reqObject;
+    public static Object procReplaceNullValue(Object requestObject) {
+        return (StringUtils.isEmpty(requestObject)) ? Constants.NULL_REPLACE_TEXT : requestObject;
+    }
+
+    /**
+     * Proc replace null value string.
+     *
+     * @param requestString the request string
+     * @return string
+     */
+    public static String procReplaceNullValue(String requestString) {
+        return (StringUtils.isEmpty(requestString)) ? Constants.NULL_REPLACE_TEXT : requestString;
+    }
+
+    /**
+     * Proc replace null value object reference.
+     *
+     * @param requestObjectReference the request object reference
+     * @return object reference
+     */
+    public static ObjectReference procReplaceNullValue(ObjectReference requestObjectReference) {
+        return (StringUtils.isEmpty(requestObjectReference)) ? new ObjectReference() {
+            {
+                setName(Constants.NULL_REPLACE_TEXT);
+                setNamespace(Constants.NULL_REPLACE_TEXT);
+            }
+        } : requestObjectReference;
+    }
+
+    /**
+     * Proc replace null value map.
+     *
+     * @param requestMap the request map
+     * @return map
+     */
+    public static Map<String, Object> procReplaceNullValue(Map<String, Object> requestMap) {
+        return (StringUtils.isEmpty(requestMap)) ? new HashMap<String, Object>() {{
+            put(Constants.SUPPORTED_RESOURCE_STORAGE, Constants.NULL_REPLACE_TEXT);
+        }} : requestMap;
+    }
+
+    /**
+     * Proc replace null value list.
+     *
+     * @param requestList           the request list
+     * @param requestListObjectType the request list object type
+     * @return list
+     */
+    public static List<?> procReplaceNullValue(List<?> requestList, Constants.ListObjectType requestListObjectType) {
+        List<?> resultList;
+
+        switch (requestListObjectType) {
+            case LIMIT_RANGES_ITEM:
+                resultList = (StringUtils.isEmpty(requestList)) ? new ArrayList<String>() {{
+                    add(Constants.NULL_REPLACE_TEXT);
+                }} : requestList;
+                break;
+
+            case COMMON_OWNER_REFERENCES:
+                resultList = (StringUtils.isEmpty(requestList)) ? new ArrayList<CommonOwnerReferences>() {
+                    {
+                        add(new CommonOwnerReferences() {{
+                            setName(Constants.NULL_REPLACE_TEXT);
+                        }});
+                    }
+                } : requestList;
+                break;
+
+            default:
+                resultList = (StringUtils.isEmpty(requestList)) ? new ArrayList<String>() {{
+                    add(Constants.NULL_REPLACE_TEXT);
+                }} : requestList;
+        }
+        return resultList;
     }
 }

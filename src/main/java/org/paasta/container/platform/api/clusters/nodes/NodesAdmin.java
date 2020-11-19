@@ -1,14 +1,17 @@
 package org.paasta.container.platform.api.clusters.nodes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.List;
+
 import lombok.Data;
+
 import org.paasta.container.platform.api.clusters.nodes.support.NodesAddress;
 import org.paasta.container.platform.api.clusters.nodes.support.NodesStatus;
 import org.paasta.container.platform.api.clusters.nodes.support.NodesSystemInfo;
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
-
-import java.util.List;
 
 /**
  * Nodes Admin Model 클래스
@@ -36,128 +39,42 @@ public class NodesAdmin {
 
     @JsonIgnore
     private CommonMetaData metadata;
+
     @JsonIgnore
     private CommonSpec spec;
+
     @JsonIgnore
     private NodesStatus status;
 
-    public String getResultCode() {
-        return resultCode;
-    }
-
-    public void setResultCode(String resultCode) {
-        this.resultCode = resultCode;
-    }
-
-    public String getResultMessage() {
-        return resultMessage;
-    }
-
-    public void setResultMessage(String resultMessage) {
-        this.resultMessage = resultMessage;
-    }
-
-    public Integer getHttpStatusCode() {
-        return httpStatusCode;
-    }
-
-    public void setHttpStatusCode(Integer httpStatusCode) {
-        this.httpStatusCode = httpStatusCode;
-    }
-
-    public String getDetailMessage() {
-        return detailMessage;
-    }
-
-    public void setDetailMessage(String detailMessage) {
-        this.detailMessage = detailMessage;
-    }
-
     public String getName() {
         return name = metadata.getName();
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getUid() {
         return uid = metadata.getUid();
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
     public Object getLabels() {
-        return labels = metadata.getLabels();
-    }
-
-    public void setLabels(Object labels) {
-        this.labels = labels;
+        return CommonUtils.procReplaceNullValue(metadata.getLabels());
     }
 
     public Object getAnnotations() {
-        return annotations = metadata.getAnnotations();
-    }
-
-    public void setAnnotations(Object annotations) {
-        this.annotations = annotations;
+        return CommonUtils.procReplaceNullValue(metadata.getAnnotations());
     }
 
     public String getCreationTimestamp() {
         return creationTimestamp = metadata.getCreationTimestamp();
     }
 
-    public void setCreationTimestamp(String creationTimestamp) {
-        this.creationTimestamp = creationTimestamp;
-    }
-
     public String getPodsCIDR() {
         return podsCIDR = spec.getPodCIDR();
-    }
-
-    public void setPodsCIDR(String podsCIDR) {
-        this.podsCIDR = podsCIDR;
     }
 
     public List<NodesAddress> getAddresses() {
         return addresses = status.getAddresses();
     }
 
-    public void setAddresses(List<NodesAddress> addresses) {
-        this.addresses = addresses;
-    }
-
     public NodesSystemInfo getInfo() {
         return info = status.getNodeInfo();
-    }
-
-    public void setInfo(NodesSystemInfo info) {
-        this.info = info;
-    }
-
-    public CommonMetaData getMetadata() {
-        return metadata;
-    }
-
-    public void setMetadata(CommonMetaData metadata) {
-        this.metadata = metadata;
-    }
-
-    public CommonSpec getSpec() {
-        return spec;
-    }
-
-    public void setSpec(CommonSpec spec) {
-        this.spec = spec;
-    }
-
-    public NodesStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(NodesStatus status) {
-        this.status = status;
     }
 }

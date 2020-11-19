@@ -1,10 +1,15 @@
 package org.paasta.container.platform.api.common;
 
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.MediaType;
 
-import java.util.*;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 
 /**
  * Constants 클래스
@@ -213,34 +218,44 @@ public class Constants {
             CommonStatusCode.OK.getCode(),CommonStatusCode.OK.getMsg(), null );
 
     public static final ResultStatus BAD_REQUEST_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.getMsg(),
-            CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
+        CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
 
     public static final ResultStatus UNAUTHORIZED_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.UNAUTHORIZED.getMsg(),
-            CommonStatusCode.UNAUTHORIZED.getCode(),CommonStatusCode.UNAUTHORIZED.getMsg(), null );
+        CommonStatusCode.UNAUTHORIZED.getCode(),CommonStatusCode.UNAUTHORIZED.getMsg(), null );
 
     public static final ResultStatus FORBIDDEN_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.FORBIDDEN.getMsg(),
-            CommonStatusCode.FORBIDDEN.getCode(),CommonStatusCode.FORBIDDEN.getMsg());
+        CommonStatusCode.FORBIDDEN.getCode(),CommonStatusCode.FORBIDDEN.getMsg());
 
     public static final ResultStatus NOT_FOUND_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.NOT_FOUND.getMsg(),
-            CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg());
+        CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg());
 
     public static final ResultStatus NOT_FOUND_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.NOT_FOUND.getMsg(),
-            CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg(), null );
+        CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg(), null );
 
     public static final ResultStatus CONFLICT_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.CONFLICT.getMsg(),
-            CommonStatusCode.CONFLICT.getCode(),CommonStatusCode.CONFLICT.getMsg(), null );
+        CommonStatusCode.CONFLICT.getCode(),CommonStatusCode.CONFLICT.getMsg(), null );
 
     public static final ResultStatus UNPROCESSABLE_ENTITY_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.UNPROCESSABLE_ENTITY.getMsg(),
-            CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(),CommonStatusCode.UNPROCESSABLE_ENTITY.getMsg(), null );
+        CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(),CommonStatusCode.UNPROCESSABLE_ENTITY.getMsg(), null );
 
     public static final ResultStatus NOT_MATCH_NAMESPACES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_NAMESPACES,
-            CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
+        CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
 
     public static final ResultStatus NOT_MATCH_USER_ID = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_USER_ID,
-            CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
+        CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
 
     public Constants() {
         throw new IllegalStateException();
     }
 
+    /**
+     * The enum List object type.
+     */
+    public enum ListObjectType {
+        LIMIT_RANGES_ITEM,
+        COMMON_OWNER_REFERENCES,
+        STRING
+    }
+
+    public static final String STRING_CONDITION_READY = "Ready";
 }
