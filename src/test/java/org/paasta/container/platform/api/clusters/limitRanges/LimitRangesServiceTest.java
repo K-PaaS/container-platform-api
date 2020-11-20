@@ -1,23 +1,25 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
+import com.google.gson.internal.LinkedTreeMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
+import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
-import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.model.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
@@ -31,6 +33,7 @@ public class LimitRangesServiceTest {
     private static final String LIMIT_RANGE_NAME = "test-limit-range-name";
     private static final String YAML_STRING = "test-yaml-string";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
+    private static final String LOW_LIMIT_NAME = "paas-ta-container-platform-low-limit-range";
 
     private static final int OFFSET = 0;
     private static final int LIMIT = 0;
@@ -163,7 +166,6 @@ public class LimitRangesServiceTest {
         when(propertyService.getCpMasterApiListLimitRangesListUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
 
-
         when(commonService.setResultObject(gResultAdminMap, LimitRangesListAdmin.class)).thenReturn(gResultListAdminModel);
         when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, LimitRangesListAdmin.class)).thenReturn(gResultListAdminModel);
         when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
@@ -172,12 +174,25 @@ public class LimitRangesServiceTest {
         LimitRangesListAdmin resultList = (LimitRangesListAdmin) limitRangesService.getLimitRangesListAdmin(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
 
         //compare result
-        assertThat(resultList).isNotNull();
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
     }
 
     @Test
-    public void getLimitRangesListAllNamespacesAdmin() {
+    public void getLimitRangesList_Valid_ReturnModel() {
+        //when
+        when(propertyService.getCpMasterApiListLimitRangesListUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges");
+        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges", HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+
+        when(commonService.setResultObject(gResultMap, LimitRangesList.class)).thenReturn(gResultListModel);
+        when(commonService.resourceListProcessing(gResultListModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, LimitRangesList.class)).thenReturn(gResultListModel);
+        when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
+
+        LimitRangesList limitRangesList = limitRangesService.getLimitRangesList(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, limitRangesList.getResultCode());
+    }
+
+    @Test
+    public void getLimitRangesListAllNamespacesAdmin_Valid_ReturnModel() {
         //when
         when(propertyService.getCpMasterApiListLimitRangesListAllNamespacesUrl()).thenReturn("/api/v1/limitranges");
 
@@ -192,24 +207,84 @@ public class LimitRangesServiceTest {
         LimitRangesListAdmin resultList = (LimitRangesListAdmin) limitRangesService.getLimitRangesListAllNamespacesAdmin(OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
 
         //compare result
-        assertThat(resultList).isNotNull();
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
     }
 
     @Test
-    public void getLimitRangesAdmin_Valid_ReturnModel() {
+    public void getLimitRangesAdmin_Valid_ReturnModel() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        LimitRangesAdmin limitRangesAdmin = new LimitRangesAdmin();
+        List<LimitRangesItem> limitsList = new ArrayList<>();
+
+        LimitRangesItem item = new LimitRangesItem();
+        LinkedTreeMap defaultLimitMap = new LinkedTreeMap();
+        defaultLimitMap.put("memory", "500Mi");
+
+        LinkedTreeMap defaultRequestMap = new LinkedTreeMap();
+        defaultRequestMap.put("memory", "100Mi");
+
+        LinkedTreeMap max = new LinkedTreeMap();
+        defaultRequestMap.put("memory", "100Mi");
+
+        LinkedTreeMap min = new LinkedTreeMap();
+        defaultRequestMap.put("memory", "100Mi");
+
+        item.setType("Container");
+        item.setResource("memory");
+        item.setDefaultLimit(defaultLimitMap);
+        item.setDefaultRequest(defaultRequestMap);
+        item.setMax(max);
+        item.setMin(min);
+
+        limitsList.add(item);
+        CommonSpec spec = new CommonSpec();
+        spec.setLimits(limitsList);
+
+        CommonMetaData metaData = new CommonMetaData();
+        metaData.setName(LOW_LIMIT_NAME);
+        metaData.setNamespace(NAMESPACE);
+        metaData.setCreationTimestamp("2020-11-17T09:31:37Z");
+
+        limitRangesAdmin.setName(metaData.getName());
+        limitRangesAdmin.setCreationTimestamp("2020-11-17T09:31:37Z");
+        limitRangesAdmin.setMetadata(metaData);
+        limitRangesAdmin.setSpec(spec);
+
+        LimitRangesAdmin finalLimitRangesAdmin = limitRangesAdmin;
+        finalLimitRangesAdmin.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+
+        LimitRangesItem serversItem = new LimitRangesItem();
+
+        LimitRangesItem finalServersItem = new LimitRangesItem();
+        finalServersItem.setType(Constants.LIMIT_RANGE_TYPE_CONTAINER);
+        finalServersItem.setResource(Constants.SUPPORTED_RESOURCE_MEMORY);
+
+        LinkedHashMap map = new LinkedHashMap();
+        map.put("metadata", metaData);
+        map.put("spec", spec);
 
         //when
         when(propertyService.getCpMasterApiListLimitRangesGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges/{name}");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges/" + LIMIT_RANGE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
-        when(commonService.setResultObject(gResultMap, LimitRangesAdmin.class)).thenReturn(gResultAdminModel);
-        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges/" + LIMIT_RANGE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(map);
+        when(commonService.setResultObject(map, LimitRangesAdmin.class)).thenReturn(limitRangesAdmin);
+
+        String type = Constants.LIMIT_RANGE_TYPE_CONTAINER;
+        String resourceType = Constants.SUPPORTED_RESOURCE_MEMORY;
+
+        Method getLimitRangesTemplateItem = limitRangesService.getClass().getDeclaredMethod("getLimitRangesTemplateItem", String.class, String.class, String.class, String.class, LimitRangesItem.class, Object.class);
+        getLimitRangesTemplateItem.setAccessible(true);
+
+        Method commonSetResourceValue = limitRangesService.getClass().getDeclaredMethod("commonSetResourceValue", String.class, LinkedTreeMap.class, LinkedTreeMap.class, LinkedTreeMap.class, LinkedTreeMap.class, Object.class);
+        commonSetResourceValue.setAccessible(true);
+
+        getLimitRangesTemplateItem.invoke(limitRangesService, metaData.getName(), metaData.getCreationTimestamp(), type, resourceType, item, serversItem);
+
+        when(commonService.setResultObject(limitRangesAdmin,LimitRangesAdmin.class)).thenReturn(limitRangesAdmin);
+        when(commonService.setResultModel(limitRangesAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalLimitRangesAdmin);
 
         //call method
         LimitRangesAdmin result = (LimitRangesAdmin) limitRangesService.getLimitRangesAdmin(NAMESPACE, LIMIT_RANGE_NAME);
 
         //compare result
-        assertThat(result).isNotNull();
         assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 
@@ -231,7 +306,7 @@ public class LimitRangesServiceTest {
     }
 
     @Test
-    public void createLimitRanges() {
+    public void createLimitRanges_Valid_ReturnModel() {
 
         //when
         when(propertyService.getCpMasterApiListLimitRangesCreateUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges");
@@ -246,7 +321,7 @@ public class LimitRangesServiceTest {
     }
 
     @Test
-    public void deleteLimitRanges() {
+    public void deleteLimitRanges_Valid_ReturnModel() {
         //when
         when(propertyService.getCpMasterApiListLimitRangesDeleteUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges/" + LIMIT_RANGE_NAME, HttpMethod.DELETE, null, ResultStatus.class)).thenReturn(gResultStatusModel);
@@ -260,7 +335,7 @@ public class LimitRangesServiceTest {
     }
 
     @Test
-    public void updateLimitRanges() {
+    public void updateLimitRanges_Valid_ReturnModel() {
         String nextUrl = Constants.URI_LIMIT_RANGES_DETAIL.replace("{limitRangeName:.+}", LIMIT_RANGE_NAME);
         gFinalResultStatusModel.setNextActionUrl(nextUrl);
 
@@ -277,10 +352,10 @@ public class LimitRangesServiceTest {
     }
 
     @Test
-    public void getLimitRangesTemplateList() {
+    public void getLimitRangesTemplateList_Valid_ReturnModel() {
     }
 
     @Test
-    public void getLimitRangesDb() {
+    public void getLimitRangesDb_Valid_ReturnModel() {
     }
 }

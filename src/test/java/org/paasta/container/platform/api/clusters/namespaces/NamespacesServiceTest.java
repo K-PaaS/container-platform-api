@@ -7,9 +7,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.paasta.container.platform.api.accessInfo.AccessToken;
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
+import org.paasta.container.platform.api.clusters.limitRanges.LimitRanges;
+import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesList;
+import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesService;
+import org.paasta.container.platform.api.clusters.namespaces.support.NamespacesListSupport;
+import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotas;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasList;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
 import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
@@ -19,10 +25,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -62,10 +70,6 @@ public class NamespacesServiceTest {
     private static NamespacesList gFinalResultListModel = null;
     private static NamespacesList gFinalResultListFailModel = null;
 
-    private static ResourceQuotasList gResultListRqModel = null;
-    private static ResourceQuotasList gFinalResultListRqModel = null;
-    private static ResourceQuotasList gFinalResultListRqFailModel = null;
-
     private static NamespacesAdmin gResultAdminModel = null;
     private static NamespacesAdmin gFinalResultAdminModel = null;
     private static NamespacesAdmin gFinalResultAdminFailModel = null;
@@ -82,8 +86,6 @@ public class NamespacesServiceTest {
     private static ResultStatus gResultFailModel = null;
     private static ResultStatus gFinalResultStatusModel = null;
 
-
-    private static ResourceQuotasList gResourceQuotasListModel = null;
     @Mock
     RestTemplateService restTemplateService;
 
@@ -104,6 +106,12 @@ public class NamespacesServiceTest {
 
     @Mock
     ResourceYamlService resourceYamlService;
+
+    @Mock
+    LimitRangesService limitRangesService;
+
+    @Mock
+    NamespacesService namespacesServiceMock;
 
     @InjectMocks
     NamespacesService namespacesService;
@@ -185,10 +193,6 @@ public class NamespacesServiceTest {
         gFinalResultAdminFailModel.setResultMessage(Constants.RESULT_STATUS_FAIL);
         gFinalResultAdminFailModel.setHttpStatusCode(CommonStatusCode.NOT_FOUND.getCode());
         gFinalResultAdminFailModel.setDetailMessage(CommonStatusCode.NOT_FOUND.getMsg());
-
-        gResourceQuotasListModel = new ResourceQuotasList();
-        gFinalResultListRqModel = new ResourceQuotasList();
-        gFinalResultListRqFailModel = new ResourceQuotasList();
     }
 
     /**
@@ -354,16 +358,21 @@ public class NamespacesServiceTest {
 
         // for - if
         String rq = "paas-ta-container-platform-low-rq";
+
         resourceYamlService.createDefaultResourceQuota(NAMESPACE, rq);
 
         // for - if
         String lr = "paas-ta-container-platform-low-limit-range";
+
         resourceYamlService.createDefaultLimitRanges(NAMESPACE, lr);
 
         String saSecretName = "cp-secret";
+
         when(restTemplateService.getSecretName(NAMESPACE, NAMESPACE_ADMIN_USER_ID)).thenReturn(saSecretName);
 
         Users newNsUser = new Users();
+        when(propertyService.getDefaultNamespace()).thenReturn("paas-ta-container-platform-temp-namespace");
+        when(usersService.getUsers(CLUSTER, "paas-ta-container-platform-temp-namespace", NAMESPACE_ADMIN_USER_ID)).thenReturn(newNsUser);
         newNsUser.setId(0);
         newNsUser.setCpNamespace(NAMESPACE);
         when(propertyService.getAdminRole()).thenReturn("paas-ta-container-platform-admin-role");
@@ -375,8 +384,7 @@ public class NamespacesServiceTest {
         newNsUser.setSaToken(accessToken.getUserAccessToken());
         newNsUser.setUserType(Constants.AUTH_NAMESPACE_ADMIN);
         newNsUser.setIsActive(Constants.CHECK_Y);
-        when(propertyService.getDefaultNamespace()).thenReturn("paas-ta-container-platform-temp-namespace");
-        when(usersService.getUsers(CLUSTER, "paas-ta-container-platform-temp-namespace", NAMESPACE_ADMIN_USER_ID)).thenReturn(newNsUser);
+
         when(usersService.createUsers(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newNsUser))).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE")).thenReturn(gFinalResultStatusModel);
@@ -392,17 +400,104 @@ public class NamespacesServiceTest {
      * Namespaces 수정(modify Namespaces) Test
      */
     @Test
-    public void modifyInitNamespaces_Valid_ReturnModel() {
+    public void modifyInitNamespaces_Valid_ReturnModel() throws Exception {
+        // given
+        List<String> resourceQuotasList = new ArrayList<>();
+        resourceQuotasList.add("cp-resource-quotas-low");
 
+        List<String> limitRangesList = new ArrayList<>();
+        limitRangesList.add("cp-limit-ranges-low");
 
+        NamespacesInitTemplate nsInitTemp = new NamespacesInitTemplate();
+        nsInitTemp.setName(NAMESPACE);
+        nsInitTemp.setNsAdminUserId(NAMESPACE_ADMIN_USER_ID);
+        nsInitTemp.setResourceQuotasList(resourceQuotasList);
+        nsInitTemp.setLimitRangesList(limitRangesList);
 
+        modifyResourceQuotas_Valid_ReturnModel();
+        modifyLimitRanges_Valid_ReturnModel();
+
+        String nsAdminUserId = nsInitTemp.getNsAdminUserId();
+        Users nsAdminUser = new Users();
+        nsAdminUser.setUserId("cp-user-id");
+        when(usersService.getUsersByNamespaceAndNsAdmin(CLUSTER, NAMESPACE)).thenReturn(nsAdminUser);
+        when(usersService.deleteUsers(nsAdminUser)).thenReturn(gFinalResultStatusModel);
+        when(resourceYamlService.createServiceAccount(nsAdminUserId, NAMESPACE)).thenReturn(gFinalResultStatusModel);
+        ResultStatus saResult = gFinalResultStatusModel;
+        when(propertyService.getAdminRole()).thenReturn("paas-ta-container-platform-admin-role");
+        when(resourceYamlService.createRoleBinding(nsAdminUserId, NAMESPACE, "paas-ta-container-platform-admin-role")).thenReturn(gFinalResultStatusModel);
+        ResultStatus rbResult = gFinalResultStatusModel;
+        String saSecretName = "";
+        when(restTemplateService.getSecretName(NAMESPACE, nsAdminUserId)).thenReturn(saSecretName);
+        when(propertyService.getDefaultNamespace()).thenReturn("paas-ta-container-platform-temp-namespace");
+        Users newNsUser = new Users();
+        when(usersService.getUsers(CLUSTER, "paas-ta-container-platform-temp-namespace", nsAdminUserId)).thenReturn(newNsUser);
+        newNsUser.setId(0);
+        newNsUser.setCpNamespace(NAMESPACE);
+        when(propertyService.getAdminRole()).thenReturn("paas-ta-container-platform-admin-role");
+        newNsUser.setRoleSetCode("paas-ta-container-platform-admin-role");
+        newNsUser.setSaSecret(saSecretName);
+        AccessToken accessToken = new AccessToken();
+        accessToken.setUserAccessToken("");
+        when(accessTokenService.getSecrets(NAMESPACE, saSecretName)).thenReturn(accessToken);
+        newNsUser.setSaToken(accessToken.getUserAccessToken());
+        newNsUser.setUserType(Constants.AUTH_NAMESPACE_ADMIN);
+        newNsUser.setIsActive(Constants.CHECK_Y);
+        when(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newNsUser)).thenReturn(newNsUser);
+        when(usersService.createUsers(newNsUser)).thenReturn(gFinalResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(Constants.SUCCESS_RESULT_STATUS, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_DETAIL_PAGE")).thenReturn(gFinalResultStatusModel);
+
+        // when
+        ResultStatus result = namespacesService.modifyInitNamespaces(CLUSTER, NAMESPACE, nsInitTemp);
+
+        // then
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 
     /**
      * ResourceQuotas 변경 Test
      */
     @Test
-    public void modifyResourceQuotas_Valid_ReturnModel() {
+    public void modifyResourceQuotas_Valid_ReturnModel() throws Exception{
+        // given
+        List<String> requestUpdatedRqList = new ArrayList<>();
+        requestUpdatedRqList.add("paas-ta-container-platform-low-rq");
+
+        CommonMetaData metaData = new CommonMetaData();
+        metaData.setName("cp-name");
+
+        ResourceQuotas resourceQuotas = new ResourceQuotas();
+        resourceQuotas.setMetadata(metaData);
+
+        List<ResourceQuotas> listResourceQuotas = new ArrayList<>();
+        listResourceQuotas.add(resourceQuotas);
+
+        ResourceQuotasList resourceQuotasListMetadata = new ResourceQuotasList();
+        resourceQuotasListMetadata.setItems(listResourceQuotas);
+
+        when(propertyService.getCpMasterApiListResourceQuotasListUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas", HttpMethod.GET, null, ResourceQuotasList.class)).thenReturn(resourceQuotasListMetadata);
+
+        List<String> k8sResourceQuotasList = resourceQuotasListMetadata.getItems().stream().map(a -> a.getMetadata().getName()).collect(Collectors.toList());
+        ArrayList<String> toBeDelete = commonService.compareArrayList(k8sResourceQuotasList, requestUpdatedRqList);
+        ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedRqList, k8sResourceQuotasList);
+
+        // for
+        String deleteRqName = "paas-ta-container-platform-low-rq";
+
+        when(resourceQuotasService.deleteResourceQuotas(NAMESPACE, deleteRqName)).thenReturn(gResultStatusModel);
+
+        // for
+        String rqName = "paas-ta-container-platform-low-rq";
+
+        resourceYamlService.createDefaultResourceQuota(NAMESPACE, rqName);
+
+        // when
+        Method method = namespacesService.getClass().getDeclaredMethod("modifyResourceQuotas", String.class, List.class);
+        method.setAccessible(true);
+        method.invoke(namespacesService, NAMESPACE, requestUpdatedRqList);
+
+        // then
 
     }
 
@@ -410,16 +505,85 @@ public class NamespacesServiceTest {
      * LimitRanges 변경 Test
      */
     @Test
-    public void modifyLimitRanges_Valid_ReturnModel() {
+    public void modifyLimitRanges_Valid_ReturnModel() throws Exception{
+        List<String> requestUpdatedLrList = new ArrayList<>();
+        requestUpdatedLrList.add("paas-ta-container-platform-low-limit-range");
+
+        CommonMetaData metaData = new CommonMetaData();
+        metaData.setName("cp-name");
+
+        LimitRanges limitRanges = new LimitRanges();
+        limitRanges.setMetadata(metaData);
+
+        List<LimitRanges> listLimitRanges = new ArrayList<>();
+        listLimitRanges.add(limitRanges);
+
+        LimitRangesList limitRangesListMetadata = new LimitRangesList();
+        limitRangesListMetadata.setItems(listLimitRanges);
+
+        when(propertyService.getCpMasterApiListLimitRangesListUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges", HttpMethod.GET, null, LimitRangesList.class)).thenReturn(limitRangesListMetadata);
+
+        List<String> k8sLimitRangesList = limitRangesListMetadata.getItems().stream().map(a -> a.getMetadata().getName()).collect(Collectors.toList());
+        ArrayList<String> toBeDelete = commonService.compareArrayList(k8sLimitRangesList, requestUpdatedLrList);
+        ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedLrList, k8sLimitRangesList);
+
+        // for
+        String lrName = "paas-ta-container-platform-low-limit-range";
+
+        resourceYamlService.createDefaultLimitRanges(NAMESPACE, lrName);
+
+        // for
+        String deleteLrName = "paas-ta-container-platform-low-limit-range";
+
+        when(limitRangesService.deleteLimitRanges(NAMESPACE, deleteLrName)).thenReturn(gResultStatusModel);
+
+        // when
+        Method method = namespacesService.getClass().getDeclaredMethod("modifyLimitRanges", String.class, List.class);
+        method.setAccessible(true);
+        method.invoke(namespacesService, NAMESPACE, requestUpdatedLrList);
+
+        // then
 
     }
 
     /**
-     * Namespace Selectbox를 위한 전체 목록 조회
+     * Namespace Selectbox를 위한 전체 목록 조회 Test
      */
     @Test
     public void getNamespacesListForSelectbox_Valid_ReturnModel() {
+        // given
+        NamespacesListAdminItem item = new NamespacesListAdminItem();
+        item.setName("cp-namespace");
 
+        CommonMetaData metadata = new CommonMetaData();
+        metadata.setName("cp-namespace");
+
+        item.setMetadata(metadata);
+
+        List<NamespacesListAdminItem> items = new ArrayList<>();
+        items.add(item);
+
+        NamespacesListAdmin namespacesListAdmin = new NamespacesListAdmin();
+        namespacesListAdmin.setItems(items);
+
+        when(namespacesService.getNamespacesListAdmin(OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME)).thenReturn(namespacesListAdmin);
+        List<NamespacesListAdminItem> namespaceItem = namespacesListAdmin.getItems();
+
+        List<String> returnNamespaceList = new ArrayList<>();
+        NamespacesListSupport namespacesListSupport = new NamespacesListSupport();
+
+        returnNamespaceList.add(Constants.ALL_NAMESPACES);
+        NamespacesListAdminItem n = namespaceItem.get(0);
+        returnNamespaceList.add(n.getName());
+        namespacesListSupport.setItems(returnNamespaceList);
+
+        when(commonService.setResultModel(namespacesListSupport, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultStatusModel);
+
+        // when
+        ResultStatus result = (ResultStatus) namespacesService.getNamespacesListForSelectbox();
+
+        // then
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
-
 }
