@@ -9,13 +9,19 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.common.model.CommonOwnerReferences;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.workloads.pods.support.ContainerStatusesItem;
+import org.paasta.container.platform.api.workloads.pods.support.PodsStatus;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -31,8 +37,8 @@ public class PodsServiceTest {
 
     private static final String TYPE = "replicaSets";
     private static final String OWNER_REFERENCES_UID = "";
-    private static final String SELECTOR = "test-selector";
-    private static final String NODE_NAME = "test-node";
+    private static final String SELECTOR = "app=nginx";
+    private static final String NODE_NAME = "paasta-cp-k8s-worker-003";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
 
     private static final int OFFSET = 0;
@@ -40,6 +46,7 @@ public class PodsServiceTest {
     private static final String ORDER_BY = "creationTime";
     private static final String ORDER = "desc";
     private static final String SEARCH_NAME = "";
+    private static final String UID = "81f2c76c-4d39-40d7-a4e5-3f7a99ae9c63";
     private static final boolean isAdmin = true;
     private static final boolean isNotAdmin = false;
 
@@ -66,6 +73,14 @@ public class PodsServiceTest {
     private static ResultStatus gResultStatusModel = null;
     private static ResultStatus gFinalResultStatusModel = null;
 
+    private static PodsStatus podsStatus = null;
+    private static List<ContainerStatusesItem> containerStatuses =null;
+    private static ContainerStatusesItem  containerStatusesItem= null;
+
+    private static List<PodsListAdminList>  podsItems = null;
+    private static PodsListAdminList podsListAdminList = null;
+
+
     @Mock
     RestTemplateService restTemplateService;
 
@@ -82,11 +97,38 @@ public class PodsServiceTest {
     public void setUp() {
         gResultMap = new HashMap();
 
+        podsListAdminList = new PodsListAdminList();
+        podsStatus = new PodsStatus();
+
+
         gResultListModel = new PodsList();
         gFinalResultListModel = new PodsList();
         gFinalResultListModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
+        podsItems = new ArrayList<>();
+        PodsListAdminList item = new PodsListAdminList();
+        PodsStatus podsStatus = new PodsStatus();
+        item.setStatus(podsStatus);
+
+        CommonMetaData metaData = new CommonMetaData();
+        List<CommonOwnerReferences> ownerReferences = new ArrayList<>();
+        CommonOwnerReferences commonOwnerReferences = new CommonOwnerReferences();
+        commonOwnerReferences.setUid(UID);
+        ownerReferences.add(commonOwnerReferences);
+
+        metaData.setOwnerReferences(ownerReferences);
+        item.setMetadata(metaData);
+
+        podsItems.add(item);
+
+
         gResultListAdminModel = new PodsListAdmin();
+        gResultListAdminModel.setItems(podsItems);
+
+
+
+
+
         gFinalResultListAdminModel = new PodsListAdmin();
         gFinalResultListAdminModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
@@ -109,6 +151,11 @@ public class PodsServiceTest {
         gResultStatusModel = new ResultStatus();
         gFinalResultStatusModel = new ResultStatus();
         gFinalResultStatusModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+
+        ContainerStatusesItem containerStatusesItem = new ContainerStatusesItem();
+
+
+
     }
 
     /**
@@ -120,6 +167,8 @@ public class PodsServiceTest {
         when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods", HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, PodsList.class)).thenReturn(gResultListModel);
+
+        when(podsService.getPodsMetricList(NAMESPACE,gResultListModel)).thenReturn(gResultListModel);
         when(commonService.resourceListProcessing(gResultListModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsList.class)).thenReturn(gResultListModel);
         when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
 
@@ -138,15 +187,18 @@ public class PodsServiceTest {
     public void getPodsListAdmin_Valid_ReturnModel() {
         // given
         when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods", HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods", HttpMethod.GET, null, Map.class))
+                .thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
         when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
+        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS))
+                .thenReturn(gResultListAdminModel);
 
         // when
         PodsListAdmin resultList = (PodsListAdmin) podsService.getPodsListAdmin(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
 
         // then
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
+        assertEquals(gResultListAdminModel, resultList);
     }
 
     /**
@@ -173,20 +225,21 @@ public class PodsServiceTest {
      */
     @Test
     public void getPodListWithLabelSelectorAdmin_Valid_ReturnModel() {
+
         // given
         when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods?labelSelector=" + SELECTOR, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(podsService.podsFIlterWithOwnerReferences(gResultListAdminModel, OWNER_REFERENCES_UID)).thenReturn(gResultListAdminModel);
         when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(podsService.restartprocessing(gResultListAdminModel));
-        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
+        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).
+                thenReturn(gResultListAdminModel);
+
 
         // when
         PodsListAdmin resultList = (PodsListAdmin) podsService.getPodListWithLabelSelectorAdmin(NAMESPACE, SELECTOR, null, null, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
 
         // then
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
+        assertEquals(gResultListAdminModel, resultList);
     }
 
     /**
@@ -195,10 +248,13 @@ public class PodsServiceTest {
     @Test
     public void getPodListByNode_Valid_ReturnModel() {
         // given
+
+        String requestURL ="/api/v1/namespaces/"+ NAMESPACE+ "/pods?fieldSelector=spec.nodeName=" + NODE_NAME;
+
         when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
-        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods/?fieldSelector=spec.nodeName=" + NODE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, requestURL, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, PodsList.class)).thenReturn(gResultListModel);
-        when(commonService.setCommonItemMetaDataBySelector(gResultListModel, PodsList.class)).thenReturn(gResultListModel);
+        when(commonService.resourceListProcessing(gResultListModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsList.class)).thenReturn(gResultListModel);
         when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
 
         // when
@@ -213,19 +269,24 @@ public class PodsServiceTest {
      * (Admin portal)
      */
     @Test
-    public void getPodListByNodeAdmin_Valid_ReturnModel() {
+    public void getPodsListByNodeAdmin_Valid_ReturnModel() {
         // given
+
+        String requestURL ="/api/v1/namespaces/"+ NAMESPACE+ "/pods?fieldSelector=spec.nodeName=" + NODE_NAME;
+
         when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods/?fieldSelector=spec.nodeName=" + NODE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+        when(commonService.generateFieldSelectorForPodsByNode(Constants.PARAM_QUERY_FIRST, NODE_NAME)).thenReturn("?fieldSelector=spec.nodeName=" + NODE_NAME);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, requestURL , HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(commonService.setCommonItemMetaDataBySelector(gResultListAdminModel, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
+        when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
+        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS))
+                .thenReturn(gResultListAdminModel);
 
         // when
         PodsListAdmin resultList = (PodsListAdmin) podsService.getPodsListByNodeAdmin(NAMESPACE, NODE_NAME, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
 
         // then
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
+        assertEquals(gResultListAdminModel, resultList);
     }
 
     /**
@@ -391,20 +452,24 @@ public class PodsServiceTest {
     @Test
     public void getPodsListAllNamespacesAdmin_Valid_ReturnModel() {
         // given
-        when(propertyService.getCpMasterApiListPodsListAllNamespacesUrl()).thenReturn("/api/v1/pods");
-        when(commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)).thenReturn(FIELD_SELECTOR);
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/pods/" + FIELD_SELECTOR, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
-        when(commonService.setResultObject(gResultMap, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsListAdmin.class)).thenReturn(gResultListAdminModel);
+        when(propertyService.getCpMasterApiListPodsListAllNamespacesUrl())
+                .thenReturn("/api/v1/pods");
+        when(commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE))
+                .thenReturn(FIELD_SELECTOR);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/pods" + FIELD_SELECTOR, HttpMethod.GET, null, Map.class))
+                .thenReturn(gResultMap);
+        when(commonService.setResultObject(gResultMap, PodsListAdmin.class))
+                .thenReturn(gResultListAdminModel);
+        when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsListAdmin.class))
+                .thenReturn(gResultListAdminModel);
+        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS))
+                .thenReturn(gResultListAdminModel);
 
-        // for
-
-        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
 
         // when
-        PodsListAdmin resultList =  (PodsListAdmin) podsService.getPodsListAllNamespacesAdmin(OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
+        PodsListAdmin resultList = (PodsListAdmin) podsService.getPodsListAllNamespacesAdmin(OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
 
         // then
-        assertEquals(gFinalResultListAdminModel, resultList);
+        assertEquals(gResultListAdminModel, resultList);
     }
 }
