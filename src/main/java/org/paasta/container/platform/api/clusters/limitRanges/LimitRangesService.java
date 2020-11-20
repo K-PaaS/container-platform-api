@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.internal.LinkedTreeMap;
 import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.*;
@@ -11,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.paasta.container.platform.api.common.Constants.CHECK_N;
@@ -364,39 +366,6 @@ public class LimitRangesService {
 
 
     /**
-     * LimitRanges 각 요소 map으로 변환(Object convert to map)
-     *
-     * @param obj the object
-     * @return the map
-     */
-    private Map<String, Object> objectToMap(Object obj) {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        return objectMapper.convertValue(obj, Map.class);
-    }
-
-
-    /**
-     * LimitRanges Resource keys 추출(Extract LimitRanges's resource key)
-     *
-     * @param map the map
-     * @return the list
-     */
-    private List<String> getKeyResource(Map<String, Object> map) {
-        List<String> keyList = new ArrayList<>();
-        if (map != null) {
-            Iterator<String> keys = map.keySet().iterator();
-            while (keys.hasNext()) {
-                keyList.add(keys.next());
-            }
-        }
-
-        return keyList;
-    }
-
-
-
-    /**
      * 존재하는 각 Type과 Resource Type별로 LimitRanges 자원 설정 값 셋팅
      *
      * @param name              the name
@@ -404,7 +373,8 @@ public class LimitRangesService {
      * @param type              the type
      * @param resourceType      the resource type
      * @param item              the item
-     * @return the limitRangesTemplateItem
+     * @param object            the object
+     @return the limitRangesTemplateItem
      */
     private Object getLimitRangesTemplateItem(String name, String creationTimestamp, String type, String resourceType, LimitRangesItem item, Object object) {
         LinkedTreeMap<String, String> defaultLimit = null;
@@ -455,6 +425,17 @@ public class LimitRangesService {
     }
 
 
+    /**
+     * Common Resource value setting
+     *
+     * @param resourceType      the resource type
+     * @param defaultLimit      the default limit
+     * @param defaultRequest    the default request
+     * @param max               the max
+     * @param min               the min
+     * @param item              the item
+     * @return the object
+     */
     private Object commonSetResourceValue(String resourceType, LinkedTreeMap<String, String> defaultLimit, LinkedTreeMap<String, String> defaultRequest, LinkedTreeMap<String, String> max, LinkedTreeMap<String, String> min, Object item) {
         if(item instanceof LimitRangesTemplateItem) {
             LimitRangesTemplateItem serversItem = (LimitRangesTemplateItem) item;
