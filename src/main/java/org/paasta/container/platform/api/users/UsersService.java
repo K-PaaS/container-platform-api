@@ -101,9 +101,9 @@ public class UsersService {
             throw new IllegalArgumentException(MessageConstant.OFFSET_ILLEGALARGUMENT);
         }
 
-        if (SELECTED_ADMINISTRATOR.toLowerCase().equals(userType.toLowerCase())) {
+        if (SELECTED_ADMINISTRATOR.equalsIgnoreCase(userType)) {
             userType = AUTH_CLUSTER_ADMIN;
-        } else if (SELECTED_USER.toLowerCase().equals(userType.toLowerCase())) {
+        } else if (SELECTED_USER.equalsIgnoreCase(userType)) {
             userType = AUTH_USER;
         } else {
             throw new IllegalArgumentException(MessageConstant.USER_TYPE_ILLEGALARGUMENT);
