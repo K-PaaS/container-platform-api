@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.users;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doReturn;
@@ -58,6 +59,8 @@ public class UsersServiceTest {
     private static final String NAMESPACE = "cp-namespace";
     private static final String ALL_NAMESPACES = "all";
     private static final String USER_ID = "paasta";
+    private static final String SERVICE_ACCOUNT_NAME = "paasta-sa";
+    private static final String CREATED = "10-10-10";
     private static final String ROLE = "paas-ta-container-platform-init-role";
     private static final String ADMIN_ROLE = "paas-ta-container-platform-admin-role";
     private static final String SECRET_NAME = "paasta-token-jqrx4";
@@ -100,6 +103,8 @@ public class UsersServiceTest {
     private static HashMap gResultNamesMap = null;
 
     private static ResultStatus gResultStatusModel = null;
+
+    private static List<String> gIgnoreNamespaceList = null;
 
     @Mock
     RestTemplateService restTemplateService;
@@ -152,6 +157,15 @@ public class UsersServiceTest {
         gResultStatusModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
         gResultStatusModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gResultStatusModel.setDetailMessage(CommonStatusCode.OK.getMsg());
+
+        gIgnoreNamespaceList = new ArrayList<String>();
+        gIgnoreNamespaceList.add("default");
+        gIgnoreNamespaceList.add("kubernetes-dashboard");
+        gIgnoreNamespaceList.add("kube-node-lease");
+        gIgnoreNamespaceList.add("kube-public");
+        gIgnoreNamespaceList.add("kube-system");
+        gIgnoreNamespaceList.add("paas-ta-container-platform-temp-namespace");
+        gIgnoreNamespaceList.add("cp-namespace");
     }
 
     @Test
@@ -227,72 +241,92 @@ public class UsersServiceTest {
     }
 
     @Test
-    public void getUsersInMultiNamespace() throws Exception {
-//        UsersList usersList = UsersModel.getResultUsersListWithClusterInfo();
-//
-//        UsersAdmin.UsersDetails usersDetails = new UsersAdmin.UsersDetails();
-//        usersDetails.setUserId("paasta");
-//        usersDetails.setServiceAccountName("paasta");
-//        usersDetails.setCreated("2020-10-13");
-//        usersDetails.setSaSecret("paasta-token-jqrx4");
-//        usersDetails.setCpNamespace("cp-namespace");
-//        usersDetails.setRoleSetCode("paas-ta-container-platform-init-role");
-//        usersDetails.setClusterApiUrl("111.111.111.111:6443");
-//        usersDetails.setClusterToken("eyJhbGciOiJSUzI1NiIsImtpZCI6IktNWmgxVXB3ajgwS0NxZjFWaVZJVGVvTXJoWnZ5dG0tMGExdzNGZjBKX00ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwYWFzLWYxMGU3ZTg4LTQ4YTUtNGUyYy04Yjk5LTZhYmIzY2ZjN2Y2Zi1jYWFzIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6InN1cGVyLWFkbWluLXRva2VuLWtzbXo1Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6InN1cGVyLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMjMwZWQ1OGQtNzc0MC00MDI4LTk0MTEtYTM1MzVhMWM0NjU4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBhYXMtZjEwZTdlODgtNDhhNS00ZTJjLThiOTktNmFiYjNjZmM3ZjZmLWNhYXM6c3VwZXItYWRtaW4ifQ.nxnIJCOH_XVMK71s0gF8bgzSxA7g6_y7hGdboLvSqIAGf9J9AgG1DouP29uShK19fMsl9IdbGODPvtuiBz4QyGLPARZldmlzEyFG3k08UMNay1xX_oK-Fe7atMlYgvoGzyM_5-Zp5dyvnxE2skk524htMGHqW1ZwnHLVxtBg8AuGfMwLW1xahmktsNZDG7pRMasPsj73E85lfavMobBlcs4hwVcZU82gAg0SK1QVe7-Uc2ip_9doNo6_9rGW3FwHdVgUNAeCvPRGV0W1dKJv0IX5e_7fIPIznj2xXcZoHf3BnKfDayDIKJOCdsEsy_2NGi1tiD3UvzDDzZpz02T2sg");
-//
-//        gResultMap.put("metadata", new HashMap<String, String>() {
-//            {
-//                put("name", "paasta-token-jqrx4");
-//                put("uid", "1111111111113");
-//                put("labels", "");
-//            }
-//        });
-//
-//        gResultMap.put("type", "secret");
-//
-//        Secrets secrets = new Secrets();
-//        CommonMetaData commonMetaData = new CommonMetaData();
-//        commonMetaData.setUid("1111111111113");
-//        commonMetaData.setName("paasta-token-jqrx4");
-//        commonMetaData.setLabels(gResultMap);
-//
-//        secrets.setMetadata(commonMetaData);
-//        secrets.setType("secret");
-//
-//        Secrets finalSecrets = secrets;
-//        finalSecrets.setResultCode(Constants.RESULT_STATUS_SUCCESS);
-//        finalSecrets.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
-//        finalSecrets.setHttpStatusCode(CommonStatusCode.OK.getCode());
-//        finalSecrets.setDetailMessage(CommonStatusCode.OK.getMsg());
-//
-//        List<UsersAdmin.UsersDetails> usersDetailsList = new ArrayList<>();
-//        usersDetailsList.add(usersDetails);
-//
-//        UsersAdmin usersAdmin = new UsersAdmin();
-//        usersAdmin.setUsersDetail(usersDetailsList);
-//        UsersAdmin finalUsersAdmin = usersAdmin;
-//        finalUsersAdmin.setResultCode(Constants.RESULT_STATUS_SUCCESS);
-//        finalUsersAdmin.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
-//        finalUsersAdmin.setHttpStatusCode(CommonStatusCode.OK.getCode());
-//        finalUsersAdmin.setDetailMessage(CommonStatusCode.OK.getMsg());
-//
-//
-//        when(restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", USER_ID) , HttpMethod.GET, null, UsersList.class)).thenReturn(usersList);
-//
-//        for (Users users : usersList.getItems()) {
-//            when(propertyService.getIgnoreNamespaceList()).thenReturn(IGNORE_NAMESPACE_LIST);
-//            when(commonService.convert(users, UsersAdmin.UsersDetails.class)).thenReturn(usersDetails);
-//            when(propertyService.getCpMasterApiListSecretsGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/secrets/{name}");
-//            when(restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl().replace("{namespace}", usersDetails.getCpNamespace()).replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
-//
-//            when(commonService.setResultObject(gResultMap, Secrets.class)).thenReturn(secrets);
-//            when(commonService.setResultModel(secrets, RESULT_STATUS_SUCCESS)).thenReturn(finalSecrets);
-//        }
-//
-//        when(commonService.setResultObject(gResultMap, UsersAdmin.class)).thenReturn(usersAdmin);
-//        when(commonService.setResultModel(usersAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalUsersAdmin);
-//
-//        usersService.getUsersInMultiNamespace(USER_ID);
+    public void getUsersInMultiNamespace() {
+        Users usersByDefaultNamespace = new Users();
+
+        usersByDefaultNamespace.setUserId(USER_ID);
+        usersByDefaultNamespace.setServiceAccountName(SERVICE_ACCOUNT_NAME);
+        usersByDefaultNamespace.setCreated(CREATED);
+        usersByDefaultNamespace.setClusterName(CLUSTER);
+        usersByDefaultNamespace.setClusterApiUrl(CLUSTER_API_URL);
+        usersByDefaultNamespace.setClusterToken(CLUSTER_ADMIN_TOKEN);
+
+        when(propertyService.getDefaultNamespace())
+                .thenReturn(NAMESPACE);
+        when(restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS
+                .replace("{cluster:.+}", CLUSTER)
+                .replace("{namespace:.+}", NAMESPACE)
+                .replace("{userId:.+}", USER_ID), HttpMethod.GET, null, Users.class))
+                .thenReturn(usersByDefaultNamespace);
+
+        UsersList list = UsersModel.getResultUsersListWithClusterInfo();
+
+        when(restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", USER_ID), HttpMethod.GET, null, UsersList.class))
+                .thenReturn(list);
+        when(propertyService.getIgnoreNamespaceList())
+                .thenReturn(gIgnoreNamespaceList);
+        when(propertyService.getCpMasterApiListSecretsGetUrl())
+                .thenReturn("/api/v1/namespaces/{namespace}/secrets/{name}");
+        when(restTemplateService.sendAdmin(TARGET_CP_MASTER_API, "/api/v1/namespaces/{namespace}/secrets/{name}".replace("{namespace}", list.getItems().get(0).getCpNamespace()).replace("{name}", list.getItems().get(0).getSaSecret()), HttpMethod.GET, null, Map.class))
+                .thenReturn(gResultMap);
+
+        UsersAdmin usersAdmin = new UsersAdmin();
+
+        usersAdmin.setUserId(usersByDefaultNamespace.getUserId());
+        usersAdmin.setServiceAccountName(usersByDefaultNamespace.getServiceAccountName());
+        usersAdmin.setCreated(usersByDefaultNamespace.getCreated());
+        usersAdmin.setClusterName(usersByDefaultNamespace.getClusterName());
+        usersAdmin.setClusterApiUrl(usersByDefaultNamespace.getClusterApiUrl());
+        usersAdmin.setClusterToken(usersByDefaultNamespace.getClusterToken());
+
+        List<UsersAdmin.UsersDetails> usersDetailsList = new ArrayList<>();
+
+        usersAdmin.setItems(usersDetailsList);
+
+        when(commonService.userListProcessing(usersAdmin, OFFSET, LIMIT, "", "", "", UsersAdmin.class ))
+                .thenReturn(usersAdmin);
+        when(commonService.setResultObject(usersAdmin, UsersAdmin.class))
+                .thenReturn(usersAdmin);
+        when(commonService.setResultModel(usersAdmin, Constants.RESULT_STATUS_SUCCESS))
+                .thenReturn(usersAdmin);
+
+        UsersAdmin result = null;
+
+        try {
+            result = (UsersAdmin) usersService.getUsersInMultiNamespace(CLUSTER, USER_ID, LIMIT, OFFSET);
+        }
+        catch(Exception e) {
+            result = new UsersAdmin();
+        }
+
+        assertThat(result).isNotNull();
+        assertEquals(usersAdmin.getUserId(), result.getUserId());
+        assertEquals(usersAdmin.getServiceAccountName(), result.getServiceAccountName());
+        assertEquals(usersAdmin.getCreated(), result.getCreated());
+        assertEquals(usersAdmin.getClusterName(), result.getClusterName());
+        assertEquals(usersAdmin.getClusterApiUrl(), result.getClusterApiUrl());
+        assertEquals(usersAdmin.getClusterToken(), result.getClusterToken());
+    }
+
+    @Test(expected = Exception.class)
+    public void getUsersInMultiNamespace_Not_Found_Result_Status() {
+        when(propertyService.getDefaultNamespace())
+                .thenReturn(NAMESPACE);
+        when(restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS
+                .replace("{cluster:.+}", CLUSTER)
+                .replace("{namespace:.+}", NAMESPACE)
+                .replace("{userId:.+}", USER_ID), HttpMethod.GET, null, Users.class))
+                .thenThrow(new Exception());
+
+        ResultStatus result = null;
+
+        try {
+            result = (ResultStatus) usersService.getUsersInMultiNamespace(CLUSTER, USER_ID, LIMIT, OFFSET);
+        }
+        catch(Exception e) {
+        }
+
+        assertEquals(Constants.NOT_FOUND_RESULT_STATUS, result);
     }
 
     @Test
@@ -362,53 +396,15 @@ public class UsersServiceTest {
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultStatus.getResultCode());
     }
 
+    @Test
+    public void registerUsers() {
 
-//    @Test
-//    public void registerUsers() {
-//        AccessToken gAccessTokenModel = new AccessToken();
-//        gAccessTokenModel.setCaCertToken("");
-//        gAccessTokenModel.setUserAccessToken("eyJhbGciOiJSUzI1NiIsImtpZCI6IktNWmgxVXB3ajgwS0NxZjFWaVZJVGVvTXJoWnZ5dG0tMGExdzNGZjBKX00ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZW1wLW5hbWVzcGFjZSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJ0ZXN0LXRva2VuLWpxcng0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6InRlc3QiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI3Y2Q0Nzk4OC01YWViLTQ1ODQtYmNmOS04OTkwZTUzNWEzZGIiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6dGVtcC1uYW1lc3BhY2U6dGVzdCJ9.ZEwhnscTtPW6WrQ5I7fFWcsLWEqnilw7I8i7C4aSXElFHd583OQqTYGk8RUJU7UM6b2T8oKstejkLWE9xP3TchYyG5T-omZBCMe00JZIof4tp0MRZLgBhXizYXGvLb2bcMdlcWg2bCCVRO92Hjik-r-vqfaGbsRGx4dT2dk1sI4RA-XDnMsVFJS94V9P58cBupT1gRMrwWStrqlXrbiwgfIlGbU9GXnA07JUCMy-1wUYdMmRaICdj-Q7eNZ5BmKCNsFBcJKaDl5diNw-gSka2F61sywpezU-30sWAtRHYIYZt6PaAaZ4caAdR8f43Yq1m142RWsr3tunLgQ768UNtQ");
-//        gAccessTokenModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
-//        gAccessTokenModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
-//        gAccessTokenModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
-//        gAccessTokenModel.setDetailMessage(CommonStatusCode.OK.getMsg());
-//
-//        Clusters gResultClusterModel = new Clusters();
-//        gResultClusterModel.setClusterApiUrl(CLUSTER_API_URL);
-//        gResultClusterModel.setClusterName(CLUSTER);
-//        gResultClusterModel.setClusterToken(SECRET_TOKEN);
-//
-//        ResultStatus finalRs = new ResultStatus();
-//        finalRs.setResultCode(Constants.RESULT_STATUS_SUCCESS);
-//        finalRs.setResultMessage("200 OK");
-//        finalRs.setHttpStatusCode(CommonStatusCode.OK.getCode());
-//        finalRs.setDetailMessage(CommonStatusCode.OK.getMsg());
-//        finalRs.setNextActionUrl(Constants.URI_USERS);
-//
-//        Users finalUsers = UsersModel2.getResultUserWithClusterInfo();
-//
-//        when(resourceYamlService.createServiceAccount(USER_ID, NAMESPACE)).thenReturn(gResultStatusModel);
-//        when(resourceYamlService.createRoleBinding(USER_ID, NAMESPACE, ROLE)).thenReturn(gResultStatusModel);
-//        when(restTemplateService.getSecretName(NAMESPACE, USER_ID)).thenReturn(SECRET_NAME);
-//
-//        //doCallRealMethod().when(accessTokenService).getSecrets(NAMESPACE, SECRET_NAME);
-//        when(accessTokenService.getSecrets(NAMESPACE, SECRET_NAME)).thenReturn(gAccessTokenModel);
-//
-//        doReturn(gResultClusterModel).when(clustersService).getClusters(CLUSTER);
-//
-//        when(usersService.createUsers(finalUsers)).thenCallRealMethod();
-//
-//        when(commonService.setResultObject(usersService.createUsers(finalUsers), ResultStatus.class)).thenReturn(gResultStatusModel);
-//        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS)).thenReturn(finalRs);
-//
-//        ResultStatus resultStatus = usersService.registerUsers(UsersModel2.getResultUser());
-//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultStatus.getResultCode());
-//    }
+    }
 
-//    @Test
-//    public void modifyUsersAdmin() {
-//
-//    }
+    @Test
+    public void modifyUsersAdmin() {
+
+    }
 
     @Test
     public void deleteUsers() {
