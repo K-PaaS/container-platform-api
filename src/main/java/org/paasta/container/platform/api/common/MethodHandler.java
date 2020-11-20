@@ -229,7 +229,8 @@ public class MethodHandler {
         if (!isExistResource) {
             LOGGER.info("The corresponding resource does not exist:::::::::error");
             //return  new ErrorMessage(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist" );
-            return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '" + requestResource + "' does not exist.");
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_EXIST_RESOURCE, CommonStatusCode.BAD_REQUEST.getCode(),
+                    requestResource + MessageConstant.NOT_EXIST);
         }
 
         for (String temp : yamlArray) {
@@ -322,14 +323,14 @@ public class MethodHandler {
             if (StringUtils.isNotEmpty(updateYamlResourceName) && StringUtils.isNotEmpty(updateYamlResourceNamespace)) {
                 if (updateYamlResourceName.startsWith("kube") || updateYamlResourceNamespace.startsWith("kube")) {
                     LOGGER.info("The prefix 'kube-' is not allowed.':::::::::error");
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The prefix 'kube-' is not allowed.", 422, "The prefix 'kube-' is not allowed.");
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW);
                 } else {
                     break;
                 }
             } else if (StringUtils.isNotEmpty(updateYamlResourceName) && StringUtils.isEmpty(updateYamlResourceNamespace)) {
                 if (updateYamlResourceName.startsWith("kube")) {
                     LOGGER.info("The prefix 'kube-' is not allowed.':::::::::error");
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The prefix 'kube-' is not allowed.", 422, "The prefix 'kube-' is not allowed.");
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW);
                 } else {
                     break;
                 }
@@ -367,7 +368,7 @@ public class MethodHandler {
                     break;
                 } else {
                     LOGGER.info("the namespace of the provided object does not match the namespace sent on the request':::::::::error");
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, "BadRequest", 400, "the namespace of the provided object does not match the namespace sent on the request");
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.name(), CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NOT_MATCH_NAMESPACES);
                 }
             } else {
                 break;
@@ -381,14 +382,14 @@ public class MethodHandler {
         if (!requestResource.equals(resourceKind) ) {
             LOGGER.info("The corresponding resource does not exist:::::::::error");
             //return  new ErrorMessage(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+requestResource+"' does not exist." );
-            return new ResultStatus(Constants.RESULT_STATUS_FAIL, "The corresponding resource does not exist", 400, "Resource Kind '"+ requestResource +"' does not exist." );
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_EXIST_RESOURCE, CommonStatusCode.BAD_REQUEST.getCode(), requestResource + MessageConstant.NOT_EXIST);
         }
 
         if (!resourceName.equals(updateYamlResourceName)) {
             LOGGER.info("Resource name is invalid:::::::::error");
             //return  new ErrorMessage(Constants.RESULT_STATUS_FAIL, "Resource name is invalid.", 400, "This is not an update yaml for the " + requestResource + " name '"+ resourceName + "'." );
             return new ResultStatus(Constants.RESULT_STATUS_FAIL,
-                    "Resource name is invalid.", 400, "This is not an update yaml for the " + requestResource + " name '"+ resourceName + "'." );
+                    MessageConstant.NOT_ALLOWED_RESOURCE_NAME, CommonStatusCode.BAD_REQUEST.getCode(), resourceName + MessageConstant.RESOURCE_NAMED + requestResource + MessageConstant.NOT_UPDATE_YAML);
         }
 
         resourceKind = YamlUtil.parsingYaml(yaml, "kind");
