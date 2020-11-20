@@ -39,10 +39,8 @@ import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.ResourceYamlService;
 import org.paasta.container.platform.api.common.RestTemplateService;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.secret.Secrets;
 
 /**
  *  Users Service Test 클래스
@@ -197,6 +195,20 @@ public class UsersServiceTest {
         Throwable exception = assertThrows(IllegalArgumentException.class, () -> usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_NONE, SEARCH_NAME, LIMIT, OFFSET, ORDER_BY, ORDER));
 
         assertEquals(MessageConstant.USER_TYPE_ILLEGALARGUMENT, exception.getLocalizedMessage());
+    }
+
+    @Test
+    public void getUsersAllByCluster_Limit() {
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> { usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_NONE, SEARCH_NAME, 0, OFFSET, ORDER_BY, ORDER); });
+
+        assertEquals(MessageConstant.MYSQL_LIMIT_ILLEGALARGUMENT, exception.getMessage());
+    }
+
+    @Test
+    public void getUsersAllByCluster_Offset() {
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> { usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_NONE, SEARCH_NAME, LIMIT, -1, ORDER_BY, ORDER); });
+
+        assertEquals(MessageConstant.OFFSET_ILLEGALARGUMENT, exception.getMessage());
     }
 
     @Test
