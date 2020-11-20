@@ -13,6 +13,8 @@ import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersList;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,12 +27,16 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.paasta.container.platform.api.common.Constants.URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID;
 
 @RunWith(SpringRunner.class)
 @TestPropertySource("classpath:application.yml")
 public class RolesServiceTest {
+    private static final String CLUSTER = "test-cluster";
     private static final String NAMESPACE = "test-namespace";
     private static final String ROLE_NAME = "test-role-name";
+    private static final String USER_ID = "test-user-id";
+    private static final String USER_TYPE = "test-user-type";
     private static final String YAML_STRING = "test-yaml-string";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
 
@@ -72,6 +78,9 @@ public class RolesServiceTest {
     private static RolesListAllNamespaces gFinalResultListAllNamespacesModel = null;
     private static RolesListAllNamespaces gFinalResultListAllNamespacesFailModel = null;
 
+    private static List<String> gIgnoreNamespaceList = null;
+
+    private static UsersList gUsersList = null;
 
     @Mock
     RestTemplateService restTemplateService;
@@ -134,22 +143,22 @@ public class RolesServiceTest {
         gResultAdminMap = new HashMap();
         gResultListAdminModel = new RolesListAdmin();
 
-        List<RolesListAdminItem> items = new ArrayList<>();
-        RolesListAdminItem item = new RolesListAdminItem();
-        item.setCreationTimestamp("2020-11-03");
-        item.setName(ROLE_NAME);
-        item.setNamespace(NAMESPACE);
+        List<RolesListAdminItem> rolesListAdminItems = new ArrayList<>();
+        RolesListAdminItem rolesListAdminItem = new RolesListAdminItem();
+        rolesListAdminItem.setCreationTimestamp("2020-11-03");
+        rolesListAdminItem.setName(ROLE_NAME);
+        rolesListAdminItem.setNamespace(NAMESPACE);
 
         CommonMetaData metaData = new CommonMetaData();
         metaData.setCreationTimestamp("2020-11-03");
         metaData.setName(ROLE_NAME);
         metaData.setNamespace(NAMESPACE);
 
-        item.setMetadata(metaData);
+        rolesListAdminItem.setMetadata(metaData);
 
-        items.add(item);
+        rolesListAdminItems.add(rolesListAdminItem);
 
-        gResultListAdminModel.setItems(items);
+        gResultListAdminModel.setItems(rolesListAdminItems);
 
         gFinalResultListAdminModel = new RolesListAdmin();
 
@@ -182,11 +191,56 @@ public class RolesServiceTest {
         // 리스트가져옴
         gResultListAllNamespacesModel = new RolesListAllNamespaces();
 
+        CommonMetaData metadata = new CommonMetaData();
+        metadata.setName(ROLE_NAME);
+        metadata.setNamespace(NAMESPACE);
+
+        RolesListAllNamespaces.RolesListAllNamespacesItem rolesListAllNamespacesItem = new RolesListAllNamespaces.RolesListAllNamespacesItem();
+        rolesListAllNamespacesItem.setMetadata(metadata);
+        rolesListAllNamespacesItem.setName(ROLE_NAME);
+        rolesListAllNamespacesItem.setNamespace(NAMESPACE);
+        rolesListAllNamespacesItem.setCheckYn(Constants.CHECK_Y);
+        rolesListAllNamespacesItem.setUserType(USER_TYPE);
+
+        List<RolesListAllNamespaces.RolesListAllNamespacesItem> items = new ArrayList<RolesListAllNamespaces.RolesListAllNamespacesItem>();
+        items.add(rolesListAllNamespacesItem);
+
+        gResultListAllNamespacesModel.setItems(items);
+
         gFinalResultListAllNamespacesModel = new RolesListAllNamespaces();
         gFinalResultListAllNamespacesModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
         gFinalResultListAllNamespacesFailModel = new RolesListAllNamespaces();
         gFinalResultListAllNamespacesFailModel.setResultCode(Constants.RESULT_STATUS_FAIL);
+
+        gIgnoreNamespaceList = new ArrayList<String>();
+        gIgnoreNamespaceList.add("default");
+        gIgnoreNamespaceList.add("kubernetes-dashboard");
+        gIgnoreNamespaceList.add("kube-node-lease");
+        gIgnoreNamespaceList.add("kube-public");
+        gIgnoreNamespaceList.add("kube-system");
+        gIgnoreNamespaceList.add("paas-ta-container-platform-temp-namespace");
+
+        gUsersList = new UsersList();
+
+        gUsersList.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+        gUsersList.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
+
+        Users users = new Users();
+
+        users.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+        users.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
+        users.setHttpStatusCode(CommonStatusCode.OK.getCode());
+        users.setDetailMessage(CommonStatusCode.OK.getMsg());
+
+        users.setCpNamespace(NAMESPACE);
+        users.setRoleSetCode(ROLE_NAME);
+        users.setUserType(USER_TYPE);
+
+        List<Users> usersList = new ArrayList<Users>();
+        usersList.add(users);
+
+        gUsersList.setItems(usersList);
     }
 
     @Test
@@ -318,6 +372,27 @@ public class RolesServiceTest {
     }
 
     @Test
+    public void getRolesAdminYaml() {
+        //when
+        when(propertyService.getCpMasterApiListRolesGetUrl())
+                .thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles/" + ROLE_NAME, HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML))
+                .thenReturn(YAML_STRING);
+        when(commonService.setResultObject(gResultMap, CommonResourcesYaml.class))
+                .thenReturn(gResultYamlModel);
+        when(commonService.setResultModel(gResultYamlModel, Constants.RESULT_STATUS_SUCCESS))
+                .thenReturn(gFinalResultYamlModel);
+
+        //call method
+        CommonResourcesYaml result =(CommonResourcesYaml) rolesService.getRolesAdminYaml(NAMESPACE, ROLE_NAME, gResultMap);
+
+        //compare result
+        assertEquals(YAML_STRING, result.getSourceTypeYaml());
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+
+    }
+
+    @Test
     public void getRolesListAllNamespacesAdmin() {
         //when
         when(propertyService.getCpMasterApiListRolesListAllNamespacesUrl())
@@ -342,5 +417,34 @@ public class RolesServiceTest {
         //compare result
         assertThat(resultList).isNotNull();
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
+    }
+
+    @Test
+    public void getNamespacesRolesTemplateList() {
+        //when
+        when(propertyService.getCpMasterApiListRolesListAllNamespacesUrl())
+                .thenReturn("/apis/rbac.authorization.k8s.io/v1/roles");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/roles", HttpMethod.GET, null, Map.class))
+                .thenReturn(gResultAdminMap);
+        when(commonService.setResultObject(gResultAdminMap, RolesListAllNamespaces.class))
+                .thenReturn(gResultListAllNamespacesModel);
+        when(propertyService.getIgnoreNamespaceList())
+                .thenReturn(gIgnoreNamespaceList);
+        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID.replace("{cluster:.+}", CLUSTER).replace("{userId:.+}", USER_ID), HttpMethod.GET, null, UsersList.class))
+                .thenReturn(gUsersList);
+        when(commonService.resourceListProcessing(gResultListAllNamespacesModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, RolesListAllNamespaces.class))
+                .thenReturn(gResultListAllNamespacesModel);
+        when(commonService.setResultModel(gResultListAllNamespacesModel, Constants.RESULT_STATUS_SUCCESS))
+                .thenReturn(gFinalResultListAllNamespacesModel);
+
+        RolesListAllNamespaces result = (RolesListAllNamespaces) rolesService.getNamespacesRolesTemplateList(CLUSTER, NAMESPACE, USER_ID,  OFFSET,  LIMIT,  ORDER_BY,  ORDER,  SEARCH_NAME);
+
+        assertThat(result).isNotNull();
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+
+        result = (RolesListAllNamespaces) rolesService.getNamespacesRolesTemplateList(CLUSTER, NAMESPACE, Constants.ALL_USER_ID,  OFFSET, LIMIT,  ORDER_BY,  ORDER, SEARCH_NAME);
+
+        assertThat(result).isNotNull();
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 }
