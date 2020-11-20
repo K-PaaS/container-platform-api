@@ -54,10 +54,8 @@ public class JwtUtil {
 
 		claims.put("IP", authRequest.getClientIp());
 		claims.put("Browser", authRequest.getBrowser());
-		for(Users users : userListByUserId.getItems()) {
-			claims.put(users.getCpNamespace(), users.getSaToken());
+		for(Users users : userListByUserId.getItems())
 			claims.put("url", users.getClusterApiUrl());
-		}
 
 		return doGenerateToken(claims, userDetails.getUsername());
 	}
@@ -113,13 +111,6 @@ public class JwtUtil {
 		String clientIp = String.valueOf(claims.get("IP"));
 
 		return clientIp;
-	}
-
-	public String getSaTokenFromToken(String authToken, String namespace) {
-		Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken).getBody();
-		String saUserToken = String.valueOf(claims.get(namespace));
-
-		return saUserToken;
 	}
 
 	public String extractJwtFromRequest(HttpServletRequest request) {
