@@ -68,7 +68,6 @@ public class UsersServiceTest {
     private static final String ORDER = "desc";
     private static final String SEARCH_NAME = "";
     private static final boolean isAdmin = true;
-    private static final boolean isSuccess = true;
     private static final String isAdminString = "true";
     private static final String isNotAdmin = "false";
 
