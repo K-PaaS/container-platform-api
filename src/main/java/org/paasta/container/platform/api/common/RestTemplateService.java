@@ -1,30 +1,20 @@
 package org.paasta.container.platform.api.common;
 
-import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
-
+import org.paasta.container.platform.api.adminToken.AdminToken;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.exception.CpCommonAPIException;
+import org.paasta.container.platform.api.login.JwtUtil;
+import org.paasta.container.platform.api.users.Users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -32,11 +22,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import org.paasta.container.platform.api.adminToken.AdminToken;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.exception.CpCommonAPIException;
-import org.paasta.container.platform.api.login.JwtUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
 
 /**
  * Rest Template Service 클래스
@@ -218,6 +208,7 @@ public class RestTemplateService {
         String authorization = "";
         String namespace = "";
         String saUserToken = "";
+        String userName = "";
         HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
         String requestUri = request.getRequestURI();
 
@@ -225,11 +216,12 @@ public class RestTemplateService {
         if (Constants.TARGET_CP_MASTER_API.equals(reqApi)) {
             namespace = getNs(requestUri);
             saUserToken = jwtUtil.extractJwtFromRequest(request);
+            userName = jwtUtil.getUsernameFromToken(saUserToken);
             apiUrl = propertyService.getCpMasterApiUrl();
             if(namespace.equals(Constants.NULL_REPLACE_TEXT))
                 authorization = "Bearer " + this.getAdminToken().getTokenValue();
             else
-                authorization = "Bearer " + jwtUtil.getSaTokenFromToken(saUserToken, namespace);
+                authorization = "Bearer " + this.getUserInfo(userName, namespace).getSaToken();
         }
 
         // COMMON API
@@ -309,6 +301,18 @@ public class RestTemplateService {
         }
 
         return adminToken;
+    }
+
+    public Users getUserInfo(String username, String namespace) {
+        this.setApiUrlAuthorization(TARGET_COMMON_API);
+        String reqUrl = Constants.URI_COMMON_API_USERS.replace("{cluster:.+}", "cp-namespace").replace("{namespace:.+}", namespace).replace("{userId:.+}", username);
+        Users users = this.send(TARGET_COMMON_API, reqUrl, HttpMethod.GET, null, Users.class);
+
+        if(Constants.RESULT_STATUS_FAIL.equals(users.getResultCode())) {
+            throw new CpCommonAPIException(users.getResultCode(), CommonStatusCode.NOT_FOUND.getMsg(), 0, users.getResultMessage());
+        }
+
+        return users;
     }
 
 
