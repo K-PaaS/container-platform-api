@@ -5,11 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.paasta.container.platform.api.common.Constants.AUTH_CLUSTER_ADMIN;
-import static org.paasta.container.platform.api.common.Constants.AUTH_USER;
-import static org.paasta.container.platform.api.common.Constants.RESULT_STATUS_SUCCESS;
-import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
-import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
+import static org.paasta.container.platform.api.common.Constants.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,6 +99,7 @@ public class UsersServiceTest {
     private static HashMap gResultNamesMap = null;
 
     private static ResultStatus gResultStatusModel = null;
+    private static ResultStatus gResultFailStatusModel = null;
 
     private static List<String> gIgnoreNamespaceList = null;
 
@@ -157,6 +154,10 @@ public class UsersServiceTest {
         gResultStatusModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
         gResultStatusModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gResultStatusModel.setDetailMessage(CommonStatusCode.OK.getMsg());
+
+        gResultFailStatusModel = new ResultStatus();
+        gResultFailStatusModel.setResultCode(Constants.RESULT_STATUS_FAIL);
+        gResultFailStatusModel.setResultMessage(Constants.RESULT_STATUS_FAIL);
 
         gIgnoreNamespaceList = new ArrayList<String>();
         gIgnoreNamespaceList.add("default");
@@ -398,7 +399,72 @@ public class UsersServiceTest {
 
     @Test
     public void registerUsers() {
+        Users users = new Users();
 
+        List<Users.NamespaceRole> list = new ArrayList<>();
+
+        Users.NamespaceRole role = new Users.NamespaceRole();
+
+        role.setRole(ROLE);
+        role.setNamespace(NAMESPACE);
+
+        list.add(role);
+
+        users.setSelectValues(list);
+        users.setUserId(USER_ID);
+        users.setUserType(Constants.AUTH_USER);
+        users.setCpNamespace(NAMESPACE);
+        users.setServiceAccountName(users.getUserId());
+        users.setRoleSetCode(ROLE);
+        users.setIsActive(CHECK_Y);
+
+        when(resourceYamlService.createServiceAccount(USER_ID, NAMESPACE))
+                .thenReturn(gResultStatusModel);
+        when(resourceYamlService.createRoleBinding(USER_ID, NAMESPACE, ROLE))
+                .thenReturn(gResultStatusModel);
+        when(restTemplateService.getSecretName(NAMESPACE, users.getUserId()))
+                .thenReturn(SECRET_NAME);
+        users.setSaSecret(SECRET_NAME);
+
+        AccessToken accessToken = new AccessToken();
+        accessToken.setUserAccessToken(SECRET_TOKEN);
+
+        when(accessTokenService.getSecrets(NAMESPACE, SECRET_NAME))
+                .thenReturn(accessToken);
+        users.setSaToken(SECRET_TOKEN);
+
+        Clusters clusters = new Clusters();
+
+        clusters.setClusterApiUrl("API_URL");
+        clusters.setClusterName("NAME");
+        clusters.setClusterToken("TOKEN");
+
+        when(clustersService.getClusters(CLUSTER))
+                .thenReturn(clusters);
+        when(restTemplateService.sendAdmin(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class))
+                .thenReturn(gResultStatusModel);
+        when(commonService.setResultObject(gResultStatusModel, ResultStatus.class))
+                .thenReturn(gResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS))
+                .thenReturn(gResultStatusModel);
+
+        ResultStatus resultStatus = (ResultStatus) usersService.registerUsers(users);
+
+        assertThat(resultStatus).isNotNull();
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultStatus.getResultCode());
+
+        // Fail
+        when(restTemplateService.sendAdmin(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class))
+                .thenReturn(gResultFailStatusModel);
+        when(propertyService.getCpMasterApiListUsersDeleteUrl())
+                .thenReturn("/api/v1/namespaces/{namespace}/serviceaccounts/{name}");
+        when(restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", NAMESPACE).replace("{name}", users.getUserId()), HttpMethod.DELETE, null, Object.class, true))
+                .thenReturn(new Object());
+
+        ResultStatus resultFailStatus = (ResultStatus) usersService.registerUsers(users);
+
+        assertThat(resultFailStatus).isNotNull();
+        assertEquals(Constants.RESULT_STATUS_FAIL, resultFailStatus.getResultCode());
     }
 
     @Test
