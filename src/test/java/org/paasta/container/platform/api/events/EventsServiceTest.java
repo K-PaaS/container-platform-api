@@ -69,6 +69,7 @@ public class EventsServiceTest {
     @Test
     public void getEventsList_Valid_ReturnModel() {
         // given
+        TYPE = "node";
         when(eventsServiceMock.generateFieldSelector(TYPE, RESOURCE_UID)).thenReturn("&fieldSelector=involvedObject.name=" + RESOURCE_UID);
         when(propertyService.getCpMasterApiListEventsListAllNamespacesUrl()).thenReturn("/api/v1/events");
         when(eventsServiceMock.generateCpMasterApiListEventsList(TYPE, RESOURCE_UID)).thenReturn("/api/v1/events");
@@ -85,11 +86,12 @@ public class EventsServiceTest {
     }
 
     /**
-     * Resource 의 Events Admin 목록 조회(Get Events Admin list)
+     * Resource 의 Events Admin 목록 조회(Get Events Admin list) Test
      */
     @Test
     public void getEventsListAdmin_Valid_ReturnModel() {
         // given
+        TYPE = "node";
         when(eventsServiceMock.generateFieldSelector(TYPE, RESOURCE_UID)).thenReturn("&fieldSelector=involvedObject.name=" + RESOURCE_UID);
         when(propertyService.getCpMasterApiListEventsListAllNamespacesUrl()).thenReturn("/api/v1/events");
         when(eventsServiceMock.generateCpMasterApiListEventsList(TYPE, RESOURCE_UID)).thenReturn("/api/v1/events");
@@ -106,11 +108,12 @@ public class EventsServiceTest {
     }
 
     /**
-     * 특정 Namespace 의 전체 Events 목록 조회(Get Events list in a Namespace)
+     * 특정 Namespace 의 전체 Events 목록 조회(Get Events list in a Namespace) Test
      */
     @Test
     public void getNamespaceEventsList_Valid_ReturnModel() {
         // given
+        TYPE = "node";
         when(propertyService.getCpMasterApiListEventsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/events");
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/events?limit=5", HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, EventsList.class)).thenReturn(gResultListModel);
@@ -124,7 +127,7 @@ public class EventsServiceTest {
     }
 
     /**
-     * 특정 Namespace 의 전체 Events 목록 조회(Get Events list in a Namespace)
+     * 특정 Namespace 의 전체 Events 목록 조회(Get Events list in a Namespace) Test
      */
     @Test
     public void getNamespaceEventsListAdmin_Valid_ReturnModel() {
@@ -159,7 +162,7 @@ public class EventsServiceTest {
     }
 
     /**
-     * Field Selector Parameter 생성 (Generate Field Selector Parameter)
+     * Field Selector Parameter 생성 (Generate Field Selector Parameter) Test
      * TYPE = node
      */
     @Test
@@ -176,7 +179,7 @@ public class EventsServiceTest {
     }
 
     /**
-     * Node와 타 리소스의 Event 목록 조회 Endpoint 구분 (Separate Endpoints  from Nodes and Other Resources)
+     * Node와 타 리소스의 Event 목록 조회 Endpoint 구분 (Separate Endpoints  from Nodes and Other Resources) Test
      * TYPE = null
      */
     @Test
@@ -194,7 +197,7 @@ public class EventsServiceTest {
     }
 
     /**
-     * Node와 타 리소스의 Event 목록 조회 Endpoint 구분 (Separate Endpoints  from Nodes and Other Resources)
+     * Node와 타 리소스의 Event 목록 조회 Endpoint 구분 (Separate Endpoints  from Nodes and Other Resources) Test
      * TYPE = node
      */
     @Test

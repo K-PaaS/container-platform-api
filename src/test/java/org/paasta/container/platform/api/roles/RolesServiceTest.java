@@ -5,10 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.clusters.namespaces.Namespaces;
+import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
@@ -261,6 +259,24 @@ public class RolesServiceTest {
     }
 
     @Test
+    public void getRolesListAdmin() {
+        //when
+        when(propertyService.getCpMasterApiListRolesListUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
+
+        when(commonService.setResultObject(gResultAdminMap, RolesListAdmin.class)).thenReturn(gResultListAdminModel);
+        when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, RolesListAdmin.class)).thenReturn(gResultListAdminModel);
+        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
+
+        //call method
+        RolesListAdmin resultList = (RolesListAdmin) rolesService.getRolesListAdmin(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
+
+        //compare result
+        assertThat(resultList).isNotNull();
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
+    }
+
+    @Test
     public void getRoles() {
         //when
         when(propertyService.getCpMasterApiListRolesGetUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
@@ -277,6 +293,22 @@ public class RolesServiceTest {
     }
 
     @Test
+    public void getRolesAdmin() {
+        //when
+        when(propertyService.getCpMasterApiListRolesGetUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles/" + ROLE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+        when(commonService.setResultObject(gResultMap, RolesAdmin.class)).thenReturn(gResultAdminModel);
+        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
+
+        //call method
+        RolesAdmin result = (RolesAdmin) rolesService.getRolesAdmin(NAMESPACE, ROLE_NAME);
+
+        //compare result
+        assertThat(result).isNotNull();
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+    }
+
+    @Test
     public void getRolesYaml() {
         //when
         when(propertyService.getCpMasterApiListRolesGetUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
@@ -286,6 +318,22 @@ public class RolesServiceTest {
 
         //call method
         CommonResourcesYaml result = (CommonResourcesYaml) rolesService.getRolesYaml(NAMESPACE, ROLE_NAME, gResultMap);
+
+        //compare result
+        assertEquals(YAML_STRING, result.getSourceTypeYaml());
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+    }
+
+    @Test
+    public void getRolesAdminYaml(){
+        //when
+        when(propertyService.getCpMasterApiListRolesGetUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles/" + ROLE_NAME, HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML)).thenReturn(YAML_STRING);
+        when(commonService.setResultObject(gResultMap, CommonResourcesYaml.class)).thenReturn(gResultYamlModel);
+        when(commonService.setResultModel(gResultYamlModel,Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultYamlModel);
+
+        //call method
+        CommonResourcesYaml result = (CommonResourcesYaml) rolesService.getRolesAdminYaml(NAMESPACE, ROLE_NAME, gResultMap);
 
         //compare result
         assertEquals(YAML_STRING, result.getSourceTypeYaml());
@@ -337,60 +385,6 @@ public class RolesServiceTest {
         assertEquals(gFinalResultStatusModel, result);
     }
 
-    @Test
-    public void getRolesListAdmin() {
-        //when
-        when(propertyService.getCpMasterApiListRolesListUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
-
-        when(commonService.setResultObject(gResultAdminMap, RolesListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, RolesListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
-
-        //call method
-        RolesListAdmin resultList = (RolesListAdmin) rolesService.getRolesListAdmin(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
-
-        //compare result
-        assertThat(resultList).isNotNull();
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
-    }
-
-    @Test
-    public void getRolesAdmin() {
-        //when
-        when(propertyService.getCpMasterApiListRolesGetUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles/" + ROLE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
-        when(commonService.setResultObject(gResultMap, RolesAdmin.class)).thenReturn(gResultAdminModel);
-        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
-
-        //call method
-        RolesAdmin result = (RolesAdmin) rolesService.getRolesAdmin(NAMESPACE, ROLE_NAME);
-
-        //compare result
-        assertThat(result).isNotNull();
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
-    }
-
-    @Test
-    public void getRolesAdminYaml() {
-        //when
-        when(propertyService.getCpMasterApiListRolesGetUrl())
-                .thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles/" + ROLE_NAME, HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML))
-                .thenReturn(YAML_STRING);
-        when(commonService.setResultObject(gResultMap, CommonResourcesYaml.class))
-                .thenReturn(gResultYamlModel);
-        when(commonService.setResultModel(gResultYamlModel, Constants.RESULT_STATUS_SUCCESS))
-                .thenReturn(gFinalResultYamlModel);
-
-        //call method
-        CommonResourcesYaml result =(CommonResourcesYaml) rolesService.getRolesAdminYaml(NAMESPACE, ROLE_NAME, gResultMap);
-
-        //compare result
-        assertEquals(YAML_STRING, result.getSourceTypeYaml());
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
-
-    }
 
     @Test
     public void getRolesListAllNamespacesAdmin() {
