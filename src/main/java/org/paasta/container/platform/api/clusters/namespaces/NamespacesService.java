@@ -374,6 +374,9 @@ public class NamespacesService {
         List<String> returnNamespaceList = new ArrayList<>();
         NamespacesListSupport namespacesListSupport = new NamespacesListSupport();
 
+        // all namespaces
+        returnNamespaceList.add(ALL_NAMESPACES);
+
         for (NamespacesListAdminItem n : namespaceItem) {
             returnNamespaceList.add(n.getName());
         }
