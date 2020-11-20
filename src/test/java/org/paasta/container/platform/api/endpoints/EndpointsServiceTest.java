@@ -10,11 +10,13 @@ import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.endpoints.support.EndpointAddress;
+import org.paasta.container.platform.api.endpoints.support.EndpointPort;
 import org.paasta.container.platform.api.endpoints.support.EndpointSubset;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class EndpointsServiceTest {
 
     private static List<EndpointAddress> gResultListEndpointAddressModel = null;
 
+    private static List<EndpointSubset> gResultSubsetListModel;
     @Mock
     RestTemplateService restTemplateService;
 
@@ -67,6 +70,8 @@ public class EndpointsServiceTest {
         gResultAdminModel = new EndpointsAdmin();
         gFinalResultAdminModel = new EndpointsAdmin();
         gFinalResultAdminModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+
+        gResultSubsetListModel = new ArrayList<>();
     }
 
     /**
@@ -114,6 +119,32 @@ public class EndpointsServiceTest {
      */
     @Test
     public void endpointsAdminProcessing_Valid_ReturnModel() {
+
+        //given
+        EndpointsAdmin endpointsAdmin = new EndpointsAdmin();
+        List<EndpointAddress> notReadyAddresses = new ArrayList<>();
+        List<EndpointPort> ports;
+
+        EndpointAddress endpointAddress = new EndpointAddress();
+        endpointAddress.setIp("10.244.1.11");
+        endpointAddress.setNodeName("paasta-cp-k8s-worker-003");
+
+        List<EndpointAddress> addresses = new ArrayList<>();
+        addresses.add(endpointAddress);
+
+        EndpointSubset endpointSubset = new EndpointSubset();
+        endpointSubset.setAddresses(addresses);
+
+        List<EndpointSubset> subsets = new ArrayList<>();
+        subsets.add(endpointSubset);
+
+        endpointsAdmin.setSubsets(subsets);
+
+        when(endpointsAdmin.getSubsets()).thenReturn(gResultSubsetListModel);
+
+
+
+
 
     }
 }
