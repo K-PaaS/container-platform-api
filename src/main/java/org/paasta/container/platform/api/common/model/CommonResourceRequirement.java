@@ -15,4 +15,5 @@ import java.util.Map;
 public class CommonResourceRequirement {
     private Map<String, Object> limits;
     private Map<String, Object> requests;
+    private Map<String, Object> usage;
 }

@@ -2,13 +2,13 @@ package org.paasta.container.platform.api.workloads.pods;
 
 
 import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonContainer;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.workloads.pods.support.ContainerStatusesItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,11 +63,63 @@ public class PodsService {
                 , HttpMethod.GET, null, Map.class);
 
         PodsList podsList = commonService.setResultObject(responseMap, PodsList.class);
+        podsList = getPodsMetricList(namespace, podsList);
         podsList = commonService.resourceListProcessing(podsList, offset, limit, orderBy, order, searchName, PodsList.class);
 
         return (PodsList) commonService.setResultModel(podsList, Constants.RESULT_STATUS_SUCCESS);
     }
 
+    /**
+     * Pods Metric정보 조회(Get Pods Metric List)
+     *
+     * @param namespace  the namespace
+     * @param podsList   the podsList
+     * @return the pods list
+     */
+    public PodsList getPodsMetricList(String namespace, PodsList podsList) {
+        HashMap responseMap = (HashMap) restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+                Constants.URI_METRIC_API_BASIC.replace("{namespace}", namespace)
+                , HttpMethod.GET, null, Map.class);
+        PodsMetric podsMetrics = commonService.setResultObject(responseMap, PodsMetric.class);
+
+        getMergeMetric(podsList, podsMetrics);
+
+        return podsList;
+    }
+
+    /**
+     * Pods Metric정보 병합(Merge Pods Metric List)
+     *
+     * @param podsList  the podsList
+     * @param podsMetrics   the podsMetrics
+     */
+    private void getMergeMetric(PodsList podsList, PodsMetric podsMetrics) {
+        Pods pods = null;
+        PodsUsage podsUsage = null;
+        CommonContainer container = null;
+        Containers containerUsage = null;
+        HashMap hm = null;
+        for(int i=0;i<podsList.getItems().size();i++) {
+            pods = podsList.getItems().get(i);
+            for(int t=0;t<podsMetrics.getItems().size();t++) {
+                podsUsage = podsMetrics.getItems().get(t);
+                if(pods.getMetadata().getName().equals(podsUsage.getMetadata().getName())) {
+                    for(int u=0;u<pods.getSpec().getContainers().size();u++){
+                        container =  pods.getSpec().getContainers().get(u);
+                        for(int y=0;y<podsUsage.getContainers().size();y++){
+                            containerUsage = podsUsage.getContainers().get(y);
+                            if(container.getName().equals(containerUsage.getName())){
+                                hm = new HashMap();
+                                hm.put("cpu",containerUsage.getUsage().getCpu());
+                                hm.put("memory",containerUsage.getUsage().getMemory());
+                                container.getResources().setUsage(hm);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Pods 목록 조회(Get Pods list)
