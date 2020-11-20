@@ -22,7 +22,7 @@ public class LimitRangesAdmin {
     private String name;
     private String namespace;
     private String creationTimestamp;
-    private List<LimitRangesItem> limits;
+    private List<LimitRangesItem> items;
 
     @JsonIgnore
     private CommonMetaData metadata;
@@ -85,10 +85,14 @@ public class LimitRangesAdmin {
         this.creationTimestamp = creationTimestamp;
     }
 
-    public List<LimitRangesItem> getLimits() { return spec.getLimits(); }
 
-    public void setLimits(List<LimitRangesItem> limits) { this.limits = limits; }
+    public List<LimitRangesItem> getItems() {
+        return items;
+    }
 
+    public void setItems(List<LimitRangesItem> items) {
+        this.items = items;
+    }
 
     public CommonMetaData getMetadata() {
         return metadata;
