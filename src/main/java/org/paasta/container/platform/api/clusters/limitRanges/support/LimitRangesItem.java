@@ -20,13 +20,14 @@ import org.paasta.container.platform.api.common.Constants;
  */
 @Data
 public class LimitRangesItem {
-    @SerializedName("default")
-    private Object defaultLimit;
-    private Object defaultRequest;
-    private Object min;
-    private Object max;
     private String type;
     private String resource;
+    private Object min;
+    private Object max;
+    private Object defaultRequest;
+
+    @SerializedName("default")
+    private Object defaultLimit;
 
     public Object getDefaultLimit() {
         return (StringUtils.isEmpty(defaultLimit)) ? new HashMap<String, String>() {{
