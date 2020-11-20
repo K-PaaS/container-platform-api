@@ -1,31 +1,21 @@
 package org.paasta.container.platform.api.clusters.limitRanges;
 
-import static org.paasta.container.platform.api.common.Constants.CHECK_N;
-import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.internal.LinkedTreeMap;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.CommonUtils;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
-import org.paasta.container.platform.api.common.model.ResultStatus;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.paasta.container.platform.api.common.Constants.CHECK_N;
+import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
 
 /**
  * LimitRanges Service 클래스
@@ -162,7 +152,41 @@ public class LimitRangesService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, LimitRangesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        LimitRangesAdmin limitRangesAdmin = commonService.setResultObject(responseMap, LimitRangesAdmin.class);
+        List<LimitRangesItem> limits = limitRangesAdmin.getSpec().getLimits();
+        List<LimitRangesItem> serversItemList = new ArrayList<>();
+
+
+        for (LimitRangesItem item:limits) {
+            List<String> typeList = Constants.LIMIT_RANGE_TYPE_LIST;
+
+            for (String type : typeList) {
+                if(type.equals(item.getType())) {
+                    if(Constants.LIMIT_RANGE_TYPE_CONTAINER.equals(type) || Constants.LIMIT_RANGE_TYPE_POD.equals(type)) {
+                        for (String resourceType : Constants.SUPPORTED_RESOURCE_LIST) {
+                            LimitRangesItem serversItem = new LimitRangesItem();
+                            serversItem = (LimitRangesItem) getLimitRangesTemplateItem(limitRangesAdmin.getName(), limitRangesAdmin.getCreationTimestamp(), type, resourceType, item, serversItem);
+
+                            if(!serversItem.getDefaultLimit().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getDefaultRequest().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMax().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMin().equals(Constants.NULL_REPLACE_TEXT)) {
+                                serversItemList.add(serversItem);
+                            }
+                        }
+                    } else {
+                        String resourceType = Constants.SUPPORTED_RESOURCE_STORAGE;
+                        LimitRangesItem serversItem = new LimitRangesItem();
+                        serversItem = (LimitRangesItem) getLimitRangesTemplateItem(limitRangesAdmin.getName(), limitRangesAdmin.getCreationTimestamp(), type, resourceType, item, serversItem);
+
+                        if(!serversItem.getDefaultLimit().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getDefaultRequest().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMax().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMin().equals(Constants.NULL_REPLACE_TEXT)) {
+                            serversItemList.add(serversItem);
+                        }
+                    }
+                }
+            }
+        }
+
+        limitRangesAdmin.setItems(serversItemList);
+
+        return commonService.setResultModel(commonService.setResultObject(limitRangesAdmin, LimitRangesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
@@ -277,7 +301,8 @@ public class LimitRangesService {
                             if(type.equals(item.getType())) {
                                 if(Constants.LIMIT_RANGE_TYPE_CONTAINER.equals(type) || Constants.LIMIT_RANGE_TYPE_POD.equals(type)) {
                                     for (String resourceType : Constants.SUPPORTED_RESOURCE_LIST) {
-                                        LimitRangesTemplateItem serversItem = getLimitRangesTemplateItem(i, type, resourceType, item);
+                                        LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
+                                        serversItem = (LimitRangesTemplateItem) getLimitRangesTemplateItem(i.getName(), i.getCreationTimestamp(), type, resourceType, item, serversItem);
 
                                         if(!serversItem.getDefaultLimit().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getDefaultRequest().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMax().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMin().equals(Constants.NULL_REPLACE_TEXT)) {
                                             serversItemList.add(serversItem);
@@ -285,7 +310,8 @@ public class LimitRangesService {
                                     }
                                 } else {
                                     String resourceType = Constants.SUPPORTED_RESOURCE_STORAGE;
-                                    LimitRangesTemplateItem serversItem = getLimitRangesTemplateItem(i, type, resourceType, item);
+                                    LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
+                                    serversItem = (LimitRangesTemplateItem) getLimitRangesTemplateItem(i.getName(), i.getCreationTimestamp(), type, resourceType, item, serversItem);
 
                                     if(!serversItem.getDefaultLimit().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getDefaultRequest().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMax().equals(Constants.NULL_REPLACE_TEXT) || !serversItem.getMin().equals(Constants.NULL_REPLACE_TEXT)) {
                                         serversItemList.add(serversItem);
@@ -369,27 +395,29 @@ public class LimitRangesService {
     }
 
 
+
     /**
      * 존재하는 각 Type과 Resource Type별로 LimitRanges 자원 설정 값 셋팅
      *
-     * @param listAdminItem the list admin item
-     * @param type          the type
-     * @param resourceType  the resource type
-     * @param item          the item
+     * @param name              the name
+     * @param creationTimestamp the creationTimestamp
+     * @param type              the type
+     * @param resourceType      the resource type
+     * @param item              the item
      * @return the limitRangesTemplateItem
      */
-    private LimitRangesTemplateItem getLimitRangesTemplateItem(LimitRangesListAdminItem listAdminItem, String type, String resourceType, LimitRangesItem item) {
+    private Object getLimitRangesTemplateItem(String name, String creationTimestamp, String type, String resourceType, LimitRangesItem item, Object object) {
         LinkedTreeMap<String, String> defaultLimit = null;
         LinkedTreeMap<String, String> defaultRequest = null;
         LinkedTreeMap<String, String> max = null;
         LinkedTreeMap<String, String> min = null;
 
-        if(!item.getDefaultRequest().equals("-")) {
-            defaultLimit = (LinkedTreeMap) item.getDefaultRequest();
+        if(!item.getDefaultLimit().equals("-")) {
+            defaultLimit = (LinkedTreeMap) item.getDefaultLimit();
         }
 
-        if(!item.getDefaultLimit().equals("-")) {
-            defaultRequest = (LinkedTreeMap) item.getDefaultLimit();
+        if(!item.getDefaultRequest().equals("-")) {
+            defaultRequest = (LinkedTreeMap) item.getDefaultRequest();
         }
 
         if(!item.getMax().equals("-")) {
@@ -400,70 +428,148 @@ public class LimitRangesService {
             min = (LinkedTreeMap) item.getMin();
         }
 
-        LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
-        CommonMetaData metadata = new CommonMetaData();
-        metadata.setCreationTimestamp(listAdminItem.getCreationTimestamp());
-        serversItem.setName(listAdminItem.getName());
-        serversItem.setType(type);
-        serversItem.setResource(resourceType);
-        serversItem.setCheckYn(CHECK_Y);
-        serversItem.setCreationTimestamp(listAdminItem.getCreationTimestamp());
-        serversItem.setMetadata(metadata);
+        if(object instanceof LimitRangesTemplateItem) {
+            LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
+            CommonMetaData metadata = new CommonMetaData();
+            metadata.setCreationTimestamp(creationTimestamp);
+            serversItem.setName(name);
+            serversItem.setType(type);
+            serversItem.setResource(resourceType);
+            serversItem.setCheckYn(CHECK_Y);
+            serversItem.setCreationTimestamp(creationTimestamp);
+            serversItem.setMetadata(metadata);
 
-        if(defaultLimit != null) {
-            for (String mapKey : defaultLimit.keySet()) {
-                if(resourceType.equals(mapKey)) {
-                    serversItem.setDefaultLimit(defaultLimit.get(mapKey));
-                    break;
-                } else {
-                    serversItem.setDefaultLimit(Constants.NULL_REPLACE_TEXT);
-                }
-            }
+            serversItem = (LimitRangesTemplateItem) commonSetResourceValue(resourceType, defaultLimit, defaultRequest, max, min, serversItem);
+
+            return serversItem;
+
         } else {
-            serversItem.setDefaultLimit(Constants.NULL_REPLACE_TEXT);
-        }
+            LimitRangesItem rangesItem = new LimitRangesItem();
+            rangesItem.setType(type);
+            rangesItem.setResource(resourceType);
 
-        if(defaultRequest != null) {
-            for (String mapKey : defaultRequest.keySet()) {
-                if(resourceType.equals(mapKey)) {
-                    serversItem.setDefaultRequest(defaultRequest.get(mapKey));
-                    break;
-                } else {
-                    serversItem.setDefaultRequest(Constants.NULL_REPLACE_TEXT);
-                }
-            }
-        } else {
-            serversItem.setDefaultRequest(Constants.NULL_REPLACE_TEXT);
-        }
+            rangesItem = (LimitRangesItem) commonSetResourceValue(resourceType, defaultLimit, defaultRequest, max, min, rangesItem);
 
-        if(min != null) {
-            for (String mapKey : min.keySet()) {
-                if(resourceType.equals(mapKey)) {
-                    serversItem.setMin(min.get(mapKey));
-                    break;
-                } else {
-                    serversItem.setMin(Constants.NULL_REPLACE_TEXT);
-                }
-            }
-        } else {
-            serversItem.setMin(Constants.NULL_REPLACE_TEXT);
+            return rangesItem;
         }
-
-        if(max != null) {
-            for (String mapKey : max.keySet()) {
-                if(resourceType.equals(mapKey)) {
-                    serversItem.setMax(max.get(mapKey));
-                    break;
-                } else {
-                    serversItem.setMax(Constants.NULL_REPLACE_TEXT);
-                }
-            }
-        } else {
-            serversItem.setMax(Constants.NULL_REPLACE_TEXT);
-        }
-
-        return serversItem;
     }
 
+
+    private Object commonSetResourceValue(String resourceType, LinkedTreeMap<String, String> defaultLimit, LinkedTreeMap<String, String> defaultRequest, LinkedTreeMap<String, String> max, LinkedTreeMap<String, String> min, Object item) {
+        if(item instanceof LimitRangesTemplateItem) {
+            LimitRangesTemplateItem serversItem = (LimitRangesTemplateItem) item;
+
+            if(defaultLimit != null) {
+                for (String mapKey : defaultLimit.keySet()) {
+                    if(resourceType.equals(mapKey)) {
+                        serversItem.setDefaultLimit(defaultLimit.get(mapKey));
+                        break;
+                    } else {
+                        serversItem.setDefaultLimit(Constants.NULL_REPLACE_TEXT);
+                    }
+                }
+            } else {
+                serversItem.setDefaultLimit(Constants.NULL_REPLACE_TEXT);
+            }
+
+            if(defaultRequest != null) {
+                for (String mapKey : defaultRequest.keySet()) {
+                    if(resourceType.equals(mapKey)) {
+                        serversItem.setDefaultRequest(defaultRequest.get(mapKey));
+                        break;
+                    } else {
+                        serversItem.setDefaultRequest(Constants.NULL_REPLACE_TEXT);
+                    }
+                }
+            } else {
+                serversItem.setDefaultRequest(Constants.NULL_REPLACE_TEXT);
+            }
+
+            if(min != null) {
+                for (String mapKey : min.keySet()) {
+                    if(resourceType.equals(mapKey)) {
+                        serversItem.setMin(min.get(mapKey));
+                        break;
+                    } else {
+                        serversItem.setMin(Constants.NULL_REPLACE_TEXT);
+                    }
+                }
+            } else {
+                serversItem.setMin(Constants.NULL_REPLACE_TEXT);
+            }
+
+            if(max != null) {
+                for (String mapKey : max.keySet()) {
+                    if(resourceType.equals(mapKey)) {
+                        serversItem.setMax(max.get(mapKey));
+                        break;
+                    } else {
+                        serversItem.setMax(Constants.NULL_REPLACE_TEXT);
+                    }
+                }
+            } else {
+                serversItem.setMax(Constants.NULL_REPLACE_TEXT);
+            }
+
+            return serversItem;
+        } else {
+            LimitRangesItem serversItem = (LimitRangesItem) item;
+
+            if(defaultLimit != null) {
+                for (String mapKey : defaultLimit.keySet()) {
+                    if(resourceType.equals(mapKey)) {
+                        serversItem.setDefaultLimit(defaultLimit.get(mapKey));
+                        break;
+                    } else {
+                        serversItem.setDefaultLimit(Constants.NULL_REPLACE_TEXT);
+                    }
+                }
+            } else {
+                serversItem.setDefaultLimit(Constants.NULL_REPLACE_TEXT);
+            }
+
+            if(defaultRequest != null) {
+                for (String mapKey : defaultRequest.keySet()) {
+                    if(resourceType.equals(mapKey)) {
+                        serversItem.setDefaultRequest(defaultRequest.get(mapKey));
+                        break;
+                    } else {
+                        serversItem.setDefaultRequest(Constants.NULL_REPLACE_TEXT);
+                    }
+                }
+            } else {
+                serversItem.setDefaultRequest(Constants.NULL_REPLACE_TEXT);
+            }
+
+            if(min != null) {
+                for (String mapKey : min.keySet()) {
+                    if(resourceType.equals(mapKey)) {
+                        serversItem.setMin(min.get(mapKey));
+                        break;
+                    } else {
+                        serversItem.setMin(Constants.NULL_REPLACE_TEXT);
+                    }
+                }
+            } else {
+                serversItem.setMin(Constants.NULL_REPLACE_TEXT);
+            }
+
+            if(max != null) {
+                for (String mapKey : max.keySet()) {
+                    if(resourceType.equals(mapKey)) {
+                        serversItem.setMax(max.get(mapKey));
+                        break;
+                    } else {
+                        serversItem.setMax(Constants.NULL_REPLACE_TEXT);
+                    }
+                }
+            } else {
+                serversItem.setMax(Constants.NULL_REPLACE_TEXT);
+            }
+
+            return serversItem;
+        }
+
+    }
 
 }

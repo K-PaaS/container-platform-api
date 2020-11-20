@@ -101,9 +101,9 @@ public class UsersService {
             throw new IllegalArgumentException(MessageConstant.OFFSET_ILLEGALARGUMENT);
         }
 
-        if (SELECTED_ADMINISTRATOR.toLowerCase().equals(userType.toLowerCase())) {
+        if (SELECTED_ADMINISTRATOR.equalsIgnoreCase(userType)) {
             userType = AUTH_CLUSTER_ADMIN;
-        } else if (SELECTED_USER.toLowerCase().equals(userType.toLowerCase())) {
+        } else if (SELECTED_USER.equalsIgnoreCase(userType)) {
             userType = AUTH_USER;
         } else {
             throw new IllegalArgumentException(MessageConstant.USER_TYPE_ILLEGALARGUMENT);
@@ -410,16 +410,13 @@ public class UsersService {
                 restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + Constants.NULL_REPLACE_TEXT + defaultRole + "-binding"), HttpMethod.DELETE, null, Object.class, true);
                 resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, newRole);
 
-                updateUser.setUserId(users.getUserId());
-                updateUser.setPassword(users.getPassword());
-                updateUser.setEmail(users.getEmail());
                 updateUser.setRoleSetCode(newRole);
                 updateUser.setSaToken(accessTokenService.getSecrets(namespace, updateUser.getSaSecret()).getUserAccessToken());
-            } else {
-                updateUser.setUserId(users.getUserId());
-                updateUser.setPassword(users.getPassword());
-                updateUser.setEmail(users.getEmail());
             }
+
+            updateUser.setUserId(users.getUserId());
+            updateUser.setPassword(users.getPassword());
+            updateUser.setEmail(users.getEmail());
 
             rsDb = createUsers(updateUser);
         }
