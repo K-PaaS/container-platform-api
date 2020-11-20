@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatus;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
@@ -16,7 +17,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,11 +53,18 @@ public class ResourceQuotasServiceTest {
     private static ResourceQuotasList gFinalResultListFailModel = null;
 
     private static ResourceQuotas gResultModel = null;
+    private static List<ResourceQuotas> gResultListArrayModel = null;
     private static ResourceQuotas gFinalResultModel = null;
 
+    private static ResourceQuotasStatus gStatusModel = null;
+    private static ResourceQuotasStatus gStatusAdminModel = null;
+
     private static ResourceQuotasListAdmin gResultListAdminModel = null;
+    private static ResourceQuotasListAdminItem gResultListAdminItemModel = null;
+    private static List<ResourceQuotasListAdminItem> gResultListAdminItemListModel = null;
     private static ResourceQuotasListAdmin gFinalResultListAdminModel = null;
     private static ResourceQuotasListAdmin gFinalResultListAdminFailModel = null;
+
 
     private static ResourceQuotasAdmin gResultAdminModel = null;
     private static ResourceQuotasAdmin gFinalResultAdminModel = null;
@@ -66,6 +76,8 @@ public class ResourceQuotasServiceTest {
     private static ResultStatus gResultStatusModel = null;
     private static ResultStatus gResultFailModel = null;
     private static ResultStatus gFinalResultStatusModel = null;
+
+
 
     @Mock
     RestTemplateService restTemplateService;
@@ -83,6 +95,8 @@ public class ResourceQuotasServiceTest {
     public void setUp() {
         gResultMap = new HashMap();
 
+        gStatusModel = new ResourceQuotasStatus();
+
         gResultStatusModel = new ResultStatus();
         gResultStatusModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
         gResultStatusModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
@@ -96,9 +110,37 @@ public class ResourceQuotasServiceTest {
         gFinalResultStatusModel.setDetailMessage(CommonStatusCode.OK.getMsg());
         gFinalResultStatusModel.setNextActionUrl(Constants.URI_RESOURCE_QUOTAS);
 
-        // 리스트가져옴
+        gResultModel = new ResourceQuotas();
         gResultListModel = new ResourceQuotasList();
 
+
+        // list
+        Map<String, String> map = new HashMap<>();
+        gStatusModel = new ResourceQuotasStatus();
+        gStatusModel.setUsed(map);
+        gStatusModel.setHard(map);
+
+        gResultModel.setStatus(gStatusModel);
+
+
+        gResultListArrayModel = new ArrayList<>();
+        gResultListArrayModel.add(0, gResultModel);
+
+        gResultListModel.setItems(gResultListArrayModel);
+
+        // list Admin
+//        Map<String, String> mapAdmin = new HashMap<>();
+//        gStatusAdminModel = new ResourceQuotasStatus();
+//        gStatusAdminModel.setUsed(mapAdmin);
+//        gStatusAdminModel.setHard(mapAdmin);
+//
+//
+//        gResultListAdminItemModel.setStatus(gStatusAdminModel);
+//        gResultListAdminItemListModel = new ArrayList<>();
+//        gResultListAdminItemListModel.add(0, gResultListAdminItemModel);
+//        gResultListAdminModel.setItems(gResultListAdminItemListModel);
+
+        // 리스트가져옴
         gFinalResultListModel = new ResourceQuotasList();
         gFinalResultListModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
@@ -106,7 +148,6 @@ public class ResourceQuotasServiceTest {
         gFinalResultListFailModel.setResultCode(Constants.RESULT_STATUS_FAIL);
 
         // 하나만 가져옴
-        gResultModel = new ResourceQuotas();
         gFinalResultModel = new ResourceQuotas();
         gFinalResultModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
@@ -228,7 +269,7 @@ public class ResourceQuotasServiceTest {
     @Test
     public void getResourceQuotas_Yaml_Valid_ReturnModel() {
         //when
-        when(propertyService.getCpMasterApiListResourceQuotasGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas{name}");
+        when(propertyService.getCpMasterApiListResourceQuotasGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas/{name}");
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas/" + RESOURCE_QUOTA_NAME, HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML)).thenReturn(YAML_STRING);
         when(commonService.setResultObject(gResultMap, CommonResourcesYaml.class)).thenReturn(gResultYamlModel);
         when(commonService.setResultModel(gResultYamlModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultYamlModel);
