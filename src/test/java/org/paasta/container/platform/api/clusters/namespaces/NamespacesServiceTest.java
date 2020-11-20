@@ -5,11 +5,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.paasta.container.platform.api.accessInfo.AccessToken;
+import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasList;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
+import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -45,7 +45,10 @@ public class NamespacesServiceTest {
     private static final String SEARCH_NAME = "";
     private static final boolean isAdmin = true;
     private static final boolean isNotAdmin = false;
+
     public static final String USERS = "users";
+    public static final String NAMESPACE_ADMIN_USER_ID = "";
+
     private static HashMap gResultMap = null;
     private static HashMap gResultAdminMap = null;
     private static HashMap gResultAdminFailMap = null;
@@ -59,6 +62,9 @@ public class NamespacesServiceTest {
     private static NamespacesList gFinalResultListModel = null;
     private static NamespacesList gFinalResultListFailModel = null;
 
+    private static ResourceQuotasList gResultListRqModel = null;
+    private static ResourceQuotasList gFinalResultListRqModel = null;
+    private static ResourceQuotasList gFinalResultListRqFailModel = null;
 
     private static NamespacesAdmin gResultAdminModel = null;
     private static NamespacesAdmin gFinalResultAdminModel = null;
@@ -90,6 +96,14 @@ public class NamespacesServiceTest {
     @Mock
     UsersService usersService;
 
+    @Mock
+    AccessTokenService accessTokenService;
+
+    @Mock
+    ResourceQuotasService resourceQuotasService;
+
+    @Mock
+    ResourceYamlService resourceYamlService;
 
     @InjectMocks
     NamespacesService namespacesService;
@@ -98,12 +112,6 @@ public class NamespacesServiceTest {
     public void setUp() throws Exception {
         gResultMap = new HashMap();
 
-
-        gResultStatusModel = new ResultStatus();
-        gResultStatusModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
-        gResultStatusModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
-        gResultStatusModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
-        gResultStatusModel.setDetailMessage(CommonStatusCode.OK.getMsg());
 
         gResultStatusModel = new ResultStatus();
         gResultStatusModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
@@ -177,8 +185,15 @@ public class NamespacesServiceTest {
         gFinalResultAdminFailModel.setResultMessage(Constants.RESULT_STATUS_FAIL);
         gFinalResultAdminFailModel.setHttpStatusCode(CommonStatusCode.NOT_FOUND.getCode());
         gFinalResultAdminFailModel.setDetailMessage(CommonStatusCode.NOT_FOUND.getMsg());
+
+        gResourceQuotasListModel = new ResourceQuotasList();
+        gFinalResultListRqModel = new ResourceQuotasList();
+        gFinalResultListRqFailModel = new ResourceQuotasList();
     }
 
+    /**
+     * Namespaces 상세 조회(Get Namespaces detail) Test
+     */
     @Test
     public void getNamespaces_Valid_ReturnModel() {
 
@@ -197,6 +212,9 @@ public class NamespacesServiceTest {
 
     }
 
+    /**
+     * NameSpaces 상세 조회(Get NameSpaces Admin detail) Test
+     */
     @Test
     public void getNamespacesAdmin_Valid_ReturnModel() {
 
@@ -216,7 +234,9 @@ public class NamespacesServiceTest {
 
     }
 
-
+    /**
+     * NameSpaces Admin 목록 조회(Get NameSpaces Admin list) Test
+     */
     @Test
     public void getNamespacesListAdmin_Valid_ReturnModel() {
 
@@ -238,6 +258,9 @@ public class NamespacesServiceTest {
 
     }
 
+    /**
+     * NameSpaces Admin YAML 조회(Get NameSpaces yaml) Test
+     */
     @Test
     public void getNamespacesAdminYaml_Valid_ReturnModel() {
 
@@ -257,9 +280,12 @@ public class NamespacesServiceTest {
         assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 
-
+    /**
+     * NameSpaces 삭제(Delete NameSpaces) Test
+     */
     @Test
-    public void deleteNamespaces() {
+    public void deleteNamespaces_Valid_ReturnModel() {
+
         Users users = new Users();
         users.setId(0);
         users.setUserId("paasta");
@@ -301,29 +327,99 @@ public class NamespacesServiceTest {
 
     }
 
+    /**
+     * Namespaces 생성(Create Namespaces) Test
+     */
+    @Test
+    public void createInitNamespaces_Valid_ReturnModel() {
+        // given
+        List<String> resourceQuotasList = new ArrayList<>();
+        resourceQuotasList.add("cp-resource-quotas-low");
 
+        List<String> limitRangesList = new ArrayList<>();
+        limitRangesList.add("cp-limit-ranges-low");
+
+        NamespacesInitTemplate nsInitTemp = new NamespacesInitTemplate();
+        nsInitTemp.setName(NAMESPACE);
+        nsInitTemp.setNsAdminUserId(NAMESPACE_ADMIN_USER_ID);
+        nsInitTemp.setResourceQuotasList(resourceQuotasList);
+        nsInitTemp.setLimitRangesList(limitRangesList);
+
+        when(resourceYamlService.createNamespace(NAMESPACE)).thenReturn(gFinalResultStatusModel);
+        resourceYamlService.createInitRole(NAMESPACE);
+        resourceYamlService.createNsAdminRole(NAMESPACE);
+        when(resourceYamlService.createServiceAccount(NAMESPACE_ADMIN_USER_ID, NAMESPACE)).thenReturn(gFinalResultStatusModel);
+        when(propertyService.getAdminRole()).thenReturn("paas-ta-container-platform-admin-role");
+        when(resourceYamlService.createRoleBinding(NAMESPACE_ADMIN_USER_ID, NAMESPACE, "paas-ta-container-platform-admin-role")).thenReturn(gFinalResultStatusModel);
+
+        // for - if
+        String rq = "paas-ta-container-platform-low-rq";
+        resourceYamlService.createDefaultResourceQuota(NAMESPACE, rq);
+
+        // for - if
+        String lr = "paas-ta-container-platform-low-limit-range";
+        resourceYamlService.createDefaultLimitRanges(NAMESPACE, lr);
+
+        String saSecretName = "cp-secret";
+        when(restTemplateService.getSecretName(NAMESPACE, NAMESPACE_ADMIN_USER_ID)).thenReturn(saSecretName);
+
+        Users newNsUser = new Users();
+        newNsUser.setId(0);
+        newNsUser.setCpNamespace(NAMESPACE);
+        when(propertyService.getAdminRole()).thenReturn("paas-ta-container-platform-admin-role");
+        newNsUser.setRoleSetCode("paas-ta-container-platform-admin-role");
+        newNsUser.setSaSecret(saSecretName);
+        AccessToken accessToken = new AccessToken();
+        accessToken.setUserAccessToken("");
+        when(accessTokenService.getSecrets(NAMESPACE, saSecretName)).thenReturn(accessToken);
+        newNsUser.setSaToken(accessToken.getUserAccessToken());
+        newNsUser.setUserType(Constants.AUTH_NAMESPACE_ADMIN);
+        newNsUser.setIsActive(Constants.CHECK_Y);
+        when(propertyService.getDefaultNamespace()).thenReturn("paas-ta-container-platform-temp-namespace");
+        when(usersService.getUsers(CLUSTER, "paas-ta-container-platform-temp-namespace", NAMESPACE_ADMIN_USER_ID)).thenReturn(newNsUser);
+        when(usersService.createUsers(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newNsUser))).thenReturn(gResultStatusModel);
+        when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE")).thenReturn(gFinalResultStatusModel);
+
+        // when
+        ResultStatus result = namespacesService.createInitNamespaces(CLUSTER, nsInitTemp);
+
+        // then
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+    }
+
+    /**
+     * Namespaces 수정(modify Namespaces) Test
+     */
+    @Test
+    public void modifyInitNamespaces_Valid_ReturnModel() {
+
+
+
+    }
+
+    /**
+     * ResourceQuotas 변경 Test
+     */
     @Test
     public void modifyResourceQuotas_Valid_ReturnModel() {
-        when(propertyService.getCpMasterApiListResourceQuotasListUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas", HttpMethod.GET, null, ResourceQuotasList.class)).thenReturn(gResourceQuotasListModel);
 
     }
 
-
-
+    /**
+     * LimitRanges 변경 Test
+     */
     @Test
-    public void createInitNamespaces() {
+    public void modifyLimitRanges_Valid_ReturnModel() {
+
     }
 
-    @Test
-    public void modifyInitNamespaces() {
-    }
-
+    /**
+     * Namespace Selectbox를 위한 전체 목록 조회
+     */
     @Test
     public void getNamespacesListForSelectbox_Valid_ReturnModel() {
+
     }
-
-
-
 
 }
