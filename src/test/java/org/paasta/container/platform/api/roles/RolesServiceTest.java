@@ -9,6 +9,7 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
@@ -16,7 +17,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,8 +29,7 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @TestPropertySource("classpath:application.yml")
 public class RolesServiceTest {
-    private static final String CLUSTER = "cp-cluster";
-    private static final String NAMESPACE = "cp-namespace";
+    private static final String NAMESPACE = "test-namespace";
     private static final String ROLE_NAME = "test-role-name";
     private static final String YAML_STRING = "test-yaml-string";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
@@ -131,6 +133,24 @@ public class RolesServiceTest {
         // 리스트가져옴
         gResultAdminMap = new HashMap();
         gResultListAdminModel = new RolesListAdmin();
+
+        List<RolesListAdminItem> items = new ArrayList<>();
+        RolesListAdminItem item = new RolesListAdminItem();
+        item.setCreationTimestamp("2020-11-03");
+        item.setName(ROLE_NAME);
+        item.setNamespace(NAMESPACE);
+
+        CommonMetaData metaData = new CommonMetaData();
+        metaData.setCreationTimestamp("2020-11-03");
+        metaData.setName(ROLE_NAME);
+        metaData.setNamespace(NAMESPACE);
+
+        item.setMetadata(metaData);
+
+        items.add(item);
+
+        gResultListAdminModel.setItems(items);
+
         gFinalResultListAdminModel = new RolesListAdmin();
 
         gFinalResultListAdminModel = new RolesListAdmin();
@@ -300,13 +320,20 @@ public class RolesServiceTest {
     @Test
     public void getRolesListAllNamespacesAdmin() {
         //when
-        when(propertyService.getCpMasterApiListRolesListAllNamespacesUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/roles");
+        when(propertyService.getCpMasterApiListRolesListAllNamespacesUrl())
+                .thenReturn("/apis/rbac.authorization.k8s.io/v1/roles");
 
         // ?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace
-        when(commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)).thenReturn(FIELD_SELECTOR);
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/roles?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
-        when(commonService.setResultObject(gResultAdminMap, RolesListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, RolesListAdmin.class)).thenReturn(gResultListAdminModel);
+        when(commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE))
+                .thenReturn(FIELD_SELECTOR);
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/roles" + FIELD_SELECTOR, HttpMethod.GET, null, Map.class))
+                .thenReturn(gResultAdminMap);
+        when(commonService.setResultObject(gResultAdminMap, RolesListAdmin.class))
+                .thenReturn(gResultListAdminModel);
+        when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, RolesListAdmin.class))
+                .thenReturn(gResultListAdminModel);
+        when(propertyService.getDefaultNamespace())
+                .thenReturn("default");
         when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
 
         //call method
