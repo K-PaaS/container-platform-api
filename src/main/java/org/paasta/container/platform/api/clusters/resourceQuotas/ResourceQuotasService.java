@@ -67,6 +67,28 @@ public class ResourceQuotasService {
         ResourceQuotasList resourceQuotasList = commonService.setResultObject(responseMap, ResourceQuotasList.class);
         resourceQuotasList = commonService.resourceListProcessing(resourceQuotasList, offset, limit, orderBy, order, searchName, ResourceQuotasList.class);
 
+
+        //convert Status
+        for(ResourceQuotas rq : resourceQuotasList.getItems()) {
+
+            Map<String, String> hards = rq.getStatus().getHard();
+            Map<String, String> useds = rq.getStatus().getUsed();
+
+            HashMap<String, Object> convertStatus = new HashMap<>();
+
+            for (String key : hards.keySet()) {
+                ResourceQuotasConvertStatus resourceQuotasConvertStatus = new ResourceQuotasConvertStatus();
+                resourceQuotasConvertStatus.setHard(hards.get(key));
+                resourceQuotasConvertStatus.setUsed(useds.get(key));
+
+                convertStatus.put(key,resourceQuotasConvertStatus );
+            }
+
+            Map<String, Object> convertStatusMap = new TreeMap<>(convertStatus);
+            rq.setResourceQuotasStatus(convertStatusMap);
+
+        }
+
         return (ResourceQuotasList) commonService.setResultModel(resourceQuotasList, Constants.RESULT_STATUS_SUCCESS);
     }
 
