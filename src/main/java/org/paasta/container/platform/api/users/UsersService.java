@@ -410,16 +410,13 @@ public class UsersService {
                 restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + Constants.NULL_REPLACE_TEXT + defaultRole + "-binding"), HttpMethod.DELETE, null, Object.class, true);
                 resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, newRole);
 
-                updateUser.setUserId(users.getUserId());
-                updateUser.setPassword(users.getPassword());
-                updateUser.setEmail(users.getEmail());
                 updateUser.setRoleSetCode(newRole);
                 updateUser.setSaToken(accessTokenService.getSecrets(namespace, updateUser.getSaSecret()).getUserAccessToken());
-            } else {
-                updateUser.setUserId(users.getUserId());
-                updateUser.setPassword(users.getPassword());
-                updateUser.setEmail(users.getEmail());
             }
+
+            updateUser.setUserId(users.getUserId());
+            updateUser.setPassword(users.getPassword());
+            updateUser.setEmail(users.getEmail());
 
             rsDb = createUsers(updateUser);
         }
