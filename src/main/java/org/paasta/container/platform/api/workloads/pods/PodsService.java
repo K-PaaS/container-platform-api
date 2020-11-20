@@ -148,19 +148,8 @@ public class PodsService {
 
         PodsListAdmin podsListAdmin = commonService.setResultObject(responseMap, PodsListAdmin.class);
         podsListAdmin = commonService.resourceListProcessing(podsListAdmin, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
+        podsListAdmin = restartCountProcessing(podsListAdmin);
 
-        for (PodsListAdminList po : podsListAdmin.getItems()) {
-
-            if (po.getStatus().getContainerStatuses() == null) {
-                List<ContainerStatusesItem> list = new ArrayList<>();
-                ContainerStatusesItem item = new ContainerStatusesItem();
-                item.setRestartCount(0);
-
-                list.add(item);
-
-                po.getStatus().setContainerStatuses(list);
-            }
-        }
 
         return commonService.setResultModel(podsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -226,7 +215,7 @@ public class PodsService {
             podsListAdmin = podsFIlterWithOwnerReferences(podsListAdmin, ownerReferencesUid);
         }
         podsListAdmin = commonService.resourceListProcessing(podsListAdmin, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
-        podsListAdmin = restartprocessing(podsListAdmin);
+        podsListAdmin = restartCountProcessing(podsListAdmin);
 
         return commonService.setResultModel(podsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -240,11 +229,10 @@ public class PodsService {
      */
     PodsList getPodListByNode(String namespace, String nodeName, int offset, int limit, String orderBy, String order, String searchName) {
         String requestURL = propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace)
-                + "/?fieldSelector=spec.nodeName=" + nodeName;
+                + "?fieldSelector=spec.nodeName=" + nodeName;
 
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API, requestURL,
                 HttpMethod.GET, null, Map.class);
-
 
         PodsList podsList = commonService.setResultObject(responseMap, PodsList.class);
         podsList = commonService.resourceListProcessing(podsList, offset, limit, orderBy, order, searchName, PodsList.class);
@@ -290,7 +278,7 @@ public class PodsService {
 
         PodsListAdmin podsListAdmin = commonService.setResultObject(responseMap, PodsListAdmin.class);
         podsListAdmin = commonService.resourceListProcessing(podsListAdmin, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
-        podsListAdmin = restartprocessing(podsListAdmin);
+        podsListAdmin = restartCountProcessing(podsListAdmin);
 
         return commonService.setResultModel(podsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
@@ -462,25 +450,14 @@ public class PodsService {
 
         PodsListAdmin podsListAdminList = commonService.setResultObject(responseMap, PodsListAdmin.class);
         podsListAdminList = commonService.resourceListProcessing(podsListAdminList, offset, limit, orderBy, order, searchName, PodsListAdmin.class);
+        podsListAdminList = restartCountProcessing(podsListAdminList);
 
-        for (PodsListAdminList po : podsListAdminList.getItems()) {
-
-            if (po.getStatus().getContainerStatuses() == null) {
-                List<ContainerStatusesItem> list = new ArrayList<>();
-                ContainerStatusesItem item = new ContainerStatusesItem();
-                item.setRestartCount(0);
-
-                list.add(item);
-
-                po.getStatus().setContainerStatuses(list);
-            }
-        }
 
         return commonService.setResultModel(podsListAdminList, Constants.RESULT_STATUS_SUCCESS);
     }
 
 
-    public PodsListAdmin restartprocessing(PodsListAdmin podsListAdmin) {
+    public PodsListAdmin restartCountProcessing(PodsListAdmin podsListAdmin) {
 
         for (PodsListAdminList po : podsListAdmin.getItems()) {
 
