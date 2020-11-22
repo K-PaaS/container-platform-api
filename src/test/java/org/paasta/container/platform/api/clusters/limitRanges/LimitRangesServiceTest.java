@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.paasta.container.platform.api.clusters.limitRanges.support.LimitRangesItem;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
@@ -21,8 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -30,7 +29,6 @@ import static org.mockito.Mockito.when;
 public class LimitRangesServiceTest {
     private static final String CLUSTER = "cp-cluster";
     private static final String NAMESPACE = "cp-namespace";
-    private static final String LIMIT_RANGE_NAME = "test-limit-range-name";
     private static final String YAML_STRING = "test-yaml-string";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
     private static final String LOW_LIMIT_NAME = "paas-ta-container-platform-low-limit-range";
@@ -42,6 +40,18 @@ public class LimitRangesServiceTest {
     private static final String SEARCH_NAME = "";
     private static final boolean isAdmin = true;
     private static final boolean isNotAdmin = false;
+    public static final String CHECK_Y = "Y";
+    public static final String CHECK_N = "N";
+
+    private static final String LIMIT_RANGE_NAME = "paas-ta-container-platform-low-limit-range";
+    private static final String LIMIT_RANGE_RESOURCE = "cpu";
+    private static final String LIMIT_RANGE_TYPE = "Container";
+    private static final String LIMIT_RANGE_DEFAULT_LIMIT = "100m";
+    private static final String LIMIT_RANGE_DEFAULT_REQUEST = "-";
+    private static final String MAX = "-";
+    private static final String MIN = "-";
+    private static final String CREATION_TIME = "2020-11-17T09:31:37Z";
+
 
     private static HashMap gResultMap = null;
     private static HashMap gResultAdminMap = null;
@@ -69,6 +79,7 @@ public class LimitRangesServiceTest {
     private static ResultStatus gResultFailModel = null;
     private static ResultStatus gFinalResultStatusModel = null;
 
+    private static LimitRangesTemplateItem gFinalLimitRangesTemplateItem = null;
 
     @Mock
     RestTemplateService restTemplateService;
@@ -129,10 +140,9 @@ public class LimitRangesServiceTest {
 
         // 리스트가져옴
         gResultAdminMap = new HashMap();
-        gResultListAdminModel = new LimitRangesListAdmin();
-        gFinalResultListAdminModel = new LimitRangesListAdmin();
+        gResultListAdminModel = LimitRangesModel.getLimitRangesListAdmin();
 
-        gFinalResultListAdminModel = new LimitRangesListAdmin();
+        gFinalResultListAdminModel = LimitRangesModel.getLimitRangesListAdmin();
         gFinalResultListAdminModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
         gFinalResultListAdminModel.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
         gFinalResultListAdminModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
@@ -158,6 +168,9 @@ public class LimitRangesServiceTest {
         gFinalResultAdminFailModel.setResultMessage(Constants.RESULT_STATUS_FAIL);
         gFinalResultAdminFailModel.setHttpStatusCode(CommonStatusCode.NOT_FOUND.getCode());
         gFinalResultAdminFailModel.setDetailMessage(CommonStatusCode.NOT_FOUND.getMsg());
+
+        gFinalLimitRangesTemplateItem = LimitRangesModel.getLimitRangesTemplateItem();
+
     }
 
     @Test
@@ -211,25 +224,25 @@ public class LimitRangesServiceTest {
     }
 
     @Test
-    public void getLimitRangesAdmin_Valid_ReturnModel() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void getLimitRangesAdmin_Type_Container_Valid_ReturnModel() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         LimitRangesAdmin limitRangesAdmin = new LimitRangesAdmin();
         List<LimitRangesItem> limitsList = new ArrayList<>();
 
         LimitRangesItem item = new LimitRangesItem();
         LinkedTreeMap defaultLimitMap = new LinkedTreeMap();
-        defaultLimitMap.put("memory", "500Mi");
+        defaultLimitMap.put(Constants.SUPPORTED_RESOURCE_MEMORY, "500Mi");
 
         LinkedTreeMap defaultRequestMap = new LinkedTreeMap();
-        defaultRequestMap.put("memory", "100Mi");
+        defaultRequestMap.put(Constants.SUPPORTED_RESOURCE_MEMORY, "100Mi");
 
         LinkedTreeMap max = new LinkedTreeMap();
-        defaultRequestMap.put("memory", "100Mi");
+        defaultRequestMap.put(Constants.SUPPORTED_RESOURCE_MEMORY, "100Mi");
 
         LinkedTreeMap min = new LinkedTreeMap();
-        defaultRequestMap.put("memory", "100Mi");
+        defaultRequestMap.put(Constants.SUPPORTED_RESOURCE_MEMORY, "100Mi");
 
-        item.setType("Container");
-        item.setResource("memory");
+        item.setType(Constants.LIMIT_RANGE_TYPE_CONTAINER);
+        item.setResource(Constants.SUPPORTED_RESOURCE_MEMORY);
         item.setDefaultLimit(defaultLimitMap);
         item.setDefaultRequest(defaultRequestMap);
         item.setMax(max);
@@ -269,6 +282,85 @@ public class LimitRangesServiceTest {
 
         String type = Constants.LIMIT_RANGE_TYPE_CONTAINER;
         String resourceType = Constants.SUPPORTED_RESOURCE_MEMORY;
+
+        Method getLimitRangesTemplateItem = limitRangesService.getClass().getDeclaredMethod("getLimitRangesTemplateItem", String.class, String.class, String.class, String.class, LimitRangesItem.class, Object.class);
+        getLimitRangesTemplateItem.setAccessible(true);
+
+        Method commonSetResourceValue = limitRangesService.getClass().getDeclaredMethod("commonSetResourceValue", String.class, LinkedTreeMap.class, LinkedTreeMap.class, LinkedTreeMap.class, LinkedTreeMap.class, Object.class);
+        commonSetResourceValue.setAccessible(true);
+
+        getLimitRangesTemplateItem.invoke(limitRangesService, metaData.getName(), metaData.getCreationTimestamp(), type, resourceType, item, serversItem);
+
+        when(commonService.setResultObject(limitRangesAdmin,LimitRangesAdmin.class)).thenReturn(limitRangesAdmin);
+        when(commonService.setResultModel(limitRangesAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalLimitRangesAdmin);
+
+        //call method
+        LimitRangesAdmin result = (LimitRangesAdmin) limitRangesService.getLimitRangesAdmin(NAMESPACE, LIMIT_RANGE_NAME);
+
+        //compare result
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+    }
+
+
+    @Test
+    public void getLimitRangesAdmin_Type_Storage_Valid_ReturnModel() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        LimitRangesAdmin limitRangesAdmin = new LimitRangesAdmin();
+        List<LimitRangesItem> limitsList = new ArrayList<>();
+
+        LimitRangesItem item = new LimitRangesItem();
+        LinkedTreeMap defaultLimitMap = new LinkedTreeMap();
+        defaultLimitMap.put(Constants.SUPPORTED_RESOURCE_STORAGE, "500Mi");
+
+        LinkedTreeMap defaultRequestMap = new LinkedTreeMap();
+        defaultRequestMap.put(Constants.SUPPORTED_RESOURCE_STORAGE, "100Mi");
+
+        LinkedTreeMap max = new LinkedTreeMap();
+        defaultRequestMap.put(Constants.SUPPORTED_RESOURCE_STORAGE, "100Mi");
+
+        LinkedTreeMap min = new LinkedTreeMap();
+        defaultRequestMap.put(Constants.SUPPORTED_RESOURCE_STORAGE, "100Mi");
+
+        item.setType(Constants.LIMIT_RANGE_TYPE_PVC);
+        item.setResource(Constants.SUPPORTED_RESOURCE_STORAGE);
+        item.setDefaultLimit(defaultLimitMap);
+        item.setDefaultRequest(defaultRequestMap);
+        item.setMax(max);
+        item.setMin(min);
+
+        limitsList.add(item);
+        CommonSpec spec = new CommonSpec();
+        spec.setLimits(limitsList);
+
+        CommonMetaData metaData = new CommonMetaData();
+        metaData.setName(LOW_LIMIT_NAME);
+        metaData.setNamespace(NAMESPACE);
+        metaData.setCreationTimestamp("2020-11-17T09:31:37Z");
+
+        limitRangesAdmin.setName(metaData.getName());
+        limitRangesAdmin.setCreationTimestamp("2020-11-17T09:31:37Z");
+        limitRangesAdmin.setMetadata(metaData);
+        limitRangesAdmin.setSpec(spec);
+
+        LimitRangesAdmin finalLimitRangesAdmin = limitRangesAdmin;
+        finalLimitRangesAdmin.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+
+        LimitRangesItem serversItem = new LimitRangesItem();
+
+        LimitRangesItem finalServersItem = new LimitRangesItem();
+        finalServersItem.setType(Constants.LIMIT_RANGE_TYPE_PVC);
+        finalServersItem.setResource(Constants.SUPPORTED_RESOURCE_STORAGE);
+
+        LinkedHashMap map = new LinkedHashMap();
+        map.put("metadata", metaData);
+        map.put("spec", spec);
+
+        //when
+        when(propertyService.getCpMasterApiListLimitRangesGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/limitranges/{name}");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges/" + LIMIT_RANGE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(map);
+        when(commonService.setResultObject(map, LimitRangesAdmin.class)).thenReturn(limitRangesAdmin);
+
+        String type = Constants.LIMIT_RANGE_TYPE_PVC;
+        String resourceType = Constants.SUPPORTED_RESOURCE_STORAGE;
 
         Method getLimitRangesTemplateItem = limitRangesService.getClass().getDeclaredMethod("getLimitRangesTemplateItem", String.class, String.class, String.class, String.class, LimitRangesItem.class, Object.class);
         getLimitRangesTemplateItem.setAccessible(true);
@@ -352,10 +444,65 @@ public class LimitRangesServiceTest {
     }
 
     @Test
-    public void getLimitRangesTemplateList_Valid_ReturnModel() {
+    public void getLimitRangesTemplateList_Valid_ReturnModel() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        LimitRangesAdmin limitRangesAdmin = LimitRangesModel.getLimitRangesAdminContainerMemory();
+
+        LimitRangesAdmin finalLimitRangesAdmin = limitRangesAdmin;
+        finalLimitRangesAdmin.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+
+        LimitRangesTemplateItem serversItem = new LimitRangesTemplateItem();
+
+        LimitRangesTemplateItem finalServersItem = new LimitRangesTemplateItem();
+        finalServersItem.setType(Constants.LIMIT_RANGE_TYPE_CONTAINER);
+        finalServersItem.setResource(Constants.SUPPORTED_RESOURCE_MEMORY);
+
+        LinkedHashMap map = new LinkedHashMap();
+        map.put("metadata", LimitRangesModel.getMetadata());
+        map.put("spec", LimitRangesModel.getSpec());
+
+        LimitRangesDefaultList defaultList = new LimitRangesDefaultList();
+        LimitRangesDefault limitRangesDefault = new LimitRangesDefault();
+        limitRangesDefault.setName(LIMIT_RANGE_NAME);
+        limitRangesDefault.setType(LIMIT_RANGE_TYPE);
+        limitRangesDefault.setResource(LIMIT_RANGE_RESOURCE);
+        limitRangesDefault.setDefaultLimit(LIMIT_RANGE_DEFAULT_LIMIT);
+        limitRangesDefault.setDefaultRequest(LIMIT_RANGE_DEFAULT_REQUEST);
+        limitRangesDefault.setMax(MAX);
+        limitRangesDefault.setMin(MIN);
+        limitRangesDefault.setCreationTimestamp(CREATION_TIME);
+
+        List<LimitRangesDefault> limitRangesDefaultLists = new ArrayList<>();
+        limitRangesDefaultLists.add(limitRangesDefault);
+
+        defaultList.setItems(limitRangesDefaultLists);
+
+        getLimitRangesListAdmin_Valid_ReturnModel();
+        when(restTemplateService.send(Constants.TARGET_COMMON_API, "/limitRanges", HttpMethod.GET, null, LimitRangesDefaultList.class)).thenReturn(defaultList);
+
+        getLimitRangesDb_Valid_ReturnModel();
+
+        String type = Constants.LIMIT_RANGE_TYPE_CONTAINER;
+        String resourceType = Constants.SUPPORTED_RESOURCE_MEMORY;
+
+        Method getLimitRangesTemplateItem = limitRangesService.getClass().getDeclaredMethod("getLimitRangesTemplateItem", String.class, String.class, String.class, String.class, LimitRangesItem.class, Object.class);
+        getLimitRangesTemplateItem.setAccessible(true);
+
+        Method commonSetResourceValue = limitRangesService.getClass().getDeclaredMethod("commonSetResourceValue", String.class, LinkedTreeMap.class, LinkedTreeMap.class, LinkedTreeMap.class, LinkedTreeMap.class, Object.class);
+        commonSetResourceValue.setAccessible(true);
+
+        getLimitRangesTemplateItem.invoke(limitRangesService, limitRangesAdmin.getName(), limitRangesAdmin.getCreationTimestamp(), type, resourceType, LimitRangesModel.getLimitRangesItem(), serversItem);
+
+        when(commonService.setResultObject(LimitRangesModel.getLimitRangesTemplateList(), LimitRangesTemplateList.class)).thenReturn(LimitRangesModel.getLimitRangesTemplateList());
+        when(commonService.setResultModel(LimitRangesModel.getLimitRangesTemplateList(), Constants.RESULT_STATUS_SUCCESS)).thenReturn(LimitRangesModel.getFinalLimitRangesTemplateList());
+
+        //call method
+        LimitRangesAdmin result = (LimitRangesAdmin) limitRangesService.getLimitRangesTemplateList(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
+
     }
 
     @Test
     public void getLimitRangesDb_Valid_ReturnModel() {
+        LimitRangesTemplateItem templateItem = limitRangesService.getLimitRangesDb(LimitRangesModel.getLimitRangesDefault(), CHECK_Y);
+        assertNotNull(templateItem);
     }
 }
