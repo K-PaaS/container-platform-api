@@ -1,10 +1,12 @@
 package org.paasta.container.platform.api.clusters.resourceQuotas;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatus;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
@@ -23,7 +25,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -89,6 +92,7 @@ public class ResourceQuotasServiceTest {
     PropertyService propertyService;
 
     @InjectMocks
+    @Spy
     ResourceQuotasService resourceQuotasService;
 
     @Before
@@ -127,18 +131,6 @@ public class ResourceQuotasServiceTest {
         gResultListArrayModel.add(0, gResultModel);
 
         gResultListModel.setItems(gResultListArrayModel);
-
-        // list Admin
-//        Map<String, String> mapAdmin = new HashMap<>();
-//        gStatusAdminModel = new ResourceQuotasStatus();
-//        gStatusAdminModel.setUsed(mapAdmin);
-//        gStatusAdminModel.setHard(mapAdmin);
-//
-//
-//        gResultListAdminItemModel.setStatus(gStatusAdminModel);
-//        gResultListAdminItemListModel = new ArrayList<>();
-//        gResultListAdminItemListModel.add(0, gResultListAdminItemModel);
-//        gResultListAdminModel.setItems(gResultListAdminItemListModel);
 
         // 리스트가져옴
         gFinalResultListModel = new ResourceQuotasList();
@@ -217,14 +209,20 @@ public class ResourceQuotasServiceTest {
 
     @Test
     public void getResourceQuotasListAdmin_Valid_ReturnModel() {
+        ResourceQuotasListAdmin resourceQuotasListAdmin = ResourceQuotasModel.getResourceQuotasListAdmin();
+        ResourceQuotasListAdmin finalResourceQuotasListAdmin = resourceQuotasListAdmin;
+        finalResourceQuotasListAdmin.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+        finalResourceQuotasListAdmin.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
+        finalResourceQuotasListAdmin.setHttpStatusCode(CommonStatusCode.OK.getCode());
+        finalResourceQuotasListAdmin.setDetailMessage(CommonStatusCode.OK.getMsg());
+
         //when
         when(propertyService.getCpMasterApiListResourceQuotasListUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas", HttpMethod.GET, null, Map.class)).thenReturn(gResultAdminMap);
 
-
-        when(commonService.setResultObject(gResultAdminMap, ResourceQuotasListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(commonService.resourceListProcessing(gResultListAdminModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, ResourceQuotasListAdmin.class)).thenReturn(gResultListAdminModel);
-        when(commonService.setResultModel(gResultListAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListAdminModel);
+        when(commonService.setResultObject(gResultAdminMap, ResourceQuotasListAdmin.class)).thenReturn(resourceQuotasListAdmin);
+        when(commonService.resourceListProcessing(resourceQuotasListAdmin, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, ResourceQuotasListAdmin.class)).thenReturn(resourceQuotasListAdmin);
+        when(commonService.setResultModel(resourceQuotasListAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalResourceQuotasListAdmin);
 
         //call method
         ResourceQuotasListAdmin resultList = (ResourceQuotasListAdmin) resourceQuotasService.getResourceQuotasListAdmin(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
@@ -252,11 +250,18 @@ public class ResourceQuotasServiceTest {
 
     @Test
     public void getResourceQuotasAdmin_Valid_ReturnModel() {
+        ResourceQuotasAdmin resourceQuotasAdmin = ResourceQuotasModel.getResourceQuotasAdmin();
+        ResourceQuotasAdmin finalResourceQuotasAdmin = resourceQuotasAdmin;
+        finalResourceQuotasAdmin.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+        finalResourceQuotasAdmin.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
+        finalResourceQuotasAdmin.setHttpStatusCode(CommonStatusCode.OK.getCode());
+        finalResourceQuotasAdmin.setDetailMessage(CommonStatusCode.OK.getMsg());
+
         //when
         when(propertyService.getCpMasterApiListResourceQuotasGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/resourcequotas/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas/" + RESOURCE_QUOTA_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
-        when(commonService.setResultObject(gResultMap, ResourceQuotasAdmin.class)).thenReturn(gResultAdminModel);
-        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
+        when(commonService.setResultObject(gResultMap, ResourceQuotasAdmin.class)).thenReturn(resourceQuotasAdmin);
+        when(commonService.setResultModel(resourceQuotasAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalResourceQuotasAdmin);
 
         //call method
         ResourceQuotasAdmin result = (ResourceQuotasAdmin) resourceQuotasService.getResourceQuotasAdmin(NAMESPACE, RESOURCE_QUOTA_NAME);
@@ -328,7 +333,18 @@ public class ResourceQuotasServiceTest {
     }
 
     @Test
-    public void getRqDefaultList() {
+    public void getRqDefaultList() throws JsonProcessingException {
+        getResourceQuotasListAdmin_Valid_ReturnModel();
+        when(restTemplateService.send(Constants.TARGET_COMMON_API, "/resourceQuotas", HttpMethod.GET, null, ResourceQuotasDefaultList.class)).thenReturn(ResourceQuotasModel.getResourceQuotasDefaultList());
+
+        ResourceQuotasDefaultList defaultList = mock(ResourceQuotasDefaultList.class);
+        when(defaultList.getItems()).thenReturn(ResourceQuotasModel.getUpdateResourceQuotasDefaultList().getItems());
+
+        when(commonService.setResultObject(defaultList, ResourceQuotasDefaultList.class)).thenReturn(ResourceQuotasModel.getUpdateResourceQuotasDefaultList());
+        when(commonService.resourceListProcessing(ResourceQuotasModel.getUpdateResourceQuotasDefaultList(), OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, ResourceQuotasDefaultList.class)).thenReturn(ResourceQuotasModel.getUpdateResourceQuotasDefaultList());
+        when(commonService.setResultModel(ResourceQuotasModel.getUpdateResourceQuotasDefaultList(), Constants.RESULT_STATUS_SUCCESS)).thenReturn(ResourceQuotasModel.getFinalResourceQuotasDefaultList());
+
+        ResourceQuotasDefaultList resourceQuotasList = (ResourceQuotasDefaultList) resourceQuotasService.getRqDefaultList(NAMESPACE, 0, 0, "creationTime", "desc", "");
     }
 
     @Test
