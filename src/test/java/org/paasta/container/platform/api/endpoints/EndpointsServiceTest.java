@@ -93,6 +93,66 @@ public class EndpointsServiceTest {
         gResultNodeAdminModel = new NodesAdmin();
         gResultNodeAdminModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
+        gResultAdminModel = new EndpointsAdmin();
+        gResultAdminModel.setResultCode("SUCCESS");
+        gResultAdminModel.setHttpStatusCode(200);
+
+
+
+        List<EndpointAddress> addresses = new ArrayList<>();
+        EndpointAddress endpointAddress = new EndpointAddress();
+        endpointAddress.setIp("10.244.1.11");
+        endpointAddress.setNodeName("paasta-cp-k8s-worker-001");
+        endpointAddress.setHostname("");
+        addresses.add(endpointAddress);
+
+        List<EndpointPort> ports = new ArrayList<>();
+        EndpointPort endpointPort = new EndpointPort();
+        endpointPort.setName("http");
+        endpointPort.setPort(80);
+        endpointPort.setProtocol("TCP");
+        ports.add(endpointPort);
+
+        List<EndpointSubset> subsets = new ArrayList<>();
+        EndpointSubset endpointSubset = new EndpointSubset();
+        endpointSubset.setAddresses(addresses);
+        endpointSubset.setPorts(ports);
+        endpointSubset.setNotReadyAddresses(addresses);
+
+        subsets.add(endpointSubset);
+        gResultAdminModel.setSubsets(subsets);
+
+        String nodeName = "paasta-cp-k8s-worker-001";
+
+        NodesAdmin nodesDetails = new NodesAdmin();
+        nodesDetails.setResultCode("SUCCESS");
+
+
+        NodesStatus nodesStatus = new NodesStatus();
+        List<CommonCondition> conditions = new ArrayList<>();
+
+        CommonCondition commonCondition = new CommonCondition();
+        commonCondition.setType("Ready");
+        commonCondition.setStatus("True");
+        conditions.add(commonCondition);
+        nodesStatus.setConditions(conditions);
+        nodesDetails.setStatus(nodesStatus);
+
+        when(nodesService.getNodesAdmin(nodeName)).thenReturn(nodesDetails);
+
+
+        List<EndPointsDetailsItemAdmin> endPointsDetailsItemAdminsList = new ArrayList<>();
+        EndPointsDetailsItemAdmin endPointsDetailsItem = new EndPointsDetailsItemAdmin();
+        endPointsDetailsItem.setHost("10.244.1.11");
+        endPointsDetailsItem.setPorts(ports);
+        endPointsDetailsItem.setNodes(nodeName);
+        endPointsDetailsItem.setReady("True");
+        endPointsDetailsItemAdminsList.add(endPointsDetailsItem);
+
+        gResultAdminModel.setEndpoints(endPointsDetailsItemAdminsList);
+
+        gFinalResultAdminModel.setEndpoints(endPointsDetailsItemAdminsList);
+        gFinalResultAdminModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
     }
 
@@ -125,7 +185,7 @@ public class EndpointsServiceTest {
         when(propertyService.getCpMasterApiListEndpointsGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/endpoints/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/endpoints/" + ENDPOINTS_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, EndpointsAdmin.class)).thenReturn(gResultAdminModel);
-        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
+        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResultAdminModel);
 
         // when
         EndpointsAdmin result = (EndpointsAdmin) endpointsService.getEndpointsAdmin(NAMESPACE, ENDPOINTS_NAME);
@@ -139,72 +199,9 @@ public class EndpointsServiceTest {
     @Test
     public void endpointsAdminProcessing_Valid_ReturnModel() {
 
-        //given
-        EndpointsAdmin endpointsAdmin = new EndpointsAdmin();
-        endpointsAdmin.setResultCode("SUCCESS");
-        endpointsAdmin.setHttpStatusCode(200);
-
-
-
-        List<EndpointAddress> addresses = new ArrayList<>();
-        EndpointAddress endpointAddress = new EndpointAddress();
-        endpointAddress.setIp("10.244.1.11");
-        endpointAddress.setNodeName("paasta-cp-k8s-worker-001");
-        endpointAddress.setHostname("");
-        addresses.add(endpointAddress);
-
-        List<EndpointPort> ports = new ArrayList<>();
-        EndpointPort endpointPort = new EndpointPort();
-        endpointPort.setName("http");
-        endpointPort.setPort(80);
-        endpointPort.setProtocol("TCP");
-        ports.add(endpointPort);
-
-        List<EndpointSubset> subsets = new ArrayList<>();
-        EndpointSubset endpointSubset = new EndpointSubset();
-        endpointSubset.setAddresses(addresses);
-        endpointSubset.setPorts(ports);
-        endpointSubset.setNotReadyAddresses(addresses);
-
-        subsets.add(endpointSubset);
-        endpointsAdmin.setSubsets(subsets);
-
-        String nodeName = "paasta-cp-k8s-worker-001";
-
-        NodesAdmin nodesDetails = new NodesAdmin();
-        nodesDetails.setResultCode("SUCCESS");
-
-
-        NodesStatus nodesStatus = new NodesStatus();
-        List<CommonCondition> conditions = new ArrayList<>();
-
-        CommonCondition commonCondition = new CommonCondition();
-        commonCondition.setType("Ready");
-        commonCondition.setStatus("True");
-        conditions.add(commonCondition);
-        nodesStatus.setConditions(conditions);
-        nodesDetails.setStatus(nodesStatus);
-
-        when(nodesService.getNodesAdmin(nodeName)).thenReturn(nodesDetails);
-
-
-        List<EndPointsDetailsItemAdmin> endPointsDetailsItemAdminsList = new ArrayList<>();
-        EndPointsDetailsItemAdmin endPointsDetailsItem = new EndPointsDetailsItemAdmin();
-        endPointsDetailsItem.setHost("10.244.1.11");
-        endPointsDetailsItem.setPorts(ports);
-        endPointsDetailsItem.setNodes(nodeName);
-        endPointsDetailsItem.setReady("True");
-        endPointsDetailsItemAdminsList.add(endPointsDetailsItem);
-
-        endpointsAdmin.setEndpoints(endPointsDetailsItemAdminsList);
-
-        gFinalResultAdminModel.setEndpoints(endPointsDetailsItemAdminsList);
-        gFinalResultAdminModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
-        EndpointsAdmin result = endpointsService.endpointsAdminProcessing(endpointsAdmin);
+        EndpointsAdmin result = endpointsService.endpointsAdminProcessing(gResultAdminModel);
 
         assertEquals(null, result.getResultCode());
-
-
 
     }
 }
