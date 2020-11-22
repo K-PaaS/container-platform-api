@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.exception;
 
+import org.paasta.container.platform.api.common.AspectService;
 import org.paasta.container.platform.api.common.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ import java.util.Iterator;
  **/
 @RestControllerAdvice
 public class GlobalExceptionHandler extends RuntimeException {
-    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     public GlobalExceptionHandler() {
     }
@@ -33,43 +34,43 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ExceptionHandler({HttpClientErrorException.class})
     @ResponseBody
     public ErrorMessage handleException(HttpClientErrorException ex) {
-        logger.info("HttpClientErrorException >>> " + ex.getStatusText());
+        LOGGER.info("HttpClientErrorException >>> " + ex.getStatusText());
         return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getStatusText(), ex.getRawStatusCode(), ex.getResponseBodyAsString());
     }
 
     @ExceptionHandler({ContainerPlatformException.class})
     @ResponseBody
     public ErrorMessage handleException(ContainerPlatformException ex) {
-        logger.info("ContainerPlatformException >>> " + ex.getErrorMessage());
+        LOGGER.info("ContainerPlatformException >>> " + ex.getErrorMessage());
         return new ErrorMessage(ex.getErrorCode(), ex.getErrorMessage(), ex.getStatusCode(), ex.getDetailMessage());
     }
 
     @ExceptionHandler({CpCommonAPIException.class})
     @ResponseBody
     public ErrorMessage handleException(CpCommonAPIException ex) {
-        logger.info("CpCommonAPIException >>> " + ex.getErrorMessage());
+        LOGGER.info("CpCommonAPIException >>> " + ex.getErrorMessage());
         return new ErrorMessage(ex.getErrorCode(), ex.getErrorMessage(), ex.getStatusCode(), ex.getDetailMessage());
     }
 
-    // 500
-    @ExceptionHandler({Exception.class})
-    public ResponseEntity<Object> handleAll(final Exception ex) {
-        if(ex.getMessage().contains("404")) {
-            return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
-        }
 
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler({Exception.class})
+    public ErrorMessage handleAll(final Exception ex) {
+        if(ex.getMessage().contains("404")) {
+            return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage(), HttpStatus.NOT_FOUND.value(), ex.getLocalizedMessage());
+        }
+        LOGGER.info("Exception >>> {}", ex.getLocalizedMessage());
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getLocalizedMessage());
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
     @ResponseBody
-    public ResponseEntity<ErrorMessage> handleException(HttpMessageNotReadableException ex) {
-        return this.getErrorResponse(ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+    public ErrorMessage handleException(HttpMessageNotReadableException ex) {
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY.value(), ex.getLocalizedMessage());
     }
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseBody
-    public ResponseEntity<ErrorMessage> handleException(MethodArgumentNotValidException ex) {
+    public ErrorMessage handleException(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
         String message = "Missing required fields:";
 
@@ -77,25 +78,23 @@ public class GlobalExceptionHandler extends RuntimeException {
         for(Iterator var5 = result.getFieldErrors().iterator(); var5.hasNext(); message = message + " " + error.getField()) {
             error = (FieldError)var5.next();
         }
+        LOGGER.info("MethodArgumentNotValidException >>> " + message);
 
-        return this.getErrorResponse(message, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, message);
     }
 
     @ExceptionHandler({NullPointerException.class})
     @ResponseBody
-    public ResponseEntity<ErrorMessage> nullException(NullPointerException ex) {
-        logger.info("NullPointerException >>> " + ex);
-        return getErrorResponse(ex.toString(), HttpStatus.NOT_FOUND);
+    public ErrorMessage nullException(NullPointerException ex) {
+        LOGGER.info("NullPointerException >>> " + ex);
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage());
     }
 
     @ExceptionHandler({IndexOutOfBoundsException.class})
     @ResponseBody
-    public String indexOutOfBoundsException(IndexOutOfBoundsException ex) {
-        logger.info("indexOutOfBoundsException >>> " + ex.getMessage());
-        return ex.getMessage();
+    public ErrorMessage indexOutOfBoundsException(IndexOutOfBoundsException ex) {
+        LOGGER.info("indexOutOfBoundsException >>> " + ex.getMessage());
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage());
     }
 
-    public ResponseEntity<ErrorMessage> getErrorResponse(String message, HttpStatus status) {
-        return new ResponseEntity(new ErrorMessage(status.value(), message), status);
-    }
 }
