@@ -167,7 +167,7 @@ public class PodsService {
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
         PodsList podsList = commonService.setResultObject(resultMap, PodsList.class);
-        podsList = getPodsMetricList(namespace, podsList);
+       // podsList = getPodsMetricList(namespace, podsList);
 
         // by replicaSets
         if (type.equals(Constants.REPLICASETS_FOR_SELECTOR)) {
@@ -236,7 +236,7 @@ public class PodsService {
                 HttpMethod.GET, null, Map.class);
 
         PodsList podsList = commonService.setResultObject(responseMap, PodsList.class);
-        podsList = getPodsMetricList(namespace, podsList);
+       // podsList = getPodsMetricList(namespace, podsList);
         podsList = commonService.resourceListProcessing(podsList, offset, limit, orderBy, order, searchName, PodsList.class);
 
         return (PodsList) commonService.setResultModel(podsList, Constants.RESULT_STATUS_SUCCESS);
