@@ -88,6 +88,9 @@ public class Constants {
     public static final String URI_SIGN_UP = "/signUp";
     public static final String CLUSTER_ROLE_URI = "users/resources";
 
+    public static final String ENDS_WITH_SES = "ses";
+    public static final String ENDS_WITH_S = "s";
+
     // KUBERNETES METRIC API URI
     public static final String URI_METRIC_API_BASIC = "/apis/metrics.k8s.io/v1beta1/namespaces/{namespace}/pods";
 

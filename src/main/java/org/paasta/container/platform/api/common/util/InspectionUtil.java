@@ -46,7 +46,7 @@ public class InspectionUtil {
      * @return the string
      */
     public static String makeMethodName(String fieldName, String suffix) {
-        if (fieldName.endsWith("s")) {
+        if (fieldName.endsWith(Constants.ENDS_WITH_S)) {
             return "getCpMasterApiList" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1) + "es" + suffix;
         } else {
             return "getCpMasterApiList" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1) + "s" + suffix;
@@ -62,7 +62,7 @@ public class InspectionUtil {
      * @return the string
      */
     public static String makeResourceName(String resourceName) {
-        if (resourceName.endsWith("ses")) {
+        if (resourceName.endsWith(Constants.ENDS_WITH_SES)) {
             return resourceName.substring(0, resourceName.length()-2).toLowerCase();
         } else {
             return resourceName.substring(0, resourceName.length()-1).toLowerCase();

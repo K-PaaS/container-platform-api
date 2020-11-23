@@ -357,13 +357,11 @@ public class NamespacesServiceTest {
         when(resourceYamlService.createRoleBinding(NAMESPACE_ADMIN_USER_ID, NAMESPACE, "paas-ta-container-platform-admin-role")).thenReturn(gFinalResultStatusModel);
 
         // for - if
-        String rq = "paas-ta-container-platform-low-rq";
-
+        String rq = nsInitTemp.getResourceQuotasList().get(0);
         resourceYamlService.createDefaultResourceQuota(NAMESPACE, rq);
 
         // for - if
-        String lr = "paas-ta-container-platform-low-limit-range";
-
+        String lr = nsInitTemp.getLimitRangesList().get(0);
         resourceYamlService.createDefaultLimitRanges(NAMESPACE, lr);
 
         String saSecretName = "cp-secret";
@@ -479,16 +477,22 @@ public class NamespacesServiceTest {
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas", HttpMethod.GET, null, ResourceQuotasList.class)).thenReturn(resourceQuotasListMetadata);
 
         List<String> k8sResourceQuotasList = resourceQuotasListMetadata.getItems().stream().map(a -> a.getMetadata().getName()).collect(Collectors.toList());
-        ArrayList<String> toBeDelete = commonService.compareArrayList(k8sResourceQuotasList, requestUpdatedRqList);
-        ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedRqList, k8sResourceQuotasList);
+
+        ArrayList<String> toBeDelete = new ArrayList<>();
+        toBeDelete.add("paas-ta-container-platform-low-rq");
+        when(commonService.compareArrayList(k8sResourceQuotasList, requestUpdatedRqList)).thenReturn(toBeDelete);
+
+        ArrayList<String> toBeAdd = new ArrayList<>();
+        toBeAdd.add("paas-ta-container-platform-low-rq");
+        when(commonService.compareArrayList(requestUpdatedRqList, k8sResourceQuotasList)).thenReturn(toBeAdd);
 
         // for
-        String deleteRqName = "paas-ta-container-platform-low-rq";
+        String deleteRqName = toBeDelete.get(0);
 
         when(resourceQuotasService.deleteResourceQuotas(NAMESPACE, deleteRqName)).thenReturn(gResultStatusModel);
 
         // for
-        String rqName = "paas-ta-container-platform-low-rq";
+        String rqName = toBeAdd.get(0);
 
         resourceYamlService.createDefaultResourceQuota(NAMESPACE, rqName);
 
@@ -525,17 +529,20 @@ public class NamespacesServiceTest {
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges", HttpMethod.GET, null, LimitRangesList.class)).thenReturn(limitRangesListMetadata);
 
         List<String> k8sLimitRangesList = limitRangesListMetadata.getItems().stream().map(a -> a.getMetadata().getName()).collect(Collectors.toList());
-        ArrayList<String> toBeDelete = commonService.compareArrayList(k8sLimitRangesList, requestUpdatedLrList);
-        ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedLrList, k8sLimitRangesList);
+        ArrayList<String> toBeDelete = new ArrayList<>();
+        toBeDelete.add("paas-ta-container-platform-low-limit-range");
+        when(commonService.compareArrayList(k8sLimitRangesList, requestUpdatedLrList)).thenReturn(toBeDelete);
+
+        ArrayList<String> toBeAdd = new ArrayList<>();
+        toBeAdd.add("paas-ta-container-platform-low-limit-range");
+        when(commonService.compareArrayList(requestUpdatedLrList, k8sLimitRangesList)).thenReturn(toBeAdd);
 
         // for
-        String lrName = "paas-ta-container-platform-low-limit-range";
-
+        String lrName = toBeAdd.get(0);
         resourceYamlService.createDefaultLimitRanges(NAMESPACE, lrName);
 
         // for
-        String deleteLrName = "paas-ta-container-platform-low-limit-range";
-
+        String deleteLrName = toBeDelete.get(0);
         when(limitRangesService.deleteLimitRanges(NAMESPACE, deleteLrName)).thenReturn(gResultStatusModel);
 
         // when
