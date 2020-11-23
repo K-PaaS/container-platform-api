@@ -186,7 +186,7 @@ public class UsersServiceTest {
         when(commonService.setResultObject(usersListAdmin, UsersListAdmin.class)).thenReturn(usersListAdmin);
         when(commonService.setResultModel(usersListAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalUsersListAdmin);
 
-        UsersListAdmin resultList = usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_CLUSTER_ADMIN, SEARCH_NAME, LIMIT, OFFSET, ORDER_BY, ORDER);
+        UsersListAdmin resultList = (UsersListAdmin) usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_CLUSTER_ADMIN, SEARCH_NAME, LIMIT, OFFSET, ORDER_BY, ORDER);
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
     }
 
@@ -198,7 +198,7 @@ public class UsersServiceTest {
         when(commonService.setResultObject(usersListAdmin, UsersListAdmin.class)).thenReturn(usersListAdmin);
         when(commonService.setResultModel(usersListAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalUsersListAdmin);
 
-        UsersListAdmin resultList = usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_USER, SEARCH_NAME, LIMIT, OFFSET, ORDER_BY, ORDER);
+        UsersListAdmin resultList = (UsersListAdmin) usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_USER, SEARCH_NAME, LIMIT, OFFSET, ORDER_BY, ORDER);
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
     }
 
@@ -213,14 +213,14 @@ public class UsersServiceTest {
 
     @Test
     public void getUsersAllByCluster_Limit() {
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> { usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_NONE, SEARCH_NAME, 0, OFFSET, ORDER_BY, ORDER); });
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> { usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_USER, SEARCH_NAME, -1, OFFSET, ORDER_BY, ORDER); });
 
-        assertEquals(MessageConstant.MYSQL_LIMIT_ILLEGALARGUMENT, exception.getMessage());
+        assertEquals(MessageConstant.LIMIT_ILLEGALARGUMENT, exception.getMessage());
     }
 
     @Test
     public void getUsersAllByCluster_Offset() {
-        Throwable exception = assertThrows(IllegalArgumentException.class, () -> { usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_NONE, SEARCH_NAME, LIMIT, -1, ORDER_BY, ORDER); });
+        Throwable exception = assertThrows(IllegalArgumentException.class, () -> { usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_USER, SEARCH_NAME, LIMIT, -1, ORDER_BY, ORDER); });
 
         assertEquals(MessageConstant.OFFSET_ILLEGALARGUMENT, exception.getMessage());
     }

@@ -93,13 +93,7 @@ public class UsersService {
      * @param cluster
      * @return
      */
-    public UsersListAdmin getUsersAllByCluster(String cluster, String userType, String searchParam, int limit, int offset, String orderBy, String order) {
-        if (limit < 1) {
-            throw new IllegalArgumentException(MessageConstant.MYSQL_LIMIT_ILLEGALARGUMENT);
-        }
-        if (offset < 0) {
-            throw new IllegalArgumentException(MessageConstant.OFFSET_ILLEGALARGUMENT);
-        }
+    public Object getUsersAllByCluster(String cluster, String userType, String searchName, int limit, int offset, String orderBy, String order) {
 
         if (SELECTED_ADMINISTRATOR.equalsIgnoreCase(userType)) {
             userType = AUTH_CLUSTER_ADMIN;
@@ -109,10 +103,13 @@ public class UsersService {
             throw new IllegalArgumentException(MessageConstant.USER_TYPE_ILLEGALARGUMENT);
         }
 
-        String reqUrlParam = "?userType=" + userType + "&searchParam=" + searchParam + "&limit=" + limit + "&offset=" + offset + "&orderBy=" + orderBy + "&order=" + order;
-        UsersListAdmin rsDb = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", cluster) + reqUrlParam, HttpMethod.GET, null, UsersListAdmin.class);
+        String reqUrlParam = "?userType=" + userType + "&searchParam=" + searchName + "&orderBy=" + orderBy + "&order=" + order;
+        UsersListAdmin usersListAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", cluster) + reqUrlParam, HttpMethod.GET, null, UsersListAdmin.class);
 
-        return (UsersListAdmin) commonService.setResultModel(commonService.setResultObject(rsDb, UsersListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        //users list paging
+        usersListAdmin = commonService.userListProcessing(usersListAdmin, offset, limit, orderBy, order, searchName, UsersListAdmin.class);
+
+        return commonService.setResultModel(commonService.setResultObject(usersListAdmin, UsersListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 

@@ -61,11 +61,11 @@ public class UsersController {
 
     })
     @GetMapping(value = "/clusters/{cluster:.+}/users")
-    public UsersListAdmin getUsersList(@PathVariable(value = "cluster") String cluster,
+    public Object getUsersList(@PathVariable(value = "cluster") String cluster,
                                        @RequestParam(name = "namespace", required = false) String namespace,
                                        @RequestParam(defaultValue = "administrator") String userType,
                                        @RequestParam(required = false, defaultValue = "") String searchName,
-                                       @RequestParam(required = false, defaultValue = "1") int limit,
+                                       @RequestParam(required = false, defaultValue = "0") int limit,
                                        @RequestParam(required = false, defaultValue = "0") int offset,
                                        @RequestParam(required = false, defaultValue = "created") String orderBy,
                                        @RequestParam(required = false, defaultValue = "desc") String order,
