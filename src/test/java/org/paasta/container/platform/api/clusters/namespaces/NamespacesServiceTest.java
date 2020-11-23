@@ -477,8 +477,14 @@ public class NamespacesServiceTest {
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/resourcequotas", HttpMethod.GET, null, ResourceQuotasList.class)).thenReturn(resourceQuotasListMetadata);
 
         List<String> k8sResourceQuotasList = resourceQuotasListMetadata.getItems().stream().map(a -> a.getMetadata().getName()).collect(Collectors.toList());
-        ArrayList<String> toBeDelete = commonService.compareArrayList(k8sResourceQuotasList, requestUpdatedRqList);
-        ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedRqList, k8sResourceQuotasList);
+
+        ArrayList<String> toBeDelete = new ArrayList<>();
+        toBeDelete.add("paas-ta-container-platform-low-rq");
+        when(commonService.compareArrayList(k8sResourceQuotasList, requestUpdatedRqList)).thenReturn(toBeDelete);
+
+        ArrayList<String> toBeAdd = new ArrayList<>();
+        toBeAdd.add("paas-ta-container-platform-low-rq");
+        when(commonService.compareArrayList(requestUpdatedRqList, k8sResourceQuotasList)).thenReturn(toBeAdd);
 
         // for
         String deleteRqName = toBeDelete.get(0);
@@ -523,8 +529,13 @@ public class NamespacesServiceTest {
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/limitranges", HttpMethod.GET, null, LimitRangesList.class)).thenReturn(limitRangesListMetadata);
 
         List<String> k8sLimitRangesList = limitRangesListMetadata.getItems().stream().map(a -> a.getMetadata().getName()).collect(Collectors.toList());
-        ArrayList<String> toBeDelete = commonService.compareArrayList(k8sLimitRangesList, requestUpdatedLrList);
-        ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedLrList, k8sLimitRangesList);
+        ArrayList<String> toBeDelete = new ArrayList<>();
+        toBeDelete.add("paas-ta-container-platform-low-limit-range");
+        when(commonService.compareArrayList(k8sLimitRangesList, requestUpdatedLrList)).thenReturn(toBeDelete);
+
+        ArrayList<String> toBeAdd = new ArrayList<>();
+        toBeAdd.add("paas-ta-container-platform-low-limit-range");
+        when(commonService.compareArrayList(requestUpdatedLrList, k8sLimitRangesList)).thenReturn(toBeAdd);
 
         // for
         String lrName = toBeAdd.get(0);
