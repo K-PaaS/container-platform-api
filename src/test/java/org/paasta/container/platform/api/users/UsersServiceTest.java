@@ -178,29 +178,27 @@ public class UsersServiceTest {
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
     }
 
-//    @Test
-//    public void getUsersAllByCluster_Cluster_Admin() {
-//        String reqUrlParam = "?userType=" + AUTH_CLUSTER_ADMIN + "&searchParam=" + SEARCH_NAME + "&limit=" + LIMIT + "&offset=" + OFFSET + "&orderBy=" + ORDER_BY + "&order=" + ORDER;
-//
-//        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", CLUSTER) + reqUrlParam , HttpMethod.GET, null, UsersListAdmin.class)).thenReturn(usersListAdmin);
-//        when(commonService.setResultObject(usersListAdmin, UsersListAdmin.class)).thenReturn(usersListAdmin);
-//        when(commonService.setResultModel(usersListAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalUsersListAdmin);
-//
-//        UsersListAdmin resultList = (UsersListAdmin) usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_CLUSTER_ADMIN, SEARCH_NAME, LIMIT, OFFSET, ORDER_BY, ORDER);
-//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
-//    }
+    @Test
+    public void getUsersAllByCluster_Cluster_Admin() {
+        String reqUrlParam = "?userType=" + AUTH_CLUSTER_ADMIN + "&searchParam=" + SEARCH_NAME + "&orderBy=" + ORDER_BY + "&order=" + ORDER;
 
-//    @Test
-//    public void getUsersAllByCluster_User() {
-//        String reqUrlParam = "?userType=" + AUTH_USER + "&searchParam=" + SEARCH_NAME + "&limit=" + LIMIT + "&offset=" + OFFSET + "&orderBy=" + ORDER_BY + "&order=" + ORDER;
-//
-//        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", CLUSTER) + reqUrlParam , HttpMethod.GET, null, UsersListAdmin.class)).thenReturn(usersListAdmin);
-//        when(commonService.setResultObject(usersListAdmin, UsersListAdmin.class)).thenReturn(usersListAdmin);
-//        when(commonService.setResultModel(usersListAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalUsersListAdmin);
-//
-//        UsersListAdmin resultList = (UsersListAdmin) usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_USER, SEARCH_NAME, LIMIT, OFFSET, ORDER_BY, ORDER);
-//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
-//    }
+        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", CLUSTER) + reqUrlParam , HttpMethod.GET, null, UsersListAdmin.class)).thenReturn(usersListAdmin);
+        when(commonService.setResultObject(usersListAdmin, UsersListAdmin.class)).thenReturn(usersListAdmin);
+        when(commonService.setResultModel(usersListAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalUsersListAdmin);
+
+        UsersListAdmin resultList = (UsersListAdmin) usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_CLUSTER_ADMIN, SEARCH_NAME, LIMIT, OFFSET, ORDER_BY, ORDER);
+    }
+
+    @Test
+    public void getUsersAllByCluster_User() {
+        String reqUrlParam = "?userType=" + AUTH_USER + "&searchParam=" + SEARCH_NAME + "&orderBy=" + ORDER_BY + "&order=" + ORDER;
+
+        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", CLUSTER) + reqUrlParam , HttpMethod.GET, null, UsersListAdmin.class)).thenReturn(usersListAdmin);
+        when(commonService.setResultObject(usersListAdmin, UsersListAdmin.class)).thenReturn(usersListAdmin);
+        when(commonService.setResultModel(usersListAdmin, Constants.RESULT_STATUS_SUCCESS)).thenReturn(finalUsersListAdmin);
+
+        UsersListAdmin resultList = (UsersListAdmin) usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_USER, SEARCH_NAME, LIMIT, OFFSET, ORDER_BY, ORDER);
+    }
 
 
     @Test(expected = IllegalArgumentException.class)
@@ -210,20 +208,6 @@ public class UsersServiceTest {
 
         assertEquals(MessageConstant.USER_TYPE_ILLEGALARGUMENT, exception.getLocalizedMessage());
     }
-
-//    @Test
-//    public void getUsersAllByCluster_Limit() {
-//        Throwable exception = assertThrows(IllegalArgumentException.class, () -> { usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_USER, SEARCH_NAME, -1, OFFSET, ORDER_BY, ORDER); });
-//
-//        assertEquals(MessageConstant.LIMIT_ILLEGALARGUMENT, exception.getMessage());
-//    }
-//
-//    @Test
-//    public void getUsersAllByCluster_Offset() {
-//        Throwable exception = assertThrows(IllegalArgumentException.class, () -> { usersService.getUsersAllByCluster(CLUSTER, USER_TYPE_AUTH_USER, SEARCH_NAME, LIMIT, -1, ORDER_BY, ORDER); });
-//
-//        assertEquals(MessageConstant.OFFSET_ILLEGALARGUMENT, exception.getMessage());
-//    }
 
     @Test
     public void getUsersListByNamespaceAdmin() {

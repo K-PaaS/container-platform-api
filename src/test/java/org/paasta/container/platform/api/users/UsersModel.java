@@ -1,6 +1,8 @@
 package org.paasta.container.platform.api.users;
 
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonItemMetaData;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.users.Users.NamespaceRole;
 
 import java.util.ArrayList;
@@ -15,6 +17,9 @@ import java.util.List;
  **/
 
 public class UsersModel {
+    private static final String NAMESPACE = "cp-namespace";
+    private static final String CREATION_TIME = "2020-11-17T09:31:37Z";
+
     public static UsersList getResultUsersList() {
         UsersList usersList = new UsersList();
         List<Users> users = new ArrayList<>();
@@ -125,6 +130,17 @@ public class UsersModel {
         return usersListAdmin;
     }
 
+    public static UsersListAdmin getFinalResultUsersAdminList() {
+        UsersListAdmin usersListAdmin = new UsersListAdmin();
+        usersListAdmin = getResultUsersAdminList();
+        usersListAdmin.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+        usersListAdmin.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
+        usersListAdmin.setHttpStatusCode(CommonStatusCode.OK.getCode());
+        usersListAdmin.setDetailMessage(CommonStatusCode.OK.getMsg());
+
+        return usersListAdmin;
+    }
+
     public static UsersListAdmin.UserDetail getResultUserDetailModel(){
         UsersListAdmin.UserDetail userDetail = new UsersListAdmin.UserDetail();
         userDetail.setUserId("paasta");
@@ -144,5 +160,36 @@ public class UsersModel {
                 .build();
 
         return secrets;
+    }
+
+    public static UsersAdmin.UsersDetails getUsersDetails(){
+        UsersAdmin.UsersDetails userDetail = new UsersAdmin.UsersDetails();
+        userDetail.setCpNamespace("cp-namespace");
+        userDetail.setRoleSetCode("paas-ta-container-platform-init-role");
+        userDetail.setServiceAccountUid("111111111aaaaaa");
+        userDetail.setSaSecret("paasta-token-jqrx4");
+
+        return userDetail;
+    }
+
+    public static List<UsersAdmin.UsersDetails> getUsersDetailsList(){
+        List<UsersAdmin.UsersDetails> userDetailList = new ArrayList<>();
+        userDetailList.add(getUsersDetails());
+
+        return userDetailList;
+    }
+
+    public static UsersAdmin getUsersAdminList(){
+        UsersAdmin usersAdmin = new UsersAdmin();
+
+        usersAdmin.setUserId("1");
+        usersAdmin.setServiceAccountName("paasta");
+        usersAdmin.setCreated(CREATION_TIME);
+        usersAdmin.setClusterName("cp-cluster");
+        usersAdmin.setClusterApiUrl("111.111.111.111:6443");
+        usersAdmin.setClusterToken("eyJhbGciOiJSUzI1NiIsImtpZCI6IktNWmgxVXB3ajgwS0NxZjFWaVZJVGVvTXJoWnZ5dG0tMGExdzNGZjBKX00ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJwYWFzLWYxMGU3ZTg4LTQ4YTUtNGUyYy04Yjk5LTZhYmIzY2ZjN2Y2Zi1jYWFzIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6InN1cGVyLWFkbWluLXRva2VuLWtzbXo1Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6InN1cGVyLWFkbWluIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiMjMwZWQ1OGQtNzc0MC00MDI4LTk0MTEtYTM1MzVhMWM0NjU4Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnBhYXMtZjEwZTdlODgtNDhhNS00ZTJjLThiOTktNmFiYjNjZmM3ZjZmLWNhYXM6c3VwZXItYWRtaW4ifQ.nxnIJCOH_XVMK71s0gF8bgzSxA7g6_y7hGdboLvSqIAGf9J9AgG1DouP29uShK19fMsl9IdbGODPvtuiBz4QyGLPARZldmlzEyFG3k08UMNay1xX_oK-Fe7atMlYgvoGzyM_5-Zp5dyvnxE2skk524htMGHqW1ZwnHLVxtBg8AuGfMwLW1xahmktsNZDG7pRMasPsj73E85lfavMobBlcs4hwVcZU82gAg0SK1QVe7-Uc2ip_9doNo6_9rGW3FwHdVgUNAeCvPRGV0W1dKJv0IX5e_7fIPIznj2xXcZoHf3BnKfDayDIKJOCdsEsy_2NGi1tiD3UvzDDzZpz02T2sg");
+        usersAdmin.setItems(getUsersDetailsList());
+
+        return usersAdmin;
     }
 }
