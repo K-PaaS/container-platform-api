@@ -357,13 +357,11 @@ public class NamespacesServiceTest {
         when(resourceYamlService.createRoleBinding(NAMESPACE_ADMIN_USER_ID, NAMESPACE, "paas-ta-container-platform-admin-role")).thenReturn(gFinalResultStatusModel);
 
         // for - if
-        String rq = "paas-ta-container-platform-low-rq";
-
+        String rq = nsInitTemp.getResourceQuotasList().get(0);
         resourceYamlService.createDefaultResourceQuota(NAMESPACE, rq);
 
         // for - if
-        String lr = "paas-ta-container-platform-low-limit-range";
-
+        String lr = nsInitTemp.getLimitRangesList().get(0);
         resourceYamlService.createDefaultLimitRanges(NAMESPACE, lr);
 
         String saSecretName = "cp-secret";
@@ -483,12 +481,12 @@ public class NamespacesServiceTest {
         ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedRqList, k8sResourceQuotasList);
 
         // for
-        String deleteRqName = "paas-ta-container-platform-low-rq";
+        String deleteRqName = toBeDelete.get(0);
 
         when(resourceQuotasService.deleteResourceQuotas(NAMESPACE, deleteRqName)).thenReturn(gResultStatusModel);
 
         // for
-        String rqName = "paas-ta-container-platform-low-rq";
+        String rqName = toBeAdd.get(0);
 
         resourceYamlService.createDefaultResourceQuota(NAMESPACE, rqName);
 
@@ -529,13 +527,11 @@ public class NamespacesServiceTest {
         ArrayList<String> toBeAdd = commonService.compareArrayList(requestUpdatedLrList, k8sLimitRangesList);
 
         // for
-        String lrName = "paas-ta-container-platform-low-limit-range";
-
+        String lrName = toBeAdd.get(0);
         resourceYamlService.createDefaultLimitRanges(NAMESPACE, lrName);
 
         // for
-        String deleteLrName = "paas-ta-container-platform-low-limit-range";
-
+        String deleteLrName = toBeDelete.get(0);
         when(limitRangesService.deleteLimitRanges(NAMESPACE, deleteLrName)).thenReturn(gResultStatusModel);
 
         // when
