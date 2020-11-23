@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.common;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.text.SimpleDateFormat;
@@ -79,9 +78,9 @@ public class CommonUtils {
         if (checkParamList.size() > 0) {
             return ResultStatus.builder()
                 .resultCode(Constants.RESULT_STATUS_FAIL)
-                .resultMessage("회원가입에 실패했습니다.")
+                .resultMessage(MessageConstant.REGISTER_FAIL)
                 .httpStatusCode(400)
-                .detailMessage("회원가입에 실패했습니다. " + checkParamList.toString() + " 항목을 다시 확인해주세요.").build();
+                .detailMessage(MessageConstant.REGISTER_FAIL + " " + checkParamList.toString() + " 항목을 다시 확인해주세요.").build();
         }
 
         return objectMapper.convertValue(map, Users.class);
@@ -94,12 +93,11 @@ public class CommonUtils {
      * @param namespace the namespace
      * @return the map
      */
-    public static Map yamlMatch(String username, String namespace) {
-        Map<String, Object> model = new HashMap<>();
-        model.put("userName", username);
-        model.put("spaceName", namespace);
-
-        return model;
+    public static Map<String, Object> yamlMatch(String username, String namespace) {
+        return new HashMap<String, Object>() {{
+            put("userName", username);
+            put("spaceName", namespace);
+        }};
     }
 
     /**
@@ -126,7 +124,6 @@ public class CommonUtils {
         return defaultValue;
     }
 
-
     /**
      * Object 목록 값 수정(Object List value modify)
      *
@@ -142,8 +139,8 @@ public class CommonUtils {
                 list.set(index, newObj);
             }
         }
-        return list.toArray();
 
+        return list.toArray();
     }
 
     /**
@@ -157,17 +154,6 @@ public class CommonUtils {
     }
 
     /**
-     * Is instance check boolean.
-     *
-     * @param object the object
-     * @param type   the type
-     * @return the boolean
-     */
-    public static boolean isInstanceCheck(Object object, Class<?> type) {
-        return type.isInstance(object);
-    }
-
-    /**
      * Is result status instance check boolean.
      *
      * @param object the object
@@ -176,19 +162,6 @@ public class CommonUtils {
     public static boolean isResultStatusInstanceCheck(Object object) {
         return object instanceof ResultStatus;
     }
-
-    /**
-     * Json string to map map.
-     *
-     * @param jsonString the json string
-     * @return the map
-     * @throws JsonProcessingException the json processing exception
-     */
-    public static Map jsonStringToMap(String jsonString) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(jsonString, Map.class);
-    }
-
 
     /**
      * Proc replace null value object.

@@ -40,4 +40,7 @@ public class MessageConstant {
 
     // searching
     public static final String USER_TYPE_ILLEGALARGUMENT = "사용자 유형 선택 목록에 없는 항목입니다.";
+
+    // register
+    public static final String REGISTER_FAIL = "회원가입에 실패했습니다.";
 }
