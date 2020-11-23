@@ -38,7 +38,7 @@ public class PodsServiceTest {
     private static final String SELECTOR = "app=nginx";
     private static final String NODE_NAME = "paasta-cp-k8s-worker-003";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
-
+    private static final String containerUsageName = "cp-container";
     private static final int OFFSET = 0;
     private static final int LIMIT = 0;
     private static final String ORDER_BY = "creationTime";
@@ -113,17 +113,18 @@ public class PodsServiceTest {
         metaData.setOwnerReferences(ownerReferences);
 
         HashMap hm = new HashMap();
-        hm.put("cpu", "70");
-        hm.put("memory", "80");
+        hm.put("cpu", "");
+        hm.put("memory", "");
 
         //PodsList.item
         List<Pods> items = new ArrayList<>();
         List<CommonContainer> containers = new ArrayList<>();
         CommonContainer commonContainer = new CommonContainer();
 
-        CommonResourceRequirement commonResourceRequirement = new CommonResourceRequirement();
-        commonResourceRequirement.setUsage(hm);
-        commonContainer.setResources(commonResourceRequirement);
+        CommonResourceRequirement resources = new CommonResourceRequirement();
+        resources.setUsage(hm);
+        commonContainer.setResources(resources);
+        commonContainer.setName(containerUsageName);
         containers.add(commonContainer);
         CommonSpec commonSpec = new CommonSpec();
         commonSpec.setContainers(containers);
@@ -136,7 +137,11 @@ public class PodsServiceTest {
         PodsUsage podsUsage = new PodsUsage();
         List<Containers> containersListForUsage = new ArrayList<>();
         Containers containersforUsage = new Containers();
-        containersforUsage.setName("podUsageName");
+        ContainerUsage  containerUsage = new ContainerUsage();
+        containerUsage.setCpu("");
+        containerUsage.setMemory("");
+        containersforUsage.setName(containerUsageName);
+        containersforUsage.setUsage(containerUsage);
         containersListForUsage.add(containersforUsage);
         podsUsage.setContainers(containersListForUsage);
 
@@ -148,7 +153,7 @@ public class PodsServiceTest {
 
         //PodsMetrics.item
         List<PodsUsage>  podsUsagesItem = new ArrayList<>();
-        metaData.setName("podUsageName");
+        metaData.setName(containerUsageName);
         podsUsage.setMetadata(metaData);
         podsUsagesItem.add(podsUsage);
         podsMetric.setItems(podsUsagesItem);
@@ -199,26 +204,26 @@ public class PodsServiceTest {
 
     }
 
-    /**
-     * Pods 목록 조회(Get Pods list) Test
-     */
-    @Test
-    public void getPodsList_Valid_ReturnModel() {
-        // given
-        when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
-        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods", HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
-        when(commonService.setResultObject(gResultMap, PodsList.class)).thenReturn(gResultListModel);
-
-        when(podsService.getPodsMetricList(NAMESPACE, gResultListModel)).thenReturn(gResultListModel);
-        when(commonService.resourceListProcessing(gResultListModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsList.class)).thenReturn(gResultListModel);
-        when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
-
-        // when
-        PodsList resultList = podsService.getPodsList(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
-
-        // then
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
-    }
+//    /**
+//     * Pods 목록 조회(Get Pods list) Test
+//     */
+//    @Test
+//    public void getPodsList_Valid_ReturnModel() {
+//        // given
+//        when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
+//        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods", HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+//        when(commonService.setResultObject(gResultMap, PodsList.class)).thenReturn(gResultListModel);
+//
+//        when(podsService.getPodsMetricList(NAMESPACE, gResultListModel)).thenReturn(gResultListModel);
+//        when(commonService.resourceListProcessing(gResultListModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsList.class)).thenReturn(gResultListModel);
+//        when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
+//
+//        // when
+//        PodsList resultList = podsService.getPodsList(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
+//
+//        // then
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
+//    }
 
     /**
      * Pods 목록 조회(Get Pods list) Test
@@ -552,7 +557,6 @@ public class PodsServiceTest {
     @Test
     public void getMergeMetric_Valid_ReturnModel() {
         podsService.getMergeMetric(gResultListModel, podsMetric);
-
     }
 
 

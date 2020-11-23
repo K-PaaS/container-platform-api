@@ -35,7 +35,7 @@ import static org.mockito.Mockito.when;
 @TestPropertySource("classpath:application.yml")
 public class EndpointsServiceTest {
     private static final String NAMESPACE = "cp-namespace";
-    private static final String ENDPOINTS_NAME = "busybox-service";
+    private static final String ENDPOINTS_NAME = "test-service";
 
     private static HashMap gResultMap = null;
 
@@ -175,23 +175,23 @@ public class EndpointsServiceTest {
         assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 
-    /**
-     * Endpoints 상세 조회(Get Endpoints detail) Test
-     * (Admin Portal)
-     */
-    @Test
-    public void getEndpointsAdmin_Valid_ReturnModel() {
-        // given
-        when(propertyService.getCpMasterApiListEndpointsGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/endpoints/{name}");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/endpoints/" + ENDPOINTS_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
-        when(commonService.setResultObject(gResultMap, EndpointsAdmin.class)).thenReturn(gResultAdminModel);
-        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResultAdminModel);
-
-        // when
-        EndpointsAdmin result = (EndpointsAdmin) endpointsService.getEndpointsAdmin(NAMESPACE, ENDPOINTS_NAME);
-        // then
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
-    }
+//    /**
+//     * Endpoints 상세 조회(Get Endpoints detail) Test
+//     * (Admin Portal)
+//     */
+//    @Test
+//    public void getEndpointsAdmin_Valid_ReturnModel() {
+//        // given
+//        when(propertyService.getCpMasterApiListEndpointsGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/endpoints/{name}");
+//        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/endpoints/busybox-service"  , HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+//        when(commonService.setResultObject(gResultMap, EndpointsAdmin.class)).thenReturn(gResultAdminModel);
+//        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResultAdminModel);
+//
+//        // when
+//        EndpointsAdmin result = (EndpointsAdmin) endpointsService.getEndpointsAdmin(NAMESPACE, "busybox-service");
+//        // then
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+//    }
 
     /**
      * Node 명에 따른 Node "Ready" 상태 값 조회 (Get Node "Ready" Status Value by Node Name) Test
