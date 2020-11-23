@@ -79,7 +79,7 @@ public class PodsServiceTest {
     private static List<Pods> podsItemListUser = null;
     private static PodsListAdminList podsListAdminList = null;
 
-
+    private static  PodsMetric podsMetric = null;
     @Mock
     RestTemplateService restTemplateService;
 
@@ -112,29 +112,48 @@ public class PodsServiceTest {
         ownerReferences.add(commonOwnerReferences);
         metaData.setOwnerReferences(ownerReferences);
 
-        //user
-        List<Pods> items = new ArrayList<>();
+        HashMap hm = new HashMap();
+        hm.put("cpu", "70");
+        hm.put("memory", "80");
 
+        //PodsList.item
+        List<Pods> items = new ArrayList<>();
+        List<CommonContainer> containers = new ArrayList<>();
+        CommonContainer commonContainer = new CommonContainer();
+
+        CommonResourceRequirement commonResourceRequirement = new CommonResourceRequirement();
+        commonResourceRequirement.setUsage(hm);
+        commonContainer.setResources(commonResourceRequirement);
+        containers.add(commonContainer);
+        CommonSpec commonSpec = new CommonSpec();
+        commonSpec.setContainers(containers);
         Pods pods = new Pods();
         pods.setMetadata(metaData);
+        pods.setSpec(commonSpec);
         items.add(pods);
-        
-        PodsUsage podsUsage = new PodsUsage();
-        CommonContainer container = new CommonContainer();
-        Containers containerUsage = new Containers();
-        HashMap hm = new HashMap();
-        PodsMetric podsMetric = new PodsMetric();
 
+
+        PodsUsage podsUsage = new PodsUsage();
+        List<Containers> containersListForUsage = new ArrayList<>();
+        Containers containersforUsage = new Containers();
+        containersforUsage.setName("podUsageName");
+        containersListForUsage.add(containersforUsage);
+        podsUsage.setContainers(containersListForUsage);
+
+
+
+
+
+       podsMetric = new PodsMetric();
+
+        //PodsMetrics.item
         List<PodsUsage>  podsUsagesItem = new ArrayList<>();
         metaData.setName("podUsageName");
         podsUsage.setMetadata(metaData);
         podsUsagesItem.add(podsUsage);
         podsMetric.setItems(podsUsagesItem);
 
-        
-        
-        
-        
+
         gResultListModel = new PodsList();
         gResultListModel.setItems(items);
 
@@ -517,7 +536,9 @@ public class PodsServiceTest {
         assertEquals(gResultListAdminModel, resultList);
     }
 
-
+    /**
+     * 참조자 UID에 의한 Pods 목록 필터 (Get Services Admin list in all namespaces) Test
+     */
     @Test
     public void podsFIlterWithOwnerReferences_Valid_ReturnModel() {
 
@@ -525,6 +546,16 @@ public class PodsServiceTest {
         assertEquals(gResultListAdminModel, resultList);
 
     }
+
+
+
+    @Test
+    public void getMergeMetric_Valid_ReturnModel() {
+        podsService.getMergeMetric(gResultListModel, podsMetric);
+
+    }
+
+
 
 }
 

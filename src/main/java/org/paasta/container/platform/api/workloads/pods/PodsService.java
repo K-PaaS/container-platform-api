@@ -93,7 +93,7 @@ public class PodsService {
      * @param podsList  the podsList
      * @param podsMetrics   the podsMetrics
      */
-    private void getMergeMetric(PodsList podsList, PodsMetric podsMetrics) {
+    public void getMergeMetric(PodsList podsList, PodsMetric podsMetrics) {
         Pods pods = null;
         PodsUsage podsUsage = null;
         CommonContainer container = null;
