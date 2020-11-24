@@ -42,5 +42,8 @@ public class MessageConstant {
     public static final String USER_TYPE_ILLEGALARGUMENT = "사용자 유형 선택 목록에 없는 항목입니다.";
 
     // register
+    public static final String DUPLICATE_USER_ID = "User ID가 중복입니다.";
+    public static final String RE_CONFIRM_INPUT_VALUE = "입력 값을 다시 확인해 주세요.";
     public static final String REGISTER_FAIL = "회원가입에 실패했습니다.";
+
 }

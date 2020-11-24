@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.config.NoAuth;
 import org.paasta.container.platform.api.users.Users;
@@ -69,7 +70,7 @@ public class SignUpController {
         // input parameter regex
         if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
             return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                    .resultMessage("입력 값을 다시 확인해 주세요.")
+                    .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
                     .httpStatusCode(400)
                     .detailMessage(regexMatch(users)).build();
         }
@@ -78,9 +79,9 @@ public class SignUpController {
         // id duplication check
         if(duplicatedUserIdCheck(users)) {
             return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                    .resultMessage("The User ID is already exist.")
+                    .resultMessage(MessageConstant.DUPLICATE_USER_ID)
                     .httpStatusCode(409)
-                    .detailMessage("User ID가 중복입니다.").build();
+                    .detailMessage(MessageConstant.DUPLICATE_USER_ID).build();
         }
 
         // for Admin
