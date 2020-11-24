@@ -94,6 +94,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         // NAMESPACE_ADMIN, USER
         else {
 
+            Users user = usersService.getUsersDetailsForLogin(userdetails.getUsername(), "false");
+
             //generate loginMetadata & filter default namespace
             List<loginMetaDataItem> loginMetaData = defaultNamespaceFilter(userItem);
 
@@ -103,7 +105,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             }
 
             authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                    MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, null);
+                    MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, user.getClusterName());
 
         }
 
