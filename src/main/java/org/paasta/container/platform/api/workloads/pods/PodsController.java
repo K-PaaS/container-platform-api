@@ -136,7 +136,7 @@ public class PodsController {
         if (isAdmin) {
             return podsService.getPodListWithLabelSelectorAdmin(namespace, selector, type, ownerReferencesUid, offset, limit, orderBy, order, searchName);
         } else
-            return podsService.getPodListWithLabelSelector(namespace, selector, type, ownerReferencesUid);
+            return podsService.getPodListWithLabelSelector(namespace, selector, type, ownerReferencesUid, offset, limit, orderBy, order, searchName);
     }
 
     /**
