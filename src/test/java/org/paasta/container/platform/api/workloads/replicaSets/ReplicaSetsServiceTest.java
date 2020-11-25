@@ -28,12 +28,13 @@ public class ReplicaSetsServiceTest {
 
     private static final String SELECTOR = "test-selector";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
-
+    private static final String UID= "";
     private static final int OFFSET = 0;
     private static final int LIMIT = 0;
     private static final String ORDER_BY = "creationTime";
     private static final String ORDER = "desc";
     private static final String SEARCH_NAME = "";
+    private static final String TYPE = "deployments";
     private static final boolean isAdmin = true;
     private static final boolean isNotAdmin = false;
 
@@ -206,7 +207,8 @@ public class ReplicaSetsServiceTest {
         when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
 
         // when
-        ReplicaSetsList resultList = replicaSetsService.getReplicaSetsListLabelSelector(NAMESPACE, SELECTOR);
+
+        ReplicaSetsList resultList = replicaSetsService.getReplicaSetsListLabelSelector(NAMESPACE, SELECTOR, TYPE, UID, OFFSET,LIMIT,ORDER_BY, ORDER,SEARCH_NAME);
 
         // then
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
