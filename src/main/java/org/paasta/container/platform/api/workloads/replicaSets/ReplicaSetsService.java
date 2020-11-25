@@ -3,12 +3,15 @@ package org.paasta.container.platform.api.workloads.replicaSets;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.workloads.pods.Pods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * ReplicaSets Service 클래스
@@ -133,7 +136,7 @@ public class ReplicaSetsService {
      * @return the replicaSets yaml
      */
     public Object getReplicaSetsAdminYaml(String namespace, String replicaSetsName, HashMap resultMap) {
-        Object response  = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+        Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListReplicaSetsGetUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", replicaSetsName), HttpMethod.GET, null, String.class, Constants.ACCEPT_TYPE_YAML);
@@ -150,11 +153,17 @@ public class ReplicaSetsService {
     /**
      * ReplicaSets 목록 조회(Get ReplicaSets Selector)
      *
-     * @param namespace the namespace
-     * @param selectors the selectors
+     * @param namespace          the namespace
+     * @param selectors          the selectors
+     * @param ownerReferencesUid the ownerReferencesUid
+     * @param offset             the offset
+     * @param limit              the limit
+     * @param orderBy            the orderBy
+     * @param order              the order
+     * @param searchName         the searchName
      * @return the replicaSets list
      */
-    public ReplicaSetsList getReplicaSetsListLabelSelector(String namespace, String selectors) {
+    public ReplicaSetsList getReplicaSetsListLabelSelector(String namespace, String selectors,String type, String ownerReferencesUid, int offset, int limit, String orderBy, String order, String searchName) {
         String requestSelector = "?labelSelector=" + selectors;
 
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -162,14 +171,25 @@ public class ReplicaSetsService {
                         .replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
 
         ReplicaSetsList replicaSetsList = commonService.setResultObject(resultMap, ReplicaSetsList.class);
-        replicaSetsList = commonService.setCommonItemMetaDataBySelector(replicaSetsList, ReplicaSetsList.class);
+
+        if(type.equals(Constants.DEPLOYMENTS_FOR_SELECTOR)) {
+            if(ownerReferencesUid != null && !ownerReferencesUid.trim().isEmpty()) {
+                // selector by deployments
+                List<ReplicaSets> replicaSetsItem;
+                replicaSetsItem = replicaSetsList.getItems().stream().filter(x -> x.getMetadata().getOwnerReferences().get(0).getUid().matches(ownerReferencesUid)).collect(Collectors.toList());
+                replicaSetsList.setItems(replicaSetsItem);
+            }
+
+        }
+
+        replicaSetsList = commonService.resourceListProcessing(replicaSetsList, offset, limit, orderBy, order, searchName, ReplicaSetsList.class);
 
         return (ReplicaSetsList) commonService.setResultModel(replicaSetsList, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
      * ReplicaSets 목록 조회(Get ReplicaSets Selector)
-     *(Admin portal)
+     * (Admin portal)
      *
      * @param namespace the namespace
      * @param selectors the selectors
@@ -187,7 +207,6 @@ public class ReplicaSetsService {
 
         return (ReplicaSetsListAdmin) commonService.setResultModel(replicaSetsListAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
-
 
 
     /**
@@ -247,7 +266,7 @@ public class ReplicaSetsService {
     public ResultStatus deleteReplicaSets(String namespace, String name, boolean isAdmin) {
         ResultStatus resultStatus;
 
-        if(isAdmin) {
+        if (isAdmin) {
             resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiListReplicaSetsDeleteUrl()
                             .replace("{namespace}", namespace).replace("{name}", name), HttpMethod.DELETE, null, ResultStatus.class);
