@@ -102,7 +102,6 @@ public class Constants {
     public static final String URI_COMMON_API_USER_DELETE = "/users/";
     public static final String URI_COMMON_API_USERS_BY_NAMESPACE_NS_ADMIN = "/clusters/{cluster:.+}/namespaces/{namespace:.+}";
     public static final String URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID = "/clusters/{cluster:.+}/users/{userId:.+}";
-    public static final String URI_COMMON_API_CLUSTERS = "/clusters/{cluster:.+}/users/{userId:.+}";
 
     // NEXT ACTION MOVEMENT DASHBOARD URI
     public static final String URI_CLUSTER_NODES = "/container-platform/clusters/nodes";
@@ -172,7 +171,6 @@ public class Constants {
 
     public static final String noName = "[-]";
     public static final String separatorString =  "," ;
-    public static final String blankString =  " " ;
 
     public static final Integer EVENT_DEFAULT_LIMIT  = 5;
     public static final String PERSISTENT_VOLUME_TYPE = "Hostpath";
