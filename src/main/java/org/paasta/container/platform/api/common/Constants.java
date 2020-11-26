@@ -1,15 +1,10 @@
 package org.paasta.container.platform.api.common;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.http.MediaType;
-
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.springframework.http.MediaType;
+
+import java.util.*;
 
 /**
  * Constants 클래스
@@ -113,10 +108,7 @@ public class Constants {
     public static final String URI_CLUSTER_NODES = "/container-platform/clusters/nodes";
     public static final String URI_CLUSTER_NAMESPACES = "/container-platform/clusters/namespaces";
     public static final String URI_INTRO_OVERVIEW = "/container-platform/intro/overview";
-    public static final String URI_INTRO_ACCESS_INFO = "/container-platform/intro/accessInfo";
-    public static final String URI_INTRO_PRIVATE_REGISTRY_INFO = "/container-platform/intro/privateRegistryInfo";
 
-    public static final String URI_WORKLOAD_OVERVIEW = "/container-platform/workloads/overview";
     public static final String URI_WORKLOAD_DEPLOYMENTS = "/container-platform/workloads/deployments";
     public static final String URI_WORKLOAD_DEPLOYMENTS_DETAIL = "/container-platform/workloads/deployments/{deploymentName:.+}";
     public static final String URI_WORKLOAD_PODS = "/container-platform/workloads/pods";
@@ -130,8 +122,6 @@ public class Constants {
     public static final String URI_STORAGES = "/container-platform/storages";
     public static final String URI_STORAGES_DETAIL = "/container-platform/storages/{persistentVolumeClaimName:.+}";
 
-    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIMS = "/container-platform/storages/persistentVolumeClaims";
-    public static final String URI_STORAGES_PERSISTENT_VOLUME_CLAIMS_DETAIL = "/container-platform/storages/persistentVolumeClaims/{persistentVolumeClaimName:.+}";
     public static final String URI_STORAGES_PERSISTENT_VOLUMES = "/container-platform/storages/persistentVolumes";
     public static final String URI_STORAGES_PERSISTENT_VOLUMES_DETAIL = "/container-platform/storages/persistentVolumes/{persistentVolumeName:.+}";
     public static final String URI_STORAGES_STORAGE_CLASSES = "/container-platform/storages/storageClasses";
@@ -152,9 +142,6 @@ public class Constants {
 
 
     /** 서비스 요청시 처리 메소드 kind 매핑 정보 */
-    public static final String RESOURCE_SERVICEACCOUNT = "ServiceAccount";
-    public static final String RESOURCE_ROLEBINDING = "RoleBinding";
-    public static final String RESOURCE_SECRET = "Secret";
     public static final String RESOURCE_ENDPOINTS = "Endpoints";
     public static final String RESOURCE_EVENTS = "Events";
 
@@ -172,13 +159,11 @@ public class Constants {
     public static final String RESOURCE_SERVICE = "Service";
 
     //storage
-    public static final String RESOURCE_PERSISTENTVOLUME = "PersistentVolume";
     public static final String RESOURCE_PERSISTENTVOLUMECLAIM = "PersistentVolumeClaim";
     public static final String RESOURCE_STORAGECLASS = "StorageClass";
 
     //management
     public static final String RESOURCE_RESOURCEQUOTA = "ResourceQuota";
-    public static final String RESOURCE_LIMITRANGE = "LimitRange";
     public static final String RESOURCE_ROLE = "Role";
 
     public static final String RESOURCE_NAME = "name";
@@ -196,7 +181,6 @@ public class Constants {
     public static final String DEPLOYMENTS_FOR_SELECTOR = "deployments";
     public static final String NULL_REPLACE_TEXT = "-";
 
-    public static final String PARAM_NODE = "node";
     public static final String PARAM_QUERY_FIRST ="?" ;
     public static final String PARAM_QUERY_AND = "&";
 
@@ -224,32 +208,17 @@ public class Constants {
     public static final ResultStatus SUCCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_SUCCESS, CommonStatusCode.OK.getMsg(),
             CommonStatusCode.OK.getCode(),CommonStatusCode.OK.getMsg(), null );
 
-    public static final ResultStatus BAD_REQUEST_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.getMsg(),
-        CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
+    public static final ResultStatus BAD_REQUEST_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL,
+            CommonStatusCode.BAD_REQUEST.getMsg(), CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
 
-    public static final ResultStatus UNAUTHORIZED_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.UNAUTHORIZED.getMsg(),
-        CommonStatusCode.UNAUTHORIZED.getCode(),CommonStatusCode.UNAUTHORIZED.getMsg(), null );
+    public static final ResultStatus FORBIDDEN_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL,
+            CommonStatusCode.FORBIDDEN.getMsg(), CommonStatusCode.FORBIDDEN.getCode(),CommonStatusCode.FORBIDDEN.getMsg());
 
-    public static final ResultStatus FORBIDDEN_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.FORBIDDEN.getMsg(),
-        CommonStatusCode.FORBIDDEN.getCode(),CommonStatusCode.FORBIDDEN.getMsg());
-
-    public static final ResultStatus NOT_FOUND_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.NOT_FOUND.getMsg(),
-        CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg());
-
-    public static final ResultStatus NOT_FOUND_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.NOT_FOUND.getMsg(),
-        CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg(), null );
-
-    public static final ResultStatus CONFLICT_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.CONFLICT.getMsg(),
-        CommonStatusCode.CONFLICT.getCode(),CommonStatusCode.CONFLICT.getMsg(), null );
-
-    public static final ResultStatus UNPROCESSABLE_ENTITY_ACCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.UNPROCESSABLE_ENTITY.getMsg(),
-        CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(),CommonStatusCode.UNPROCESSABLE_ENTITY.getMsg(), null );
+    public static final ResultStatus NOT_FOUND_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL,
+            CommonStatusCode.NOT_FOUND.getMsg(), CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg());
 
     public static final ResultStatus NOT_MATCH_NAMESPACES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_NAMESPACES,
-        CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
-
-    public static final ResultStatus NOT_MATCH_USER_ID = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_USER_ID,
-        CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
+            CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
 
     public Constants() {
         throw new IllegalStateException();
