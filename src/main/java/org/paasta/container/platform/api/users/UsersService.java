@@ -1,39 +1,23 @@
 package org.paasta.container.platform.api.users;
 
-import static org.paasta.container.platform.api.common.Constants.ALL_NAMESPACES;
-import static org.paasta.container.platform.api.common.Constants.AUTH_CLUSTER_ADMIN;
-import static org.paasta.container.platform.api.common.Constants.AUTH_USER;
-import static org.paasta.container.platform.api.common.Constants.CHECK_N;
-import static org.paasta.container.platform.api.common.Constants.CHECK_Y;
-import static org.paasta.container.platform.api.common.Constants.SELECTED_ADMINISTRATOR;
-import static org.paasta.container.platform.api.common.Constants.SELECTED_USER;
-import static org.paasta.container.platform.api.common.Constants.TARGET_COMMON_API;
-import static org.paasta.container.platform.api.common.Constants.TARGET_CP_MASTER_API;
-import static org.paasta.container.platform.api.common.Constants.USERS;
+import org.paasta.container.platform.api.accessInfo.AccessTokenService;
+import org.paasta.container.platform.api.clusters.clusters.Clusters;
+import org.paasta.container.platform.api.clusters.clusters.ClustersService;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.secret.Secrets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-
-import org.paasta.container.platform.api.accessInfo.AccessTokenService;
-import org.paasta.container.platform.api.clusters.clusters.Clusters;
-import org.paasta.container.platform.api.clusters.clusters.ClustersService;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.MessageConstant;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.ResourceYamlService;
-import org.paasta.container.platform.api.common.RestTemplateService;
-import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.secret.Secrets;
+import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
  * User Service 클래스

@@ -1,11 +1,12 @@
 package org.paasta.container.platform.api.workloads.deployments;
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -25,8 +26,6 @@ import java.util.HashMap;
 public class DeploymentsController {
 
     private final DeploymentsService deploymentsService;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentsController.class);
 
     /**
      * Instantiates a new Deployments controller
