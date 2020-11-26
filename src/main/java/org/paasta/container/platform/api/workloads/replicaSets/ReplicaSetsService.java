@@ -3,7 +3,6 @@ package org.paasta.container.platform.api.workloads.replicaSets;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.workloads.pods.Pods;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -163,7 +162,7 @@ public class ReplicaSetsService {
      * @param searchName         the searchName
      * @return the replicaSets list
      */
-    public ReplicaSetsList getReplicaSetsListLabelSelector(String namespace, String selectors,String type, String ownerReferencesUid, int offset, int limit, String orderBy, String order, String searchName) {
+    public ReplicaSetsList getReplicaSetsListLabelSelector(String namespace, String selectors,String type, String ownerReferencesName, String ownerReferencesUid, int offset, int limit, String orderBy, String order, String searchName) {
         String requestSelector = "?labelSelector=" + selectors;
 
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -175,11 +174,17 @@ public class ReplicaSetsService {
         if(type.equals(Constants.DEPLOYMENTS_FOR_SELECTOR)) {
             if(ownerReferencesUid != null && !ownerReferencesUid.trim().isEmpty()) {
                 // selector by deployments
-                List<ReplicaSets> replicaSetsItem;
-                replicaSetsItem = replicaSetsList.getItems().stream().filter(x -> x.getMetadata().getOwnerReferences().get(0).getUid().matches(ownerReferencesUid)).collect(Collectors.toList());
-                replicaSetsList.setItems(replicaSetsItem);
+                List<ReplicaSets> replicaSetsItemByUid;
+                replicaSetsItemByUid = replicaSetsList.getItems().stream().filter(x -> x.getMetadata().getOwnerReferences().get(0).getUid().matches(ownerReferencesUid)).collect(Collectors.toList());
+                replicaSetsList.setItems(replicaSetsItemByUid);
             }
 
+            if(ownerReferencesName != null && !ownerReferencesName.trim().isEmpty()) {
+                // selector by deployments
+                List<ReplicaSets> replicaSetsItemByName;
+                replicaSetsItemByName = replicaSetsList.getItems().stream().filter(x-> x.getMetadata().getName().matches("(?i).*" + ownerReferencesName + ".*")).collect(Collectors.toList());
+                replicaSetsList.setItems(replicaSetsItemByName);
+            }
         }
 
         replicaSetsList = commonService.resourceListProcessing(replicaSetsList, offset, limit, orderBy, order, searchName, ReplicaSetsList.class);
