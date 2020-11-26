@@ -29,6 +29,7 @@ public class ReplicaSetsServiceTest {
     private static final String SELECTOR = "test-selector";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
     private static final String UID= "";
+    private static final String RESOURCE_NAME="" ;
     private static final int OFFSET = 0;
     private static final int LIMIT = 0;
     private static final String ORDER_BY = "creationTime";
@@ -208,7 +209,7 @@ public class ReplicaSetsServiceTest {
 
         // when
 
-        ReplicaSetsList resultList = replicaSetsService.getReplicaSetsListLabelSelector(NAMESPACE, SELECTOR, TYPE, UID, OFFSET,LIMIT,ORDER_BY, ORDER,SEARCH_NAME);
+        ReplicaSetsList resultList = replicaSetsService.getReplicaSetsListLabelSelector(NAMESPACE, SELECTOR, TYPE, UID, RESOURCE_NAME, OFFSET,LIMIT,ORDER_BY, ORDER,SEARCH_NAME);
 
         // then
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
