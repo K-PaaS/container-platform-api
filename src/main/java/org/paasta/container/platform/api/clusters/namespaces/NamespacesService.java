@@ -1,34 +1,27 @@
 package org.paasta.container.platform.api.clusters.namespaces;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
-
 import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesList;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesService;
 import org.paasta.container.platform.api.clusters.namespaces.support.NamespacesListSupport;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasList;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.CommonUtils;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.ResourceYamlService;
-import org.paasta.container.platform.api.common.RestTemplateService;
+import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.paasta.container.platform.api.common.Constants.*;
 
@@ -261,8 +254,6 @@ public class NamespacesService {
      * @return return is succeeded
      */
     public ResultStatus modifyInitNamespaces(String cluster, String namespace, NamespacesInitTemplate initTemplate) {
-        ResultStatus resultStatus = new ResultStatus();
-
         if (!namespace.equals(initTemplate.getName())) {
             return Constants.NOT_MATCH_NAMESPACES;
         }
@@ -300,7 +291,7 @@ public class NamespacesService {
             newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
             newNsUser.setIsActive(CHECK_Y);
 
-            resultStatus = usersService.createUsers(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newNsUser));
+            usersService.createUsers(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newNsUser));
 
         }
 

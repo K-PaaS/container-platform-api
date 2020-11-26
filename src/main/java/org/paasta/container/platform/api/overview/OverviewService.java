@@ -18,8 +18,6 @@ import org.paasta.container.platform.api.workloads.pods.support.ContainerStatuse
 import org.paasta.container.platform.api.workloads.pods.support.PodsStatus;
 import org.paasta.container.platform.api.workloads.replicaSets.ReplicaSetsListAdmin;
 import org.paasta.container.platform.api.workloads.replicaSets.ReplicaSetsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -37,8 +35,9 @@ import java.util.Map;
  **/
 @Service
 public class OverviewService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OverviewService.class);
+    private static final String ORDER_BY_DEFAULT = "creationTime";
+    private static final String ORDER_DEFAULT = "desc";
+    private static final String STATUS_FIELD_NAME = "status";
 
     private final NamespacesService namespacesService;
     private final DeploymentsService deploymentsService;
@@ -79,7 +78,7 @@ public class OverviewService {
         Overview overview = new Overview();
 
         // namespaces count
-        NamespacesListAdmin namespacesListAll = (NamespacesListAdmin) namespacesService.getNamespacesListAdmin(0,0,"creationTime", "desc", "");
+        NamespacesListAdmin namespacesListAll = (NamespacesListAdmin) namespacesService.getNamespacesListAdmin(0,0, ORDER_BY_DEFAULT, ORDER_DEFAULT, "");
 
         // deployments count
         DeploymentsListAdmin deploymentsListAll = getDeploymentsList(null);
@@ -179,10 +178,10 @@ public class OverviewService {
      */
     private DeploymentsListAdmin getDeploymentsList(String namespace){
         if(StringUtils.isEmpty(namespace)) {
-            return (DeploymentsListAdmin) deploymentsService.getDeploymentsListAllNamespacesAdmin(0,0,"creationTime", "desc", "");
+            return (DeploymentsListAdmin) deploymentsService.getDeploymentsListAllNamespacesAdmin(0,0, ORDER_BY_DEFAULT, ORDER_DEFAULT, "");
         }
 
-        return (DeploymentsListAdmin) deploymentsService.getDeploymentsListAdmin(namespace,0,0,"creationTime", "desc", "");
+        return (DeploymentsListAdmin) deploymentsService.getDeploymentsListAdmin(namespace,0,0, ORDER_BY_DEFAULT, ORDER_DEFAULT, "");
     }
 
 
@@ -194,10 +193,10 @@ public class OverviewService {
      */
     private PodsListAdmin getPodsList(String namespace){
         if(StringUtils.isEmpty(namespace)) {
-            return (PodsListAdmin) podsService.getPodsListAllNamespacesAdmin(0,0,"creationTime", "desc", "");
+            return (PodsListAdmin) podsService.getPodsListAllNamespacesAdmin(0,0, ORDER_BY_DEFAULT, ORDER_DEFAULT, "");
         }
 
-        return (PodsListAdmin) podsService.getPodsListAdmin(namespace, 0,0,"creationTime", "desc", "");
+        return (PodsListAdmin) podsService.getPodsListAdmin(namespace, 0,0, ORDER_BY_DEFAULT, ORDER_DEFAULT, "");
     }
 
 
@@ -209,10 +208,10 @@ public class OverviewService {
      */
     private ReplicaSetsListAdmin getReplicaSetsList(String namespace){
         if(StringUtils.isEmpty(namespace)) {
-            return (ReplicaSetsListAdmin) replicaSetsService.getReplicaSetsListAllNamespacesAdmin(0,0,"creationTime", "desc", "");
+            return (ReplicaSetsListAdmin) replicaSetsService.getReplicaSetsListAllNamespacesAdmin(0,0, ORDER_BY_DEFAULT, ORDER_DEFAULT, "");
         }
 
-        return (ReplicaSetsListAdmin) replicaSetsService.getReplicaSetsListAdmin(namespace, 0,0,"creationTime", "desc", "");
+        return (ReplicaSetsListAdmin) replicaSetsService.getReplicaSetsListAdmin(namespace, 0,0, ORDER_BY_DEFAULT, ORDER_DEFAULT, "");
     }
 
 
@@ -227,7 +226,7 @@ public class OverviewService {
         int runningCnt = 0;
 
         for(int i = 0; i < getCommonCnt(deploymentsList); i++) {
-            DeploymentsStatus status = commonService.getField("status", deploymentsList.getItems().get(i));
+            DeploymentsStatus status = commonService.getField(STATUS_FIELD_NAME, deploymentsList.getItems().get(i));
 
             // status: unavailableReplicas, replicas, availableReplicas
             if(status.getUnavailableReplicas() > 0 && status.getReplicas() != 0 && status.getReplicas() != status.getAvailableReplicas()) {
@@ -251,7 +250,7 @@ public class OverviewService {
         int runningCnt = 0;
 
         for(int i = 0; i < getCommonCnt(podsList); i++) {
-            PodsStatus status = commonService.getField("status", podsList.getItems().get(i));
+            PodsStatus status = commonService.getField(STATUS_FIELD_NAME, podsList.getItems().get(i));
             if(status.getContainerStatuses() != null) {
                 ContainerStatusesItem item = status.getContainerStatuses().get(0);
                 // containerStatuses -> state: waiting
@@ -286,7 +285,7 @@ public class OverviewService {
         int runningCnt = 0;
 
         for(int i = 0; i < getCommonCnt(replicaSetsList); i++) {
-            CommonStatus status = commonService.getField("status", replicaSetsList.getItems().get(i));
+            CommonStatus status = commonService.getField(STATUS_FIELD_NAME, replicaSetsList.getItems().get(i));
             // status -> AvailableReplicas
             if(status.getAvailableReplicas() < status.getReplicas() && status.getReplicas() > 0) {
                 failedCnt++;
