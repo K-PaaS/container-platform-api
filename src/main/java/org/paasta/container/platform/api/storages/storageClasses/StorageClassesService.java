@@ -55,7 +55,7 @@ public class StorageClassesService {
         HashMap responseMap = null;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListStorageClassesListUrl(),
+                propertyService.getCpMasterApiListStorageClassesListUrl().replace("{namespace}", namespace),
                 HttpMethod.GET, null, Map.class);
 
         try {
@@ -141,7 +141,7 @@ public class StorageClassesService {
     public ResultStatus deleteStorageClasses(String namespace, String resourceName) {
         ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListStorageClassesDeleteUrl()
-                        .replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+                        .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_STORAGE_CLASSES);

@@ -152,9 +152,6 @@ public class PropertyService {
     @Value("${cpMaster.api.list.persistentVolumes.update}")
     private String cpMasterApiListPersistentVolumesUpdateUrl;
 
-    @Value("${cpMaster.api.list.persistentVolumes.listAllNamespaces}")
-    private String cpMasterApiListPersistentVolumesListAllNamespacesUrl;
-
     //persistentVolumeClaims
     @Value("${cpMaster.api.list.persistentVolumeClaims.list}")
     private String cpMasterApiListPersistentVolumeClaimsListUrl;
