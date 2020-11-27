@@ -54,7 +54,7 @@ public class ResourceExecuteManager {
 
         Object targetObject = InspectionUtil.getBean(injectBeanName);
 
-        Method paramMethod = targetObject.getClass().getDeclaredMethod(methodName, String.class, String.class);
+        Method paramMethod = targetObject.getClass().getDeclaredMethod(methodName, String.class, String.class, boolean.class);
         if (paramMethod == null) {
             throw new ContainerPlatformException("처리할 메소드 (" + methodName + ") 가 존재 하지 않습니다.", "404");
         }
