@@ -7,8 +7,6 @@ import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -28,7 +26,6 @@ import static org.paasta.container.platform.api.common.CommonUtils.regexMatch;
 @Api(value = "UsersController v1")
 @RestController
 public class UsersController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UsersController.class);
     private final UsersService usersService;
 
     @Autowired
@@ -63,14 +60,14 @@ public class UsersController {
     })
     @GetMapping(value = "/clusters/{cluster:.+}/users")
     public Object getUsersList(@PathVariable(value = "cluster") String cluster,
-                                       @RequestParam(name = "namespace", required = false) String namespace,
-                                       @RequestParam(defaultValue = "administrator") String userType,
-                                       @RequestParam(required = false, defaultValue = "") String searchName,
-                                       @RequestParam(required = false, defaultValue = "0") int limit,
-                                       @RequestParam(required = false, defaultValue = "0") int offset,
-                                       @RequestParam(required = false, defaultValue = "created") String orderBy,
-                                       @RequestParam(required = false, defaultValue = "desc") String order,
-                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                               @RequestParam(name = "namespace", required = false) String namespace,
+                               @RequestParam(defaultValue = "administrator") String userType,
+                               @RequestParam(required = false, defaultValue = "") String searchName,
+                               @RequestParam(required = false, defaultValue = "0") int limit,
+                               @RequestParam(required = false, defaultValue = "0") int offset,
+                               @RequestParam(required = false, defaultValue = "created") String orderBy,
+                               @RequestParam(required = false, defaultValue = "desc") String order,
+                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return usersService.getUsersAllByCluster(cluster, userType, searchName, limit, offset, orderBy, order);
