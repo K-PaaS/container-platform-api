@@ -37,7 +37,7 @@ public class Constants {
     public static final String ALL_NAMESPACES = "all";
     public static final String ALL_USER_ID = "all";
     public static final String USERS = "users";
-    public static final String SINGLE_CLUSTER_NAME = "cp-cluster";
+
     public static final String NOT_ASSIGNED_ROLE = "NOT_ASSIGNED_ROLE";
     public static final String DEFAULT_CLUSTER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name
 

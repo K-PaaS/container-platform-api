@@ -234,7 +234,7 @@ public class NamespacesService {
         newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
         newNsUser.setIsActive(CHECK_Y);
 
-        ResultStatus rsDb = usersService.createUsers(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newNsUser));
+        ResultStatus rsDb = usersService.createUsers(usersService.commonSaveClusterInfo(propertyService.getCpClusterName(), newNsUser));
 
         if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
@@ -291,7 +291,7 @@ public class NamespacesService {
             newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
             newNsUser.setIsActive(CHECK_Y);
 
-            usersService.createUsers(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newNsUser));
+            usersService.createUsers(usersService.commonSaveClusterInfo(propertyService.getCpClusterName(), newNsUser));
 
         }
 

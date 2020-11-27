@@ -421,8 +421,8 @@ public class UsersServiceTest {
         clusters.setClusterApiUrl("API_URL");
         clusters.setClusterName("NAME");
         clusters.setClusterToken("TOKEN");
-
-        when(clustersService.getClusters(CLUSTER))
+        when(propertyService.getCpClusterName()).thenReturn(CLUSTER);
+        when(clustersService.getClusters(propertyService.getCpClusterName()))
                 .thenReturn(clusters);
         when(restTemplateService.sendAdmin(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class))
                 .thenReturn(gResultStatusModel);
@@ -431,7 +431,7 @@ public class UsersServiceTest {
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS))
                 .thenReturn(gResultStatusModel);
 
-        ResultStatus resultStatus = (ResultStatus) usersService.registerUsers(users);
+        ResultStatus resultStatus = usersService.registerUsers(users);
 
         assertThat(resultStatus).isNotNull();
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultStatus.getResultCode());
