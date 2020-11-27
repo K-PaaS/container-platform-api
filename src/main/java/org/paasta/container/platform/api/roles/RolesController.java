@@ -226,10 +226,10 @@ public class RolesController {
     })
     @PutMapping("/{resourceName:.+}")
     public ResultStatus updateRoles(@PathVariable(value = "cluster") String cluster,
-                              @PathVariable(value = "namespace") String namespace,
-                              @PathVariable(value = "resourceName") String resourceName,
-                              @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
-                              @RequestBody String yaml) {
+                                    @PathVariable(value = "namespace") String namespace,
+                                    @PathVariable(value = "resourceName") String resourceName,
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin,
+                                    @RequestBody String yaml) {
 
         if (isAdmin) {
             return rolesService.updateRoles(namespace, resourceName, yaml);

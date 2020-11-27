@@ -104,7 +104,7 @@ public class RolesService {
 
         resultMap.put("sourceTypeYaml", resultString);
 
-        return  commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(commonService.setResultObject(resultMap, CommonResourcesYaml.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -156,7 +156,7 @@ public class RolesService {
      * @return return is succeeded
      */
     public ResultStatus deleteRoles(String namespace, String resourceName) {
-        ResultStatus resultStatus =  restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
+        ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListRolesDeleteUrl()
                         .replace("{namespace}", namespace)
                         .replace("{name}", resourceName)
@@ -260,7 +260,7 @@ public class RolesService {
         HashMap responseMap = null;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListRolesListAllNamespacesUrl()  + commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)
+                propertyService.getCpMasterApiListRolesListAllNamespacesUrl() + commonService.generateFieldSelectorForExceptNamespace(Constants.RESOURCE_NAMESPACE)
                 , HttpMethod.GET, null, Map.class);
 
         try {
@@ -315,7 +315,7 @@ public class RolesService {
         List<RolesListAllNamespaces.RolesListAllNamespacesItem> rolesListAdminItems = new ArrayList<>();
 
         for (RolesListAllNamespaces.RolesListAllNamespacesItem item : rolesListAllNamespaces.getItems()) {
-            if(!propertyService.getIgnoreNamespaceList().contains(item.getNamespace())) {
+            if (!propertyService.getIgnoreNamespaceList().contains(item.getNamespace())) {
                 rolesListAdminItems.add(item);
             }
         }
