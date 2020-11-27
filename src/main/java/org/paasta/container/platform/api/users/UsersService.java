@@ -74,8 +74,14 @@ public class UsersService {
     /**
      * Users 전체 목록 조회(Get Users list for Admin)
      *
-     * @param cluster
-     * @return
+     * @param cluster    the cluster
+     * @param userType   the user type
+     * @param searchName the search name
+     * @param limit      the limit
+     * @param offset     the offset
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @return the users list
      */
     public Object getUsersAllByCluster(String cluster, String userType, String searchName, int limit, int offset, String orderBy, String order) {
 
@@ -99,8 +105,8 @@ public class UsersService {
 
     /**
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
-     * (Admin portal)
      *
+     * @param cluster   the cluster
      * @param namespace the namespace
      * @return the users list
      */
@@ -110,11 +116,12 @@ public class UsersService {
                 .replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersListAdmin.class);
     }
 
+
     /**
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
      * @param namespace the namespace
-     * @return the user list
+     * @return the users list
      */
     public UsersList getUsersListByNamespace(String cluster, String namespace) {
         return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
@@ -201,6 +208,14 @@ public class UsersService {
      * @param namespace the namespace
      * @return the users list
      */
+
+    /**
+     * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
+     *
+     * @param cluster   the cluster
+     * @param namespace the namespace
+     * @return the users list
+     */
     public Map<String, List> getUsersNameListByNamespace(String cluster, String namespace) {
         return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES_LIST
                 .replace("{cluster:.+}", cluster)
@@ -249,6 +264,7 @@ public class UsersService {
     /**
      * Namespace 와 userId로 사용자 단 건 상세 조회(Get Users userId namespace)
      *
+     * @param cluster   the cluster
      * @param namespace the namespace
      * @param userId    the userId
      * @return the users detail
@@ -333,11 +349,12 @@ public class UsersService {
 
     /**
      * Users 수정(Update Users)
-     * (Admin Portal)
      *
-     * @param userId the userId
-     * @param users  the users
+     * @param cluster the cluster
+     * @param userId  the userId
+     * @param users   the users
      * @return return is succeeded
+     * @throws Exception
      */
     public ResultStatus modifyUsersAdmin(String cluster, String userId, Users users) throws Exception {
         ResultStatus rsDb = new ResultStatus();
@@ -441,7 +458,7 @@ public class UsersService {
     /**
      * Users 삭제(Delete Users)
      *
-     * @param users thes uesrs
+     * @param users the users
      * @return return is succeeded
      */
     public ResultStatus deleteUsers(Users users) {
@@ -465,7 +482,8 @@ public class UsersService {
     /**
      * Users 수정(Update Users)
      *
-     * @param user the users
+     * @param userId the user id
+     * @param user   the users
      * @return return is succeeded
      */
     public ResultStatus modifyUsers(String userId, Users user) {
@@ -495,6 +513,7 @@ public class UsersService {
     /**
      * Users 권한 설정(Set Users authority)
      *
+     * @param cluster   the cluster
      * @param namespace the namespace
      * @param users     the users
      * @return return is succeeded
@@ -601,9 +620,14 @@ public class UsersService {
 
     /**
      * Namespace 상세 Users 목록 조회(Get Users namespace list)
-     * (Admin portal)
      *
-     * @param namespace the namespace
+     * @param cluster    the cluster
+     * @param namespace  the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the search name
      * @return the users list
      */
     public Object getUsersListInNamespaceAdmin(String cluster, String namespace, int offset, int limit, String orderBy, String order, String searchName) {
