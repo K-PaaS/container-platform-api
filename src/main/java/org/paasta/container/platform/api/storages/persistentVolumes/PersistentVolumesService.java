@@ -55,7 +55,8 @@ public class PersistentVolumesService {
         HashMap responseMap = null;
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListPersistentVolumesListUrl(), HttpMethod.GET, null, Map.class);
+                propertyService.getCpMasterApiListPersistentVolumesListUrl().replace("{namespace}", namespace)
+                , HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
@@ -118,7 +119,8 @@ public class PersistentVolumesService {
     public ResultStatus deletePersistentVolumes(String namespace, String resourceName) {
         ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPersistentVolumesDeleteUrl()
-                       .replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
+                        .replace("{namespace}", namespace).replace("{name}", resourceName),
+                HttpMethod.DELETE, null, ResultStatus.class);
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(resultStatus, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUMES);
