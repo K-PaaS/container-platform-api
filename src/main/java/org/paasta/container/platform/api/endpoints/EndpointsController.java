@@ -28,24 +28,29 @@ public class EndpointsController {
      * @param endpointsService the endpoints service
      */
     @Autowired
-    public EndpointsController(EndpointsService endpointsService) {this.endpointsService = endpointsService;}
+    public EndpointsController(EndpointsService endpointsService) {
+        this.endpointsService = endpointsService;
+    }
 
 
     /**
      * Endpoints 상세 조회(Get Endpoints detail)
      *
-     * @param namespace the namespace
+     * @param cluster      the cluster
+     * @param namespace    the namespace
      * @param resourceName the resource name
-     * @param isAdmin the isAdmin
+     * @param isAdmin      the isAdmin
      * @return the endpoints detail
      */
     @ApiOperation(value = "Endpoints 상세 조회(Get Endpoints detail)", nickname = "getEndpoints")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "resourceName", value = "리소스 명",  required = true, dataType = "string", paramType = "path")
+            @ApiImplicitParam(name = "resourceName", value = "리소스 명", required = true, dataType = "string", paramType = "path")
     })
     @GetMapping(value = "/{resourceName:.+}")
-    public Object getEndpoints(@PathVariable(value = "namespace") String namespace,
+    public Object getEndpoints(@PathVariable(value = "cluster") String cluster,
+                               @PathVariable(value = "namespace") String namespace,
                                @PathVariable(value = "resourceName") String resourceName,
                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
