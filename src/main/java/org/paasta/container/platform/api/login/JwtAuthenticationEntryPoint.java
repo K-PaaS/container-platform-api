@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.login;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.http.MediaType;
@@ -31,22 +32,22 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException, ServletException {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        String detailMessage = "Token authentication failed";
+        String detailMessage = MessageConstant.LOGIN_TOKEN_FAIL_MESSAGE;
 
         final Exception exception = (Exception) request.getAttribute("exception");
 
         if (exception != null) {
 
-            if (exception.getMessage().equals("TOKEN_EXPIRED")) {
-                detailMessage = "Access Token has Expired";
-            } else if (exception.getMessage().equals("INVALID_CREDENTIALS")) {
-                detailMessage = "Invalid Credentials";
+            if (exception.getMessage().equals(MessageConstant.LOGIN_TOKEN_EXPIRED)) {
+                detailMessage = MessageConstant.LOGIN_TOKEN_EXPIRED_MESSAGE;
+            } else if (exception.getMessage().equals(MessageConstant.LOGIN_INVALID_CREDENTIALS)) {
+                detailMessage = MessageConstant.LOGIN_INVALID_CREDENTIALS_MESSAGE;
             }
 
         }
 
         ResultStatus resultStatus = new ResultStatus
-                (Constants.RESULT_STATUS_FAIL, "TOKEN_FAILED", CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(), detailMessage);
+                (Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_TOKEN_FAIL, CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(), detailMessage);
 
         OutputStream out = response.getOutputStream();
 

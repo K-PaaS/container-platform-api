@@ -32,6 +32,16 @@ public class MessageConstant {
     public static final String INACTIVE_USER_ACCESS = "승인되지 않은 사용자입니다. 관리자에게 문의하시기 바랍니다.";
 
 
+    public static final String LOGIN_TOKEN_FAIL ="TOKEN_FAILED";
+    public static final String LOGIN_TOKEN_EXPIRED = "TOKEN_EXPIRED";
+    public static final String LOGIN_INVALID_CREDENTIALS = "INVALID_CREDENTIALS";
+    public static final String LOGIN_TOKEN_FAIL_MESSAGE = "Token authentication failed";
+    public static final String LOGIN_TOKEN_EXPIRED_MESSAGE = "Access Token has Expired";
+    public static final String LOGIN_INVALID_CREDENTIALS_MESSAGE = "Invalid Credentials";
+
+
+
+
     // paging
     public static final String LIMIT_ILLEGALARGUMENT = "limit(한 페이지에 가져올 리소스 최대 수) 는 반드시 0 이상이여아 합니다. limit >=0 ";
     public static final String OFFSET_ILLEGALARGUMENT = "offset(목록 시작지점) 은 반드시 0 이상이여아 합니다. offset >=0 ";
