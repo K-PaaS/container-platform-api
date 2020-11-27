@@ -317,7 +317,7 @@ public class UsersService {
             users.setIsActive(CHECK_Y);
 
             // DB에 저장
-            rsDb = createUsers(commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, users));
+            rsDb = createUsers(commonSaveClusterInfo(propertyService.getCpClusterName(), users));
 
             // DB 커밋에 실패했을 경우 k8s 에 만들어진 service account 삭제
             if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
@@ -431,7 +431,7 @@ public class UsersService {
             newUser.setSaToken(accessTokenService.getSecrets(addInNamespace, saSecretName).getUserAccessToken());
             newUser.setUserType("USER");
 
-            rsDb = createUsers(commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newUser));
+            rsDb = createUsers(commonSaveClusterInfo(propertyService.getCpClusterName(), newUser));
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS_DETAIL.replace("{userId:.+}", users.getServiceAccountName()));

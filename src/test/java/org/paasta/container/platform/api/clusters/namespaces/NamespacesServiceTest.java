@@ -44,25 +44,17 @@ public class NamespacesServiceTest {
     private static final String NAMESPACE = "test-namespace";
     private static final String USER_ID = "test-user";
     private static final String YAML_STRING = "test-yaml-string";
-    private static final String FIELD_SELECTOR = "?fieldSelector=metadata.name!=kubernetes-dashboard,metadata.name!=kube-node-lease,metadata.name!=kube-public,metadata.name!=kube-system,metadata.name!=temp-namespace";
 
     private static final int OFFSET = 0;
     private static final int LIMIT = 0;
     private static final String ORDER_BY = "creationTime";
     private static final String ORDER = "desc";
     private static final String SEARCH_NAME = "";
-    private static final boolean isAdmin = true;
-    private static final boolean isNotAdmin = false;
 
-    public static final String USERS = "users";
     public static final String NAMESPACE_ADMIN_USER_ID = "";
 
     private static HashMap gResultMap = null;
     private static HashMap gResultAdminMap = null;
-    private static HashMap gResultAdminFailMap = null;
-
-
-    private static List<String> gResultList;
     private static Namespaces gResultModel = null;
     private static Namespaces gFinalResultModel = null;
 
@@ -383,7 +375,7 @@ public class NamespacesServiceTest {
         newNsUser.setUserType(Constants.AUTH_NAMESPACE_ADMIN);
         newNsUser.setIsActive(Constants.CHECK_Y);
 
-        when(usersService.createUsers(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newNsUser))).thenReturn(gResultStatusModel);
+        when(usersService.createUsers(usersService.commonSaveClusterInfo(CLUSTER, newNsUser))).thenReturn(gResultStatusModel);
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE")).thenReturn(gFinalResultStatusModel);
 
@@ -441,7 +433,7 @@ public class NamespacesServiceTest {
         newNsUser.setSaToken(accessToken.getUserAccessToken());
         newNsUser.setUserType(Constants.AUTH_NAMESPACE_ADMIN);
         newNsUser.setIsActive(Constants.CHECK_Y);
-        when(usersService.commonSaveClusterInfo(Constants.SINGLE_CLUSTER_NAME, newNsUser)).thenReturn(newNsUser);
+        when(usersService.commonSaveClusterInfo(CLUSTER, newNsUser)).thenReturn(newNsUser);
         when(usersService.createUsers(newNsUser)).thenReturn(gFinalResultStatusModel);
         when(commonService.setResultModelWithNextUrl(Constants.SUCCESS_RESULT_STATUS, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_DETAIL_PAGE")).thenReturn(gFinalResultStatusModel);
 

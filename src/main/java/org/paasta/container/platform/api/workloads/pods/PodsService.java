@@ -72,8 +72,8 @@ public class PodsService {
     /**
      * Pods Metric정보 조회(Get Pods Metric List)
      *
-     * @param namespace  the namespace
-     * @param podsList   the podsList
+     * @param namespace the namespace
+     * @param podsList  the podsList
      * @return the pods list
      */
     public PodsList getPodsMetricList(String namespace, PodsList podsList) {
@@ -90,8 +90,8 @@ public class PodsService {
     /**
      * Pods Metric정보 병합(Merge Pods Metric List)
      *
-     * @param podsList  the podsList
-     * @param podsMetrics   the podsMetrics
+     * @param podsList    the podsList
+     * @param podsMetrics the podsMetrics
      */
     public void getMergeMetric(PodsList podsList, PodsMetric podsMetrics) {
         Pods pods = null;
@@ -99,19 +99,19 @@ public class PodsService {
         CommonContainer container = null;
         Containers containerUsage = null;
         HashMap hm = null;
-        for(int i=0;i<podsList.getItems().size();i++) {
+        for (int i = 0; i < podsList.getItems().size(); i++) {
             pods = podsList.getItems().get(i);
-            for(int t=0;t<podsMetrics.getItems().size();t++) {
+            for (int t = 0; t < podsMetrics.getItems().size(); t++) {
                 podsUsage = podsMetrics.getItems().get(t);
-                if(pods.getMetadata().getName().equals(podsUsage.getMetadata().getName())) {
-                    for(int u=0;u<pods.getSpec().getContainers().size();u++){
-                        container =  pods.getSpec().getContainers().get(u);
-                        for(int y=0;y<podsUsage.getContainers().size();y++){
+                if (pods.getMetadata().getName().equals(podsUsage.getMetadata().getName())) {
+                    for (int u = 0; u < pods.getSpec().getContainers().size(); u++) {
+                        container = pods.getSpec().getContainers().get(u);
+                        for (int y = 0; y < podsUsage.getContainers().size(); y++) {
                             containerUsage = podsUsage.getContainers().get(y);
-                            if(container.getName().equals(containerUsage.getName())){
+                            if (container.getName().equals(containerUsage.getName())) {
                                 hm = new HashMap();
-                                hm.put("cpu",containerUsage.getUsage().getCpu());
-                                hm.put("memory",containerUsage.getUsage().getMemory());
+                                hm.put("cpu", containerUsage.getUsage().getCpu());
+                                hm.put("memory", containerUsage.getUsage().getMemory());
                                 container.getResources().setUsage(hm);
                             }
                         }
@@ -161,7 +161,7 @@ public class PodsService {
      * @param selector  the selector
      * @return the pods list
      */
-    PodsList getPodListWithLabelSelector(String namespace, String selector, String type, String ownerReferencesUid,int offset, int limit, String orderBy, String order, String searchName){
+    PodsList getPodListWithLabelSelector(String namespace, String selector, String type, String ownerReferencesUid, int offset, int limit, String orderBy, String order, String searchName) {
         String requestSelector = "?labelSelector=" + selector;
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListPodsListUrl().replace("{namespace}", namespace) + requestSelector, HttpMethod.GET, null, Map.class);
@@ -459,6 +459,12 @@ public class PodsService {
     }
 
 
+    /**
+     * Pods ContainerStatuses 이 없을 경우 처리 (Handle without Pods ContainerStatus)
+     *
+     * @param podsListAdmin the podsListAdmin
+     * @return the pods list
+     */
     public PodsListAdmin restartCountProcessing(PodsListAdmin podsListAdmin) {
 
         for (PodsListAdminList po : podsListAdmin.getItems()) {
@@ -478,6 +484,13 @@ public class PodsService {
     }
 
 
+    /**
+     * 참조 리소스 UID를 통한 Pod List 필터 처리  (Filters with Reference Resource UID)
+     *
+     * @param podsListAdmin      the podsListAdmin
+     * @param ownerReferencesUid the ownerReferencesUid
+     * @return the pods list
+     */
     public PodsListAdmin podsFIlterWithOwnerReferences(PodsListAdmin podsListAdmin, String ownerReferencesUid) {
 
         List<PodsListAdminList> podsItem;

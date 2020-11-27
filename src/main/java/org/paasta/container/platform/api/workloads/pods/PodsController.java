@@ -1,6 +1,5 @@
 package org.paasta.container.platform.api.workloads.pods;
 
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -122,16 +121,16 @@ public class PodsController {
     @GetMapping(value = "/resources")
     @ResponseBody
     public Object getPodsListBySelector(@PathVariable(value = "cluster") String cluster,
-                                       @PathVariable(value = "namespace") String namespace,
-                                       @RequestParam(name = "selector", required = true, defaultValue = "") String selector,
-                                       @RequestParam(required = false, defaultValue = "default") String type,
-                                       @RequestParam(required = false, defaultValue = "") String ownerReferencesUid,
-                                       @RequestParam(required = false, defaultValue = "0") int offset,
-                                       @RequestParam(required = false, defaultValue = "0") int limit,
-                                       @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                       @RequestParam(required = false, defaultValue = "") String order,
-                                       @RequestParam(required = false, defaultValue = "") String searchName,
-                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                        @PathVariable(value = "namespace") String namespace,
+                                        @RequestParam(name = "selector", required = true, defaultValue = "") String selector,
+                                        @RequestParam(required = false, defaultValue = "default") String type,
+                                        @RequestParam(required = false, defaultValue = "") String ownerReferencesUid,
+                                        @RequestParam(required = false, defaultValue = "0") int offset,
+                                        @RequestParam(required = false, defaultValue = "0") int limit,
+                                        @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
+                                        @RequestParam(required = false, defaultValue = "") String order,
+                                        @RequestParam(required = false, defaultValue = "") String searchName,
+                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return podsService.getPodListWithLabelSelectorAdmin(namespace, selector, type, ownerReferencesUid, offset, limit, orderBy, order, searchName);
@@ -166,14 +165,14 @@ public class PodsController {
     })
     @GetMapping(value = "/nodes/{nodeName:.+}")
     public Object getPodsListByNode(@PathVariable(value = "cluster") String cluster,
-                                   @PathVariable(value = "namespace") String namespace,
-                                   @PathVariable(value = "nodeName") String nodeName,
-                                   @RequestParam(required = false, defaultValue = "0") int offset,
-                                   @RequestParam(required = false, defaultValue = "0") int limit,
-                                   @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
-                                   @RequestParam(required = false, defaultValue = "") String order,
-                                   @RequestParam(required = false, defaultValue = "") String searchName,
-                                   @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                    @PathVariable(value = "namespace") String namespace,
+                                    @PathVariable(value = "nodeName") String nodeName,
+                                    @RequestParam(required = false, defaultValue = "0") int offset,
+                                    @RequestParam(required = false, defaultValue = "0") int limit,
+                                    @RequestParam(required = false, defaultValue = "creationTime") String orderBy,
+                                    @RequestParam(required = false, defaultValue = "") String order,
+                                    @RequestParam(required = false, defaultValue = "") String searchName,
+                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return podsService.getPodsListByNodeAdmin(namespace, nodeName, offset, limit, orderBy, order, searchName);

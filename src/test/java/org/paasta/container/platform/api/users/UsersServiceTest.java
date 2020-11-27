@@ -1,43 +1,31 @@
 package org.paasta.container.platform.api.users;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.paasta.container.platform.api.common.Constants.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-
+import org.paasta.container.platform.api.accessInfo.AccessToken;
+import org.paasta.container.platform.api.accessInfo.AccessTokenService;
+import org.paasta.container.platform.api.clusters.clusters.Clusters;
+import org.paasta.container.platform.api.clusters.clusters.ClustersService;
+import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import org.paasta.container.platform.api.accessInfo.AccessToken;
-import org.paasta.container.platform.api.accessInfo.AccessTokenService;
-import org.paasta.container.platform.api.clusters.clusters.Clusters;
-import org.paasta.container.platform.api.clusters.clusters.ClustersService;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.MessageConstant;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.ResourceYamlService;
-import org.paasta.container.platform.api.common.RestTemplateService;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
  *  Users Service Test 클래스
@@ -421,8 +409,8 @@ public class UsersServiceTest {
         clusters.setClusterApiUrl("API_URL");
         clusters.setClusterName("NAME");
         clusters.setClusterToken("TOKEN");
-
-        when(clustersService.getClusters(CLUSTER))
+        when(propertyService.getCpClusterName()).thenReturn(CLUSTER);
+        when(clustersService.getClusters(propertyService.getCpClusterName()))
                 .thenReturn(clusters);
         when(restTemplateService.sendAdmin(TARGET_COMMON_API, "/users", HttpMethod.POST, users, ResultStatus.class))
                 .thenReturn(gResultStatusModel);
@@ -431,7 +419,7 @@ public class UsersServiceTest {
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS))
                 .thenReturn(gResultStatusModel);
 
-        ResultStatus resultStatus = (ResultStatus) usersService.registerUsers(users);
+        ResultStatus resultStatus = usersService.registerUsers(users);
 
         assertThat(resultStatus).isNotNull();
         assertEquals(Constants.RESULT_STATUS_SUCCESS, resultStatus.getResultCode());
