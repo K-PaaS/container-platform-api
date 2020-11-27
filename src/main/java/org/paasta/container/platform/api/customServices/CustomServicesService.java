@@ -102,7 +102,6 @@ public class CustomServicesService {
     }
 
 
-
     /**
      * Services Admin YAML 조회(Get Services Admin yaml)
      *
@@ -155,7 +154,7 @@ public class CustomServicesService {
      */
     public ResultStatus deleteServices(String namespace, String resourceName, boolean isAdmin) {
         ResultStatus resultStatus;
-        if(isAdmin) {
+        if (isAdmin) {
             resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                     propertyService.getCpMasterApiListServicesDeleteUrl()
                             .replace("{namespace}", namespace).replace("{name}", resourceName), HttpMethod.DELETE, null, ResultStatus.class);
@@ -246,7 +245,6 @@ public class CustomServicesService {
 
         return commonService.setResultModel(commonService.setResultObject(responseMap, CustomServicesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
-
 
 
     /**

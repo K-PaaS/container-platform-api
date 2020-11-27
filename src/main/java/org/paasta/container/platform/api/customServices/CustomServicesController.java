@@ -129,9 +129,9 @@ public class CustomServicesController {
     })
     @GetMapping(value = "/{resourceName:.+}/yaml")
     public Object getCustomServicesYaml(@PathVariable(value = "cluster") String cluster,
-                                                    @PathVariable(value = "namespace") String namespace,
-                                                    @PathVariable(value = "resourceName") String resourceName,
-                                                    @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                        @PathVariable(value = "namespace") String namespace,
+                                        @PathVariable(value = "resourceName") String resourceName,
+                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return customServicesService.getCustomServicesAdminYaml(namespace, resourceName, new HashMap<>());
@@ -216,10 +216,10 @@ public class CustomServicesController {
     })
     @PutMapping("/{resourceName:.+}")
     public ResultStatus updateServices(@PathVariable(value = "cluster") String cluster,
-                                 @PathVariable(value = "namespace") String namespace,
-                                 @PathVariable(value = "resourceName") String resourceName,
-                                 @RequestBody String yaml,
-                                 @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
+                                       @PathVariable(value = "namespace") String namespace,
+                                       @PathVariable(value = "resourceName") String resourceName,
+                                       @RequestBody String yaml,
+                                       @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         return customServicesService.updateServices(namespace, resourceName, yaml, isAdmin);
     }
