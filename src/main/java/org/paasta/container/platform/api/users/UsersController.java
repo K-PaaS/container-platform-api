@@ -229,6 +229,14 @@ public class UsersController {
     @PostMapping(value = "/clusters/{cluster:.+}/users")
     public ResultStatus registerUsers(@PathVariable(value = "cluster") String cluster,
                                       @RequestBody Users users) {
+        // input parameter regex
+        if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
+            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                    .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
+                    .httpStatusCode(400)
+                    .detailMessage(regexMatch(users)).build();
+        }
+
         return usersService.registerUsers(users);
     }
 
