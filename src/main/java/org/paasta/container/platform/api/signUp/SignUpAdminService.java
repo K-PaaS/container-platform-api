@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.paasta.container.platform.api.common.Constants.*;
 
 /**
@@ -67,47 +70,72 @@ public class SignUpAdminService {
      * @return the resultStatus
      */
     public ResultStatus signUpAdminUsers(Users users) {
+        ResultStatus rsDb = new ResultStatus();
+
         String namespace = users.getCpNamespace();
         String username = users.getUserId();
+
+        String defaultNamespace = propertyService.getDefaultNamespace();
+
+        List<String> nsList = new ArrayList<>();
+        nsList.add(namespace);
+        nsList.add(defaultNamespace);
 
         // save admin token
         adminTokenService.saveAdminToken(users.getClusterToken());
 
-        // create row spec resource quota, limit range
-        ResultStatus nsResult = resourceYamlService.createNamespace(namespace);
+        for (String reqNamespace : nsList) {
+            if(reqNamespace.equals(namespace)) {
+                // create row spec resource quota, limit range
+                ResultStatus nsResult = resourceYamlService.createNamespace(namespace);
 
-        if(Constants.RESULT_STATUS_FAIL.equals(nsResult.getResultCode())) {
-            return nsResult;
+                if(Constants.RESULT_STATUS_FAIL.equals(nsResult.getResultCode())) {
+                    return nsResult;
+                }
+
+                resourceYamlService.createDefaultResourceQuota(namespace,null);
+                resourceYamlService.createDefaultLimitRanges(namespace, null);
+
+                ResultStatus saResult = resourceYamlService.createServiceAccount(username, namespace);
+
+                if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
+                    return saResult;
+                }
+
+                ResultStatus rbResult = resourceYamlService.createRoleBinding(username, namespace, null);
+                if(Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
+                    LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
+                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", username), HttpMethod.DELETE, null, Object.class, true);
+                    return rbResult;
+                }
+
+                String adminSaSecretName = restTemplateService.getSecretName(namespace, users.getUserId());
+                users.setCpNamespace(namespace);
+                users.setRoleSetCode(DEFAULT_CLUSTER_ADMIN_ROLE);
+                users.setSaSecret(adminSaSecretName);
+                users.setSaToken(accessTokenService.getSecrets(namespace, adminSaSecretName).getUserAccessToken());
+                users.setUserType(AUTH_CLUSTER_ADMIN);
+                users.setIsActive(CHECK_Y);
+
+            } else {
+                // add temporary namespace
+                ResultStatus saResult = resourceYamlService.createServiceAccount(username, defaultNamespace);
+                if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
+                    return saResult;
+                }
+
+                String saSecretName = restTemplateService.getSecretName(defaultNamespace, username);
+                users.setCpNamespace(defaultNamespace);
+                users.setRoleSetCode(NOT_ASSIGNED_ROLE);
+                users.setSaSecret(saSecretName);
+                users.setSaToken(accessTokenService.getSecrets(defaultNamespace, saSecretName).getUserAccessToken());
+                users.setUserType(AUTH_USER);
+                users.setIsActive(CHECK_N);
+            }
+
+            users.setServiceAccountName(username);
+            rsDb = usersService.createUsers(users);
         }
-
-        resourceYamlService.createDefaultResourceQuota(namespace,null);
-        resourceYamlService.createDefaultLimitRanges(namespace, null);
-
-        ResultStatus saResult = resourceYamlService.createServiceAccount(username, namespace);
-
-        if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
-            return saResult;
-        }
-
-        ResultStatus rbResult = resourceYamlService.createRoleBinding(username, namespace, null);
-
-        if(Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
-            LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", username), HttpMethod.DELETE, null, Object.class, true);
-            return rbResult;
-        }
-
-        String adminSaSecretName = restTemplateService.getSecretName(namespace, users.getUserId());
-
-        users.setCpNamespace(namespace);
-        users.setServiceAccountName(username);
-        users.setRoleSetCode(DEFAULT_CLUSTER_ADMIN_ROLE);
-        users.setSaSecret(adminSaSecretName);
-        users.setSaToken(accessTokenService.getSecrets(namespace, adminSaSecretName).getUserAccessToken());
-        users.setUserType(AUTH_CLUSTER_ADMIN);
-        users.setIsActive(CHECK_Y);
-
-        ResultStatus rsDb = usersService.createUsers(users);
 
         clustersService.createClusters(users.getClusterApiUrl(), users.getClusterName(), users.getClusterToken());
 
