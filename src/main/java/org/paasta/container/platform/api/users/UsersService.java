@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -310,17 +311,26 @@ public class UsersService {
         List<Users.NamespaceRole> list = users.getSelectValues();
         ResultStatus rsDb = new ResultStatus();
 
+        String defaultNamespace = propertyService.getDefaultNamespace();
+        Users.NamespaceRole namespaceRole = new Users.NamespaceRole();
+        namespaceRole.setNamespace(defaultNamespace);
+
+        list.add(namespaceRole);
+
         for (Users.NamespaceRole nsRole : list) {
             String namespace = nsRole.getNamespace();
-            String role = nsRole.getRole();
+            String role = NOT_ASSIGNED_ROLE;
 
             String userName = users.getUserId();
 
             // 각 namespace 별 service account 생성
             resourceYamlService.createServiceAccount(userName, namespace);
 
-            // select box에서 선택한 role으로 role binding
-            resourceYamlService.createRoleBinding(userName, namespace, role);
+            if(!StringUtils.isEmpty(nsRole.getRole())) {
+                role = nsRole.getRole();
+                // select box에서 선택한 role으로 role binding
+                resourceYamlService.createRoleBinding(userName, namespace, role);
+            }
 
             String adminSaSecretName = restTemplateService.getSecretName(namespace, users.getUserId());
 
