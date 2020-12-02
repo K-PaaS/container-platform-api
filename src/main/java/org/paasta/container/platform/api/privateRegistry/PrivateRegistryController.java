@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Api(value = "PrivateRegistryController v1")
 @RestController
-@RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/privateRegistry")
+@RequestMapping("/privateRegistry")
 public class PrivateRegistryController {
 
     private final PrivateRegistryService privateRegistryService;
@@ -37,21 +37,15 @@ public class PrivateRegistryController {
     /**
      * Private Registry 조회(Get Private Registry)
      *
-     * @param cluster        the cluster
-     * @param namespace      the namespace
      * @param repositoryName the repositoryName
      * @return the private registry
      */
     @ApiOperation(value = " Private Registry 조회(Get Private Registry)", nickname = "getPrivateRegistry")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "repositoryName", value = "레파지토리 명", required = true, dataType = "string", paramType = "path"),
     })
     @GetMapping(value = "/{repositoryName:.+}")
-    public Object getPrivateRegistry(@PathVariable("cluster") String cluster,
-                                     @PathVariable("namespace") String namespace,
-                                     @PathVariable("repositoryName") String repositoryName) {
-        return privateRegistryService.getPrivateRegistry(cluster, namespace, repositoryName);
+    public Object getPrivateRegistry(@PathVariable("repositoryName") String repositoryName) {
+        return privateRegistryService.getPrivateRegistry(repositoryName);
     }
 }
