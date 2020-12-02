@@ -387,12 +387,33 @@ public class PodsServiceTest {
      */
     @Test
     public void getPodsAdmin_Valid_ReturnModel() {
+        PodsStatus originStatus = new PodsStatus();
+        originStatus.setPodIP("aaa");
+        originStatus.setQosClass("aaa");
+        originStatus.setContainerStatuses(null);
+        originStatus.setPhase("aaa");
+
+        gResultMap.put("status", originStatus);
+
         // given
         when(propertyService.getCpMasterApiListPodsGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods/" + PODS_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
 
-        // try catch
+        PodsStatus status = new PodsStatus();
 
+        List<ContainerStatusesItem> list = new ArrayList<>();
+        ContainerStatusesItem item = new ContainerStatusesItem();
+        item.setRestartCount(0);
+
+        status.setPodIP("aaa");
+        status.setQosClass("aaa");
+        status.setContainerStatuses(list);
+        status.setPhase("aaa");
+
+        when(commonService.setResultObject(gResultMap.get("status"), PodsStatus.class)).thenReturn(status);
+
+
+        // try catch
         when(commonService.setResultObject(gResultMap, PodsAdmin.class)).thenReturn(gResultAdminModel);
         when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
 
