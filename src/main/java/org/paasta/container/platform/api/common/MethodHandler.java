@@ -13,14 +13,10 @@ import org.paasta.container.platform.api.common.util.YamlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static org.paasta.container.platform.api.common.Constants.NOT_ALLOWED_POD_NAME_LIST;
@@ -35,10 +31,11 @@ import static org.paasta.container.platform.api.common.Constants.NOT_ALLOWED_POD
  **/
 @Aspect
 @Component
+@Order(1)
 public class MethodHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandler.class);
-    private static final String IS_ADMIN = "isAdmin";
+    private static final String IS_ADMIN_KEY = "isAdmin";
     private static final String YAML_KEY = "yaml";
     private static final String NAMESPACE_KEY = "namespace";
     private static final String KIND_KEY = "kind";
@@ -46,52 +43,12 @@ public class MethodHandler {
     private static final String METADATA_NAME_KEY = "name";
 
     private final HttpServletRequest request;
+    private final PropertyService propertyService;
 
     @Autowired
-    public MethodHandler(HttpServletRequest request) {
+    public MethodHandler(HttpServletRequest request, PropertyService propertyService) {
         this.request = request;
-    }
-
-
-    /**
-     * API URL 호출 시 로그인한 사용자 정보로 admin/user 판별 (check that login user is admin or user)
-     *
-     * true/false 를 argument 안에 파라미터로 넣어줌
-     * isAdmin으로 판별해서 true면 admin 서비스 호출
-     *
-     * @param joinPoint the joinPoint
-     * @return the object
-     * @throws Throwable
-     */
-    @Around("execution(* org.paasta.container.platform.api..*Controller.*(..))" + "&& !@annotation(org.paasta.container.platform.api.config.NoAuth)")
-    public Object isAdminAspect(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object[] parameterValues = Arrays.asList(joinPoint.getArgs()).toArray();
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        List<GrantedAuthority> list = (List<GrantedAuthority>) authentication.getAuthorities();
-        LOGGER.info("YOUR AUTHORITY :: {}", list.get(0).getAuthority());
-        String authority = list.get(0).getAuthority();
-
-        boolean isAdmin = false;
-
-        if(Constants.AUTH_CLUSTER_ADMIN.equals(authority)) {
-            isAdmin = true;
-        }
-
-        CodeSignature methodSignature = (CodeSignature) joinPoint.getSignature();
-        String[] sigParamNames = methodSignature.getParameterNames();
-
-        int index = 0;
-        for (String name:sigParamNames) {
-            if (IS_ADMIN.equals(name)) {
-                break;
-            }
-
-            index++;
-        }
-
-        parameterValues = CommonUtils.modifyValue(parameterValues, index, isAdmin);
-        return joinPoint.proceed(parameterValues);
+        this.propertyService = propertyService;
     }
 
 
@@ -106,6 +63,7 @@ public class MethodHandler {
 
         String yaml = null;
         String namespace = null;
+        Boolean isAdmin = false;
 
         Object[] parameterValues = Arrays.asList(joinPoint.getArgs()).toArray();
 
@@ -121,6 +79,10 @@ public class MethodHandler {
 
             if (NAMESPACE_KEY.equals(sigParamNames[i])) {
                 namespace = Arrays.asList(parameterValues).get(i).toString();
+            }
+
+            if (IS_ADMIN_KEY.equals(sigParamNames[i])) {
+                isAdmin = (boolean) Arrays.asList(parameterValues).get(i);
             }
         }
 
@@ -221,6 +183,14 @@ public class MethodHandler {
 
         for (String temp : yamlArray) {
             String resourceKind = YamlUtil.parsingYaml(temp, KIND_KEY);
+
+            //isAdmin check
+            if(!isAdmin){
+                if(propertyService.getAdminResource().contains(resourceKind)) {
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.name(),
+                            CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.INCLUDE_INACCESSIBLE_RESOURCES);
+                }
+            }
 
             Object dryRunResult = InspectionUtil.resourceDryRunCheck("CreateUrl", namespace, resourceKind, temp, null);
             ObjectMapper oMapper = new ObjectMapper();

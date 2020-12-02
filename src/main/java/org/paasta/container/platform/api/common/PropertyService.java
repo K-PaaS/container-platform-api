@@ -29,6 +29,8 @@ public class PropertyService {
     @Value("${cpNamespace.ignoreNamespace}")
     List<String> ignoreNamespaceList;
 
+    @Value("${cpResource.clusterResource}")
+    private String adminResource;
 
     @Value("${cpNamespace.defaultNamespace}")
     private String defaultNamespace;
