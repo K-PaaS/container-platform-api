@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.common.model.CommonContainer;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.workloads.pods.support.ContainerStatusesItem;
+import org.paasta.container.platform.api.workloads.pods.support.PodsStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class PodsService {
+    private static final String STATUS_FIELD_NAME = "status";
+
     private final RestTemplateService restTemplateService;
     private final CommonService commonService;
     private final PropertyService propertyService;
@@ -322,6 +325,18 @@ public class PodsService {
             return obj;
         }
 
+        PodsStatus status = commonService.setResultObject(responseMap.get(STATUS_FIELD_NAME), PodsStatus.class);
+
+        if(status.getContainerStatuses() == null) {
+            List<ContainerStatusesItem> list = new ArrayList<>();
+            ContainerStatusesItem item = new ContainerStatusesItem();
+            item.setRestartCount(0);
+
+            list.add(item);
+            status.setContainerStatuses(list);
+        }
+
+        responseMap.put(STATUS_FIELD_NAME, status);
         return commonService.setResultModel(commonService.setResultObject(responseMap, PodsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
 
     }

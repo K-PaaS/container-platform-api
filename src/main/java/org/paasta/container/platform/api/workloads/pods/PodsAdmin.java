@@ -1,17 +1,15 @@
 package org.paasta.container.platform.api.workloads.pods;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.util.List;
-
 import lombok.Data;
-
 import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
-import org.paasta.container.platform.api.common.model.CommonStatus;
+import org.paasta.container.platform.api.workloads.pods.support.PodsStatus;
 import org.paasta.container.platform.api.workloads.pods.support.Volume;
+
+import java.util.List;
 
 /**
  * Pods Admin Model 클래스
@@ -51,7 +49,7 @@ public class PodsAdmin {
     private CommonSpec spec;
 
     @JsonIgnore
-    private CommonStatus status;
+    private PodsStatus status;
 
     public int getRestarts() {
         return (int) Math.floor(status.getContainerStatuses().get(0).getRestartCount());
