@@ -36,13 +36,13 @@ public class PrivateRegistryService {
     /**
      * Private Registry 상세 조회(Get Private Registry detail)
      *
-     * @param repositoryName the repositoryName
+     * @param imageName the imageName
      * @return the private registry
      */
-    public Object getPrivateRegistry(String repositoryName) {
+    public Object getPrivateRegistry(String imageName) {
 
         Object response = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_PRIVATE_REGISTRY
-                .replace("{repositoryName:.+}", repositoryName), HttpMethod.GET, null, PrivateRegistry.class);
+                .replace("{imageName:.+}", imageName), HttpMethod.GET, null, PrivateRegistry.class);
 
         if (CommonUtils.isResultStatusInstanceCheck(response)) {
             return response;

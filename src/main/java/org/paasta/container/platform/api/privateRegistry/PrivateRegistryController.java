@@ -37,15 +37,15 @@ public class PrivateRegistryController {
     /**
      * Private Registry 조회(Get Private Registry)
      *
-     * @param repositoryName the repositoryName
+     * @param imageName the imageName
      * @return the private registry
      */
     @ApiOperation(value = " Private Registry 조회(Get Private Registry)", nickname = "getPrivateRegistry")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "repositoryName", value = "레파지토리 명", required = true, dataType = "string", paramType = "path"),
+            @ApiImplicitParam(name = "imageName", value = "이미지 명", required = true, dataType = "string", paramType = "path"),
     })
-    @GetMapping(value = "/{repositoryName:.+}")
-    public Object getPrivateRegistry(@PathVariable("repositoryName") String repositoryName) {
-        return privateRegistryService.getPrivateRegistry(repositoryName);
+    @GetMapping(value = "/{imageName:.+}")
+    public Object getPrivateRegistry(@PathVariable("imageName") String imageName) {
+        return privateRegistryService.getPrivateRegistry(imageName);
     }
 }
