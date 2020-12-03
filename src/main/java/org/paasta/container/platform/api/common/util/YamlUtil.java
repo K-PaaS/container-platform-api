@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.common.util;
 
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.exception.ContainerPlatformException;
 import org.yaml.snakeyaml.Yaml;
@@ -38,7 +39,7 @@ public class YamlUtil {
             }
             
         } catch (ClassCastException e) {
-            throw new ContainerPlatformException(Constants.RESULT_STATUS_FAIL, CommonStatusCode.INVALID_FORMAT.getMsg(), CommonStatusCode.INVALID_FORMAT.getCode(), CommonStatusCode.INVALID_FORMAT.getMsg());
+            throw new ContainerPlatformException(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_YAML_FORMAT , CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.INVALID_YAML_FORMAT);
         }
 
         return value;
@@ -63,7 +64,7 @@ public class YamlUtil {
             }
 
         } catch (ClassCastException e) {
-            throw new ContainerPlatformException(Constants.RESULT_STATUS_FAIL, CommonStatusCode.INVALID_FORMAT.getMsg(), CommonStatusCode.INVALID_FORMAT.getCode(), CommonStatusCode.INVALID_FORMAT.getMsg());
+            throw new ContainerPlatformException(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_YAML_FORMAT,  CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.INVALID_YAML_FORMAT);
         }
 
         return value;
