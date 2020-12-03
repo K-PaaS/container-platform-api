@@ -79,9 +79,7 @@ public class PodsAdmin {
         return metadata.getCreationTimestamp();
     }
 
-    public String getNodes() {
-        return spec.getNodeName();
-    }
+    public String getNodes() { return CommonUtils.procReplaceNullValue(spec.getNodeName()); }
 
     public String getIp() {
         return status.getPodIP();
