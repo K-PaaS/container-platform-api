@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +163,7 @@ public class ReplicaSetsService {
      * @param searchName         the searchName
      * @return the replicaSets list
      */
-    public ReplicaSetsList getReplicaSetsListLabelSelector(String namespace, String selectors,String type, String ownerReferencesName, String ownerReferencesUid, int offset, int limit, String orderBy, String order, String searchName) {
+    public ReplicaSetsList getReplicaSetsListLabelSelector(String namespace, String selectors, String type, String ownerReferencesName, String ownerReferencesUid, int offset, int limit, String orderBy, String order, String searchName) {
         String requestSelector = "?labelSelector=" + selectors;
 
         HashMap resultMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -171,23 +172,40 @@ public class ReplicaSetsService {
 
         ReplicaSetsList replicaSetsList = commonService.setResultObject(resultMap, ReplicaSetsList.class);
 
-        if(type.equals(Constants.DEPLOYMENTS_FOR_SELECTOR)) {
-            if(ownerReferencesUid != null && !ownerReferencesUid.trim().isEmpty()) {
-                // selector by deployments
+        if (type.equals(Constants.DEPLOYMENTS_FOR_SELECTOR)) {
+            if (ownerReferencesUid != null && !ownerReferencesUid.trim().isEmpty()) {
+                // selector by deployments Uid
                 List<ReplicaSets> replicaSetsItemByUid;
                 replicaSetsItemByUid = replicaSetsList.getItems().stream().filter(x -> x.getMetadata().getOwnerReferences().get(0).getUid().matches(ownerReferencesUid)).collect(Collectors.toList());
                 replicaSetsList.setItems(replicaSetsItemByUid);
             }
 
-            if(ownerReferencesName != null && !ownerReferencesName.trim().isEmpty()) {
-                // selector by deployments
+            if (ownerReferencesName != null && !ownerReferencesName.trim().isEmpty()) {
+                // selector by deployments Name
                 List<ReplicaSets> replicaSetsItemByName;
-                replicaSetsItemByName = replicaSetsList.getItems().stream().filter(x-> x.getMetadata().getName().matches("(?i).*" + ownerReferencesName + ".*")).collect(Collectors.toList());
+                replicaSetsItemByName = replicaSetsList.getItems().stream().filter(x -> x.getMetadata().getName().matches("(?i).*" + ownerReferencesName + ".*")).collect(Collectors.toList());
                 replicaSetsList.setItems(replicaSetsItemByName);
             }
+
+
+            // filter by relicas count ( replicas > 0 )
+            List<ReplicaSets> replicaSetsItemByReplicasCount;
+            replicaSetsItemByReplicasCount = replicaSetsList.getItems().stream().filter(x -> x.getSpec().getReplicas() > 0).collect(Collectors.toList());
+            replicaSetsList.setItems(replicaSetsItemByReplicasCount);
+
         }
 
+        //paging and order process
         replicaSetsList = commonService.resourceListProcessing(replicaSetsList, offset, limit, orderBy, order, searchName, ReplicaSetsList.class);
+
+        //If there are more than one ReplicaSets, extract only one by created time
+        if (replicaSetsList.getItems().size() > 1) {
+            ReplicaSets extractReplicaSets = replicaSetsList.getItems().get(0);
+
+            List<ReplicaSets> extractReplicaSetsList = new ArrayList<>();
+            extractReplicaSetsList.add(extractReplicaSets);
+            replicaSetsList.setItems(extractReplicaSetsList);
+        }
 
         return (ReplicaSetsList) commonService.setResultModel(replicaSetsList, Constants.RESULT_STATUS_SUCCESS);
     }
