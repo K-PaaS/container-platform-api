@@ -30,15 +30,11 @@ public class LimitRangesItem {
     private Object defaultLimit;
 
     public Object getDefaultLimit() {
-        return (StringUtils.isEmpty(defaultLimit)) ? new HashMap<String, String>() {{
-            put(Constants.SUPPORTED_RESOURCE_MEMORY, Constants.NULL_REPLACE_TEXT);
-        }} : defaultLimit;
+        return (StringUtils.isEmpty(defaultLimit)) ? Constants.NULL_REPLACE_TEXT : defaultLimit;
     }
 
     public Object getDefaultRequest() {
-        return (StringUtils.isEmpty(defaultRequest)) ? new HashMap<String, String>() {{
-            put(Constants.SUPPORTED_RESOURCE_MEMORY, Constants.NULL_REPLACE_TEXT);
-        }} : defaultRequest;
+        return (StringUtils.isEmpty(defaultRequest)) ? Constants.NULL_REPLACE_TEXT : defaultRequest;
     }
 
     public Object getMin() {

@@ -382,19 +382,19 @@ public class LimitRangesService {
         LinkedTreeMap<String, String> max = null;
         LinkedTreeMap<String, String> min = null;
 
-        if(!item.getDefaultLimit().equals("-")) {
+        if(!item.getDefaultLimit().equals(Constants.NULL_REPLACE_TEXT)) {
             defaultLimit = (LinkedTreeMap) item.getDefaultLimit();
         }
 
-        if(!item.getDefaultRequest().equals("-")) {
+        if(!item.getDefaultRequest().equals(Constants.NULL_REPLACE_TEXT)) {
             defaultRequest = (LinkedTreeMap) item.getDefaultRequest();
         }
 
-        if(!item.getMax().equals("-")) {
+        if(!item.getMax().equals(Constants.NULL_REPLACE_TEXT)) {
             max = (LinkedTreeMap) item.getMax();
         }
 
-        if(!item.getMin().equals("-")) {
+        if(!item.getMin().equals(Constants.NULL_REPLACE_TEXT)) {
             min = (LinkedTreeMap) item.getMin();
         }
 
