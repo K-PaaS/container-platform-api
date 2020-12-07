@@ -27,7 +27,11 @@ public class ResourceExecuteManager {
      * @return the string
      */
     public static String makeServiceMethodName(String kind) {
-        return "create" + kind + "s";
+        if (kind.endsWith(Constants.ENDS_WITH_S)) {
+            return "create" + kind + "es";
+        } else {
+            return "create" + kind + "s";
+        }
     }
 
 

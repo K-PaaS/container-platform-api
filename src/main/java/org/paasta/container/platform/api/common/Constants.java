@@ -161,6 +161,7 @@ public class Constants {
 
     //storage
     public static final String RESOURCE_PERSISTENTVOLUMECLAIM = "PersistentVolumeClaim";
+    public static final String RESOURCE_PERSISTENTVOLUME = "PersistentVolume";
     public static final String RESOURCE_STORAGECLASS = "StorageClass";
 
     //management
@@ -198,6 +199,7 @@ public class Constants {
             put(RESOURCE_REPLICASET, SERVICE_PACKAGE + "workloads.pods:ReplicaSetsService");     // ReplicaSet 서비스
             put(RESOURCE_SERVICE, SERVICE_PACKAGE + "customServices:CustomServicesService");     // Service 서비스
             put(RESOURCE_PERSISTENTVOLUMECLAIM, SERVICE_PACKAGE + "storages.persistentVolumeClaims:PersistentVolumeClaimsService");     // PersistentVolumeClaim 서비스
+            put(RESOURCE_PERSISTENTVOLUME, SERVICE_PACKAGE + "storages.persistentVolumes:PersistentVolumesService");     // PersistentVolume 서비스
             put(RESOURCE_STORAGECLASS, SERVICE_PACKAGE + "storages.storageClasses:StorageClassesService");     // StorageClass 서비스
             put(RESOURCE_RESOURCEQUOTA, SERVICE_PACKAGE + "managements.resourceQuotas:ResourceQuotasService");     // ResourceQuota 서비스
             put(RESOURCE_ROLE, SERVICE_PACKAGE + "roles:RolesService"); // Role 서비스
@@ -219,6 +221,9 @@ public class Constants {
 
     public static final ResultStatus NOT_MATCH_NAMESPACES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_NAMESPACES,
             CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
+
+    public static final ResultStatus DO_NOT_DELETE_DEFAULT_RESOURCES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES,
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES, null );
 
     public Constants() {
         throw new IllegalStateException();
