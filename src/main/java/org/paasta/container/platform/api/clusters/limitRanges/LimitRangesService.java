@@ -219,7 +219,8 @@ public class LimitRangesService {
      * LimitRanges 생성(Create LimitRanges)
      *
      * @param namespace the namespace
-     * @param yaml      the yamlc
+     * @param yaml      the yaml
+     * @param isAdmin    the isAdmin
      * @return return is succeeded
      */
     public Object createLimitRanges(String namespace, String yaml, boolean isAdmin) {
@@ -270,6 +271,11 @@ public class LimitRangesService {
      * LimitRanges Template 목록 조회(Get LimitRanges Template list)
      *
      * @param namespace the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the limitRanges template list
      */
     public Object getLimitRangesTemplateList(String namespace, int offset, int limit, String orderBy, String order, String searchName) {
@@ -344,6 +350,7 @@ public class LimitRangesService {
      * LimitRanges DB Template 형식 맞춤(Set LimitRanges DB template)
      *
      * @param limitRangesDefault the limitRangesDefault
+     * @param yn the yn
      * @return the limitRanges template item
      */
     public LimitRangesTemplateItem getLimitRangesDb(LimitRangesDefault limitRangesDefault, String yn) {
@@ -366,7 +373,7 @@ public class LimitRangesService {
 
 
     /**
-     * 존재하는 각 Type과 Resource Type별로 LimitRanges 자원 설정 값 셋팅
+     * 존재하는 각 Type 과 Resource Type 별로 LimitRanges 자원 설정 값 셋팅(Set LimitRanges resources value for type)
      *
      * @param name              the name
      * @param creationTimestamp the creationTimestamp
@@ -426,7 +433,7 @@ public class LimitRangesService {
 
 
     /**
-     * Common Resource value setting
+     * Common Resource 값 세팅(Set Common Resource value)
      *
      * @param resourceType      the resource type
      * @param defaultLimit      the default limit

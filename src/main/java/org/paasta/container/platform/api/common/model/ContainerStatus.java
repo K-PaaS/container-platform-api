@@ -2,6 +2,13 @@ package org.paasta.container.platform.api.common.model;
 
 import lombok.Data;
 
+/**
+ * Container Status Model 클래스
+ *
+ * @author jjy
+ * @version 1.0
+ * @since 2020.11.09
+ */
 @Data
 public class ContainerStatus {
     private String name;

@@ -147,7 +147,7 @@ public class EventsService {
      * Field Selector Parameter 생성 (Generate Field Selector Parameter)
      *
      * @param resourceUid the namespace
-     * @return the string
+     * @return the String
      */
     public String generateFieldSelector(String type, String resourceUid) {
 
@@ -163,10 +163,10 @@ public class EventsService {
     }
 
     /**
-     * Node와 타 리소스의 Event 목록 조회 Endpoint 구분 (Separate Endpoints  from Nodes and Other Resources)
+     * Node 와 타리소스의 Event 목록 조회 Endpoint 구분 (Separate Endpoints from Nodes and Other Resources)
      *
      * @param resourceUid the namespace
-     * @return the string
+     * @return the String
      */
     public String generateCpMasterApiListEventsList(String type, String resourceUid) {
 

@@ -164,6 +164,7 @@ public class NamespacesService {
     /**
      * NameSpaces 삭제(Delete NameSpaces)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @return return is succeeded
      */
@@ -184,6 +185,7 @@ public class NamespacesService {
     /**
      * Namespaces 생성(Create Namespaces)
      *
+     * @param cluster the cluster
      * @param initTemplate the initTemplate
      * @return return is succeeded
      */
@@ -247,8 +249,9 @@ public class NamespacesService {
 
 
     /**
-     * Namespaces 수정(modify Namespaces)
+     * Namespaces 수정(Update Namespaces)
      *
+     * @param cluster the cluster
      * @param namespace    the namespace
      * @param initTemplate the init template
      * @return return is succeeded
@@ -300,7 +303,7 @@ public class NamespacesService {
 
 
     /**
-     * ResourceQuotas 변경
+     * ResourceQuotas 변경(Modify ResourceQuotas)
      *
      * @param namespace            the namespace
      * @param requestUpdatedRqList the request update resourceQuotas list
@@ -328,7 +331,7 @@ public class NamespacesService {
 
 
     /**
-     * LimitRanges 변경
+     * LimitRanges 변경(Modify LimitRanges)
      *
      * @param namespace            the namespace
      * @param requestUpdatedLrList the request update limitRanges list
@@ -354,7 +357,7 @@ public class NamespacesService {
 
 
     /**
-     * Namespace Selectbox를 위한 전체 목록 조회
+     * Namespace SelectBox 를 위한 전체 목록 조회(Get all list for NameSpace SelectBox)
      *
      * @return the namespaces admin
      */

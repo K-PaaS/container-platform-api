@@ -10,7 +10,7 @@ import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 
 /**
- * ResourceQuotasDefaultList Model 클래스
+ * ResourceQuotas Default List Model 클래스
  *
  * @author hrjin
  * @version 1.0

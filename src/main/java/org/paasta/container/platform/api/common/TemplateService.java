@@ -39,7 +39,7 @@ public class TemplateService {
      *
      * @param templateName the template name
      * @param model the model
-     * @return String
+     * @return the String
      */
     public String convert(String templateName, Map<String, Object> model) {
         String yml;

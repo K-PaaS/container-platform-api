@@ -5,7 +5,7 @@ package org.paasta.container.platform.api.exception;
  *
  * @author hrjin
  * @version 1.0
- * @since 2020-08-24
+ * @since 2020.08.24
  **/
 public class CpCommonAPIException extends BaseBizException {
 	private static final long serialVersionUID = -1288712633779609678L;

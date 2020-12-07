@@ -73,7 +73,7 @@ public class PodsService {
     }
 
     /**
-     * Pods Metric정보 조회(Get Pods Metric List)
+     * Pods Metric 정보 조회(Get Pods Metric List)
      *
      * @param namespace the namespace
      * @param podsList  the podsList
@@ -91,7 +91,7 @@ public class PodsService {
     }
 
     /**
-     * Pods Metric정보 병합(Merge Pods Metric List)
+     * Pods Metric 정보 병합(Merge Pods Metric List)
      *
      * @param podsList    the podsList
      * @param podsMetrics the podsMetrics
@@ -162,6 +162,13 @@ public class PodsService {
      *
      * @param namespace the namespace
      * @param selector  the selector
+     * @param type the type
+     * @param ownerReferencesUid the ownerReferencesUid
+     * @param offset the offset
+     * @param limit the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the pods list
      */
     PodsList getPodListWithLabelSelector(String namespace, String selector, String type, String ownerReferencesUid, int offset, int limit, String orderBy, String order, String searchName) {
@@ -225,10 +232,15 @@ public class PodsService {
     }
 
     /**
-     * Node명에 따른 Pods 목록 조회(Get Pods node)
+     * Node 명에 따른 Pods 목록 조회(Get Pods node)
      *
      * @param namespace the namespace
      * @param nodeName  the node name
+     * @param offset             the offset
+     * @param limit              the limit
+     * @param orderBy            the orderBy
+     * @param order              the order
+     * @param searchName         the searchName
      * @return the pods list
      */
     PodsList getPodListByNode(String namespace, String nodeName, int offset, int limit, String orderBy, String order, String searchName) {
@@ -247,7 +259,7 @@ public class PodsService {
 
 
     /**
-     * Node명에 따른 Pods 목록 조회(Get Pods node)
+     * Node 명에 따른 Pods 목록 조회(Get Pods node)
      * (Admin portal)
      *
      * @param namespace  the namespace
@@ -389,6 +401,7 @@ public class PodsService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public Object createPods(String namespace, String yaml, boolean isAdmin) {
@@ -430,6 +443,7 @@ public class PodsService {
      * @param namespace the namespace
      * @param name      the pods name
      * @param yaml      the yaml
+     * @param isAdmin      the isAdmin
      * @return return is succeeded
      */
     public Object updatePods(String namespace, String name, String yaml, boolean isAdmin) {
@@ -500,7 +514,7 @@ public class PodsService {
 
 
     /**
-     * 참조 리소스 UID를 통한 Pod List 필터 처리  (Filters with Reference Resource UID)
+     * 참조 리소스 UID 를 통한 Pod List 필터 처리  (Filters with Reference Resource UID)
      *
      * @param podsListAdmin      the podsListAdmin
      * @param ownerReferencesUid the ownerReferencesUid

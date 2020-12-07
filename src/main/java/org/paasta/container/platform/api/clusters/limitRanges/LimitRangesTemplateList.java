@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * LimitRangesTemplateList Model 클래스
+ * LimitRanges Template List Model 클래스
  *
  * @author hrjin
  * @version 1.0

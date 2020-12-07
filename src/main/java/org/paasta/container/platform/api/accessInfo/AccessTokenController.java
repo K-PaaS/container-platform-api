@@ -36,7 +36,7 @@ public class AccessTokenController {
      *
      * @param namespace the namespace
      * @param accessTokenName the accessTokenName
-     * @return the AccessToken
+     * @return the AccessToken detail
      */
     @ApiOperation(value = "Secrets 상세 조회(Get Secrets detail)", nickname = "getSecret")
     @ApiImplicitParams({

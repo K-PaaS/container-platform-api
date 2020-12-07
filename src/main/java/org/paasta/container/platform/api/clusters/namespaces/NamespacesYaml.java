@@ -8,7 +8,7 @@ import org.paasta.container.platform.api.common.model.CommonStatus;
 import java.util.Map;
 
 /**
- * Namespace Model 클래스
+ * Namespaces Yaml Model 클래스
  *
  * @author hrjin
  * @version 1.0

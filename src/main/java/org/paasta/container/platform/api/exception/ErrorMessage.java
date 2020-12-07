@@ -7,7 +7,7 @@ import lombok.Data;
  *
  * @author hrjin
  * @version 1.0
- * @since 2020-08-24
+ * @since 2020.08.24
  **/
 @Data
 public class ErrorMessage {

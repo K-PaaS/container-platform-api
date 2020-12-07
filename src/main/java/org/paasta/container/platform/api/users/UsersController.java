@@ -38,6 +38,7 @@ public class UsersController {
      *
      * @param cluster    the cluster
      * @param namespace  the namespace
+     * @param userType  the user type
      * @param searchName the searchName
      * @param limit      the limit
      * @param offset     the offset

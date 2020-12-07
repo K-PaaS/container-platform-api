@@ -27,7 +27,7 @@ import static org.paasta.container.platform.api.common.Constants.NOT_ALLOWED_POD
  *
  * @author hrjin
  * @version 1.0
- * @since 2020-08-25
+ * @since 2020.08.25
  **/
 @Aspect
 @Component

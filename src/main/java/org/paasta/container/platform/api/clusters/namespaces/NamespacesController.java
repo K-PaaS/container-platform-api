@@ -177,7 +177,7 @@ public class NamespacesController {
 
 
     /**
-     * Namespaces 수정(modify Namespaces)
+     * Namespaces 수정(Update Namespaces)
      *
      * @param cluster      the cluster
      * @param namespace    the namespace

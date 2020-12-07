@@ -234,6 +234,7 @@ public class ResourceQuotasService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin    the isAdmin
      * @return return is succeeded
      */
     public Object createResourceQuotas(String namespace, String yaml, boolean isAdmin) {
@@ -282,6 +283,11 @@ public class ResourceQuotasService {
      * ResourceQuotas Default Template 목록 조회(Get ResourceQuotas Default Template list)
      *
      * @param namespace the namespace
+     * @param offset     the offset
+     * @param limit      the limit
+     * @param orderBy    the orderBy
+     * @param order      the order
+     * @param searchName the searchName
      * @return the resourceQuotas list
      * @throws JsonProcessingException
      */

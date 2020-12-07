@@ -19,7 +19,7 @@ import java.util.Map;
 public class YamlUtil {
 
     /**
-     * YAML의 Resource 값 조회(Get YAML's resource)
+     * YAML 의 Resource 값 조회(Get YAML's resource)
      *
      * @param yaml the yaml
      * @param keyword the keyword
@@ -85,7 +85,7 @@ public class YamlUtil {
 
 
    /**
-    * 복합 yaml List로 조회(Get list of multiple YAML)
+    * 복합 yaml List 로 조회(Get list of multiple YAML)
     *
     * @param yaml the yaml
     * @return the string[]

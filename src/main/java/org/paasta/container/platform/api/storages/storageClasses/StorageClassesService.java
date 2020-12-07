@@ -120,6 +120,7 @@ public class StorageClassesService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin the isAmdin
      * @return return is succeeded
      */
     public Object createStorageClasses(String namespace, String yaml, boolean isAdmin) {

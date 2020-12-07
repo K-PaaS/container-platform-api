@@ -139,7 +139,7 @@ public class PodsController {
     }
 
     /**
-     * Node명에 따른 Pods 목록 조회(Get Pods By node)
+     * Node 명에 따른 Pods 목록 조회(Get Pods By node)
      *
      * @param cluster    the cluster
      * @param namespace  the namespace

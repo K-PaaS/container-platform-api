@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * LimitRangesDefaultList Model 클래스
+ * LimitRanges Default List Model 클래스
  *
  * @author hrjin
  * @version 1.0
