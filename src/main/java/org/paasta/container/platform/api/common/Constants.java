@@ -165,6 +165,7 @@ public class Constants {
     public static final String RESOURCE_STORAGECLASS = "StorageClass";
 
     //management
+    public static final String RESOURCE_LIMITRANGE = "LimitRange";
     public static final String RESOURCE_RESOURCEQUOTA = "ResourceQuota";
     public static final String RESOURCE_ROLE = "Role";
 
@@ -201,7 +202,8 @@ public class Constants {
             put(RESOURCE_PERSISTENTVOLUMECLAIM, SERVICE_PACKAGE + "storages.persistentVolumeClaims:PersistentVolumeClaimsService");     // PersistentVolumeClaim 서비스
             put(RESOURCE_PERSISTENTVOLUME, SERVICE_PACKAGE + "storages.persistentVolumes:PersistentVolumesService");     // PersistentVolume 서비스
             put(RESOURCE_STORAGECLASS, SERVICE_PACKAGE + "storages.storageClasses:StorageClassesService");     // StorageClass 서비스
-            put(RESOURCE_RESOURCEQUOTA, SERVICE_PACKAGE + "managements.resourceQuotas:ResourceQuotasService");     // ResourceQuota 서비스
+            put(RESOURCE_RESOURCEQUOTA, SERVICE_PACKAGE + "clusters.resourceQuotas:ResourceQuotasService");     // ResourceQuota 서비스
+            put(RESOURCE_LIMITRANGE, SERVICE_PACKAGE + "clusters.limitRanges:LimitRangesService");     // LimitRange 서비스
             put(RESOURCE_ROLE, SERVICE_PACKAGE + "roles:RolesService"); // Role 서비스
         }
 
