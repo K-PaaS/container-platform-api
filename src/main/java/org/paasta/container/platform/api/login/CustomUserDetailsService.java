@@ -63,7 +63,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             roles = Arrays.asList(new SimpleGrantedAuthority(user.getUserType()));
             return new User(user.getUserId(), user.getPassword(), roles);
         }
-        throw new UsernameNotFoundException(MessageConstant.NON_EXISTENT_ID);
+        throw new UsernameNotFoundException(MessageConstant.INVALID_LOGIN_INFO);
     }
 
 
