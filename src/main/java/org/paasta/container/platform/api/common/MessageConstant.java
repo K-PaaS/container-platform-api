@@ -26,7 +26,7 @@ public class MessageConstant {
     public static final String LOGIN_FAIL = "Login Failed.";
     public static final String NON_EXISTENT_ID = "존재하지 않는 사용자 아이디입니다.";
     public static final String UNAVAILABLE_ID = "해당 사용자 아이디는 사용할 수 없습니다.";
-    public static final String INVALID_PASSWORD = "비밀번호가 올바르지 않습니다.";
+    public static final String INVALID_PASSWORD = "로그인 정보가 올바르지 않습니다.";
     public static final String ID_REQUIRED = "사용자 아이디를 입력해주세요.";
     public static final String PASSWORD_REQUIRED = "비밀번호를 입력해주세요.";
     public static final String ID_PASSWORD_REQUIRED = "사용자 아이디와 비밀번호를 입력해주세요.";
