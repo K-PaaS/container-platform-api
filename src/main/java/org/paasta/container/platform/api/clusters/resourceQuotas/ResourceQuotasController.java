@@ -232,7 +232,7 @@ public class ResourceQuotasController {
 
 
     /**
-     * ResourceQuotas Default Template 목록 조회 (Get ResourceQoutas Default Template list)
+     * ResourceQuotas Default Template 목록 조회 (Get ResourceQuotas Default Template list)
      *
      * @param cluster    the cluster
      * @param namespace  the namespace

@@ -58,7 +58,7 @@ public class CommonUtils {
     }
 
     /**
-     * 넘어온 Object의 parameter가 null 또는 ""(빈 값)인지 체크 (check that the parameter is null or empty)
+     * 넘어온 Object 의 parameter 가 null 또는 ""(빈 값)인지 체크 (check that the parameter is null or empty)
      *
      * @param obj the obj
      * @return the Object
@@ -87,7 +87,7 @@ public class CommonUtils {
     }
 
     /**
-     * Yaml match map.
+     * Yaml match map
      *
      * @param username  the username
      * @param namespace the namespace
@@ -144,7 +144,7 @@ public class CommonUtils {
     }
 
     /**
-     * Resource name check string.
+     * Resource name check string
      *
      * @param resourceName the resource name
      * @return the string
@@ -154,7 +154,7 @@ public class CommonUtils {
     }
 
     /**
-     * Is result status instance check boolean.
+     * Is result status instance check boolean
      *
      * @param object the object
      * @return the boolean
@@ -164,7 +164,7 @@ public class CommonUtils {
     }
 
     /**
-     * Proc replace null value object.
+     * Proc replace null value object
      *
      * @param requestObject the request object
      * @return object
@@ -174,20 +174,20 @@ public class CommonUtils {
     }
 
     /**
-     * Proc replace null value string.
+     * Proc replace null value string
      *
      * @param requestString the request string
-     * @return string
+     * @return the string
      */
     public static String procReplaceNullValue(String requestString) {
         return (StringUtils.isEmpty(requestString)) ? Constants.NULL_REPLACE_TEXT : requestString;
     }
 
     /**
-     * Proc replace null value object reference.
+     * Proc replace null value object reference
      *
      * @param requestObjectReference the request object reference
-     * @return object reference
+     * @return the object reference
      */
     public static ObjectReference procReplaceNullValue(ObjectReference requestObjectReference) {
         return (StringUtils.isEmpty(requestObjectReference)) ? new ObjectReference() {
@@ -199,10 +199,10 @@ public class CommonUtils {
     }
 
     /**
-     * Proc replace null value map.
+     * Proc replace null value map
      *
      * @param requestMap the request map
-     * @return map
+     * @return the map
      */
     public static Map<String, Object> procReplaceNullValue(Map<String, Object> requestMap) {
         return (StringUtils.isEmpty(requestMap)) ? new HashMap<String, Object>() {{
@@ -211,11 +211,11 @@ public class CommonUtils {
     }
 
     /**
-     * Proc replace null value list.
+     * Proc replace null value list
      *
      * @param requestList           the request list
      * @param requestListObjectType the request list object type
-     * @return list
+     * @return the list
      */
     public static List<?> procReplaceNullValue(List<?> requestList, Constants.ListObjectType requestListObjectType) {
         List<?> resultList;

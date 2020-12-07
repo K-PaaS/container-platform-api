@@ -36,7 +36,7 @@ public class popUpController {
 
 
     /**
-     * ResourceQuotas Default Template 목록 조회 (Get ResourceQoutas Default Template list)
+     * ResourceQuotas Default Template 목록 조회 (Get ResourceQuotas Default Template list)
      *
      * @param cluster    the cluster
      * @param namespace  the namespace
@@ -118,7 +118,7 @@ public class popUpController {
     }
 
     /**
-     * User가 속해 있는 Namespace와 Role 목록 조회(Get Namespace and Roles List to which User belongs)
+     * User 가 속해 있는 Namespace 와 Role 목록 조회(Get Namespace and Roles List to which User belongs)
      *
      * @param cluster    the cluster
      * @param namespace  the namespace
@@ -131,7 +131,7 @@ public class popUpController {
      * @param isAdmin    the isAdmin
      * @return return is succeeded
      */
-    @ApiOperation(value = "User가 속해 있는 Namespace와 Role 목록 조회(Get Namespace and Roles List to which User belongs)", nickname = "getRolesListAllNamespacesAdminByUserId")
+    @ApiOperation(value = "User 가 속해 있는 Namespace 와 Role 목록 조회(Get Namespace and Roles List to which User belongs)", nickname = "getRolesListAllNamespacesAdminByUserId")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
             @ApiImplicitParam(name = "namespace", value = "네임스페이스 명", required = true, dataType = "string", paramType = "path"),

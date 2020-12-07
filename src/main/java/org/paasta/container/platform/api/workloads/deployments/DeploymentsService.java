@@ -188,6 +188,7 @@ public class DeploymentsService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public Object createDeployments(String namespace, String yaml, boolean isAdmin) {
@@ -204,6 +205,7 @@ public class DeploymentsService {
      *
      * @param namespace the namespace
      * @param name      the deployments name
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public ResultStatus deleteDeployments(String namespace, String name, boolean isAdmin) {
@@ -229,6 +231,7 @@ public class DeploymentsService {
      * @param namespace the namespace
      * @param name      the deployments name
      * @param yaml      the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public ResultStatus updateDeployments(String namespace, String name, String yaml, boolean isAdmin) {

@@ -98,6 +98,7 @@ public class PersistentVolumesService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public Object createPersistentVolumes(String namespace, String yaml, boolean isAdmin) {

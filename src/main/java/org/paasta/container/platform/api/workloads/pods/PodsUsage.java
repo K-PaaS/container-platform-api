@@ -5,6 +5,13 @@ import org.paasta.container.platform.api.common.model.CommonMetaData;
 
 import java.util.List;
 
+/**
+ * Pods Usage Model 클래스
+ *
+ * @author Lee
+ * @version 1.0
+ * @since 2020.11.20
+ */
 @Data
 public class PodsUsage {
     private String resultCode;

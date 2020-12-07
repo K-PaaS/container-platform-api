@@ -103,6 +103,19 @@ public class RestTemplateService {
         return send(reqApi, reqUrl, httpMethod, bodyObject, responseType, acceptType, MediaType.APPLICATION_JSON_VALUE);
     }
 
+    /**
+     * t 전송(Send t)
+     *
+     * (Admin)
+     * @param <T>          the type parameter
+     * @param reqApi       the req api
+     * @param reqUrl       the req url
+     * @param httpMethod   the http method
+     * @param bodyObject   the body object
+     * @param responseType the response type
+     * @param acceptType   the accept type
+     * @return the t
+     */
     public <T> T sendAdmin(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, String acceptType) {
         return sendAdmin(reqApi, reqUrl, httpMethod, bodyObject, responseType, acceptType, MediaType.APPLICATION_JSON_VALUE);
     }
@@ -150,10 +163,36 @@ public class RestTemplateService {
         return resEntity.getBody();
     }
 
+    /**
+     * t 전송(Send t)
+     *
+     * (Admin)
+     * @param <T>          the type parameter
+     * @param reqApi       the req api
+     * @param reqUrl       the req url
+     * @param httpMethod   the http method
+     * @param bodyObject   the body object
+     * @param responseType the response type
+     * @return the t
+     */
     public <T> T sendAdmin(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType) {
         return sendAdmin(reqApi, reqUrl, httpMethod, bodyObject, responseType, Constants.ACCEPT_TYPE_JSON, MediaType.APPLICATION_JSON_VALUE);
     }
 
+    /**
+     * t 전송(Send t)
+     *
+     * (Admin)
+     * @param <T>          the type parameter
+     * @param reqApi       the req api
+     * @param reqUrl       the req url
+     * @param httpMethod   the http method
+     * @param bodyObject   the body object
+     * @param responseType the response type
+     * @param acceptType   the accept type
+     * @param contentType  the content type
+     * @return the t
+     */
     public <T> T sendAdmin(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, String acceptType, String contentType) {
 
         setApiUrlAuthorizationAdmin(reqApi);
@@ -261,9 +300,10 @@ public class RestTemplateService {
     }
 
     /**
-     * requestURI에서 namespace명 추출
+     * requestURI 에서 namespace 명 추출(Extract namespace name from requestURI)
      *
      * @param URI the requestURI
+     * @return the String
      */
     public String getNs(String URI) {
         String namespace = Constants.NULL_REPLACE_TEXT;
@@ -324,6 +364,7 @@ public class RestTemplateService {
      * @param httpMethod   the http method
      * @param bodyObject   the body object
      * @param responseType the response type
+     * @param isAdmin the is Admin
      * @return the t
      */
     public <T> T sendYaml(String reqApi, String reqUrl, HttpMethod httpMethod, Object bodyObject, Class<T> responseType, Boolean isAdmin) {
@@ -340,8 +381,7 @@ public class RestTemplateService {
      * @param reqApi      the reqApi
      * @param res         the response
      * @param httpMethod  the http method
-     * @param <T>         the T
-     * @return            the T
+     * @return            the t
      */
     public <T> T statusCodeDiscriminate(String reqApi, ResponseEntity<T> res, HttpMethod httpMethod) {
         // 200, 201, 202일때 결과 코드 동일하게
@@ -379,7 +419,7 @@ public class RestTemplateService {
 
 
     /**
-     * service account의 secret 이름을 조회(Get Secret of Service Account)
+     * service account 의 secret 이름을 조회(Get Secret of Service Account)
      *
      * @param namespace the namespace
      * @param userName the user name

@@ -143,7 +143,7 @@ public class ResourceYamlService {
 
 
     /**
-     * namespace에 ResourceQuotas를 할당(Allocate ResourceQuotas to Namespace)
+     * Namespace 에 ResourceQuotas 를 할당(Allocate ResourceQuotas to Namespace)
      *
      * @param reqNamespace the request namespace
      * @param rqName the request name
@@ -182,7 +182,7 @@ public class ResourceYamlService {
 
 
     /**
-     * namespace에 LimitRanges를 할당(Allocate LimitRanges to Namespace)
+     * Namespace 에 LimitRanges 를 할당(Allocate LimitRanges to Namespace)
      *
      * @param reqNamespace the request namespace
      * @param lrName the request name

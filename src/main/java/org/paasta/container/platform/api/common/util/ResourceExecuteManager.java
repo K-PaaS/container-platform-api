@@ -41,6 +41,7 @@ public class ResourceExecuteManager {
      * @param namespace the namespace
      * @param kind the kind
      * @param yaml the yaml
+     * @param isAdmin the isAdmin
      * @return the object
      * @throws Exception
      */
@@ -76,6 +77,7 @@ public class ResourceExecuteManager {
      * @param namespace the namespace
      * @param yaml the yaml
      * @return the object
+     * @param isAdmin the isAdmin
      * @throws Exception
      */
     public static Object commonControllerExecute(String namespace, String yaml, boolean isAdmin) throws Exception {

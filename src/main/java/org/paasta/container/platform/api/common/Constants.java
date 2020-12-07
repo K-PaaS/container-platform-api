@@ -232,7 +232,7 @@ public class Constants {
     }
 
     /**
-     * The enum List object type.
+     * The enum List object type
      */
     public enum ListObjectType {
         LIMIT_RANGES_ITEM,

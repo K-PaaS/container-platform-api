@@ -10,7 +10,7 @@ import org.paasta.container.platform.api.common.model.CommonSpec;
 import javax.management.monitor.CounterMonitor;
 
 /**
- * ResourceQuotasDefault Model 클래스
+ * ResourceQuotas Default Model 클래스
  *
  * @author hrjin
  * @version 1.0

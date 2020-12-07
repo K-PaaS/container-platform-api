@@ -136,6 +136,7 @@ public class RolesService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin  the isAdmin
      * @return return is succeeded
      */
     public Object createRoles(String namespace, String yaml, boolean isAdmin) {
@@ -290,7 +291,7 @@ public class RolesService {
 
 
     /**
-     * User가 속해 있는 Namespace와 Role 목록 조회(Get Namespace and Roles List to which User belongs)
+     * User 가 속해 있는 Namespace 와 Role 목록 조회(Get Namespace and Roles List to which User belongs)
      *
      * @param cluster    the cluster
      * @param namespace  the namespace

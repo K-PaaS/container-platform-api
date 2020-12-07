@@ -113,6 +113,7 @@ public class ReplicaSetsService {
      *
      * @param namespace       the namespace
      * @param replicaSetsName the replicaSets name
+     * @param resultMap the resultMap
      * @return the replicaSets yaml
      */
     public Object getReplicaSetsYaml(String namespace, String replicaSetsName, HashMap resultMap) {
@@ -133,6 +134,7 @@ public class ReplicaSetsService {
      *
      * @param namespace       the namespace
      * @param replicaSetsName the replicaSets name
+     * @param resultMap the resultMap
      * @return the replicaSets yaml
      */
     public Object getReplicaSetsAdminYaml(String namespace, String replicaSetsName, HashMap resultMap) {
@@ -155,6 +157,8 @@ public class ReplicaSetsService {
      *
      * @param namespace          the namespace
      * @param selectors          the selectors
+     * @param type the type
+     * @param ownerReferencesName the ownerReferencesName
      * @param ownerReferencesUid the ownerReferencesUid
      * @param offset             the offset
      * @param limit              the limit
@@ -268,6 +272,7 @@ public class ReplicaSetsService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public Object createReplicaSets(String namespace, String yaml, boolean isAdmin) {
@@ -284,6 +289,7 @@ public class ReplicaSetsService {
      *
      * @param namespace the namespace
      * @param name      the replicaSets name
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public ResultStatus deleteReplicaSets(String namespace, String name, boolean isAdmin) {
@@ -309,6 +315,7 @@ public class ReplicaSetsService {
      * @param namespace the namespace
      * @param name      the replicaSets name
      * @param yaml      the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public ResultStatus updateReplicaSets(String namespace, String name, String yaml, boolean isAdmin) {

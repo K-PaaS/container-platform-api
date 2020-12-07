@@ -39,7 +39,7 @@ public class InspectionUtil {
 
 
     /**
-     * PropertyService의 create, update 메소드 명 생성(Make method name with field name)
+     * PropertyService 의 create, update 메소드 명 생성(Make method name with field name)
      *
      * @param fieldName the field name
      * @param suffix the suffix
@@ -55,7 +55,7 @@ public class InspectionUtil {
 
 
     /**
-     * Resource명 생성(Make resource name)
+     * Resource 명 생성(Make resource name)
      * ex) deployments -> deployment
      *
      * @param resourceName the resource name
@@ -117,6 +117,7 @@ public class InspectionUtil {
      * @param namespace the namespace
      * @param kind the kind
      * @param yaml the yaml
+     * @param resourceName the resource name
      * @return the object
      * @throws NoSuchMethodException
      * @throws InvocationTargetException

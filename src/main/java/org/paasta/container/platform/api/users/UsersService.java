@@ -121,6 +121,7 @@ public class UsersService {
     /**
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
      *
+     * @param cluster   the cluster
      * @param namespace the namespace
      * @return the users list
      */
@@ -201,14 +202,6 @@ public class UsersService {
         return commonService.setResultModel(commonService.setResultObject(usersAdmin, UsersAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
-
-
-    /**
-     * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)
-     *
-     * @param namespace the namespace
-     * @return the users list
-     */
 
     /**
      * 각 Namespace 별 등록 되어 있는 사용자들의 이름 목록 조회(Get Users registered list namespace)

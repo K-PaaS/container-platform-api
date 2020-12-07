@@ -43,7 +43,7 @@ public class AccessTokenService {
      *
      * @param namespace the namespace
      * @param accessTokenName the accessTokenName
-     * @return the accessToken
+     * @return the accessToken detail
      */
     public AccessToken getSecrets(String namespace, String accessTokenName) {
         String caCertToken;

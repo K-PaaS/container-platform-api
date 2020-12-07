@@ -190,6 +190,7 @@ public class PersistentVolumeClaimsService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public Object createPersistentVolumeClaims(String namespace, String yaml, boolean isAdmin) {
@@ -232,6 +233,7 @@ public class PersistentVolumeClaimsService {
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param yaml         the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
 

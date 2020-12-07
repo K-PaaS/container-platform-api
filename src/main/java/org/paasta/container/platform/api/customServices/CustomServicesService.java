@@ -132,6 +132,7 @@ public class CustomServicesService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public Object createServices(String namespace, String yaml, boolean isAdmin) {
@@ -175,6 +176,7 @@ public class CustomServicesService {
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param yaml         the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     public ResultStatus updateServices(String namespace, String resourceName, String yaml, boolean isAdmin) {
@@ -186,8 +188,6 @@ public class CustomServicesService {
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_SERVICES_DETAIL.replace("{serviceName:.+}", resourceName));
     }
 
-
-    //methods for administrators
 
     /**
      * Services Admin 목록 조회(Get Services Admin list)

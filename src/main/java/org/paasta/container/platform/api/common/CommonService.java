@@ -88,10 +88,10 @@ public class CommonService {
     /**
      * 생성/수정/삭제 후 페이지 이동을 위한 result model 설정(Set result model for moving the page after a create/update/delete)
      *
-     * @param reqObject
-     * @param resultCode
-     * @param nextActionUrl
-     * @return
+     * @param reqObject the reqObject
+     * @param resultCode the resultCode
+     * @param nextActionUrl the nextActionUrl
+     * @return the object
      */
     public Object setResultModelWithNextUrl(Object reqObject, String resultCode, String nextActionUrl) {
         try {
@@ -162,10 +162,10 @@ public class CommonService {
     /**
      * 서로 다른 객체를 매핑 (mapping each other objects)
      *
-     * @param instance
-     * @param targetClass
-     * @param <A>
-     * @param <B>
+     * @param instance the instance
+     * @param targetClass the targetClass
+     * @param <A> the type parameter
+     * @param <B> the type parameter
      * @return the b
      * @throws Exception
      */
@@ -188,8 +188,8 @@ public class CommonService {
     /**
      * 필드를 조회하고, 그 값을 반환 처리(check the field and return the result)
      *
-     * @param fieldName
-     * @param obj
+     * @param fieldName the fieldName
+     * @param obj the obj
      * @return the t
      */
     @SneakyThrows
@@ -204,9 +204,9 @@ public class CommonService {
     /**
      * 필드를 조회하고, 그 값을 저장 처리(check the field and save the result)
      *
-     * @param fieldName
-     * @param obj
-     * @param value
+     * @param fieldName the fieldName
+     * @param obj the obj
+     * @param value the value
      * @return the object
      */
     @SneakyThrows
@@ -222,8 +222,8 @@ public class CommonService {
     /**
      * 리소스 명 기준, 키워드가 포함된 리스트 반환 처리(return the list including keywords)
      *
-     * @param commonList
-     * @param keyword
+     * @param commonList the commonList
+     * @param keyword the keyword
      * @return the list
      */
     public <T> List<T> searchKeywordForResourceName(List<T> commonList, String keyword) {
@@ -239,9 +239,9 @@ public class CommonService {
     /**
      * 리소스 생성날짜 또는 이름으로 리스트 정렬 처리(order by creation time or name)
      *
-     * @param commonList
-     * @param orderBy
-     * @param order
+     * @param commonList the commonList
+     * @param orderBy the orderBy
+     * @param order the order
      * @return the list
      */
     public <T> List<T> sortingListByCondition(List<T> commonList, String orderBy, String order) {
@@ -280,11 +280,11 @@ public class CommonService {
 
 
     /**
-     * offset & limit을 통한 리스트 가공 처리(sublist using offset and limit)
+     * offset & limit 을 통한 리스트 가공 처리(sublist using offset and limit)
      *
-     * @param itemList
-     * @param offset
-     * @param limit
+     * @param itemList the itemList
+     * @param offset the offset
+     * @param limit the limit
      * @return the list
      */
     public <T> List<T> subListforLimit(List<T> itemList, int offset, int limit) {
@@ -297,11 +297,11 @@ public class CommonService {
     }
 
     /**
-     * commonItemMetaData 객체 생성(create a commonItemMetaData object)
+     * commonItemMetaData 객체 생성(create a common Item Meta Data object)
      *
-     * @param itemList
-     * @param offset
-     * @param limit
+     * @param itemList the itemList
+     * @param offset the offset
+     * @param limit the limit
      * @return the CommonItemMetaData
      */
     public CommonItemMetaData setCommonItemMetaData(List itemList, int offset, int limit) {
@@ -332,6 +332,20 @@ public class CommonService {
 
         return commonItemMetaData;
     }
+
+    /**
+     *
+     *
+     * @param resourceList the resourceList
+     * @param offset the offset
+     * @param limit the limit
+     * @param orderBy the orderBy
+     * @param order the order
+     * @param searchName the searchName
+     * @param requestClass the requestClass
+     *
+     * @return the t
+     */
 
     public <T> T resourceListProcessing(Object resourceList, int offset, int limit, String orderBy, String order, String searchName, Class<T> requestClass) {
 
@@ -365,9 +379,11 @@ public class CommonService {
 
 
     /**
-     * selector에 의한 리스트 조회 commonItemMetaData 설정(config commonItemMetaData)
+     * selector 에 의한 리스트 조회 commonItemMetaData 설정(config common Item Meta Data)
      *
-     * @param resourceList
+     * @param resourceList the resourceList
+     * @param requestClass the requestClass
+     *
      * @return the t
      */
     public <T> T setCommonItemMetaDataBySelector(Object resourceList, Class<T> requestClass) {
@@ -382,8 +398,9 @@ public class CommonService {
 
 
     /**
-     * 리소스 목록조회 제외대상 네임스페이스 fieldSelector 생성 (Create Except Namespace Field Selector)
+     * 리소스 목록 조회 제외 대상 네임스페이스 fieldSelector 생성 (Create Except Namespace Field Selector)
      *
+     * @param type the type
      * @return the string
      */
     public String generateFieldSelectorForExceptNamespace(String type) {
@@ -407,8 +424,10 @@ public class CommonService {
 
 
     /**
-     * Nodes명에 따른 Pods 목록조회 fieldSelector 생성 (Create Field Selector For pods By NodeNames )
+     * Nodes 명에 따른 Pods 목록조회 fieldSelector 생성 (Create Field Selector For pods By NodeNames)
      *
+     * @param prefix the prefix
+     * @param nodeName the node name
      * @return the string
      */
     public String generateFieldSelectorForPodsByNode(String prefix, String nodeName) {
@@ -432,7 +451,7 @@ public class CommonService {
 
 
     /**
-     * 같은 Resource인지 목록 값 비교
+     * 같은 Resource 인지 목록 값 비교
      *
      * @param defaultList the default list
      * @param compareList the compare list

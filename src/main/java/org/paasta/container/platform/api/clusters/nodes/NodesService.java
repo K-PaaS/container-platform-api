@@ -95,7 +95,7 @@ public class NodesService {
      * Nodes 상세 조회(Get Nodes detail)
      *
      * @param resourceName the resource name
-     * @return the nodes
+     * @return the nodes detail
      */
     public Nodes getNodes(String resourceName) {
         HashMap responseMap = (HashMap) restTemplateService.send(Constants.TARGET_CP_MASTER_API,
@@ -111,7 +111,7 @@ public class NodesService {
      * NodesAdmin 상세 조회(Get Nodes Admin detail)
      *
      * @param resourceName the resource name
-     * @return the nodes admin
+     * @return the nodes admin detail
      */
     public Object getNodesAdmin(String resourceName) {
         Object obj = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,

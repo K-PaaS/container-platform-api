@@ -49,7 +49,7 @@ public class OverviewService {
 
     /**
      * Instantiates a new Overview service
-     *  @param namespacesService  the namespaces service
+     * @param namespacesService  the namespaces service
      * @param deploymentsService the deployments service
      * @param podsService        the pods service
      * @param replicaSetsService the replicaSets service
@@ -72,6 +72,7 @@ public class OverviewService {
     /**
      * 전체 Namespaces 의 Overview 조회(Get Overview in All Namespaces)
      *
+     * @param cluster the cluster
      * @return the overview
      */
     public Overview getOverviewAll(String cluster) {
@@ -88,7 +89,6 @@ public class OverviewService {
 
         // replicaSets count
         ReplicaSetsListAdmin replicaSetsListAll = getReplicaSetsList(null);
-
 
         // users count
         UsersList usersList = usersService.getUsersListByNamespace(cluster, propertyService.getDefaultNamespace());
@@ -118,6 +118,7 @@ public class OverviewService {
     /**
      * Overview 조회(Get Overview)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
      * @return the overview
      */

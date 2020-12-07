@@ -10,7 +10,7 @@ import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
 
 /**
- * Namespace Admin Model 클래스
+ * Namespaces Admin Model 클래스
  *
  * @author hrjin
  * @version 1.0

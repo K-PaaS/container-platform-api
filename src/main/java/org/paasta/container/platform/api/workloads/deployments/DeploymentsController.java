@@ -192,6 +192,7 @@ public class DeploymentsController {
      * @param namespace    the namespace
      * @param resourceName the resource name
      * @param yaml         the yaml
+     * @param isAdmin the isAdmin
      * @return return is succeeded
      */
     @ApiOperation(value = "Deployments 수정(Update Deployments)", nickname = "updateDeployments")

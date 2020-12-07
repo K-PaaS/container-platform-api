@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.common.model;
 import lombok.Data;
 
 /**
- * Common Yaml Model 클래스
+ * Common Resources Yaml Model 클래스
  *
  * @author kjhoon
  * @version 1.0
