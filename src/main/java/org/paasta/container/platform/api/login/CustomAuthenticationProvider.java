@@ -45,7 +45,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         UserDetails loadedUser = customUserDetailsService.loadUserByUsername(username);
 
         if (loadedUser == null) {
-            throw new InternalAuthenticationServiceException(MessageConstant.NON_EXISTENT_ID);
+            throw new InternalAuthenticationServiceException(MessageConstant.INVALID_LOGIN_INFO);
         }
         if (!loadedUser.isAccountNonLocked()) {
             throw new LockedException(MessageConstant.UNAVAILABLE_ID);
@@ -57,7 +57,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new AccountExpiredException(MessageConstant.UNAVAILABLE_ID);
         }
         if (!passwordEncoder.matches(password, loadedUser.getPassword())) {
-            throw new BadCredentialsException(MessageConstant.INVALID_PASSWORD);
+            throw new BadCredentialsException(MessageConstant.INVALID_LOGIN_INFO);
         }
         if (!loadedUser.isCredentialsNonExpired()) {
             throw new CredentialsExpiredException(MessageConstant.UNAVAILABLE_ID);
