@@ -220,6 +220,9 @@ public class Constants {
     public static final ResultStatus NOT_MATCH_NAMESPACES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_NAMESPACES,
             CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
 
+    public static final ResultStatus DO_NOT_DELETE_DEFAULT_RESOURCES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES,
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES, null );
+
     public Constants() {
         throw new IllegalStateException();
     }

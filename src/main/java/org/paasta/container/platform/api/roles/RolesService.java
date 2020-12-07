@@ -156,6 +156,10 @@ public class RolesService {
      * @return return is succeeded
      */
     public ResultStatus deleteRoles(String namespace, String resourceName) {
+        if(propertyService.getRolesList().contains(resourceName)) {
+            return Constants.DO_NOT_DELETE_DEFAULT_RESOURCES;
+        }
+
         ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
                 propertyService.getCpMasterApiListRolesDeleteUrl()
                         .replace("{namespace}", namespace)

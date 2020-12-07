@@ -35,6 +35,9 @@ public class PropertyService {
     @Value("${cpNamespace.defaultNamespace}")
     private String defaultNamespace;
 
+    @Value("${cpNamespace.role.list}")
+    List<String> rolesList;
+
     @Value("${cpNamespace.role.init}")
     private String initRole;
 
