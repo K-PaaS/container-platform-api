@@ -20,7 +20,10 @@ public class MessageConstant {
     public static final String RESOURCE_NAMED = "이름을 가진 리소스";
     public static final String INCLUDE_INACCESSIBLE_RESOURCES = "User 권한으로 생성이 불가한 리소스가 포함되어있습니다.";
     public static final String INVALID_YAML_FORMAT = "잘못된 YAML 형식입니다.";
-    public static final String DO_NOT_DELETE_DEFAULT_RESOURCES = " 해당 리소스는 삭제할 수 없습니다.";
+    public static final String DO_NOT_DELETE_DEFAULT_RESOURCES = "해당 리소스는 삭제할 수 없습니다.";
+
+    public static final String CODE_ERROR = "요청 사항에 오류가 발생하였습니다. 관리자에게 문의하세요.";
+    public static final String REQUEST_VALUE_IS_MISSING = "필수 사항이 누락되었습니다.";
 
     //login
     public static final String LOGIN_SUCCESS = "Login Successful.";

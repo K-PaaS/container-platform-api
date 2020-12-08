@@ -1,15 +1,13 @@
 package org.paasta.container.platform.api.exception;
 
+import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * GlobalController Exception Handler 클래스
@@ -23,31 +21,17 @@ public class GlobalControllerExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalControllerExceptionHandler.class);
 
-    @Autowired
-    public MessageSource messageSource;
-
-    // Rest API Template Error Exception
-    @ExceptionHandler(HttpClientErrorException.class)
+    @ExceptionHandler({HttpClientErrorException.class})
     @ResponseBody
-    public void httpClientErrorException(HttpClientErrorException ex, HttpServletResponse response) throws Exception {
+    public ErrorMessage handleException(HttpClientErrorException ex) {
+        LOGGER.info("HttpClientErrorException >>> " + ex.getLocalizedMessage());
+        for (CommonStatusCode code : CommonStatusCode.class.getEnumConstants()) {
+            if(code.getCode() == ex.getRawStatusCode()) {
+                return new ErrorMessage(Constants.RESULT_STATUS_FAIL, code.getMsg(), code.getCode(), code.getMsg());
+            }
+        }
 
-        LOGGER.error("HttpClientErrorException : " + ex );
-        //LOGGER.info("ex >>> rawCode : " + ex.getRawStatusCode() + " getMessage : " + ex.getMessage() + ", localizedMessage : " + ex.getLocalizedMessage()+ ", getResponseBodyAsString : "  + ex.getResponseBodyAsString()+ ", getCause : " + ex.getCause());
-
-        String message =
-                "{\"resultMessage\":\""+ex.getStatusText()+"\"" +
-                //",\"resultCode\":\""+ex.getStatusCode()+"\"}";
-                ",\"resultCode\":\""+"FAIL"+"\"}";
-        // errorCode를 받지만, 에러를 "FAIL"로 코드 통일
-
-        // CONTAINER-PLATFORM-API 통신 성공을 위한 SC_OK(200) 및 kubernetes API 에러코드 및 메시지 전달
-        response.resetBuffer();
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setHeader("Content-Type", "application/json;charset=utf-8");
-        response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().print(message);
-        response.flushBuffer();
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getStatusText(), ex.getRawStatusCode(), ex.getResponseBodyAsString());
     }
-
 }
 

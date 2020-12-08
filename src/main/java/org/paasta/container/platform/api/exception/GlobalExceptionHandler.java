@@ -1,6 +1,8 @@
 package org.paasta.container.platform.api.exception;
 
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.MessageConstant;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,12 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ResponseBody
     public ErrorMessage handleException(HttpClientErrorException ex) {
         LOGGER.info("HttpClientErrorException >>> " + ex.getStatusText());
+        for (CommonStatusCode code : CommonStatusCode.class.getEnumConstants()) {
+            if(code.getCode() == ex.getRawStatusCode()) {
+                return new ErrorMessage(Constants.RESULT_STATUS_FAIL, code.getMsg(), code.getCode(), code.getMsg());
+            }
+        }
+
         return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getStatusText(), ex.getRawStatusCode(), ex.getResponseBodyAsString());
     }
 
@@ -54,10 +62,11 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ExceptionHandler({Exception.class})
     public ErrorMessage handleAll(final Exception ex) {
         if(ex.getMessage().contains("404")) {
-            return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage(), HttpStatus.NOT_FOUND.value(), ex.getLocalizedMessage());
+            return new ErrorMessage(Constants.RESULT_STATUS_FAIL, CommonStatusCode.NOT_FOUND.getMsg(), HttpStatus.NOT_FOUND.value(), CommonStatusCode.NOT_FOUND.getMsg());
         }
+
         LOGGER.info("Exception >>> {}", ex.getLocalizedMessage());
-        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getLocalizedMessage());
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, CommonStatusCode.INTERNAL_SERVER_ERROR.getMsg(), HttpStatus.INTERNAL_SERVER_ERROR.value(), CommonStatusCode.INTERNAL_SERVER_ERROR.getMsg());
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class})
@@ -66,7 +75,7 @@ public class GlobalExceptionHandler extends RuntimeException {
 
         String message = "Required request body is missing";
         if(ex.getMessage().contains(message)){
-            return new ErrorMessage(Constants.RESULT_STATUS_FAIL,message, HttpStatus.UNPROCESSABLE_ENTITY.value(), message);
+            return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUEST_VALUE_IS_MISSING, HttpStatus.UNPROCESSABLE_ENTITY.value(), MessageConstant.REQUEST_VALUE_IS_MISSING);
         }
         return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY.value(), ex.getLocalizedMessage());
     }
@@ -75,10 +84,10 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ResponseBody
     public ErrorMessage handleException(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
-        String message = "Missing required fields:";
+        String message = MessageConstant.REQUEST_VALUE_IS_MISSING + " : ";
 
         FieldError error;
-        for(Iterator var5 = result.getFieldErrors().iterator(); var5.hasNext(); message = message + " " + error.getField()) {
+        for(Iterator var5 = result.getFieldErrors().iterator(); var5.hasNext(); message = message + error.getField()) {
             error = (FieldError)var5.next();
         }
         LOGGER.info("MethodArgumentNotValidException >>> " + message);
@@ -90,14 +99,20 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ResponseBody
     public ErrorMessage nullException(NullPointerException ex) {
         LOGGER.info("NullPointerException >>> " + ex);
-        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage());
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR);
     }
 
     @ExceptionHandler({IndexOutOfBoundsException.class})
     @ResponseBody
     public ErrorMessage indexOutOfBoundsException(IndexOutOfBoundsException ex) {
         LOGGER.info("indexOutOfBoundsException >>> " + ex.getMessage());
-        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage());
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR);
     }
 
+    @ExceptionHandler({ClassCastException.class})
+    @ResponseBody
+    public ErrorMessage classCastException(ClassCastException ex) {
+        LOGGER.info("ClassCastException >>> " + ex.getMessage());
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR);
+    }
 }
