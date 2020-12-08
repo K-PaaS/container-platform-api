@@ -333,8 +333,9 @@ public class CommonService {
         return commonItemMetaData;
     }
 
+
     /**
-     *
+     * Resource 목록에 대한 검색 및 페이징, 정렬을 위한 공통 메서드(Common Method for searching, paging, ordering about resource's list)
      *
      * @param resourceList the resourceList
      * @param offset the offset
@@ -344,9 +345,8 @@ public class CommonService {
      * @param searchName the searchName
      * @param requestClass the requestClass
      *
-     * @return the t
+     * @return the T
      */
-
     public <T> T resourceListProcessing(Object resourceList, int offset, int limit, String orderBy, String order, String searchName, Class<T> requestClass) {
 
         Object resourceReturnList = null;

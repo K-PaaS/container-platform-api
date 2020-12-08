@@ -39,6 +39,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    /**
+     * Instantiates a new CustomUserDetails service
+     *
+     * @param propertyService the property service
+     * @param usersService    the users service
+     */
     @Autowired
     public CustomUserDetailsService(PropertyService propertyService, UsersService usersService) {
         this.propertyService = propertyService;
@@ -48,6 +54,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private HttpServletRequest request;
 
+
+    /**
+     * 로그인 인증을 위한 User 상세 조회(Get Users detail for login authentication)
+     *
+     * @param userId the user id
+     * @return the user details
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         List<SimpleGrantedAuthority> roles = null;
@@ -67,6 +81,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
 
+    /**
+     * 사용자 인증 후 리턴 객체 생성(Create authentication response)
+     *
+     * @param authRequest the auth request
+     * @return the object
+     */
     public Object createAuthenticationResponse(AuthenticationRequest authRequest) {
 
         AuthenticationResponse authResponse = new AuthenticationResponse();
@@ -114,6 +134,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
 
+    /**
+     * 기본 Namespace를 제외한 인증된 사용자가 속한 Namespace 목록 조회(Get List of Namespaces to which authenticated users belong, excluding default namespaces)
+     *
+     * @param userItem the users item
+     * @return the list
+     */
     public List<loginMetaDataItem> defaultNamespaceFilter(List<Users> userItem) {
 
         List<loginMetaDataItem> loginMetaData = new ArrayList<>();

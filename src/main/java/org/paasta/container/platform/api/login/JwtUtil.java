@@ -39,6 +39,15 @@ public class JwtUtil {
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
 
+
+    /**
+     * JWT 토큰 생성을 위한 권한 및 브라우저 정보 조회(Get authority and browser info for generate JWT token)
+     *
+     * @param userDetails      the user details
+     * @param authRequest      the auth request
+     * @param userListByUserId the users list
+     * @return the string
+     */
     public String generateToken(UserDetails userDetails, AuthenticationRequest authRequest, UsersList userListByUserId) {
         Map<String, Object> claims = new HashMap<>();
         String url = null;
@@ -62,6 +71,14 @@ public class JwtUtil {
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
+
+    /**
+     * JWT 토큰 생성(Generate JWT token)
+     *
+     * @param claims  the claims
+     * @param subject the subject
+     * @return the string
+     */
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
@@ -69,6 +86,13 @@ public class JwtUtil {
 
     }
 
+
+    /**
+     * 토큰 유효성 검사(Validation token value)
+     *
+     * @param authToken the auth token
+     * @return the boolean
+     */
     public boolean validateToken(String authToken) {
         try {
 
@@ -81,12 +105,26 @@ public class JwtUtil {
         }
     }
 
+
+    /**
+     * 토큰을 통한 사용자 이름 조회(Get User name from token)
+     *
+     * @param token the token
+     * @return the string
+     */
     public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 
         return claims.getSubject();
     }
 
+
+    /**
+     * 토큰을 통한 권한 조회(Get Roles from token)
+     *
+     * @param authToken the auth token
+     * @return the list
+     */
     public List<SimpleGrantedAuthority> getRolesFromToken(String authToken) {
         List<SimpleGrantedAuthority> roles = null;
         Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken).getBody();
@@ -108,6 +146,13 @@ public class JwtUtil {
         return roles;
     }
 
+
+    /**
+     * 토큰을 통한 클라이언트 IP 조회(Get Client IP from token)
+     *
+     * @param authToken the auth token
+     * @return the string
+     */
     public String getClientIpFromToken(String authToken) {
         Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken).getBody();
         String clientIp = String.valueOf(claims.get("IP"));
@@ -115,6 +160,13 @@ public class JwtUtil {
         return clientIp;
     }
 
+
+    /**
+     * API 요청으로부터 JWT 토큰 추출(Extract JWT token from API Request)
+     *
+     * @param request the request
+     * @return the string
+     */
     public String extractJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {

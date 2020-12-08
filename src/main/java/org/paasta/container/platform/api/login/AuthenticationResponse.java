@@ -32,6 +32,19 @@ public class AuthenticationResponse extends ResultStatus {
         super(resultCode, resultMessage, httpStatusCode, detailMessage);
     }
 
+    /**
+     * Instantiates a new AuthenticationResponse
+     *
+     * @param resultCode     the result code
+     * @param resultMessage  the result message
+     * @param httpStatusCode the http status code
+     * @param detailMessage  the detail message
+     * @param nextActionUrl  the next action url
+     * @param userId         the use id
+     * @param token          the token
+     * @param loginMetaData  the login metadata
+     * @param clusterName    the cluster name
+     */
     public AuthenticationResponse(String resultCode, String resultMessage, int httpStatusCode, String detailMessage,
                                   String nextActionUrl, String userId, String token, List loginMetaData, String clusterName) {
         super(resultCode, resultMessage, httpStatusCode, detailMessage, nextActionUrl);
