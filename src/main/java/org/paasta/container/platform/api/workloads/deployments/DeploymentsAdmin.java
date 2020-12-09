@@ -5,10 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.workloads.deployments.support.DeploymentsSpec;
 import org.paasta.container.platform.api.workloads.deployments.support.DeploymentsStatus;
 import org.paasta.container.platform.api.workloads.deployments.support.DeploymentsStrategy;
+
+import java.util.List;
 
 /**
  * Deployments Admin Model 클래스
@@ -27,7 +30,7 @@ public class DeploymentsAdmin {
     private String uid;
     private String namespace;
     private Object labels;
-    private Object annotations;
+    private List<CommonAnnotations> annotations;
     private String creationTimestamp;
     private DeploymentsStrategy strategy;
     private int minReadySeconds;
@@ -60,10 +63,6 @@ public class DeploymentsAdmin {
 
     public Object getLabels() {
         return CommonUtils.procReplaceNullValue(spec.getTemplate().getMetadata().getLabels());
-    }
-
-    public Object getAnnotations() {
-        return CommonUtils.procReplaceNullValue(metadata.getAnnotations());
     }
 
     public String getCreationTimestamp() {

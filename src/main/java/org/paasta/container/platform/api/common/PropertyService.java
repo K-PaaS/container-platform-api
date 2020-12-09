@@ -68,6 +68,9 @@ public class PropertyService {
     @Value("${cpNamespace.limitRanges.high}")
     private String highLimitRanges;
 
+    @Value("${cpAnnotations.configuration}")
+    List<String> cpAnnotationsConfiguration;
+
     //service
     @Value("${cpMaster.api.list.services.list}")
     private String cpMasterApiListServicesListUrl;

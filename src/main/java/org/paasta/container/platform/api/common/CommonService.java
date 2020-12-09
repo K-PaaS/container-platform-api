@@ -3,7 +3,9 @@ package org.paasta.container.platform.api.common;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonItemMetaData;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +34,12 @@ public class CommonService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonService.class);
     private final Gson gson;
+    private final PropertyService propertyService;
 
     @Value("${cpNamespace.ignoreNamespace}")
     List<String> ignoreNamespaceList;
+
+
 
     /**
      * Instantiates a new Common service
@@ -42,8 +47,9 @@ public class CommonService {
      * @param gson the gson
      */
     @Autowired
-    public CommonService(Gson gson) {
+    public CommonService(Gson gson, PropertyService propertyService) {
         this.gson = gson;
+        this.propertyService = propertyService;
     }
 
 
@@ -479,6 +485,45 @@ public class CommonService {
 
 
         return (T) resourceReturnList;
+    }
+
+
+    /**
+     * Annotaions 처리
+     *
+     * @param resourceDetails the resource Details
+     * @param requestClass the requestClass
+     * @return the ArrayList
+     */
+    public<T> T annotationsProcessing(Object resourceDetails, Class<T> requestClass)  {
+
+        Object returnObj = null;
+
+        CommonMetaData commonMetaData = getField("metadata", resourceDetails);
+        Map<String, String> annotations  = getField("annotations", commonMetaData);
+
+        // new annotaions list
+        List<CommonAnnotations> commonAnnotationsList = new ArrayList<>();
+
+        for (String key : annotations.keySet()) {
+            CommonAnnotations commonAnnotations = new CommonAnnotations();
+
+            //if exists configuration annotaion
+            if (propertyService.getCpAnnotationsConfiguration().contains(key)) {
+                commonAnnotations.setCheckYn(Constants.CHECK_Y);
+            } else {
+                commonAnnotations.setCheckYn(Constants.CHECK_N);
+            }
+
+            commonAnnotations.setKey(key);
+            commonAnnotations.setValue(annotations.get(key));
+
+            commonAnnotationsList.add(commonAnnotations);
+        }
+
+        returnObj = setField("annotations", resourceDetails, commonAnnotationsList);
+
+        return (T) returnObj;
     }
 
 

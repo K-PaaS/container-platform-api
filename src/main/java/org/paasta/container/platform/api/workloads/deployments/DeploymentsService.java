@@ -133,7 +133,10 @@ public class DeploymentsService {
             return obj;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, DeploymentsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        DeploymentsAdmin deploymentsAdmin = commonService.setResultObject(responseMap, DeploymentsAdmin.class);
+        deploymentsAdmin = commonService.annotationsProcessing(deploymentsAdmin, DeploymentsAdmin.class);
+
+        return commonService.setResultModel(deploymentsAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
 
@@ -188,7 +191,7 @@ public class DeploymentsService {
      *
      * @param namespace the namespace
      * @param yaml      the yaml
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     public Object createDeployments(String namespace, String yaml, boolean isAdmin) {
@@ -205,7 +208,7 @@ public class DeploymentsService {
      *
      * @param namespace the namespace
      * @param name      the deployments name
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     public ResultStatus deleteDeployments(String namespace, String name, boolean isAdmin) {
@@ -231,7 +234,7 @@ public class DeploymentsService {
      * @param namespace the namespace
      * @param name      the deployments name
      * @param yaml      the yaml
-     * @param isAdmin the isAdmin
+     * @param isAdmin   the isAdmin
      * @return return is succeeded
      */
     public ResultStatus updateDeployments(String namespace, String name, String yaml, boolean isAdmin) {
