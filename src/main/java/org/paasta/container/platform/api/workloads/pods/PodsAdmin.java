@@ -89,8 +89,8 @@ public class PodsAdmin {
         return status.getQosClass();
     }
 
-    public List<?> getControllers() {
-        return CommonUtils.procReplaceNullValue(metadata.getOwnerReferences(), Constants.ListObjectType.COMMON_OWNER_REFERENCES);
+    public String getControllers() {
+        return CommonUtils.procReplaceNullValue(metadata.getOwnerReferences().get(0).getName());
     }
 
     public List<Volume> getVolumes() {
