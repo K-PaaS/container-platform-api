@@ -1,16 +1,15 @@
 package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import java.util.List;
-import java.util.Map;
-
 import lombok.Data;
-
 import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsSpec;
 import org.paasta.container.platform.api.storages.persistentVolumeClaims.support.PersistentVolumeClaimsStatus;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * PersistentVolumeClaims Admin Model 클래스
@@ -30,7 +29,7 @@ public class PersistentVolumeClaimsAdmin {
     private String uid;
     private String namespace;
     private Object labels;
-    private Object annotations;
+    private List<CommonAnnotations> annotations;
     private String creationTimestamp;
 
     private String persistentVolumeClaimStatus;
@@ -61,10 +60,6 @@ public class PersistentVolumeClaimsAdmin {
 
     public Object getLabels() {
         return CommonUtils.procReplaceNullValue(metadata.getLabels());
-    }
-
-    public Object getAnnotations() {
-        return CommonUtils.procReplaceNullValue(metadata.getAnnotations());
     }
 
     public String getCreationTimestamp() {

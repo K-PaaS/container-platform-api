@@ -500,25 +500,33 @@ public class CommonService {
         Object returnObj = null;
 
         CommonMetaData commonMetaData = getField("metadata", resourceDetails);
-        Map<String, String> annotations  = getField("annotations", commonMetaData);
+        Map<String, String> annotations = getField("annotations", commonMetaData);
 
         // new annotaions list
         List<CommonAnnotations> commonAnnotationsList = new ArrayList<>();
 
-        for (String key : annotations.keySet()) {
-            CommonAnnotations commonAnnotations = new CommonAnnotations();
+        if(annotations != null) {
+            for (String key : annotations.keySet()) {
+                CommonAnnotations commonAnnotations = new CommonAnnotations();
 
-            //if exists configuration annotaion
-            if (propertyService.getCpAnnotationsConfiguration().contains(key)) {
-                commonAnnotations.setCheckYn(Constants.CHECK_Y);
-            } else {
-                commonAnnotations.setCheckYn(Constants.CHECK_N);
+                //if exists configuration annotaion
+                if (propertyService.getCpAnnotationsConfiguration().contains(key)) {
+                    commonAnnotations.setCheckYn(Constants.CHECK_Y);
+                } else {
+                    commonAnnotations.setCheckYn(Constants.CHECK_N);
+                }
+
+                commonAnnotations.setKey(key);
+                commonAnnotations.setValue(annotations.get(key));
+
+                commonAnnotationsList.add(commonAnnotations);
             }
-
-            commonAnnotations.setKey(key);
-            commonAnnotations.setValue(annotations.get(key));
-
-            commonAnnotationsList.add(commonAnnotations);
+        } else {
+            CommonAnnotations emptyCommonAnnotations = new CommonAnnotations();
+            emptyCommonAnnotations.setCheckYn(Constants.NULL_REPLACE_TEXT);
+            emptyCommonAnnotations.setKey(Constants.NULL_REPLACE_TEXT);
+            emptyCommonAnnotations.setValue(Constants.NULL_REPLACE_TEXT);
+            commonAnnotationsList.add(emptyCommonAnnotations);
         }
 
         returnObj = setField("annotations", resourceDetails, commonAnnotationsList);

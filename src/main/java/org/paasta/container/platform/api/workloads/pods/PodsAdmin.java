@@ -3,7 +3,7 @@ package org.paasta.container.platform.api.workloads.pods;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.paasta.container.platform.api.common.CommonUtils;
-import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.workloads.pods.support.PodsStatus;
@@ -29,7 +29,7 @@ public class PodsAdmin {
     private String uid;
     private String namespace;
     private Object labels;
-    private Object annotations;
+    private List<CommonAnnotations> annotations;
     private String creationTimestamp;
 
     private String nodes;
@@ -69,10 +69,6 @@ public class PodsAdmin {
 
     public Object getLabels() {
         return CommonUtils.procReplaceNullValue(metadata.getLabels());
-    }
-
-    public Object getAnnotations() {
-        return CommonUtils.procReplaceNullValue(metadata.getAnnotations());
     }
 
     public String getCreationTimestamp() {

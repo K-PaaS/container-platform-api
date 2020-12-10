@@ -3,7 +3,6 @@ package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.storages.persistentVolumes.PersistentVolumes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -136,7 +135,10 @@ public class PersistentVolumeClaimsService {
             return obj;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumeClaimsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        PersistentVolumeClaimsAdmin persistentVolumeClaimsAdmin = commonService.setResultObject(responseMap, PersistentVolumeClaimsAdmin.class);
+        persistentVolumeClaimsAdmin = commonService.annotationsProcessing(persistentVolumeClaimsAdmin, PersistentVolumeClaimsAdmin.class);
+
+        return commonService.setResultModel(persistentVolumeClaimsAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

@@ -248,7 +248,10 @@ public class RolesService {
             return response;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, RolesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        RolesAdmin rolesAdmin = commonService.setResultObject(responseMap, RolesAdmin.class);
+        rolesAdmin = commonService.annotationsProcessing(rolesAdmin, RolesAdmin.class);
+
+        return commonService.setResultModel(rolesAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

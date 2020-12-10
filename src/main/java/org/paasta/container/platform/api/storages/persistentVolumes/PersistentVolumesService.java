@@ -165,7 +165,10 @@ public class PersistentVolumesService {
             return obj;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, PersistentVolumesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        PersistentVolumesAdmin persistentVolumesAdmin = commonService.setResultObject(responseMap, PersistentVolumesAdmin.class);
+        persistentVolumesAdmin = commonService.annotationsProcessing(persistentVolumesAdmin, PersistentVolumesAdmin.class);
+
+        return commonService.setResultModel(persistentVolumesAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
 

@@ -92,7 +92,10 @@ public class StorageClassesService {
             return obj;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, StorageClassesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        StorageClassesAdmin storageClassesAdmin = commonService.setResultObject(responseMap, StorageClassesAdmin.class);
+        storageClassesAdmin = commonService.annotationsProcessing(storageClassesAdmin, StorageClassesAdmin.class);
+
+        return commonService.setResultModel(storageClassesAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**

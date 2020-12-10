@@ -1,11 +1,12 @@
 package org.paasta.container.platform.api.storages.storageClasses;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Data;
-
 import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
+
+import java.util.List;
 
 /**
  * StorageClasses Admin Model 클래스
@@ -24,7 +25,7 @@ public class StorageClassesAdmin {
     private String name;
     private String uid;
     private Object labels;
-    private Object annotations;
+    private List<CommonAnnotations> annotations;
     private String creationTimestamp;
 
     private String provisioner;
@@ -43,10 +44,6 @@ public class StorageClassesAdmin {
 
     public Object getLabels() {
         return CommonUtils.procReplaceNullValue(metadata.getLabels());
-    }
-
-    public Object getAnnotations() {
-        return CommonUtils.procReplaceNullValue(metadata.getAnnotations());
     }
 
     public String getCreationTimestamp() {

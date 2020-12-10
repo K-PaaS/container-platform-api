@@ -349,7 +349,11 @@ public class PodsService {
         }
 
         responseMap.put(STATUS_FIELD_NAME, status);
-        return commonService.setResultModel(commonService.setResultObject(responseMap, PodsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+
+        PodsAdmin podsAdmin = commonService.setResultObject(responseMap, PodsAdmin.class);
+        podsAdmin = commonService.annotationsProcessing(podsAdmin, PodsAdmin.class);
+
+        return commonService.setResultModel(podsAdmin, Constants.RESULT_STATUS_SUCCESS);
 
     }
 

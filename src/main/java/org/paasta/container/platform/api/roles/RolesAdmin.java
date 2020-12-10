@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.Data;
 
 import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.roles.supports.RolesRule;
 
@@ -30,7 +31,7 @@ public class RolesAdmin {
     private String uid;
     private String namespace;
     private Object labels;
-    private Object annotations;
+    private List<CommonAnnotations> annotations;
     private String creationTimestamp;
     private List<RolesRule> rules;
 
@@ -51,10 +52,6 @@ public class RolesAdmin {
 
     public Object getLabels() {
         return CommonUtils.procReplaceNullValue(metadata.getLabels());
-    }
-
-    public Object getAnnotations() {
-        return CommonUtils.procReplaceNullValue(metadata.getAnnotations());
     }
 
     public String getCreationTimestamp() {
