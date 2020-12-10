@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
+
+import java.util.List;
 
 /**
  * ReplicaSets Admin Model 클래스
@@ -27,7 +30,7 @@ public class ReplicaSetsAdmin {
     private String uid;
     private String namespace;
     private Object labels;
-    private Object annotations;
+    private List<CommonAnnotations> annotations;
     private String creationTimestamp;
 
     private Object selector;
@@ -56,10 +59,6 @@ public class ReplicaSetsAdmin {
 
     public Object getLabels() {
         return CommonUtils.procReplaceNullValue(metadata.getLabels());
-    }
-
-    public Object getAnnotations() {
-        return CommonUtils.procReplaceNullValue(metadata.getAnnotations());
     }
 
     public String getCreationTimestamp() {

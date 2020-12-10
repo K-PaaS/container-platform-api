@@ -104,8 +104,10 @@ public class ReplicaSetsService {
         } catch (Exception e) {
             return obj;
         }
+        ReplicaSetsAdmin replicaSetsAdmin = commonService.setResultObject(responseMap, ReplicaSetsAdmin.class);
+        replicaSetsAdmin = commonService.annotationsProcessing(replicaSetsAdmin, ReplicaSetsAdmin.class);
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, ReplicaSetsAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        return commonService.setResultModel(replicaSetsAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
     /**
