@@ -509,7 +509,7 @@ public class CommonService {
             for (String key : annotations.keySet()) {
                 CommonAnnotations commonAnnotations = new CommonAnnotations();
 
-                //if exists configuration annotaion
+                //if exists configuration annotations
                 if (propertyService.getCpAnnotationsConfiguration().contains(key)) {
                     commonAnnotations.setCheckYn(Constants.CHECK_Y);
                 } else {
@@ -517,7 +517,7 @@ public class CommonService {
                 }
 
                 commonAnnotations.setKey(key);
-                commonAnnotations.setValue(annotations.get(key));
+                commonAnnotations.setValue(procSetAnnotations(annotations.get(key)));
 
                 commonAnnotationsList.add(commonAnnotations);
             }
@@ -535,4 +535,8 @@ public class CommonService {
     }
 
 
+    public String procSetAnnotations(String value) {
+        return value.replace(",", "&comma;").replace("\"", "&quot;")
+                .replace("{", "&lbrace;").replace("}", "&rbrace;").replace(":", "&colon;");
+    }
 }

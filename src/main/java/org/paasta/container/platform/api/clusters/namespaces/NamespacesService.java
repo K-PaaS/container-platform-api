@@ -102,8 +102,9 @@ public class NamespacesService {
         } catch (Exception e) {
             return obj;
         }
-
-        return commonService.setResultModel(commonService.setResultObject(responseMap, NamespacesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        NamespacesAdmin namespacesAdmin = commonService.setResultObject(responseMap, NamespacesAdmin.class);
+        namespacesAdmin = commonService.annotationsProcessing(namespacesAdmin, NamespacesAdmin.class);
+        return commonService.setResultModel(namespacesAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
 

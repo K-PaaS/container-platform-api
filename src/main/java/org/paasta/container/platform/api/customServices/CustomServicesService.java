@@ -242,8 +242,9 @@ public class CustomServicesService {
         } catch (Exception e) {
             return response;
         }
-
-        return commonService.setResultModel(commonService.setResultObject(responseMap, CustomServicesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        CustomServicesAdmin customServicesAdmin = commonService.setResultObject(responseMap, CustomServicesAdmin.class);
+        customServicesAdmin = commonService.annotationsProcessing(customServicesAdmin, CustomServicesAdmin.class);
+        return commonService.setResultModel(customServicesAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
 
 

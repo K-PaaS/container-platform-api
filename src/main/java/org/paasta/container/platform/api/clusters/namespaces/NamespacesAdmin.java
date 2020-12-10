@@ -5,9 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatus;
+
+import java.util.List;
 
 /**
  * Namespaces Admin Model 클래스
@@ -26,7 +29,7 @@ public class NamespacesAdmin {
     private String name;
     private String uid;
     private Object labels;
-    private Object annotations;
+    private List<CommonAnnotations> annotations;
     private String namespaceStatus;
     private String creationTimestamp;
 
@@ -49,10 +52,6 @@ public class NamespacesAdmin {
 
     public Object getLabels() {
         return CommonUtils.procReplaceNullValue(metadata.getLabels());
-    }
-
-    public Object getAnnotations() {
-        return CommonUtils.procReplaceNullValue(metadata.getAnnotations());
     }
 
     public String getNamespaceStatus() {

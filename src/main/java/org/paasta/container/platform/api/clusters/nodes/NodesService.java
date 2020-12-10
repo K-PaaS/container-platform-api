@@ -127,7 +127,9 @@ public class NodesService {
             return obj;
         }
 
-        return commonService.setResultModel(commonService.setResultObject(responseMap, NodesAdmin.class), Constants.RESULT_STATUS_SUCCESS);
+        NodesAdmin nodesAdmin = commonService.setResultObject(responseMap, NodesAdmin.class);
+        nodesAdmin = commonService.annotationsProcessing(nodesAdmin, NodesAdmin.class);
+        return commonService.setResultModel(nodesAdmin,Constants.RESULT_STATUS_SUCCESS);
     }
 
 }

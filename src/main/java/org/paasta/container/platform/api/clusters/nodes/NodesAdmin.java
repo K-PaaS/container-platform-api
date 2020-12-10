@@ -10,6 +10,7 @@ import org.paasta.container.platform.api.clusters.nodes.support.NodesAddress;
 import org.paasta.container.platform.api.clusters.nodes.support.NodesStatus;
 import org.paasta.container.platform.api.clusters.nodes.support.NodesSystemInfo;
 import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 
@@ -30,7 +31,7 @@ public class NodesAdmin {
     private String name;
     private String uid;
     private Object labels;
-    private Object annotations;
+    private List<CommonAnnotations> annotations;
     private String creationTimestamp;
 
     private String podsCIDR;
@@ -56,10 +57,6 @@ public class NodesAdmin {
 
     public Object getLabels() {
         return CommonUtils.procReplaceNullValue(metadata.getLabels());
-    }
-
-    public Object getAnnotations() {
-        return CommonUtils.procReplaceNullValue(metadata.getAnnotations());
     }
 
     public String getCreationTimestamp() {
