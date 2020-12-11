@@ -468,6 +468,20 @@ public class CommonService {
     }
 
 
+
+    /**
+     * User 목록에 대한 검색 및 페이징, 정렬을 위한 공통 메서드(Common Method for searching, paging, ordering about resource's list)
+     *
+     * @param resourceList the resourceList
+     * @param offset the offset
+     * @param limit the limit
+     * @param orderBy the orderBy
+     * @param order the order
+     * @param searchName the searchName
+     * @param requestClass the requestClass
+     *
+     * @return the T
+     */
     public <T> T userListProcessing(Object resourceList, int offset, int limit, String orderBy, String order, String searchName, Class<T> requestClass) {
 
         Object resourceReturnList = null;
@@ -489,7 +503,7 @@ public class CommonService {
 
 
     /**
-     * Annotaions 처리
+     * Annotations checkY/N 처리 (Resource Annotation Check y/n Processing)
      *
      * @param resourceDetails the resource Details
      * @param requestClass the requestClass
@@ -499,8 +513,8 @@ public class CommonService {
 
         Object returnObj = null;
 
-        CommonMetaData commonMetaData = getField("metadata", resourceDetails);
-        Map<String, String> annotations = getField("annotations", commonMetaData);
+        CommonMetaData commonMetaData = getField(Constants.RESOURCE_METADATA, resourceDetails);
+        Map<String, String> annotations = getField(Constants.RESOURCE_ANNOTATIONS, commonMetaData);
 
         // new annotaions list
         List<CommonAnnotations> commonAnnotationsList = new ArrayList<>();
@@ -508,12 +522,13 @@ public class CommonService {
         if(annotations != null) {
             for (String key : annotations.keySet()) {
                 CommonAnnotations commonAnnotations = new CommonAnnotations();
+                commonAnnotations.setCheckYn(Constants.CHECK_N);
 
-                //if exists configuration annotations
-                if (propertyService.getCpAnnotationsConfiguration().contains(key)) {
-                    commonAnnotations.setCheckYn(Constants.CHECK_Y);
-                } else {
-                    commonAnnotations.setCheckYn(Constants.CHECK_N);
+                for(String configAnnotations : propertyService.getCpAnnotationsConfiguration()) {
+                   // if exists kube-annotations
+                    if(key.startsWith(configAnnotations)) {
+                        commonAnnotations.setCheckYn(Constants.CHECK_Y);
+                    }
                 }
 
                 commonAnnotations.setKey(key);
@@ -529,12 +544,18 @@ public class CommonService {
             commonAnnotationsList.add(emptyCommonAnnotations);
         }
 
-        returnObj = setField("annotations", resourceDetails, commonAnnotationsList);
+        returnObj = setField(Constants.RESOURCE_ANNOTATIONS, resourceDetails, commonAnnotationsList);
 
         return (T) returnObj;
     }
 
 
+    /**
+     * Annotations 특수문자 변환 처리 (Annotations Special Character Convert)
+     *
+     * @param value the value
+     * @return the string
+     */
     public String procSetAnnotations(String value) {
         return value.replace(",", "&comma;").replace("\"", "&quot;")
                 .replace("{", "&lbrace;").replace("}", "&rbrace;").replace(":", "&colon;");

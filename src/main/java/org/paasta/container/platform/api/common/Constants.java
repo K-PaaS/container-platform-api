@@ -172,6 +172,10 @@ public class Constants {
     public static final String RESOURCE_NAME = "name";
     public static final String RESOURCE_CREATIONTIMESTAMP = "creationTimestamp";
     public static final String RESOURCE_METADATA = "metadata";
+    public static final String RESOURCE_ANNOTATIONS = "annotations";
+
+
+
 
     public static final String noName = "[-]";
     public static final String separatorString =  "," ;
