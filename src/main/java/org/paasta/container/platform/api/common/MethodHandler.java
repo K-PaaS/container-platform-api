@@ -71,7 +71,7 @@ public class MethodHandler {
         CodeSignature methodSignature = (CodeSignature) joinPoint.getSignature();
         String[] sigParamNames = methodSignature.getParameterNames();
 
-        // yaml 의 위치 파악
+        // yaml 의 위치 파악(locate yaml)
         for (int i = 0; i < sigParamNames.length; i++) {
             if (YAML_KEY.equals(sigParamNames[i])) {
                 yaml = Arrays.asList(parameterValues).get(i).toString();
@@ -225,7 +225,7 @@ public class MethodHandler {
         CodeSignature methodSignature = (CodeSignature) joinPoint.getSignature();
         String[] sigParamNames = methodSignature.getParameterNames();
 
-        // yaml 의 위치 파악
+        // yaml 의 위치 파악(locate yaml)
         for (int i=0; i < sigParamNames.length; i++) {
             if (YAML_KEY.equals(sigParamNames[i])) {
                 yaml = Arrays.asList(parameterValues).get(i).toString();

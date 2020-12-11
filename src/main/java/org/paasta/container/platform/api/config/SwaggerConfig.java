@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author hrjin
  * @version 1.0
- * @since 2020-08-20
+ * @since 2020.08.20
  **/
 @Configuration
 @EnableSwagger2

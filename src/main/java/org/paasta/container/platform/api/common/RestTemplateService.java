@@ -384,7 +384,7 @@ public class RestTemplateService {
      * @return            the t
      */
     public <T> T statusCodeDiscriminate(String reqApi, ResponseEntity<T> res, HttpMethod httpMethod) {
-        // 200, 201, 202일때 결과 코드 동일하게
+        // 200, 201, 202일때 결과 코드 동일하게(Same Result Code = 200, 201, 202)
         Integer[] RESULT_STATUS_SUCCESS_CODE = {200, 201, 202};
 
         ResultStatus resultStatus;

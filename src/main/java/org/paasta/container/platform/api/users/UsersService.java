@@ -183,7 +183,7 @@ public class UsersService {
                 Object obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl().replace("{namespace}", usersDetails.getCpNamespace()).replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class);
 
                 if (!(obj instanceof ResultStatus)) {
-                    // k8s에서 secret 정보 조회
+                    // k8s에서 secret 정보 조회(Get secret from k8s)
                     Secrets secrets = (Secrets) commonService.setResultModel(commonService.setResultObject(obj, Secrets.class), Constants.RESULT_STATUS_SUCCESS);
                     usersDetails.setServiceAccountUid(secrets.getMetadata().getUid());
                     usersDetails.setSecrets(UsersAdmin.Secrets.builder()
@@ -316,12 +316,12 @@ public class UsersService {
 
             String userName = users.getUserId();
 
-            // 각 namespace 별 service account 생성
+            // 각 namespace 별 service account 생성(Create service account by each namespace name)
             resourceYamlService.createServiceAccount(userName, namespace);
 
             if(!StringUtils.isEmpty(nsRole.getRole())) {
                 role = nsRole.getRole();
-                // select box에서 선택한 role으로 role binding
+                // select box에서 선택한 role으로 role binding(Role binding selected role)
                 resourceYamlService.createRoleBinding(userName, namespace, role);
             }
 
@@ -335,10 +335,10 @@ public class UsersService {
             users.setSaToken(accessTokenService.getSecrets(namespace, adminSaSecretName).getUserAccessToken());
             users.setIsActive(CHECK_Y);
 
-            // DB에 저장
+            // DB에 저장(Save DB)
             rsDb = createUsers(commonSaveClusterInfo(propertyService.getCpClusterName(), users));
 
-            // DB 커밋에 실패했을 경우 k8s 에 만들어진 service account 삭제
+            // DB 커밋에 실패했을 경우 k8s 에 만들어진 service account 삭제(Delete service account)
             if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
                 LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
                 restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", userName), HttpMethod.DELETE, null, Object.class, true);
@@ -365,10 +365,10 @@ public class UsersService {
         List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(cluster, users.getServiceAccountName(), 0,0)).getItems();
         List<Users.NamespaceRole> selectValues = users.getSelectValues();
 
-        // 기존 namespace list
+        // 기존 namespace list(Existed namespace list)
         List<String> defaultNsList = usersDetails.stream().map(UsersAdmin.UsersDetails::getCpNamespace).collect(Collectors.toList());
 
-        // 넘어온 새로운 select value 중 namespace list
+        // 넘어온 새로운 select value 중 namespace list(namespace list for new select value)
         List<String> newNsList = selectValues.stream().map(Users.NamespaceRole::getNamespace).collect(Collectors.toList());
 
         ArrayList<String> asIs = commonService.equalArrayList(defaultNsList, newNsList);
@@ -469,10 +469,10 @@ public class UsersService {
         String saName = users.getServiceAccountName();
         String role = users.getRoleSetCode();
 
-        // 기존 service account 삭제
+        // 기존 service account 삭제(Delete Exited service account)
         restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class, true);
 
-        // role binding 삭제
+        // role binding 삭제(Delete role binding)
         restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + Constants.NULL_REPLACE_TEXT + role + "-binding"), HttpMethod.DELETE, null, Object.class, true);
 
         // DB delete
