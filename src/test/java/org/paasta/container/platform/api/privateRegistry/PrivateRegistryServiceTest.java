@@ -46,8 +46,8 @@ class PrivateRegistryServiceTest {
     @Test
     void getPrivateRegistry() {
 
-        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_PRIVATE_REGISTRY.replace("{imageName:.+}", IMAGE_NAME), HttpMethod.GET, null, PrivateRegistry.class))
-                .thenReturn(gFinalResultModel);
+        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_PRIVATE_REGISTRY
+                .replace("{imageName:.+}", IMAGE_NAME), HttpMethod.GET, null, PrivateRegistry.class)).thenReturn(gFinalResultModel);
         when(commonService.setResultObject(gFinalResultModel, PrivateRegistry.class)).thenReturn(gFinalResultModel);
         when(commonService.setResultModel(gFinalResultModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultModel);
         PrivateRegistry privateRegistry = (PrivateRegistry) privateRegistryService.getPrivateRegistry(IMAGE_NAME);
