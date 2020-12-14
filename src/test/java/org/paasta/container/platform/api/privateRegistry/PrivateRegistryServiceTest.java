@@ -9,6 +9,7 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -23,7 +24,7 @@ public class PrivateRegistryServiceTest {
 
     private static final String IMAGE_NAME = "registry";
     private static PrivateRegistry gFinalResultModel = null;
-
+    private static ResultStatus gResultFailStatusModel = null;
     @Mock
     RestTemplateService restTemplateService;
 
@@ -42,6 +43,10 @@ public class PrivateRegistryServiceTest {
         gFinalResultModel.setDetailMessage(CommonStatusCode.OK.getMsg());
 
 
+        gResultFailStatusModel = new ResultStatus();
+        gResultFailStatusModel.setResultCode(Constants.RESULT_STATUS_FAIL);
+        gResultFailStatusModel.setResultMessage(Constants.RESULT_STATUS_FAIL);
+
     }
     @Test
     public void getPrivateRegistry() {
@@ -53,7 +58,14 @@ public class PrivateRegistryServiceTest {
         PrivateRegistry privateRegistry = (PrivateRegistry) privateRegistryService.getPrivateRegistry(IMAGE_NAME);
 
         assertEquals(Constants.RESULT_STATUS_SUCCESS, privateRegistry.getResultCode());
+    }
 
+    @Test
+    public void getPrivateRegistry_Not_Found_Result_Status() {
 
+        when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_PRIVATE_REGISTRY
+                .replace("{imageName:.+}", IMAGE_NAME), HttpMethod.GET, null, ResultStatus.class)).thenReturn(gResultFailStatusModel);
+
+        assertEquals(Constants.RESULT_STATUS_FAIL, gResultFailStatusModel.getResultCode());
     }
 }

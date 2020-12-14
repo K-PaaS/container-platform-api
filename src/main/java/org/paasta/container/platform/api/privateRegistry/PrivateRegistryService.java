@@ -16,20 +16,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class PrivateRegistryService {
     private final RestTemplateService restTemplateService;
-    private final PropertyService propertyService;
     private final CommonService commonService;
 
     /**
      * Instantiates a new PrivateRegistry service
      *
      * @param restTemplateService the rest template service
-     * @param propertyService     the property service
      * @param commonService       the common service
      */
     @Autowired
-    public PrivateRegistryService(RestTemplateService restTemplateService, PropertyService propertyService, CommonService commonService) {
+    public PrivateRegistryService(RestTemplateService restTemplateService, CommonService commonService) {
         this.restTemplateService = restTemplateService;
-        this.propertyService = propertyService;
         this.commonService = commonService;
     }
 
