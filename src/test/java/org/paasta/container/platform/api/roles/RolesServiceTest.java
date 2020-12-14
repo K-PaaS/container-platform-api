@@ -7,10 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.paasta.container.platform.api.clusters.namespaces.Namespaces;
 import org.paasta.container.platform.api.common.*;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.model.*;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
 import org.springframework.http.HttpMethod;
@@ -37,7 +34,7 @@ public class RolesServiceTest {
     private static final String USER_TYPE = "test-user-type";
     private static final String YAML_STRING = "test-yaml-string";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
-
+    private static final String KUBE_ANNOTATIONS = "kubectl.kubernetes.io/";
     private static final int OFFSET = 0;
     private static final int LIMIT = 0;
     private static final String ORDER_BY = "creationTime";
@@ -180,6 +177,23 @@ public class RolesServiceTest {
         gFinalResultAdminModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gFinalResultAdminModel.setDetailMessage(CommonStatusCode.OK.getMsg());
 
+
+        CommonMetaData commonMetaData = new CommonMetaData();
+        Map<String, String> annotations = new HashMap<>();
+        annotations.put(KUBE_ANNOTATIONS, KUBE_ANNOTATIONS);
+        commonMetaData.setAnnotations(annotations);
+
+        CommonAnnotations commonAnnotations = new CommonAnnotations();
+        commonAnnotations.setCheckYn("Y");
+        commonAnnotations.setKey(KUBE_ANNOTATIONS);
+        commonAnnotations.setValue(KUBE_ANNOTATIONS);
+
+        List<CommonAnnotations> commonAnnotationsList = new ArrayList<>();
+        commonAnnotationsList.add(commonAnnotations);
+        gResultAdminModel.setAnnotations(commonAnnotationsList);
+
+
+
         gFinalResultAdminFailModel = new RolesAdmin();
         gFinalResultAdminFailModel.setResultCode(Constants.RESULT_STATUS_FAIL);
         gFinalResultAdminFailModel.setResultMessage(Constants.RESULT_STATUS_FAIL);
@@ -298,6 +312,7 @@ public class RolesServiceTest {
         when(propertyService.getCpMasterApiListRolesGetUrl()).thenReturn("/apis/rbac.authorization.k8s.io/v1/namespaces/{namespace}/roles/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/namespaces/" + NAMESPACE + "/roles/" + ROLE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, RolesAdmin.class)).thenReturn(gResultAdminModel);
+        when(commonService.annotationsProcessing(gResultAdminModel, RolesAdmin.class)).thenReturn(gResultAdminModel);
         when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
 
         //call method

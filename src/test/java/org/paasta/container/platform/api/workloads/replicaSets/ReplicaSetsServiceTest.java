@@ -6,13 +6,17 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonAnnotations;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -25,7 +29,7 @@ public class ReplicaSetsServiceTest {
     private static final String NAMESPACE = "cp-namespace";
     private static final String REPLICASETS_NAME = "cp-service-name";
     private static final String YAML_STRING = "test-yaml-string";
-
+    private static final String KUBE_ANNOTATIONS = "kubectl.kubernetes.io/";
     private static final String SELECTOR = "test-selector";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
     private static final String UID= "";
@@ -91,6 +95,22 @@ public class ReplicaSetsServiceTest {
         gFinalResultAdminModel = new ReplicaSetsAdmin();
         gFinalResultAdminModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
+        CommonMetaData commonMetaData = new CommonMetaData();
+        Map<String, String> annotations = new HashMap<>();
+        annotations.put(KUBE_ANNOTATIONS, KUBE_ANNOTATIONS);
+        commonMetaData.setAnnotations(annotations);
+
+        CommonAnnotations commonAnnotations = new CommonAnnotations();
+        commonAnnotations.setCheckYn("Y");
+        commonAnnotations.setKey(KUBE_ANNOTATIONS);
+        commonAnnotations.setValue(KUBE_ANNOTATIONS);
+
+        List<CommonAnnotations> commonAnnotationsList = new ArrayList<>();
+        commonAnnotationsList.add(commonAnnotations);
+        gResultAdminModel.setAnnotations(commonAnnotationsList);
+
+
+
         gResultYamlModel = new CommonResourcesYaml();
         gFinalResultYamlModel = new CommonResourcesYaml();
         gFinalResultYamlModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
@@ -148,6 +168,7 @@ public class ReplicaSetsServiceTest {
         when(propertyService.getCpMasterApiListReplicaSetsGetUrl()).thenReturn("/apis/apps/v1/namespaces/{namespace}/replicasets/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/apps/v1/namespaces/" + NAMESPACE + "/replicasets/" + REPLICASETS_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, ReplicaSetsAdmin.class)).thenReturn(gResultAdminModel);
+        when(commonService.annotationsProcessing(gResultAdminModel, ReplicaSetsAdmin.class)).thenReturn(gResultAdminModel);
         when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
 
         // when

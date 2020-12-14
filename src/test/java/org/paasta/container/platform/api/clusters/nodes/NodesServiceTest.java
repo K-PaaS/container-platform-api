@@ -9,14 +9,14 @@ import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
-import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.model.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +31,7 @@ public class NodesServiceTest {
     private static final String NODE_NAME = "test-node-name";
     private static final String YAML_STRING = "test-yaml-string";
     private static final String FIELD_SELECTOR = "?fieldSelector=metadata.namespace!=kubernetes-dashboard,metadata.namespace!=kube-node-lease,metadata.namespace!=kube-public,metadata.namespace!=kube-system,metadata.namespace!=temp-namespace";
-
+    private static final String KUBE_ANNOTATIONS = "kubectl.kubernetes.io/";
     private static final int OFFSET = 0;
     private static final int LIMIT = 0;
     private static final String ORDER_BY = "creationTime";
@@ -148,6 +148,22 @@ public class NodesServiceTest {
         gFinalResultAdminModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gFinalResultAdminModel.setDetailMessage(CommonStatusCode.OK.getMsg());
 
+
+        CommonMetaData commonMetaData = new CommonMetaData();
+        Map<String, String> annotations = new HashMap<>();
+        annotations.put(KUBE_ANNOTATIONS, KUBE_ANNOTATIONS);
+        commonMetaData.setAnnotations(annotations);
+
+        CommonAnnotations commonAnnotations = new CommonAnnotations();
+        commonAnnotations.setCheckYn("Y");
+        commonAnnotations.setKey(KUBE_ANNOTATIONS);
+        commonAnnotations.setValue(KUBE_ANNOTATIONS);
+
+        List<CommonAnnotations> commonAnnotationsList = new ArrayList<>();
+        commonAnnotationsList.add(commonAnnotations);
+        gResultAdminModel.setAnnotations(commonAnnotationsList);
+
+
         gFinalResultAdminFailModel = new NodesAdmin();
         gFinalResultAdminFailModel.setResultCode(Constants.RESULT_STATUS_FAIL);
         gFinalResultAdminFailModel.setResultMessage(Constants.RESULT_STATUS_FAIL);
@@ -212,6 +228,7 @@ public class NodesServiceTest {
         when(propertyService.getCpMasterApiListNodesGetUrl()).thenReturn("/api/v1/nodes/{name}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/nodes/" + NODE_NAME, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, NodesAdmin.class)).thenReturn(gResultAdminModel);
+        when(commonService.annotationsProcessing(gResultAdminModel, NodesAdmin.class)).thenReturn(gResultAdminModel);
         when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
 
         //call method

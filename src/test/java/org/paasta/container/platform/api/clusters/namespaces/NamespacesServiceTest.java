@@ -15,10 +15,7 @@ import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotas;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasList;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
 import org.paasta.container.platform.api.common.*;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.model.*;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersService;
 import org.springframework.http.HttpMethod;
@@ -50,6 +47,7 @@ public class NamespacesServiceTest {
     private static final String ORDER_BY = "creationTime";
     private static final String ORDER = "desc";
     private static final String SEARCH_NAME = "";
+    private static final String KUBE_ANNOTATIONS = "kubectl.kubernetes.io/";
 
     public static final String NAMESPACE_ADMIN_USER_ID = "";
 
@@ -180,6 +178,22 @@ public class NamespacesServiceTest {
         gFinalResultAdminModel.setHttpStatusCode(CommonStatusCode.OK.getCode());
         gFinalResultAdminModel.setDetailMessage(CommonStatusCode.OK.getMsg());
 
+        CommonMetaData commonMetaData = new CommonMetaData();
+        Map<String, String> annotations = new HashMap<>();
+        annotations.put(KUBE_ANNOTATIONS, KUBE_ANNOTATIONS);
+        commonMetaData.setAnnotations(annotations);
+
+        CommonAnnotations commonAnnotations = new CommonAnnotations();
+        commonAnnotations.setCheckYn("Y");
+        commonAnnotations.setKey(KUBE_ANNOTATIONS);
+        commonAnnotations.setValue(KUBE_ANNOTATIONS);
+
+        List<CommonAnnotations> commonAnnotationsList = new ArrayList<>();
+        commonAnnotationsList.add(commonAnnotations);
+        gResultAdminModel.setAnnotations(commonAnnotationsList);
+
+
+
         gFinalResultAdminFailModel = new NamespacesAdmin();
         gFinalResultAdminFailModel.setResultCode(Constants.RESULT_STATUS_FAIL);
         gFinalResultAdminFailModel.setResultMessage(Constants.RESULT_STATUS_FAIL);
@@ -218,6 +232,7 @@ public class NamespacesServiceTest {
         when(propertyService.getCpMasterApiListNamespacesGetUrl()).thenReturn("/api/v1/namespaces/{namespace}");
         when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, NamespacesAdmin.class)).thenReturn(gResultAdminModel);
+        when(commonService.annotationsProcessing(gResultAdminModel, NamespacesAdmin.class)).thenReturn(gResultAdminModel);
         when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
 
         //call method
