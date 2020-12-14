@@ -148,11 +148,13 @@ public class UsersService {
         UsersAdmin usersAdmin = new UsersAdmin();
         Users usersByDefaultNamespace = null;
 
+        String defaultNamespace = propertyService.getDefaultNamespace();
+
         try {
             //temp-namespace user info get
           usersByDefaultNamespace = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS
                     .replace("{cluster:.+}", cluster)
-                    .replace("{namespace:.+}", propertyService.getDefaultNamespace())
+                    .replace("{namespace:.+}", defaultNamespace)
                     .replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
         }
         catch(Exception e) {

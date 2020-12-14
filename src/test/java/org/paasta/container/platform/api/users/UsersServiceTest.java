@@ -44,7 +44,7 @@ public class UsersServiceTest {
     private static final String DEFAULT_NAMESPACE = "temp-namespace";
     private static final String ALL_NAMESPACES = "all";
     private static final String USER_ID = "paasta";
-    private static final String SERVICE_ACCOUNT_NAME = "paasta-sa";
+    private static final String SERVICE_ACCOUNT_NAME = "paasta";
     private static final String CREATED = "10-10-10";
     private static final String ROLE = "paas-ta-container-platform-init-role";
     private static final String ADMIN_ROLE = "paas-ta-container-platform-admin-role";
@@ -52,7 +52,7 @@ public class UsersServiceTest {
     private static final String SECRET_TOKEN = "eyJhbGciOiJSUzI1NiIsImtpZCI6IktNWmgxVXB3ajgwS0NxZjFWaVZJVGVvTXJoWnZ5dG0tMGExdzNGZjBKX00ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0ZW1wLW5hbWVzcGFjZSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJ0ZXN0LXRva2VuLWpxcng0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6InRlc3QiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI3Y2Q0Nzk4OC01YWViLTQ1ODQtYmNmOS04OTkwZTUzNWEzZGIiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6dGVtcC1uYW1lc3BhY2U6dGVzdCJ9.ZEwhnscTtPW6WrQ5I7fFWcsLWEqnilw7I8i7C4aSXElFHd583OQqTYGk8RUJU7UM6b2T8oKstejkLWE9xP3TchYyG5T-omZBCMe00JZIof4tp0MRZLgBhXizYXGvLb2bcMdlcWg2bCCVRO92Hjik-r-vqfaGbsRGx4dT2dk1sI4RA-XDnMsVFJS94V9P58cBupT1gRMrwWStrqlXrbiwgfIlGbU9GXnA07JUCMy-1wUYdMmRaICdj-Q7eNZ5BmKCNsFBcJKaDl5diNw-gSka2F61sywpezU-30sWAtRHYIYZt6PaAaZ4caAdR8f43Yq1m142RWsr3tunLgQ768UNtQ";
 
     private static final int OFFSET = 0;
-    private static final int LIMIT = 1;
+    private static final int LIMIT = 0;
     private static final String ORDER_BY = "creationTime";
     private static final String ORDER = "desc";
     private static final String SEARCH_NAME = "";
@@ -225,10 +225,10 @@ public class UsersServiceTest {
         usersByDefaultNamespace.setClusterToken(CLUSTER_ADMIN_TOKEN);
 
         when(propertyService.getDefaultNamespace())
-                .thenReturn(NAMESPACE);
+                .thenReturn(DEFAULT_NAMESPACE);
         when(restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS
                 .replace("{cluster:.+}", CLUSTER)
-                .replace("{namespace:.+}", NAMESPACE)
+                .replace("{namespace:.+}", DEFAULT_NAMESPACE)
                 .replace("{userId:.+}", USER_ID), HttpMethod.GET, null, Users.class))
                 .thenReturn(usersByDefaultNamespace);
 
@@ -284,10 +284,10 @@ public class UsersServiceTest {
     @Test(expected = Exception.class)
     public void getUsersInMultiNamespace_Not_Found_Result_Status() {
         when(propertyService.getDefaultNamespace())
-                .thenReturn(NAMESPACE);
+                .thenReturn(DEFAULT_NAMESPACE);
         when(restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS
                 .replace("{cluster:.+}", CLUSTER)
-                .replace("{namespace:.+}", NAMESPACE)
+                .replace("{namespace:.+}", DEFAULT_NAMESPACE)
                 .replace("{userId:.+}", USER_ID), HttpMethod.GET, null, Users.class))
                 .thenThrow(new Exception());
 
@@ -446,24 +446,13 @@ public class UsersServiceTest {
         assertEquals(Constants.RESULT_STATUS_FAIL, resultFailStatus.getResultCode());
     }
 
-//    @Test
-//    public void modifyUsersAdmin() throws Exception {
-////        //getUsersInMultiNamespace();
-////        //when(propertyService.getDefaultNamespace()).thenReturn(NAMESPACE);
-////        //doReturn(NAMESPACE).when(propertyService).getDefaultNamespace();
-////        //doReturn(UsersModel.getUsersAdminList()).when(usersService).getUsersInMultiNamespace(CLUSTER, USER_ID, LIMIT, OFFSET);
-////
-////        //when(usersService.getUsersInMultiNamespace(CLUSTER, USER_ID, LIMIT, OFFSET)).thenReturn(UsersModel.getUsersAdminList());
-////        List<UsersAdmin.UsersDetails> usersDetails = UsersModel.getUsersAdminList().getItems();
-////        //when(usersService.getUsersInMultiNamespace(CLUSTER, USER_ID, LIMIT, OFFSET)).thenReturn(usersDetails);
-//
-//
-//
-//        resourceYamlService.createServiceAccount("paasta", "addInNamespace");
-//        resourceYamlService.createRoleBinding("paasta", "addInNamespace", "ns-init-role");
-//
-//        ResultStatus resultStatus = usersService.modifyUsersAdmin(CLUSTER, USER_ID, UsersModel.getResultUser());
-//    }
+    @Test
+    public void modifyUsersAdmin() throws Exception {
+        getUsersInMultiNamespace();
+        //when(usersService.getUsersInMultiNamespace(CLUSTER, USER_ID, 0, 0)).thenReturn(UsersModel.getUsersAdminList());
+
+        ResultStatus resultStatus = usersService.modifyUsersAdmin(CLUSTER, SERVICE_ACCOUNT_NAME, UsersModel.getResultUser());
+    }
 
     @Test
     public void deleteUsers() {
