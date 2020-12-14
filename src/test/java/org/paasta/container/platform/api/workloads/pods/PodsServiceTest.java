@@ -220,6 +220,26 @@ public class PodsServiceTest {
 
     }
 
+//    /**
+//     * Pods 목록 조회(Get Pods list) Test
+//     */
+//    @Test
+//    public void getPodsList_Valid_ReturnModel() {
+//        // given
+//        when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
+//        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods", HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+//        when(commonService.setResultObject(gResultMap, PodsList.class)).thenReturn(gResultListModel);
+//
+//        when(podsService.getPodsMetricList(NAMESPACE, gResultListModel)).thenReturn(gResultListModel);
+//        when(commonService.resourceListProcessing(gResultListModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsList.class)).thenReturn(gResultListModel);
+//        when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
+//
+//        // when
+//        PodsList resultList = podsService.getPodsList(NAMESPACE, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
+//
+//        // then
+//        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
+//    }
 
     /**
      * Pods 목록 조회(Get Pods list) Test
@@ -243,6 +263,24 @@ public class PodsServiceTest {
         assertEquals(gResultListAdminModel, resultList);
     }
 
+    /**
+     * Pods 목록 조회(Get Pods selector) Test
+     */
+    @Test
+    public void getPodListWithLabelSelector_Valid_ReturnModel() {
+        // given
+        when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
+        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/pods?labelSelector=" + SELECTOR, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+        when(commonService.setResultObject(gResultMap, PodsList.class)).thenReturn(gResultListModel);
+        when(commonService.setCommonItemMetaDataBySelector(gResultListModel, PodsList.class)).thenReturn(gResultListModel);
+        when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
+
+        // when
+        PodsList resultList = podsService.getPodListWithLabelSelector(NAMESPACE, SELECTOR, "replicaSets", UID,OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
+
+        // then
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
+    }
 
     /**
      * Pods 목록 조회(Get Pods selector) Test
@@ -266,6 +304,27 @@ public class PodsServiceTest {
         assertEquals(gResultListAdminModel, resultList);
     }
 
+    /**
+     * Pods 목록 조회(Get Pods node) Test
+     */
+    @Test
+    public void getPodListByNode_Valid_ReturnModel() {
+        // given
+
+        String requestURL = "/api/v1/namespaces/" + NAMESPACE + "/pods?fieldSelector=spec.nodeName=" + NODE_NAME;
+
+        when(propertyService.getCpMasterApiListPodsListUrl()).thenReturn("/api/v1/namespaces/{namespace}/pods");
+        when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, requestURL, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+        when(commonService.setResultObject(gResultMap, PodsList.class)).thenReturn(gResultListModel);
+        when(commonService.resourceListProcessing(gResultListModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, PodsList.class)).thenReturn(gResultListModel);
+        when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
+
+        // when
+        PodsList resultList = podsService.getPodListByNode(NAMESPACE, NODE_NAME, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME);
+
+        // then
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, resultList.getResultCode());
+    }
 
     /**
      * Pods 목록 조회(Get Pods node) Test
@@ -529,6 +588,13 @@ public class PodsServiceTest {
         PodsListAdmin resultList =  podsService.podsFIlterWithOwnerReferences(gResultListAdminModel, UID);
         assertEquals(gResultListAdminModel, resultList);
 
+    }
+
+
+
+    @Test
+    public void getMergeMetric_Valid_ReturnModel() {
+        podsService.getMergeMetric(gResultListModel, podsMetric);
     }
 
 
