@@ -6,10 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.paasta.container.platform.api.common.*;
-import org.paasta.container.platform.api.common.model.CommonAnnotations;
-import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
-import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.common.model.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -79,7 +76,28 @@ public class ReplicaSetsServiceTest {
     public void setUp() {
         gResultMap = new HashMap();
 
+        List<ReplicaSets>  replicaSetsList = new ArrayList<>();
+        ReplicaSets replicaSets = new ReplicaSets();
+        CommonMetaData metadata = new CommonMetaData();
+        CommonSpec commonSpec = new CommonSpec();
+
+        commonSpec.setReplicas(2);
+
+        List<CommonOwnerReferences> commonOwnerReferencesList = new ArrayList<>();
+        CommonOwnerReferences commonOwnerReferences = new CommonOwnerReferences();
+        commonOwnerReferences.setUid("uid");
+        commonOwnerReferences.setName("name");
+        commonOwnerReferencesList.add(commonOwnerReferences);
+
+
+
+        metadata.setOwnerReferences(commonOwnerReferencesList);
+        replicaSets.setMetadata(metadata);
+        replicaSets.setSpec(commonSpec);
+        replicaSetsList.add(replicaSets);
         gResultListModel = new ReplicaSetsList();
+        gResultListModel.setItems(replicaSetsList);
+
         gFinalResultListModel = new ReplicaSetsList();
         gFinalResultListModel.setResultCode(Constants.RESULT_STATUS_SUCCESS);
 
@@ -225,7 +243,8 @@ public class ReplicaSetsServiceTest {
         when(propertyService.getCpMasterApiListReplicaSetsListUrl()).thenReturn("/apis/apps/v1/namespaces/{namespace}/replicasets");
         when(restTemplateService.send(Constants.TARGET_CP_MASTER_API, "/apis/apps/v1/namespaces/" + NAMESPACE + "/replicasets?labelSelector=" + SELECTOR, HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
         when(commonService.setResultObject(gResultMap, ReplicaSetsList.class)).thenReturn(gResultListModel);
-        when(commonService.setCommonItemMetaDataBySelector(gResultListModel, ReplicaSetsList.class)).thenReturn(gResultListModel);
+
+        when(commonService.resourceListProcessing(gResultListModel, OFFSET, LIMIT, ORDER_BY, ORDER, SEARCH_NAME, ReplicaSetsList.class)).thenReturn(gResultListModel);
         when(commonService.setResultModel(gResultListModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultListModel);
 
         // when
