@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.paasta.container.platform.api.clusters.nodes.Nodes;
 import org.paasta.container.platform.api.clusters.nodes.NodesAdmin;
 import org.paasta.container.platform.api.clusters.nodes.NodesService;
 import org.paasta.container.platform.api.clusters.nodes.support.NodesStatus;
@@ -14,6 +13,7 @@ import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonCondition;
+import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.endpoints.support.EndPointsDetailsItemAdmin;
 import org.paasta.container.platform.api.endpoints.support.EndpointAddress;
 import org.paasta.container.platform.api.endpoints.support.EndpointPort;
@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -175,23 +174,25 @@ public class EndpointsServiceTest {
         assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 
-//    /**
-//     * Endpoints 상세 조회(Get Endpoints detail) Test
-//     * (Admin Portal)
-//     */
-//    @Test
-//    public void getEndpointsAdmin_Valid_ReturnModel() {
-//        // given
-//        when(propertyService.getCpMasterApiListEndpointsGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/endpoints/{name}");
-//        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/" + NAMESPACE + "/endpoints/busybox-service"  , HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
-//        when(commonService.setResultObject(gResultMap, EndpointsAdmin.class)).thenReturn(gResultAdminModel);
-//        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gResultAdminModel);
-//
-//        // when
-//        EndpointsAdmin result = (EndpointsAdmin) endpointsService.getEndpointsAdmin(NAMESPACE, "busybox-service");
-//        // then
-//        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
-//    }
+    /**
+     * Endpoints 상세 조회(Get Endpoints detail) Test
+     * (Admin Portal)
+     */
+    @Test
+    public void getEndpointsAdmin_Valid_ReturnModel() {
+        // given
+        when(propertyService.getCpMasterApiListEndpointsGetUrl()).thenReturn("/api/v1/namespaces/{namespace}/endpoints/{name}");
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/api/v1/namespaces/"+ NAMESPACE + "/endpoints/" + ENDPOINTS_NAME,
+                HttpMethod.GET, null, Map.class)).thenReturn(gResultMap);
+
+        when(commonService.setResultObject(gResultMap, EndpointsAdmin.class)).thenReturn(gResultAdminModel);
+        when(commonService.setResultModel(gResultAdminModel, Constants.RESULT_STATUS_SUCCESS)).thenReturn(gFinalResultAdminModel);
+
+        ResultStatus resultStatus = (ResultStatus)  endpointsService.getEndpointsAdmin(NAMESPACE, ENDPOINTS_NAME) ;
+
+        // then
+        assertEquals(null, resultStatus);
+    }
 
     /**
      * Node 명에 따른 Node "Ready" 상태 값 조회 (Get Node "Ready" Status Value by Node Name) Test
