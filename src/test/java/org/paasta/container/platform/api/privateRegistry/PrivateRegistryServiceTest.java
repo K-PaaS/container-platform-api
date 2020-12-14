@@ -1,7 +1,7 @@
 package org.paasta.container.platform.api.privateRegistry;
 
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @TestPropertySource("classpath:application.yml")
-class PrivateRegistryServiceTest {
+public class PrivateRegistryServiceTest {
 
     private static final String IMAGE_NAME = "registry";
     private static PrivateRegistry gFinalResultModel = null;
@@ -44,7 +44,7 @@ class PrivateRegistryServiceTest {
 
     }
     @Test
-    void getPrivateRegistry() {
+    public void getPrivateRegistry() {
 
         when(restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_PRIVATE_REGISTRY
                 .replace("{imageName:.+}", IMAGE_NAME), HttpMethod.GET, null, PrivateRegistry.class)).thenReturn(gFinalResultModel);
