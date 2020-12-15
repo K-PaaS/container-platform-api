@@ -532,7 +532,7 @@ public class CommonService {
                 }
 
                 commonAnnotations.setKey(key);
-                commonAnnotations.setValue(procSetAnnotations(annotations.get(key)));
+                commonAnnotations.setValue(annotations.get(key));
 
                 commonAnnotationsList.add(commonAnnotations);
             }
