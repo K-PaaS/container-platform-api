@@ -532,7 +532,7 @@ public class CommonService {
                 }
 
                 commonAnnotations.setKey(key);
-                commonAnnotations.setValue(annotations.get(key));
+                commonAnnotations.setValue(procSetAnnotations(annotations.get(key)));
 
                 commonAnnotationsList.add(commonAnnotations);
             }
@@ -557,7 +557,6 @@ public class CommonService {
      * @return the string
      */
     public String procSetAnnotations(String value) {
-        return value.replace(",", "&comma;").replace("\"", "&quot;")
-                .replace("{", "&lbrace;").replace("}", "&rbrace;").replace(":", "&colon;");
+      return value.replace("\\\"","\"");
     }
 }
