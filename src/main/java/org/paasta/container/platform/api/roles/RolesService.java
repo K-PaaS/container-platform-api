@@ -309,8 +309,10 @@ public class RolesService {
     public Object getNamespacesRolesTemplateList(String cluster, String namespace, String userId, int offset, int limit, String orderBy, String order, String searchName) {
         HashMap responseMap;
 
+        String fieldSelector = "?fieldSelector=metadata.name!="+ propertyService.getAdminRole();
+
         Object response = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,
-                propertyService.getCpMasterApiListRolesListAllNamespacesUrl(), HttpMethod.GET, null, Map.class);
+                propertyService.getCpMasterApiListRolesListAllNamespacesUrl() + fieldSelector, HttpMethod.GET, null, Map.class);
 
         try {
             responseMap = (HashMap) response;
