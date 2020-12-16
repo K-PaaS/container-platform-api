@@ -231,6 +231,9 @@ public class Constants {
     public static final ResultStatus DO_NOT_DELETE_DEFAULT_RESOURCES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES,
             CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES, null );
 
+    public static final ResultStatus MANDATORY_NAMESPACE_AND_ROLE = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.MANDATORY_NAMESPACE_AND_ROLE,
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.MANDATORY_NAMESPACE_AND_ROLE, null );
+
     public Constants() {
         throw new IllegalStateException();
     }
