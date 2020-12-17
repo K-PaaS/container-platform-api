@@ -199,7 +199,7 @@ public class UsersService {
         }
 
         usersAdmin.setItems(usersDetailsList);
-        usersAdmin = commonService.userListProcessing(usersAdmin, offset, limit, "", "", "", UsersAdmin.class );
+        usersAdmin = commonService.userListProcessing(usersAdmin, offset, limit, "", "", "", UsersAdmin.class);
 
         return commonService.setResultModel(commonService.setResultObject(usersAdmin, UsersAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
@@ -363,6 +363,14 @@ public class UsersService {
      */
     public ResultStatus modifyUsersAdmin(String cluster, String userId, Users users) throws Exception {
         ResultStatus rsDb = new ResultStatus();
+        String defaultNs = propertyService.getDefaultNamespace();
+
+        Users tempUsers = getUsers(cluster, defaultNs, userId);
+        tempUsers.setUserId(users.getUserId());
+        tempUsers.setPassword(users.getPassword());
+        tempUsers.setEmail(users.getEmail());
+
+        createUsers(tempUsers);
 
         List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(cluster, users.getServiceAccountName(), 0,0)).getItems();
         List<Users.NamespaceRole> selectValues = users.getSelectValues();

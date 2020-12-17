@@ -13,6 +13,7 @@ import org.paasta.container.platform.api.clusters.clusters.ClustersService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.secret.Secrets;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -154,7 +155,7 @@ public class UsersServiceTest {
         gIgnoreNamespaceList.add("kube-public");
         gIgnoreNamespaceList.add("kube-system");
         gIgnoreNamespaceList.add("paas-ta-container-platform-temp-namespace");
-        gIgnoreNamespaceList.add("cp-namespace");
+        gIgnoreNamespaceList.add("temp-namespace");
     }
 
     @Test
@@ -214,7 +215,7 @@ public class UsersServiceTest {
     }
 
     @Test
-    public void getUsersInMultiNamespace() {
+    public void getUsersInMultiNamespace() throws Exception {
         Users usersByDefaultNamespace = new Users();
 
         usersByDefaultNamespace.setUserId(USER_ID);
@@ -230,7 +231,7 @@ public class UsersServiceTest {
                 .replace("{cluster:.+}", CLUSTER)
                 .replace("{namespace:.+}", DEFAULT_NAMESPACE)
                 .replace("{userId:.+}", USER_ID), HttpMethod.GET, null, Users.class))
-                .thenReturn(usersByDefaultNamespace);
+                .thenReturn(UsersModel.getResultUserWithClusterInfoInTempNs());
 
         UsersList list = UsersModel.getResultUsersListWithClusterInfo();
 
@@ -238,10 +239,11 @@ public class UsersServiceTest {
                 .thenReturn(list);
         when(propertyService.getIgnoreNamespaceList())
                 .thenReturn(gIgnoreNamespaceList);
+        when(commonService.convert(list.getItems().get(0), UsersAdmin.UsersDetails.class)).thenReturn(UsersModel.getUsersDetails());
         when(propertyService.getCpMasterApiListSecretsGetUrl())
                 .thenReturn("/api/v1/namespaces/{namespace}/secrets/{name}");
         when(restTemplateService.sendAdmin(TARGET_CP_MASTER_API, "/api/v1/namespaces/{namespace}/secrets/{name}".replace("{namespace}", list.getItems().get(0).getCpNamespace()).replace("{name}", list.getItems().get(0).getSaSecret()), HttpMethod.GET, null, Map.class))
-                .thenReturn(gResultMap);
+                .thenReturn(UsersModel.getResultUserSecretModelMap());
 
         UsersAdmin usersAdmin = new UsersAdmin();
 
@@ -253,15 +255,24 @@ public class UsersServiceTest {
         usersAdmin.setClusterToken(usersByDefaultNamespace.getClusterToken());
 
         List<UsersAdmin.UsersDetails> usersDetailsList = new ArrayList<>();
+        usersDetailsList.add(UsersModel.getUsersDetails());
 
         usersAdmin.setItems(usersDetailsList);
 
-        when(commonService.userListProcessing(usersAdmin, OFFSET, LIMIT, "", "", "", UsersAdmin.class ))
-                .thenReturn(usersAdmin);
+        when(commonService.setResultObject(UsersModel.getResultUserSecretModelMap(), Secrets.class))
+                .thenReturn(UsersModel.getSecrets());
+        when(commonService.setResultModel(UsersModel.getSecrets(), Constants.RESULT_STATUS_SUCCESS))
+                .thenReturn(UsersModel.getFinalSecrets());
+
+        UsersAdmin finalUsersAdmin;
+        finalUsersAdmin = usersAdmin;
+        finalUsersAdmin.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+
+        usersAdmin = commonService.userListProcessing(usersAdmin, OFFSET, LIMIT, "", "", "", UsersAdmin.class);
         when(commonService.setResultObject(usersAdmin, UsersAdmin.class))
                 .thenReturn(usersAdmin);
         when(commonService.setResultModel(usersAdmin, Constants.RESULT_STATUS_SUCCESS))
-                .thenReturn(usersAdmin);
+                .thenReturn(finalUsersAdmin);
 
         UsersAdmin result = null;
 
@@ -273,12 +284,12 @@ public class UsersServiceTest {
         }
 
         assertThat(result).isNotNull();
-        assertEquals(usersAdmin.getUserId(), result.getUserId());
-        assertEquals(usersAdmin.getServiceAccountName(), result.getServiceAccountName());
-        assertEquals(usersAdmin.getCreated(), result.getCreated());
-        assertEquals(usersAdmin.getClusterName(), result.getClusterName());
-        assertEquals(usersAdmin.getClusterApiUrl(), result.getClusterApiUrl());
-        assertEquals(usersAdmin.getClusterToken(), result.getClusterToken());
+        assertEquals(finalUsersAdmin.getUserId(), result.getUserId());
+        assertEquals(finalUsersAdmin.getServiceAccountName(), result.getServiceAccountName());
+        assertEquals(finalUsersAdmin.getCreated(), result.getCreated());
+        assertEquals(finalUsersAdmin.getClusterName(), result.getClusterName());
+        assertEquals(finalUsersAdmin.getClusterApiUrl(), result.getClusterApiUrl());
+        assertEquals(finalUsersAdmin.getClusterToken(), result.getClusterToken());
     }
 
     @Test(expected = Exception.class)
@@ -348,6 +359,22 @@ public class UsersServiceTest {
         when(commonService.setResultModel(users, Constants.RESULT_STATUS_SUCCESS)).thenReturn(users);
 
         Users result = usersService.getUsers(CLUSTER, NAMESPACE, USER_ID);
+        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+    }
+
+    @Test
+    public void getUsers_tmp() {
+        Users user1 = UsersModel.getResultUserWithClusterInfoInTempNs();
+        Users user2 = UsersModel.getResultUserWithClusterInfoInTempNs();
+        user2.setResultCode(Constants.RESULT_STATUS_SUCCESS);
+        user2.setResultMessage(Constants.RESULT_STATUS_SUCCESS);
+        user2.setHttpStatusCode(CommonStatusCode.OK.getCode());
+        user2.setDetailMessage(CommonStatusCode.OK.getMsg());
+
+        when(restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{cluster:.+}", CLUSTER).replace("{namespace:.+}", DEFAULT_NAMESPACE).replace("{userId:.+}", USER_ID), HttpMethod.GET, null, Users.class)).thenReturn(user1);
+        when(commonService.setResultModel(user1, Constants.RESULT_STATUS_SUCCESS)).thenReturn(user2);
+
+        Users result = usersService.getUsers(CLUSTER, DEFAULT_NAMESPACE, USER_ID);
         assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 
@@ -448,8 +475,10 @@ public class UsersServiceTest {
 
     @Test
     public void modifyUsersAdmin() throws Exception {
+        when(propertyService.getDefaultNamespace()).thenReturn(DEFAULT_NAMESPACE);
+        getUsers_tmp();
+
         getUsersInMultiNamespace();
-        //when(usersService.getUsersInMultiNamespace(CLUSTER, USER_ID, 0, 0)).thenReturn(UsersModel.getUsersAdminList());
 
         ResultStatus resultStatus = usersService.modifyUsersAdmin(CLUSTER, SERVICE_ACCOUNT_NAME, UsersModel.getResultUser());
     }
