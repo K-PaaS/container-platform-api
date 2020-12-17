@@ -431,9 +431,11 @@ public class RolesServiceTest {
     @Test
     public void getNamespacesRolesTemplateList() {
         //when
+        when(propertyService.getAdminRole())
+                .thenReturn("paas-ta-container-platform-admin-role");
         when(propertyService.getCpMasterApiListRolesListAllNamespacesUrl())
                 .thenReturn("/apis/rbac.authorization.k8s.io/v1/roles");
-        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/roles", HttpMethod.GET, null, Map.class))
+        when(restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, "/apis/rbac.authorization.k8s.io/v1/roles" + "?fieldSelector=metadata.name!=paas-ta-container-platform-admin-role", HttpMethod.GET, null, Map.class))
                 .thenReturn(gResultAdminMap);
         when(commonService.setResultObject(gResultAdminMap, RolesListAllNamespaces.class))
                 .thenReturn(gResultListAllNamespacesModel);
