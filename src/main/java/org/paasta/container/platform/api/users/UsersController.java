@@ -238,6 +238,10 @@ public class UsersController {
                     .detailMessage(regexMatch(users)).build();
         }
 
+        if(users.getSelectValues().size() == 0) {
+            return Constants.MANDATORY_NAMESPACE_AND_ROLE;
+        }
+
         return usersService.registerUsers(users);
     }
 
