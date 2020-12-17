@@ -267,7 +267,20 @@ public class CommonService {
                 sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_NAME,
                         getField(Constants.RESOURCE_METADATA, x))).reversed()).collect(Collectors.toList());
             }
-        } else {
+        }
+
+        else if (orderBy.equals(Constants.RESOURCE_NS)) {
+            // 네임스페이스명 기준
+            order = (order.equals("")) ? "asc" : order;
+            if (order.equals("asc")) {
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_NS,
+                        getField(Constants.RESOURCE_METADATA, x)))).collect(Collectors.toList());
+            } else {
+                sortList = commonList.stream().sorted(Comparator.comparing(x -> this.<String>getField(Constants.RESOURCE_NS,
+                        getField(Constants.RESOURCE_METADATA, x))).reversed()).collect(Collectors.toList());
+            }
+        }
+        else {
             // 생성날짜 기준
             order = (order.equals("")) ? "desc" : order;
 
