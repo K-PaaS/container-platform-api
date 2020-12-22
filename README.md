@@ -1,4 +1,4 @@
-# paas-ta-container-platform-api
+# PaaS-TA 컨테이너 플랫폼
 
 PaaS-TA에서 제공하는 컨테이너 플랫폼 제어에 필요한 REST API를 제공합니다.
 
