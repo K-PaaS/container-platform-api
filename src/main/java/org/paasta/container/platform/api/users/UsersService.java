@@ -176,11 +176,17 @@ public class UsersService {
         usersAdmin.setServiceAccountName(usersByDefaultNamespace.getServiceAccountName());
         usersAdmin.setCreated(usersByDefaultNamespace.getCreated());
 
-        //set cluster info
-        usersAdmin.setClusterName(usersByDefaultNamespace.getClusterName());
-        usersAdmin.setClusterApiUrl(usersByDefaultNamespace.getClusterApiUrl());
-        usersAdmin.setClusterToken(usersByDefaultNamespace.getClusterToken());
-
+        if(usersByDefaultNamespace.getUserType().equals(AUTH_CLUSTER_ADMIN)) {
+            //set cluster info
+            usersAdmin.setClusterName(usersByDefaultNamespace.getClusterName());
+            usersAdmin.setClusterApiUrl(usersByDefaultNamespace.getClusterApiUrl());
+            usersAdmin.setClusterToken(usersByDefaultNamespace.getClusterToken());
+        }
+        else {
+            usersAdmin.setClusterName(Constants.NULL_REPLACE_TEXT);
+            usersAdmin.setClusterApiUrl(Constants.NULL_REPLACE_TEXT);
+            usersAdmin.setClusterToken(Constants.NULL_REPLACE_TEXT);
+        }
 
         UsersList list = restTemplateService.send(TARGET_COMMON_API,
                 Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);

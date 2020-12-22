@@ -129,7 +129,7 @@ public class SignUpAdminService {
                 users.setRoleSetCode(NOT_ASSIGNED_ROLE);
                 users.setSaSecret(saSecretName);
                 users.setSaToken(accessTokenService.getSecrets(defaultNamespace, saSecretName).getUserAccessToken());
-                users.setUserType(AUTH_USER);
+                users.setUserType(AUTH_CLUSTER_ADMIN);
                 users.setIsActive(CHECK_N);
             }
 
