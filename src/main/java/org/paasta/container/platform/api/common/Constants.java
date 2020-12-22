@@ -34,6 +34,11 @@ public class Constants {
     public static final String AUTH_NAMESPACE_ADMIN = "NAMESPACE_ADMIN";
     public static final String AUTH_USER = "USER";
 
+
+    public static final String AUTH_CLUSTER_ADMIN_CG = "Cluster Admin";
+    public static final String AUTH_NAMESPACE_ADMIN_CG = "Namespace Admin";
+    public static final String AUTH_USER_CG = "User";
+
     public static final String ALL_NAMESPACES = "all";
     public static final String ALL_USER_ID = "all";
     public static final String USERS = "users";
