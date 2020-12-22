@@ -329,7 +329,7 @@ public class UsersService {
 
             String adminSaSecretName = restTemplateService.getSecretName(namespace, users.getUserId());
 
-            users.setUserType(Constants.AUTH_USER);
+            users.setUserType(AUTH_USER);
             users.setCpNamespace(namespace);
             users.setServiceAccountName(userName);
             users.setRoleSetCode(role);
@@ -428,7 +428,7 @@ public class UsersService {
             updateUser.setUserId(users.getUserId());
             updateUser.setPassword(users.getPassword());
             updateUser.setEmail(users.getEmail());
-
+            updateUser.setUserType(AUTH_USER);
             rsDb = createUsers(updateUser);
         }
 
@@ -459,7 +459,7 @@ public class UsersService {
             newUser.setIsActive(CHECK_Y);
             newUser.setSaSecret(saSecretName);
             newUser.setSaToken(accessTokenService.getSecrets(addInNamespace, saSecretName).getUserAccessToken());
-            newUser.setUserType("USER");
+            newUser.setUserType(AUTH_USER);
 
             rsDb = createUsers(commonSaveClusterInfo(propertyService.getCpClusterName(), newUser));
         }
@@ -596,7 +596,7 @@ public class UsersService {
                     newUser.setCpNamespace(namespace);
                     newUser.setRoleSetCode(roleName);
                     newUser.setIsActive(CHECK_Y);
-                    newUser.setUserType("USER");
+                    newUser.setUserType(AUTH_USER);
 
                     rsDb = updateUsers(newUser);
                 }
