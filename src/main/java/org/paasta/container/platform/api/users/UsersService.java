@@ -215,6 +215,20 @@ public class UsersService {
         }
 
         usersAdmin.setItems(usersDetailsList);
+
+        for (UsersAdmin.UsersDetails userDetail : usersAdmin.getItems()) {
+
+            if (userDetail.getUserType().equals(Constants.AUTH_CLUSTER_ADMIN)) {
+                userDetail.setUserType(AUTH_CLUSTER_ADMIN_CG);
+            } else if (userDetail.getUserType().equals(AUTH_NAMESPACE_ADMIN)) {
+                userDetail.setUserType(AUTH_NAMESPACE_ADMIN_CG);
+            } else if (userDetail.getUserType().equals(AUTH_USER)) {
+                userDetail.setUserType(AUTH_USER_CG);
+            } else {
+                userDetail.setUserType(AUTH_USER_CG);
+            }
+        }
+
         usersAdmin = commonService.userListProcessing(usersAdmin, offset, limit, "", "", "", UsersAdmin.class);
 
         return commonService.setResultModel(commonService.setResultObject(usersAdmin, UsersAdmin.class), Constants.RESULT_STATUS_SUCCESS);
