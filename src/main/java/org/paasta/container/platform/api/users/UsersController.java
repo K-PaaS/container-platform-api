@@ -8,6 +8,7 @@ import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -26,6 +27,9 @@ import static org.paasta.container.platform.api.common.CommonUtils.regexMatch;
 @Api(value = "UsersController v1")
 @RestController
 public class UsersController {
+    @Value("${cpNamespace.defaultNamespace}")
+    private String defaultNamespace;
+
     private final UsersService usersService;
 
     @Autowired
@@ -162,6 +166,9 @@ public class UsersController {
     public Object getUsersByNamespace(@PathVariable(value = "cluster") String cluster,
                                       @PathVariable(value = "namespace") String namespace,
                                       @PathVariable(value = "userId") String userId) {
+        if(Constants.ALL_NAMESPACES.equals(namespace)) {
+            namespace = defaultNamespace;
+        }
 
         return usersService.getUsers(cluster, namespace, userId);
     }
