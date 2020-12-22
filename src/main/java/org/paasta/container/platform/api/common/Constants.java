@@ -103,6 +103,7 @@ public class Constants {
     public static final String URI_COMMON_API_USERS_BY_NAMESPACE_NS_ADMIN = "/clusters/{cluster:.+}/namespaces/{namespace:.+}";
     public static final String URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID = "/clusters/{cluster:.+}/users/{userId:.+}";
     public static final String URI_COMMON_API_PRIVATE_REGISTRY = "/privateRegistry/{imageName:.+}";
+    public static final String URI_COMMON_API_CLUSTER_ADMIN_ROLE_BY_CLUSTER_NAME_USER_ID = "/clusters/{cluster:.+}/users/{userId:.+}/userType";
 
     // NEXT ACTION MOVEMENT DASHBOARD URI
     public static final String URI_CLUSTER_NODES = "/container-platform/clusters/nodes";

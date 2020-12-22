@@ -719,4 +719,17 @@ public class UsersService {
         return (UsersInNamespace) commonService.setResultModel(usersInNamespace, Constants.RESULT_STATUS_SUCCESS);
     }
 
+    /**
+     * CLUSTER_ADMIN 권한을 가진 운영자 상세 조회(Get Cluster Admin's info)
+     *
+     * @param cluster   the cluster
+     * @param userId    the userId
+     * @return the users detail
+     */
+    public Users getClusterAdminUsers(String cluster, String userId) {
+        Users users = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_CLUSTER_ADMIN_ROLE_BY_CLUSTER_NAME_USER_ID
+                .replace("{cluster:.+}", cluster)
+                .replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
+        return (Users) commonService.setResultModel(users, Constants.RESULT_STATUS_SUCCESS);
+    }
 }

@@ -167,7 +167,7 @@ public class UsersController {
                                       @PathVariable(value = "namespace") String namespace,
                                       @PathVariable(value = "userId") String userId) {
         if(Constants.ALL_NAMESPACES.equals(namespace)) {
-            namespace = defaultNamespace;
+            return usersService.getClusterAdminUsers(cluster, userId);
         }
 
         return usersService.getUsers(cluster, namespace, userId);
