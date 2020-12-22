@@ -97,6 +97,19 @@ public class UsersService {
         String reqUrlParam = "?userType=" + userType + "&searchParam=" + searchName + "&orderBy=" + orderBy + "&order=" + order;
         UsersListAdmin usersListAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", cluster) + reqUrlParam, HttpMethod.GET, null, UsersListAdmin.class);
 
+        for (UsersListAdmin.UserDetail userDetail : usersListAdmin.getItems()) {
+
+            if (userDetail.getUserType().equals(Constants.AUTH_CLUSTER_ADMIN)) {
+                userDetail.setUserType(AUTH_CLUSTER_ADMIN_CG);
+            } else if (userDetail.getUserType().equals(AUTH_NAMESPACE_ADMIN)) {
+                userDetail.setUserType(AUTH_NAMESPACE_ADMIN_CG);
+            } else if (userDetail.getUserType().equals(AUTH_USER)) {
+                userDetail.setUserType(AUTH_USER_CG);
+            } else {
+                userDetail.setUserType(AUTH_USER_CG);
+            }
+        }
+
         //users list paging
         usersListAdmin = commonService.userListProcessing(usersListAdmin, offset, limit, orderBy, order, searchName, UsersListAdmin.class);
 
@@ -132,18 +145,16 @@ public class UsersService {
     }
 
 
-
-
     /**
      * 하나의 Cluster 내 여러 Namespaces 에 속한 User 에 대한 상세 조회(Get Users cluster namespace)
      *
      * @param cluster the cluster
-     * @param userId the userId
-     * @param limit the limit
-     * @param offset the offset
+     * @param userId  the userId
+     * @param limit   the limit
+     * @param offset  the offset
      * @return the users detail
      */
-    public Object getUsersInMultiNamespace(String cluster, String userId, int limit,  int offset) throws Exception {
+    public Object getUsersInMultiNamespace(String cluster, String userId, int limit, int offset) throws Exception {
 
         UsersAdmin usersAdmin = new UsersAdmin();
         Users usersByDefaultNamespace = null;
@@ -152,12 +163,11 @@ public class UsersService {
 
         try {
             //temp-namespace user info get
-          usersByDefaultNamespace = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS
+            usersByDefaultNamespace = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS
                     .replace("{cluster:.+}", cluster)
                     .replace("{namespace:.+}", defaultNamespace)
                     .replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             return Constants.NOT_FOUND_RESULT_STATUS;
         }
 
@@ -321,7 +331,7 @@ public class UsersService {
             // 각 namespace 별 service account 생성(Create service account by each namespace name)
             resourceYamlService.createServiceAccount(userName, namespace);
 
-            if(!StringUtils.isEmpty(nsRole.getRole())) {
+            if (!StringUtils.isEmpty(nsRole.getRole())) {
                 role = nsRole.getRole();
                 // select box에서 선택한 role으로 role binding(Role binding selected role)
                 resourceYamlService.createRoleBinding(userName, namespace, role);
@@ -372,7 +382,7 @@ public class UsersService {
 
         createUsers(tempUsers);
 
-        List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(cluster, users.getServiceAccountName(), 0,0)).getItems();
+        List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(cluster, users.getServiceAccountName(), 0, 0)).getItems();
         List<Users.NamespaceRole> selectValues = users.getSelectValues();
 
         // 기존 namespace list(Existed namespace list)
@@ -645,7 +655,7 @@ public class UsersService {
      */
     public Object getUsersListInNamespaceAdmin(String cluster, String namespace, int offset, int limit, String orderBy, String order, String searchName) {
 
-         String param ="?orderBy=" + orderBy + "&order=" + order + "&searchName=" + searchName;
+        String param = "?orderBy=" + orderBy + "&order=" + order + "&searchName=" + searchName;
 
         UsersListInNamespaceAdmin usersListInNamespaceAdmin = restTemplateService.sendAdmin(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
                 .replace("{cluster:.+}", cluster)
