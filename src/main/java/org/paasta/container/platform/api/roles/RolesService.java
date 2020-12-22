@@ -346,6 +346,10 @@ public class RolesService {
                     if (user.getCpNamespace().equals(item.getNamespace()) && user.getRoleSetCode().equals(item.getName())) {
                         item.setCheckYn(Constants.CHECK_Y);
                         item.setUserType(user.getUserType());
+
+                        if(Constants.AUTH_NAMESPACE_ADMIN.equals(user.getUserType())) {
+                            item.setIsNamespaceAdminRole(Constants.CHECK_Y);
+                        }
                     }
                 }
             }
