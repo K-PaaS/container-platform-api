@@ -166,7 +166,7 @@ public class UsersController {
     public Object getUsersByNamespace(@PathVariable(value = "cluster") String cluster,
                                       @PathVariable(value = "namespace") String namespace,
                                       @PathVariable(value = "userId") String userId) {
-        if(Constants.ALL_NAMESPACES.equals(namespace)) {
+        if (namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
             return usersService.getClusterAdminUsers(cluster, userId);
         }
 
