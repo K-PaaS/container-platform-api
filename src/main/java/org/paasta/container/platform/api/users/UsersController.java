@@ -195,8 +195,14 @@ public class UsersController {
     public Object getUsers(@PathVariable(value = "cluster") String cluster,
                            @PathVariable(value = "userId") String userId,
                            @RequestParam(required = false, defaultValue = "0") int limit,
-                           @RequestParam(required = false, defaultValue = "0") int offset) throws Exception {
-        return usersService.getUsersInMultiNamespace(cluster, userId, limit, offset);
+                           @RequestParam(required = false, defaultValue = "0") int offset,
+                           @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
+
+        if (isAdmin) {
+            return usersService.getUsersInMultiNamespace(cluster, userId, limit, offset);
+        }
+
+        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
     }
 
 

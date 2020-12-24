@@ -214,6 +214,9 @@ public class UsersService {
             }
         }
 
+        // Remove if cluster administrator role exists
+        usersDetailsList.removeIf( x-> x.getRoleSetCode().equals(Constants.DEFAULT_CLUSTER_ADMIN_ROLE));
+
         usersAdmin.setItems(usersDetailsList);
 
         for (UsersAdmin.UsersDetails userDetail : usersAdmin.getItems()) {
