@@ -611,6 +611,12 @@ public class UsersService {
     public ResultStatus deleteUsersByAllNamespaces(String userId) {
         UsersList users = getUsersDetails(userId);
 
+        for(Users user : users.getItems()) {
+            if (user.getUserType().equals(AUTH_CLUSTER_ADMIN)) {
+                return DO_NOT_DELETE_DEFAULT_RESOURCES;
+            }
+        }
+
         ResultStatus rs = new ResultStatus();
         for (Users user : users.getItems()) {
             rs = deleteUsers(user);
