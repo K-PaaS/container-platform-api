@@ -4,8 +4,11 @@ import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.clusters.clusters.Clusters;
 import org.paasta.container.platform.api.clusters.clusters.ClustersService;
 import org.paasta.container.platform.api.common.*;
+import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.secret.Secrets;
+import org.paasta.container.platform.api.users.serviceAccount.ServiceAccount;
+import org.paasta.container.platform.api.users.serviceAccount.ServiceAccountList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +88,35 @@ public class UsersService {
      * @return the users list
      */
     public Object getUsersAllByCluster(String cluster, String userType, String searchName, int limit, int offset, String orderBy, String order) {
+        Map<String, List<String>> list = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES, HttpMethod.GET, null, Map.class);
+        List<String> names = list.get(USERS);
+
+        ServiceAccountList saList = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersListAllNamespacesUrl(), HttpMethod.GET, null, ServiceAccountList.class);
+        for (ServiceAccount sa : saList.getItems()) {
+            CommonMetaData metaData = sa.getMetadata();
+            String saName = metaData.getName();
+
+            if(!names.contains(saName) && !DEFAULT_SERVICE_ACCOUNT.equals(saName) && !propertyService.getIgnoreNamespaceList().contains(metaData.getNamespace())) {
+                Users userWithoutUserId = new Users();
+                userWithoutUserId.setUserId(saName);
+                userWithoutUserId.setServiceAccountName(saName);
+                userWithoutUserId.setCpNamespace(metaData.getNamespace());
+                userWithoutUserId.setCreated(metaData.getCreationTimestamp());
+                userWithoutUserId.setUserType(AUTH_NAMESPACE_ADMIN);
+                userWithoutUserId.setRoleSetCode(NOT_ASSIGNED_ROLE);
+                userWithoutUserId.setIsActive(CHECK_K8S);
+
+                String saSecretName = sa.getSecrets().get(0).get(Constants.RESOURCE_NAME);
+                userWithoutUserId.setSaSecret(saSecretName);
+                userWithoutUserId.setSaToken(accessTokenService.getSecrets(metaData.getNamespace(), saSecretName).getUserAccessToken());
+
+                createUsers(userWithoutUserId);
+
+                createSaInTemp(saName);
+            }
+
+        }
+
 
         if (SELECTED_ADMINISTRATOR.equalsIgnoreCase(userType)) {
             userType = AUTH_CLUSTER_ADMIN;
@@ -116,6 +148,30 @@ public class UsersService {
         return commonService.setResultModel(commonService.setResultObject(usersListAdmin, UsersListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
+
+    /**
+     * 임시 namespace에 사용자 생성(Create Users in Temporary namespace)
+     *
+     * @param saName the service account name
+     */
+    private void createSaInTemp(String saName) {
+        Users users = new Users();
+        String defaultNamespace = propertyService.getDefaultNamespace();
+
+        // add temporary namespace
+        resourceYamlService.createServiceAccount(saName, defaultNamespace);
+        String saSecretName = restTemplateService.getSecretName(defaultNamespace, saName);
+
+        users.setUserId(saName);
+        users.setServiceAccountName(saName);
+        users.setCpNamespace(defaultNamespace);
+        users.setRoleSetCode(NOT_ASSIGNED_ROLE);
+        users.setSaSecret(saSecretName);
+        users.setSaToken(accessTokenService.getSecrets(defaultNamespace, saSecretName).getUserAccessToken());
+        users.setUserType(AUTH_USER);
+
+        createUsers(users);
+    }
 
     /**
      * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
@@ -408,8 +464,16 @@ public class UsersService {
         List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(cluster, users.getServiceAccountName(), 0, 0)).getItems();
         List<Users.NamespaceRole> selectValues = users.getSelectValues();
 
+        List<UsersAdmin.UsersDetails> newUsersDetails = new ArrayList<>();
+
+        for (UsersAdmin.UsersDetails d : usersDetails) {
+            if(!Constants.AUTH_CLUSTER_ADMIN_CG.equals(d.getUserType()) && !Constants.CHECK_K8S.equals(d.getIsActive())) {
+                newUsersDetails.add(d);
+            }
+        }
+
         // 기존 namespace list(Existed namespace list)
-        List<String> defaultNsList = usersDetails.stream().map(UsersAdmin.UsersDetails::getCpNamespace).collect(Collectors.toList());
+        List<String> defaultNsList = newUsersDetails.stream().map(UsersAdmin.UsersDetails::getCpNamespace).collect(Collectors.toList());
 
         // 넘어온 새로운 select value 중 namespace list(namespace list for new select value)
         List<String> newNsList = selectValues.stream().map(Users.NamespaceRole::getNamespace).collect(Collectors.toList());

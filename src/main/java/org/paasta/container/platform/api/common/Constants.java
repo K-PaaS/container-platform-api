@@ -17,8 +17,12 @@ public class Constants {
 
     public static final String RESULT_STATUS_SUCCESS = "SUCCESS";
     public static final String RESULT_STATUS_FAIL = "FAIL";
+
     public static final String CHECK_Y = "Y";
     public static final String CHECK_N = "N";
+
+    // for kubernetes cli user
+    public static final String CHECK_K8S = "K";
 
     public static final String TARGET_CP_MASTER_API = "cpMasterApi";
     public static final String TARGET_COMMON_API = "commonApi";
@@ -42,6 +46,7 @@ public class Constants {
     public static final String ALL_NAMESPACES = "all";
     public static final String ALL_USER_ID = "all";
     public static final String USERS = "users";
+    public static final String DEFAULT_SERVICE_ACCOUNT = "default";
 
     public static final String NOT_ASSIGNED_ROLE = "NOT_ASSIGNED_ROLE";
     public static final String DEFAULT_CLUSTER_ADMIN_ROLE = "cluster-admin"; // k8s default cluster role's name

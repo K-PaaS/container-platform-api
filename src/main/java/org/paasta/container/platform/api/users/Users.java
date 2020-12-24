@@ -56,6 +56,50 @@ public class Users {
         private String role;
     }
 
+    public String getUserId() {
+        return CommonUtils.procReplaceNullValue(userId);
+    }
+
+    public String getPassword() {
+        return CommonUtils.procReplaceNullValue(password);
+    }
+
+    public String getEmail() {
+        return CommonUtils.procReplaceNullValue(email);
+    }
+
+    public String getClusterName() {
+        return CommonUtils.procReplaceNullValue(clusterName);
+    }
+
+    public String getClusterApiUrl() {
+        return CommonUtils.procReplaceNullValue(clusterApiUrl);
+    }
+
+    public String getClusterToken() {
+        return CommonUtils.procReplaceNullValue(clusterToken);
+    }
+
+    public String getCpNamespace() {
+        return CommonUtils.procReplaceNullValue(cpNamespace);
+    }
+
+    public String getServiceAccountName() {
+        return CommonUtils.procReplaceNullValue(serviceAccountName);
+    }
+
+    public String getSaSecret() {
+        return CommonUtils.procReplaceNullValue(saSecret);
+    }
+
+    public String getSaToken() {
+        return CommonUtils.procReplaceNullValue(saToken);
+    }
+
+    public String getRoleSetCode() {
+        return CommonUtils.procReplaceNullValue(roleSetCode);
+    }
+
     public String getCpAccountTokenName() {
         return CommonUtils.procReplaceNullValue(cpAccountTokenName);
     }

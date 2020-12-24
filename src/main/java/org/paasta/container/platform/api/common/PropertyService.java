@@ -273,6 +273,9 @@ public class PropertyService {
     @Value("${cpMaster.api.list.users.delete}")
     private String cpMasterApiListUsersDeleteUrl;
 
+    @Value("${cpMaster.api.list.users.listAllNamespaces}")
+    private String cpMasterApiListUsersListAllNamespacesUrl;
+
     //namespace
     @Value("${cpMaster.api.list.namespaces.list}")
     private String cpMasterApiListNamespacesListUrl;

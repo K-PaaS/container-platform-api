@@ -47,7 +47,7 @@ public class UsersAdmin {
     public static class UsersDetails {
 
         private String serviceAccountUid;
-
+        public String isActive;
         public String cpNamespace;
         public String userType;
         public String roleSetCode;
