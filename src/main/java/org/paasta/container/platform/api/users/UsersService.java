@@ -816,7 +816,9 @@ public class UsersService {
         Map<String, List<String>> list = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_NAMES, HttpMethod.GET, null, Map.class);
         List<String> names = list.get(USERS);
 
-        if (ALL_NAMESPACES.equals(namespace)) {
+        Users user = getUsersByNamespaceAndNsAdmin(cluster, namespace);
+
+        if (ALL_NAMESPACES.equals(namespace) || user == null) {
             for (String name : names) {
                 UsersInfo usersInfo = new UsersInfo();
                 usersInfo.setUserId(name);
@@ -825,8 +827,6 @@ public class UsersService {
                 usersInfos.add(usersInfo);
             }
         } else {
-            Users user = getUsersByNamespaceAndNsAdmin(cluster, namespace);
-
             for (String name : names) {
                 UsersInfo usersInfo = new UsersInfo();
                 usersInfo.setUserId(name);
