@@ -130,6 +130,15 @@ public class UsersService {
         String reqUrlParam = "?userType=" + userType + "&searchParam=" + searchName + "&orderBy=" + orderBy + "&order=" + order;
         UsersListAdmin usersListAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", cluster) + reqUrlParam, HttpMethod.GET, null, UsersListAdmin.class);
 
+        //find cluster user id
+        List<UsersListAdmin.UserDetail> clusterUserIdList = usersListAdmin.getItems().stream().filter(x->x.getUserType().matches(Constants.AUTH_CLUSTER_ADMIN)).collect(Collectors.toList());
+
+        // remove by cluster user id
+        for(UsersListAdmin.UserDetail clusterUser : clusterUserIdList) {
+            usersListAdmin.getItems().removeIf( x->x.getUserId().equals(clusterUser.getUserId()));
+        }
+
+        // convert user type name
         for (UsersListAdmin.UserDetail userDetail : usersListAdmin.getItems()) {
 
             if (userDetail.getUserType().equals(Constants.AUTH_CLUSTER_ADMIN)) {
