@@ -5,6 +5,7 @@ import org.paasta.container.platform.api.clusters.clusters.Clusters;
 import org.paasta.container.platform.api.clusters.clusters.ClustersService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.secret.Secrets;
 import org.paasta.container.platform.api.users.serviceAccount.ServiceAccount;
@@ -110,9 +111,9 @@ public class UsersService {
                 userWithoutUserId.setSaSecret(saSecretName);
                 userWithoutUserId.setSaToken(accessTokenService.getSecrets(metaData.getNamespace(), saSecretName).getUserAccessToken());
 
-                createUsers(userWithoutUserId);
-
                 createSaInTemp(saName);
+
+                createUsers(userWithoutUserId);
             }
 
         }
@@ -561,7 +562,14 @@ public class UsersService {
             rsDb = createUsers(commonSaveClusterInfo(propertyService.getCpClusterName(), newUser));
         }
 
-        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS_DETAIL.replace("{userId:.+}", users.getServiceAccountName()));
+        ResultStatus finalRs = (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS_DETAIL.replace("{userId:.+}", users.getServiceAccountName()));
+        if(Constants.RESULT_STATUS_SUCCESS.equals(finalRs.getResultCode())) {
+            finalRs.setResultMessage(CommonStatusCode.OK.getMsg());
+            finalRs.setHttpStatusCode(CommonStatusCode.OK.getCode());
+            finalRs.setDetailMessage(CommonStatusCode.OK.getMsg());
+        }
+
+        return finalRs;
     }
 
 
