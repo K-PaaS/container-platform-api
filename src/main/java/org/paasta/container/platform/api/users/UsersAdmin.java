@@ -32,6 +32,7 @@ public class UsersAdmin {
     public String userId;
     public String serviceAccountName;
     public String created;
+    public String email;
 
     // Cluster Info
     public String clusterName;

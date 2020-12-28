@@ -245,6 +245,7 @@ public class UsersService {
         usersAdmin.setUserId(usersByDefaultNamespace.getUserId());
         usersAdmin.setServiceAccountName(usersByDefaultNamespace.getServiceAccountName());
         usersAdmin.setCreated(usersByDefaultNamespace.getCreated());
+        usersAdmin.setEmail(usersByDefaultNamespace.getEmail());
 
         if(usersByDefaultNamespace.getUserType().equals(AUTH_CLUSTER_ADMIN)) {
             //set cluster info
