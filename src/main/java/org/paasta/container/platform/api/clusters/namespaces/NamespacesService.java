@@ -266,11 +266,41 @@ public class NamespacesService {
         modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
 
         String nsAdminUserId = initTemplate.getNsAdminUserId();
-        Users nsAdminUser = usersService.getUsersByNamespaceAndNsAdmin(cluster, namespace);
+        Users nsAdminUser = null;
 
-        if (!nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
+        try {
+            nsAdminUser = usersService.getUsersByNamespaceAndNsAdmin(cluster, namespace);
+        }
+        catch(NullPointerException e){
+            LOGGER.info("NAMESPACE ADMINISTRATOR DOES NOT EXIST...");
+        }
+
+
+        if (nsAdminUser != null && !nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
+            LOGGER.info("THE CURRENT NAMESPACE ADMINISTRATOR EXISTS AND CHANGES TO A NEW NAMESPACE ADMINISTRATOR....");
+
+            //delete current namespace admin
             usersService.deleteUsers(nsAdminUser);
-            // add new sa
+
+            Users newNamespaceAdmin = null;
+            try {
+                // Verify that the new namespace admin is the current namespace member
+                newNamespaceAdmin = usersService.getUsers(cluster, namespace, nsAdminUserId);
+            } catch (NullPointerException e) {
+                LOGGER.info("THE NEW NAMESPACE ADMINISTRATOR IS NOT A CURRENT NAMESPACE MEMBER.....");
+            }
+
+            if (newNamespaceAdmin != null) {
+                usersService.deleteUsers(newNamespaceAdmin);
+
+            }
+        }
+
+
+        if(nsAdminUser == null || !nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
+
+            LOGGER.info("WHEN THE CURRENT NAMESPACE ADMINISTRATOR DOES NOT EXIST OR CHANGES TO A NEW NAMESPACE ADMINISTRATOR.....");
+
             ResultStatus saResult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
 
             if (Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
