@@ -301,6 +301,10 @@ public class NamespacesService {
 
             LOGGER.info("WHEN THE CURRENT NAMESPACE ADMINISTRATOR DOES NOT EXIST OR CHANGES TO A NEW NAMESPACE ADMINISTRATOR.....");
 
+            // create admin and init role
+            resourceYamlService.createNsAdminRole(namespace);
+            resourceYamlService.createInitRole(namespace);
+
             ResultStatus saResult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
 
             if (Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
