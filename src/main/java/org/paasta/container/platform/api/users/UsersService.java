@@ -547,12 +547,12 @@ public class UsersService {
                 restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + Constants.NULL_REPLACE_TEXT + defaultRole + "-binding"), HttpMethod.DELETE, null, Object.class, true);
                 resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, newRole);
 
-                if(CHECK_K8S.equals(updateUser.getIsActive()) && AUTH_NAMESPACE_ADMIN.equals(updateUser.getUserType())) {
-                    defaultUserType = AUTH_NAMESPACE_ADMIN;
-                }
-
                 updateUser.setRoleSetCode(newRole);
                 updateUser.setSaToken(accessTokenService.getSecrets(namespace, updateUser.getSaSecret()).getUserAccessToken());
+            }
+
+            if(CHECK_K8S.equals(updateUser.getIsActive()) && AUTH_NAMESPACE_ADMIN.equals(updateUser.getUserType())) {
+                defaultUserType = AUTH_NAMESPACE_ADMIN;
             }
 
             updateUser.setUserId(users.getUserId());
