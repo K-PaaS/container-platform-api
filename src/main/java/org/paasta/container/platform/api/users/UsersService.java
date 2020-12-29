@@ -113,7 +113,7 @@ public class UsersService {
 
                 createSaInTemp(saName);
 
-                createUsers(userWithoutUserId);
+                createUsers(commonSaveClusterInfo(cluster, userWithoutUserId));
             }
 
         }
@@ -268,6 +268,10 @@ public class UsersService {
 
         for (Users users : list.getItems()) {
             if (!propertyService.getIgnoreNamespaceList().contains(users.getCpNamespace())) {
+                if (NOT_ASSIGNED_ROLE.equals(users.getRoleSetCode())) {
+                    users.setRoleSetCode(NULL_REPLACE_TEXT);
+                }
+
                 usersDetails = commonService.convert(users, UsersAdmin.UsersDetails.class);
                 Object obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl().replace("{namespace}", usersDetails.getCpNamespace()).replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class);
 
@@ -478,6 +482,7 @@ public class UsersService {
 
         List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(cluster, users.getServiceAccountName(), 0, 0)).getItems();
         List<Users.NamespaceRole> selectValues = users.getSelectValues();
+        List<String> nsNameList = selectValues.stream().map(x -> x.getNamespace()).collect(Collectors.toList());
 
         List<UsersAdmin.UsersDetails> newUsersDetails = new ArrayList<>();
 
@@ -485,6 +490,13 @@ public class UsersService {
             if(!Constants.AUTH_CLUSTER_ADMIN_CG.equals(d.getUserType()) && !Constants.CHECK_K8S.equals(d.getIsActive())) {
                 newUsersDetails.add(d);
             }
+
+            for (String nsNAme : nsNameList) {
+                if(nsNAme.equals(d.getCpNamespace()) && Constants.CHECK_K8S.equals(d.getIsActive())) {
+                    newUsersDetails.add(d);
+                }
+            }
+
         }
 
         // 기존 namespace list(Existed namespace list)
@@ -527,11 +539,17 @@ public class UsersService {
             String namespace = nr.getNamespace();
             String newRole = nr.getRole();
             String defaultRole = updateUser.getRoleSetCode();
+            String defaultUserType = AUTH_USER;
 
             if (!updateUser.getRoleSetCode().equals(nr.getRole())) {
                 LOGGER.info("Same Namespace >> {}, Default Role >> {}, New Role >> {}", namespace, defaultRole, newRole);
+
                 restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + Constants.NULL_REPLACE_TEXT + defaultRole + "-binding"), HttpMethod.DELETE, null, Object.class, true);
                 resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, newRole);
+
+                if(CHECK_K8S.equals(updateUser.getIsActive()) && AUTH_NAMESPACE_ADMIN.equals(updateUser.getUserType())) {
+                    defaultUserType = AUTH_NAMESPACE_ADMIN;
+                }
 
                 updateUser.setRoleSetCode(newRole);
                 updateUser.setSaToken(accessTokenService.getSecrets(namespace, updateUser.getSaSecret()).getUserAccessToken());
@@ -540,7 +558,7 @@ public class UsersService {
             updateUser.setUserId(users.getUserId());
             updateUser.setPassword(users.getPassword());
             updateUser.setEmail(users.getEmail());
-            updateUser.setUserType(AUTH_USER);
+            updateUser.setUserType(defaultUserType);
             rsDb = createUsers(updateUser);
         }
 
