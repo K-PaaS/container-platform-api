@@ -276,20 +276,6 @@ public class NamespacesService {
         }
 
 
-        Users newNamespaceAdmin = null;
-        try {
-            // Verify that the new namespace admin is the current namespace member
-            newNamespaceAdmin = usersService.getUsers(cluster, namespace, nsAdminUserId);
-        } catch (NullPointerException e) {
-            LOGGER.info("THE NEW NAMESPACE ADMINISTRATOR IS NOT A CURRENT NAMESPACE MEMBER.....");
-        }
-
-        if (newNamespaceAdmin != null) {
-            usersService.deleteUsers(newNamespaceAdmin);
-
-        }
-
-
         if (nsAdminUser != null && !nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
             LOGGER.info("THE CURRENT NAMESPACE ADMINISTRATOR EXISTS AND CHANGES TO A NEW NAMESPACE ADMINISTRATOR....");
             //delete current namespace admin
@@ -299,6 +285,20 @@ public class NamespacesService {
         if (nsAdminUser == null || !nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
 
             LOGGER.info("WHEN THE CURRENT NAMESPACE ADMINISTRATOR DOES NOT EXIST OR CHANGES TO A NEW NAMESPACE ADMINISTRATOR.....");
+
+            // Delete the existing user account
+            Users newNamespaceAdmin = null;
+            try {
+                // Verify that the new namespace admin is the current namespace member
+                newNamespaceAdmin = usersService.getUsers(cluster, namespace, nsAdminUserId);
+            } catch (NullPointerException e) {
+                LOGGER.info("THE NEW NAMESPACE ADMINISTRATOR IS NOT A CURRENT NAMESPACE MEMBER.....");
+            }
+
+            if (newNamespaceAdmin != null) {
+                usersService.deleteUsers(newNamespaceAdmin);
+
+            }
 
             // create admin and init role
             resourceYamlService.createNsAdminRole(namespace);
