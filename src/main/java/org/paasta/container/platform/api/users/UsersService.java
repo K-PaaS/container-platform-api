@@ -831,7 +831,7 @@ public class UsersService {
                 UsersInfo usersInfo = new UsersInfo();
                 usersInfo.setUserId(name);
                 usersInfo.setIsNsAdmin(CHECK_N);
-                if (name.contains(user.getUserId())) {
+                if (name.equals(user.getUserId())) {
                     usersInfo.setIsNsAdmin(CHECK_Y);
                 }
 
