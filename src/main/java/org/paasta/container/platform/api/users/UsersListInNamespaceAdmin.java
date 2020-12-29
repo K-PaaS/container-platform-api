@@ -38,7 +38,11 @@ public class UsersListInNamespaceAdmin {
 
             if (userType.equals(Constants.AUTH_NAMESPACE_ADMIN)) {
                 isAdmin = CHECK_Y;
-            } else {
+            }
+            else if (userType.equals(Constants.AUTH_CLUSTER_ADMIN)) {
+                isAdmin = CHECK_Y;
+            }
+            else {
                 isAdmin = CHECK_N;
             }
 
