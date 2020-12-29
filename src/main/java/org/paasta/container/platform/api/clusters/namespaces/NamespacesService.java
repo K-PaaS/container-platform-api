@@ -279,7 +279,8 @@ public class NamespacesService {
         if (nsAdminUser != null && !nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
             LOGGER.info("THE CURRENT NAMESPACE ADMINISTRATOR EXISTS AND CHANGES TO A NEW NAMESPACE ADMINISTRATOR....");
             //delete current namespace admin
-            usersService.deleteUsers(nsAdminUser);
+            nsAdminUser.setUserType(AUTH_USER);
+            usersService.updateUsers(nsAdminUser);
         }
 
         if (nsAdminUser == null || !nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
