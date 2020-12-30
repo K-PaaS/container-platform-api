@@ -100,7 +100,7 @@ public class PersistentVolumesAdmin {
     }
 
     public String getStorageClasses() {
-        return spec.getStorageClassName();
+        return CommonUtils.procReplaceNullValue(spec.getStorageClassName());
     }
 
     public List<String> getAccessMode() {
