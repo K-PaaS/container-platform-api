@@ -266,6 +266,12 @@ public class NamespacesService {
         modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
 
         String nsAdminUserId = initTemplate.getNsAdminUserId();
+
+        if(nsAdminUserId.trim().isEmpty() || nsAdminUserId == null ) {
+            return Constants.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT;
+        }
+
+
         Users nsAdminUser = null;
 
         try {

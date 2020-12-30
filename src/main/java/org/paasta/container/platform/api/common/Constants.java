@@ -249,6 +249,9 @@ public class Constants {
     public static final ResultStatus UNAPPROACHABLE_USERS = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.UNAPPROACHABLE_USERS,
             CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.UNAPPROACHABLE_USERS, null );
 
+    public static final ResultStatus REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT,
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT, null );
+
     public Constants() {
         throw new IllegalStateException();
     }
