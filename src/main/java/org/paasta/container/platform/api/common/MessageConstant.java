@@ -22,6 +22,7 @@ public class MessageConstant {
     public static final String INVALID_YAML_FORMAT = "잘못된 YAML 형식입니다.";
     public static final String DO_NOT_DELETE_DEFAULT_RESOURCES = "해당 리소스는 삭제할 수 없습니다.";
     public static final String MANDATORY_NAMESPACE_AND_ROLE = "Namespace와 Role 선택은 필수입니다.";
+    public static final String UNAPPROACHABLE_USERS = "지정이 불가한 사용자입니다.";
 
     public static final String CODE_ERROR = "요청 사항에 오류가 발생하였습니다. 관리자에게 문의하세요.";
     public static final String REQUEST_VALUE_IS_MISSING = "필수 사항이 누락되었습니다.";

@@ -246,6 +246,9 @@ public class Constants {
     public static final ResultStatus MANDATORY_NAMESPACE_AND_ROLE = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.MANDATORY_NAMESPACE_AND_ROLE,
             CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.MANDATORY_NAMESPACE_AND_ROLE, null );
 
+    public static final ResultStatus UNAPPROACHABLE_USERS = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.UNAPPROACHABLE_USERS,
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.UNAPPROACHABLE_USERS, null );
+
     public Constants() {
         throw new IllegalStateException();
     }

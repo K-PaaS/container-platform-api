@@ -297,6 +297,7 @@ public class NamespacesService {
             }
 
             if (newNamespaceAdmin != null) {
+                // If the new namespace admin is current a namespace member, it deletes the user.
                 usersService.deleteUsers(newNamespaceAdmin);
 
             }
@@ -304,6 +305,19 @@ public class NamespacesService {
             // create admin and init role
             resourceYamlService.createNsAdminRole(namespace);
             resourceYamlService.createInitRole(namespace);
+
+
+            Users newNsUser = null;
+
+            try {
+                newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
+            }
+            catch(NullPointerException e){
+                LOGGER.info("THERE ARE NO USERS IN THE TEMP NAMESPACE.....");
+                return Constants.UNAPPROACHABLE_USERS;
+
+            }
+
 
             ResultStatus saResult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
 
@@ -320,7 +334,7 @@ public class NamespacesService {
             }
             String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
 
-            Users newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
+
             newNsUser.setId(0);
             newNsUser.setCpNamespace(namespace);
             newNsUser.setRoleSetCode(propertyService.getAdminRole());
