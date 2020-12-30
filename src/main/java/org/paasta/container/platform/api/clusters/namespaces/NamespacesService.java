@@ -262,6 +262,7 @@ public class NamespacesService {
             return Constants.NOT_MATCH_NAMESPACES;
         }
 
+        // Modify ResourceQuotas , LimitRanges
         modifyResourceQuotas(namespace, initTemplate.getResourceQuotasList());
         modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
 
@@ -269,6 +270,17 @@ public class NamespacesService {
 
         if(nsAdminUserId.trim().isEmpty() || nsAdminUserId == null ) {
             return Constants.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT;
+        }
+
+        Users newNsUser = null;
+
+        try {
+            newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
+        }
+        catch(NullPointerException e){
+            LOGGER.info("THERE ARE NO USERS IN THE TEMP NAMESPACE.....");
+            return Constants.UNAPPROACHABLE_USERS;
+
         }
 
 
@@ -311,18 +323,6 @@ public class NamespacesService {
             // create admin and init role
             resourceYamlService.createNsAdminRole(namespace);
             resourceYamlService.createInitRole(namespace);
-
-
-            Users newNsUser = null;
-
-            try {
-                newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
-            }
-            catch(NullPointerException e){
-                LOGGER.info("THERE ARE NO USERS IN THE TEMP NAMESPACE.....");
-                return Constants.UNAPPROACHABLE_USERS;
-
-            }
 
 
             ResultStatus saResult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
