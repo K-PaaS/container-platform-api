@@ -413,8 +413,11 @@ public class UsersService {
 
         Users tempUsers = getUsers(cluster, defaultNs, userId);
         tempUsers.setUserId(users.getUserId());
-        tempUsers.setPassword(users.getPassword());
         tempUsers.setEmail(users.getEmail());
+
+        if(users.getPassword() != null && !users.getPassword().trim().isEmpty()) {
+            tempUsers.setPassword(users.getPassword());
+        }
 
         createUsers(tempUsers);
 

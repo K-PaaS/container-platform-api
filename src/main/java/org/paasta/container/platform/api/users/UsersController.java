@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.paasta.container.platform.api.common.CommonUtils.regexMatch;
+import static org.paasta.container.platform.api.common.CommonUtils.regexMatchByAdmin;
 
 /**
  * User Controller 클래스
@@ -279,7 +280,18 @@ public class UsersController {
                               @RequestBody Users users,
                               @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
 
-        // input parameter regex
+        // For Admin
+        if (isAdmin) {
+            if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatchByAdmin(users))) {
+                return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                        .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
+                        .httpStatusCode(400)
+                        .detailMessage(regexMatchByAdmin(users)).build();
+            }
+
+            return usersService.modifyUsersAdmin(cluster, userId, users);
+        }
+
         if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
             return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
                     .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
@@ -287,10 +299,6 @@ public class UsersController {
                     .detailMessage(regexMatch(users)).build();
         }
 
-        // For Admin
-        if (isAdmin) {
-            return usersService.modifyUsersAdmin(cluster, userId, users);
-        }
 
         return usersService.modifyUsers(userId, users);
     }
