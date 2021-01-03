@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
+import org.paasta.container.platform.api.storages.persistentVolumes.support.HostPathVolumeSource;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.ObjectReference;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumesSpec;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumesStatus;
@@ -55,7 +56,10 @@ public class PersistentVolumesAdmin {
 
     public Object getSource() {
         if (spec.getHostPath() == null) {
-            return NULL_REPLACE_TEXT;
+            HostPathVolumeSource hostPathVolumeSource = new HostPathVolumeSource();
+            hostPathVolumeSource.setType(NULL_REPLACE_TEXT);
+            hostPathVolumeSource.setPath(NULL_REPLACE_TEXT);
+            return hostPathVolumeSource;
         } else {
             String path = spec.getHostPath().getPath();
             String type = spec.getHostPath().getType();

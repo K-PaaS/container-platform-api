@@ -71,7 +71,7 @@ public class PersistentVolumeClaimsAdmin {
     }
 
     public String getStorageClasses() {
-        return spec.getStorageClassName();
+        return CommonUtils.procReplaceNullValue(spec.getStorageClassName());
     }
 
     public Map<String, Object> getCapacity() {
