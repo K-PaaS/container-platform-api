@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.events;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.events.support.EventInvolvedObject;
@@ -58,7 +59,7 @@ class EventsAdminItem {
     }
 
     public String getFilePath() {
-        return involvedObject.getFieldPath();
+        return  CommonUtils.procReplaceNullValue(involvedObject.getFieldPath());
     }
 
     public void setFilePath(String filePath) {
@@ -66,6 +67,7 @@ class EventsAdminItem {
     }
 
     public Integer getCount() {
+        if(count == null) { count = 0; }
         return count;
     }
 
@@ -74,7 +76,7 @@ class EventsAdminItem {
     }
 
     public String getFirstTimestamp() {
-        return firstTimestamp;
+        return CommonUtils.procReplaceNullValue(firstTimestamp);
     }
 
     public void setFirstTimestamp(String firstTimestamp) {
@@ -82,7 +84,7 @@ class EventsAdminItem {
     }
 
     public String getLastTimestamp() {
-        return lastTimestamp;
+        return CommonUtils.procReplaceNullValue(lastTimestamp);
     }
 
     public void setLastTimestamp(String lastTimestamp) {
