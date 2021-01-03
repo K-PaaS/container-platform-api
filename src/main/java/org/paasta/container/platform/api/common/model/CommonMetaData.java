@@ -37,6 +37,12 @@ public class CommonMetaData {
     @SerializedName("continue")
     private String _continue;
 
+    public List<CommonOwnerReferences> getOwnerReferences() {
+     if(ownerReferences == null) {ownerReferences = null;}
+     return ownerReferences;
+    }
+
+
     public String getCreationTimestamp() {
         return CommonUtils.procSetTimestamp(creationTimestamp);
     }

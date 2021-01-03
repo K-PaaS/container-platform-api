@@ -3,11 +3,13 @@ package org.paasta.container.platform.api.workloads.pods;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.paasta.container.platform.api.common.CommonUtils;
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.workloads.pods.support.PodsStatus;
 import org.paasta.container.platform.api.workloads.pods.support.Volume;
+
 
 import java.util.List;
 
@@ -86,6 +88,7 @@ public class PodsAdmin {
     }
 
     public String getControllers() {
+        if(metadata.getOwnerReferences() == null) {return Constants.NULL_REPLACE_TEXT;}
         return CommonUtils.procReplaceNullValue(metadata.getOwnerReferences().get(0).getName());
     }
 
