@@ -24,7 +24,8 @@ public class MessageConstant {
     public static final String MANDATORY_NAMESPACE_AND_ROLE = "Namespace와 Role 선택은 필수입니다.";
     public static final String UNAPPROACHABLE_USERS = "지정이 불가한 사용자입니다.";
     public static final String REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT = "Namespace 관리자 지정이 필요합니다.";
-
+    public static final String NAMESPACES_CANNOT_BE_CREATED = "리소스 생성이 불가한 Namespace 입니다.";
+    public static final String NAMESPACES_CANNOT_BE_MODIFIED = "리소스 수정이 불가한 Namespace 입니다.";
 
     public static final String CODE_ERROR = "요청 사항에 오류가 발생하였습니다. 관리자에게 문의하세요.";
     public static final String REQUEST_VALUE_IS_MISSING = "필수 사항이 누락되었습니다.";

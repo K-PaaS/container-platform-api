@@ -86,6 +86,10 @@ public class MethodHandler {
             }
         }
 
+        if(namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+           return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NAMESPACES_CANNOT_BE_CREATED, CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NAMESPACES_CANNOT_BE_CREATED);
+        }
+
         String requestResource;
         String requestURI = request.getRequestURI();
 
@@ -239,6 +243,12 @@ public class MethodHandler {
                 resourceName = Arrays.asList(parameterValues).get(i).toString();
             }
         }
+
+
+        if(namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NAMESPACES_CANNOT_BE_MODIFIED, CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NAMESPACES_CANNOT_BE_MODIFIED);
+        }
+
 
         String requestResource;
         String requestURI = request.getRequestURI();
