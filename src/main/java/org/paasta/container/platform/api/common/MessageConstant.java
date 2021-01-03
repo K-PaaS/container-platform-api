@@ -17,7 +17,7 @@ public class MessageConstant {
     public static final String NOT_EXIST_RESOURCE = "해당 리소스가 존재하지 않습니다.";
     public static final String NOT_EXIST = " 리소스 kind 가 존재하지 않습니다.";
     public static final String NOT_UPDATE_YAML = "에 대한 수정 yaml 형식이 아닙니다.";
-    public static final String RESOURCE_NAMED = "이름을 가진 리소스";
+    public static final String RESOURCE_NAMED = " 이름을 가진 리소스";
     public static final String INCLUDE_INACCESSIBLE_RESOURCES = "User 권한으로 생성이 불가한 리소스가 포함되어있습니다.";
     public static final String INVALID_YAML_FORMAT = "잘못된 YAML 형식입니다.";
     public static final String DO_NOT_DELETE_DEFAULT_RESOURCES = "해당 리소스는 삭제할 수 없습니다.";
