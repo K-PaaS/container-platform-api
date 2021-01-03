@@ -62,7 +62,7 @@ public class DeploymentsAdmin {
     }
 
     public Object getLabels() {
-        return CommonUtils.procReplaceNullValue(spec.getTemplate().getMetadata().getLabels());
+        return CommonUtils.procReplaceNullValue(metadata.getLabels());
     }
 
     public String getCreationTimestamp() {
