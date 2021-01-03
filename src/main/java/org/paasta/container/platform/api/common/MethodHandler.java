@@ -245,11 +245,6 @@ public class MethodHandler {
         }
 
 
-        if(namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
-            return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NAMESPACES_CANNOT_BE_MODIFIED, CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NAMESPACES_CANNOT_BE_MODIFIED);
-        }
-
-
         String requestResource;
         String requestURI = request.getRequestURI();
 
