@@ -291,17 +291,16 @@ public class LimitRangesService {
         List<String> dbLrNameList = defaultList.getItems().stream().map(LimitRangesDefault::getName).collect(Collectors.toList());
 
         for (LimitRangesDefault limitRangesDefault : defaultList.getItems()) {
-            String yn = CHECK_N;
 
-            if (k8sLrNameList.contains(limitRangesDefault.getName())) {
-                yn = CHECK_Y;
+            if (!k8sLrNameList.contains(limitRangesDefault.getName())) {
+                serversItemList.add(getLimitRangesDb(limitRangesDefault, CHECK_N));
             }
-            serversItemList.add(getLimitRangesDb(limitRangesDefault, yn));
+
         }
 
         if (adminItems.size() > 0) {
             for (LimitRangesListAdminItem i : adminItems) {
-                if (!dbLrNameList.contains(i.getName())) {
+
                     for (LimitRangesItem item : i.getSpec().getLimits()) {
                         List<String> typeList = Constants.LIMIT_RANGE_TYPE_LIST;
 
@@ -328,7 +327,7 @@ public class LimitRangesService {
                             }
                         }
                     }
-                }
+
             }
 
             serverList.setItems(serversItemList);
