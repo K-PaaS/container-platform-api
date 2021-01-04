@@ -303,20 +303,16 @@ public class ResourceQuotasService {
         List<String> dbRqNameList = resourceQuotasDefaultList.getItems().stream().map(ResourceQuotasDefault::getName).collect(Collectors.toList());
 
         for (ResourceQuotasDefault resourceQuotasDefault : resourceQuotasDefaultList.getItems()) {
-            String yn = CHECK_N;
+            if (!k8sRqNameList.contains(resourceQuotasDefault.getName())) {
+                CommonMetaData metadata = new CommonMetaData();
 
-            if (k8sRqNameList.contains(resourceQuotasDefault.getName())) {
-                yn = CHECK_Y;
+                metadata.setName(resourceQuotasDefault.getName());
+                metadata.setCreationTimestamp(resourceQuotasDefault.getCreationTimestamp());
+
+                resourceQuotasDefault.setCheckYn(CHECK_N);
+                resourceQuotasDefault.setMetadata(metadata);
+                quotasDefaultList.add(resourceQuotasDefault);
             }
-
-            CommonMetaData metadata = new CommonMetaData();
-
-            metadata.setName(resourceQuotasDefault.getName());
-            metadata.setCreationTimestamp(resourceQuotasDefault.getCreationTimestamp());
-
-            resourceQuotasDefault.setCheckYn(yn);
-            resourceQuotasDefault.setMetadata(metadata);
-            quotasDefaultList.add(resourceQuotasDefault);
         }
 
         if (resourceQuotasList.getItems().size() > 0) {
@@ -324,10 +320,8 @@ public class ResourceQuotasService {
                 ObjectMapper mapper = new ObjectMapper();
                 String status = mapper.writeValueAsString(i.getConvertStatus());
 
-                if (!dbRqNameList.contains(i.getName())) {
-                    quotasDefault = new ResourceQuotasDefault(i.getName(), status, CHECK_Y, i.getMetadata(), i.getCreationTimestamp());
-                    quotasDefaultList.add(quotasDefault);
-                }
+                quotasDefault = new ResourceQuotasDefault(i.getName(), status, CHECK_Y, i.getMetadata(), i.getCreationTimestamp());
+                quotasDefaultList.add(quotasDefault);
 
             }
 
