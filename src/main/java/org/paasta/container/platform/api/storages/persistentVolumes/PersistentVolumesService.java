@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.storages.persistentVolumes;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumeType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -142,6 +143,7 @@ public class PersistentVolumesService {
                 Constants.RESULT_STATUS_SUCCESS, Constants.URI_STORAGES_PERSISTENT_VOLUMES_DETAIL.replace("{persistentVolumeName:.+}", resourceName));
     }
 
+
     /**
      * PersistentVolumes 상세 조회(Get PersistentVolumes detail)
      * (Admin Portal)
@@ -167,12 +169,12 @@ public class PersistentVolumesService {
         PersistentVolumesAdmin persistentVolumesAdmin = commonService.setResultObject(responseMap, PersistentVolumesAdmin.class);
         persistentVolumesAdmin = commonService.annotationsProcessing(persistentVolumesAdmin, PersistentVolumesAdmin.class);
 
-
         List<Map> pvSource = new ArrayList<>();
 
-        List<String> persistentVolumeType = propertyService.getCpPersistentVolumeType();
+        for(PersistentVolumeType pvType : PersistentVolumeType.class.getEnumConstants() ) {
 
-        for(String type : persistentVolumeType) {
+            String type = pvType.name();
+
             Map volume = commonService.getField(type, persistentVolumesAdmin.getSpec());
 
             if(volume != null) {
@@ -180,30 +182,32 @@ public class PersistentVolumesService {
                 LinkedHashMap volumeLinkedMap = new LinkedHashMap<>();
 
                 if(type.equals(Constants.PERSISTENT_HOST_PATH_FIELD)) {
-                    volumeLinkedMap.put(Constants.TYPE, Constants.PERSISTENT_HOST_PATH_TYPE);
+                    volumeLinkedMap.put(Constants.TYPE, pvType.getName());
                     volumeLinkedMap.put(Constants.PATH, volume.get(Constants.PATH));
                 }
                 else {
-                    volumeLinkedMap.put(Constants.TYPE, type);
+                    volumeLinkedMap.put(Constants.TYPE, pvType.getName());
                     volumeLinkedMap.putAll(volume);
                 }
-
-
 
                 pvSource.add(volumeLinkedMap);
             }
 
         }
 
+
         if (pvSource.size() == 0 ) {
             LinkedHashMap volumeLinkedMap = new LinkedHashMap<>();
             volumeLinkedMap.put(Constants.TYPE, Constants.NULL_REPLACE_TEXT);
+            pvSource.add(volumeLinkedMap);
         }
+
 
         persistentVolumesAdmin.setSource(pvSource);
 
         return commonService.setResultModel(persistentVolumesAdmin, Constants.RESULT_STATUS_SUCCESS);
     }
+
 
 
 }

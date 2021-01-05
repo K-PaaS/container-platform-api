@@ -28,7 +28,7 @@ public class PersistentVolumesSpec {
     private Object capacity;
     private String persistentVolumeReclaimPolicy;
 
-    //PersistentVolume type
+    // persistentVolume type
 
     private Map awsElasticBlockStore;
     private Map azureDisk;

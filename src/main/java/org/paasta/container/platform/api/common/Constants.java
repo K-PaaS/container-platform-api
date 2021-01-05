@@ -195,7 +195,6 @@ public class Constants {
     public static final String separatorString =  "," ;
 
     public static final Integer EVENT_DEFAULT_LIMIT  = 5;
-    public static final String PERSISTENT_HOST_PATH_TYPE = "Hostpath";
     public static final String PERSISTENT_HOST_PATH_FIELD = "hostPath";
 
     public static final String REPLICASETS_FOR_SELECTOR = "replicaSets";

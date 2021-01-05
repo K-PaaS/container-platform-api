@@ -71,9 +71,6 @@ public class PropertyService {
     @Value("${cpAnnotations.configuration}")
     List<String> cpAnnotationsConfiguration;
 
-    @Value("${cpPersistentVolume.type}")
-    List<String> cpPersistentVolumeType;
-
     //service
     @Value("${cpMaster.api.list.services.list}")
     private String cpMasterApiListServicesListUrl;
