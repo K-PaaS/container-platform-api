@@ -23,6 +23,8 @@ public class Constants {
 
     // for kubernetes cli user
     public static final String CHECK_K8S = "K";
+    public static final String TYPE = "type" ;
+    public static final String PATH= "path" ;
 
     public static final String TARGET_CP_MASTER_API = "cpMasterApi";
     public static final String TARGET_COMMON_API = "commonApi";
@@ -193,7 +195,8 @@ public class Constants {
     public static final String separatorString =  "," ;
 
     public static final Integer EVENT_DEFAULT_LIMIT  = 5;
-    public static final String PERSISTENT_VOLUME_TYPE = "Hostpath";
+    public static final String PERSISTENT_HOST_PATH_TYPE = "Hostpath";
+    public static final String PERSISTENT_HOST_PATH_FIELD = "hostPath";
 
     public static final String REPLICASETS_FOR_SELECTOR = "replicaSets";
     public static final String DEPLOYMENTS_FOR_SELECTOR = "deployments";

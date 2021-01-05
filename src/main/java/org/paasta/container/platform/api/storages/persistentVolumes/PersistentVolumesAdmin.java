@@ -2,19 +2,17 @@ package org.paasta.container.platform.api.storages.persistentVolumes;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+
 import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonAnnotations;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.storages.persistentVolumes.support.HostPathVolumeSource;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.ObjectReference;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumesSpec;
 import org.paasta.container.platform.api.storages.persistentVolumes.support.PersistentVolumesStatus;
 
 import java.util.List;
+import java.util.Map;
 
-import static org.paasta.container.platform.api.common.Constants.NULL_REPLACE_TEXT;
-import static org.paasta.container.platform.api.common.Constants.PERSISTENT_VOLUME_TYPE;
 
 /**
  * PersistentVolumes Admin Model 클래스
@@ -42,7 +40,7 @@ public class PersistentVolumesAdmin {
     private String storageClasses;
     private String accessMode;
 
-    private Object source;
+    private List<Map> source;
     private Object capacity;
 
     @JsonIgnore
@@ -53,23 +51,6 @@ public class PersistentVolumesAdmin {
 
     @JsonIgnore
     private PersistentVolumesStatus status;
-
-    public Object getSource() {
-        if (spec.getHostPath() == null) {
-            HostPathVolumeSource hostPathVolumeSource = new HostPathVolumeSource();
-            hostPathVolumeSource.setType(NULL_REPLACE_TEXT);
-            hostPathVolumeSource.setPath(NULL_REPLACE_TEXT);
-            return hostPathVolumeSource;
-        } else {
-            String path = spec.getHostPath().getPath();
-            String type = spec.getHostPath().getType();
-
-            if ((StringUtils.isNotEmpty(path)) && (StringUtils.isNotEmpty(type)) || type.equals("")) {
-                spec.getHostPath().setType(PERSISTENT_VOLUME_TYPE);
-            }
-            return spec.getHostPath();
-        }
-    }
 
     public Object getCapacity() {
         return CommonUtils.procReplaceNullValue(spec.getCapacity());

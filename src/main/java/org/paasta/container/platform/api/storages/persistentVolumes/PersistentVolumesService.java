@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * PersistentVolumes Service 클래스
@@ -167,6 +166,41 @@ public class PersistentVolumesService {
 
         PersistentVolumesAdmin persistentVolumesAdmin = commonService.setResultObject(responseMap, PersistentVolumesAdmin.class);
         persistentVolumesAdmin = commonService.annotationsProcessing(persistentVolumesAdmin, PersistentVolumesAdmin.class);
+
+
+        List<Map> pvSource = new ArrayList<>();
+
+        List<String> persistentVolumeType = propertyService.getCpPersistentVolumeType();
+
+        for(String type : persistentVolumeType) {
+            Map volume = commonService.getField(type, persistentVolumesAdmin.getSpec());
+
+            if(volume != null) {
+
+                LinkedHashMap volumeLinkedMap = new LinkedHashMap<>();
+
+                if(type.equals(Constants.PERSISTENT_HOST_PATH_FIELD)) {
+                    volumeLinkedMap.put(Constants.TYPE, Constants.PERSISTENT_HOST_PATH_TYPE);
+                    volumeLinkedMap.put(Constants.PATH, volume.get(Constants.PATH));
+                }
+                else {
+                    volumeLinkedMap.put(Constants.TYPE, type);
+                    volumeLinkedMap.putAll(volume);
+                }
+
+
+
+                pvSource.add(volumeLinkedMap);
+            }
+
+        }
+
+        if (pvSource.size() == 0 ) {
+            LinkedHashMap volumeLinkedMap = new LinkedHashMap<>();
+            volumeLinkedMap.put(Constants.TYPE, Constants.NULL_REPLACE_TEXT);
+        }
+
+        persistentVolumesAdmin.setSource(pvSource);
 
         return commonService.setResultModel(persistentVolumesAdmin, Constants.RESULT_STATUS_SUCCESS);
     }

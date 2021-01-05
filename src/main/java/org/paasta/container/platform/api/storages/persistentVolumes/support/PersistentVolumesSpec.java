@@ -27,5 +27,35 @@ public class PersistentVolumesSpec {
     private ObjectReference claimRef;
     private Object capacity;
     private String persistentVolumeReclaimPolicy;
-    private HostPathVolumeSource hostPath;
+
+    //PersistentVolume type
+
+    private Map awsElasticBlockStore;
+    private Map azureDisk;
+    private Map azureFile;
+    private Map cephfs;
+    private Map cinder;
+    private Map csi;
+    private Map fc;
+    private Map flexVolume;
+    private Map flocker;
+    private Map gcePersistentDisk;
+    private Map glusterfs;
+    private Map hostPath;
+    private Map iscsi;
+    private Map local;
+    private Map nfs;
+    private Map photonPersistentDisk;
+    private Map portworxVolume;
+    private Map quobyte;
+    private Map rbd;
+    private Map scaleIO;
+    private Map storageos;
+    private Map vsphereVolume;
+
+
+
+
+
+
 }
