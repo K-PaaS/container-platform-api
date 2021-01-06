@@ -182,12 +182,26 @@ public class PersistentVolumesService {
                 LinkedHashMap volumeLinkedMap = new LinkedHashMap<>();
 
                 if(type.equals(Constants.PERSISTENT_HOST_PATH_FIELD)) {
+                    String path = Constants.NULL_REPLACE_TEXT;
+
+                    if(volume.get(Constants.PATH) != null) {
+                        path = volume.get(Constants.PATH).toString();
+                    }
+
                     volumeLinkedMap.put(Constants.TYPE, pvType.getName());
-                    volumeLinkedMap.put(Constants.PATH, volume.get(Constants.PATH));
+                    volumeLinkedMap.put(Constants.PATH, path);
                 }
                 else {
                     volumeLinkedMap.put(Constants.TYPE, pvType.getName());
-                    volumeLinkedMap.putAll(volume);
+
+                    for( Object key : volume.keySet()){
+                        String value = Constants.NULL_REPLACE_TEXT;
+
+                        if(volume.get(key) != null) {
+                            value = volume.get(key).toString();
+                        }
+                        volumeLinkedMap.put(key.toString(), value);
+                    }
                 }
 
                 pvSource.add(volumeLinkedMap);
