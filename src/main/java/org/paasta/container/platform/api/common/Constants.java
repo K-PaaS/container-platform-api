@@ -108,6 +108,7 @@ public class Constants {
     public static final String URI_COMMON_API_USERS_LIST =  "/users";
     public static final String URI_COMMON_API_USERS_NAMES =  "/users/names";
     public static final String URI_COMMON_API_USERS_LIST_BY_CLUSTER = "/clusters/{cluster:.+}/users";
+    public static final String URI_COMMON_API_USERS_LIST_BY_CLUSTER_TEMPNAMESPACE = "/clusters/{cluster:.+}/users/tempNamespace";
     public static final String URI_COMMON_API_USER_DETAIL_LOGIN =  "/users/login/{userId:.+}";
     public static final String URI_COMMON_API_USERS_LIST_BY_NAMESPACE = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users";
     public static final String URI_COMMON_API_USERS_NAMES_LIST = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/names";

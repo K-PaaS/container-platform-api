@@ -95,10 +95,24 @@ public class UsersService {
             throw new IllegalArgumentException(MessageConstant.USER_TYPE_ILLEGALARGUMENT);
         }
 
+
         String reqUrlParam = "?userType=" + userType + "&searchParam=" + searchName + "&orderBy=" + orderBy + "&order=" + order;
         UsersListAdmin usersListAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", cluster) + reqUrlParam, HttpMethod.GET, null, UsersListAdmin.class);
 
-        if (SELECTED_USER.equalsIgnoreCase(userType)) {
+
+        if (SELECTED_USER.equalsIgnoreCase(userType))  {
+            String requesetParam = "?searchParam=" + searchName;
+
+            // get only temp namesapce users
+            UsersListAdmin tempUserListAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER_TEMPNAMESPACE.replace("{cluster:.+}", cluster) + requesetParam, HttpMethod.GET, null, UsersListAdmin.class);
+
+            for( UsersListAdmin.UserDetail tempUser : tempUserListAdmin.getItems()) {
+                tempUser.setCpNamespace(NULL_REPLACE_TEXT);
+                tempUser.setRoleSetCode(NULL_REPLACE_TEXT);
+                tempUser.setUserType(NULL_REPLACE_TEXT);
+                usersListAdmin.getItems().add(tempUser);
+             }
+
             //find cluster user id
             List<UsersListAdmin.UserDetail> clusterUserIdList = usersListAdmin.getItems().stream().filter(x->x.getUserType().matches(Constants.AUTH_CLUSTER_ADMIN)).collect(Collectors.toList());
 
@@ -107,6 +121,7 @@ public class UsersService {
                 usersListAdmin.getItems().removeIf( x->x.getUserId().equals(clusterUser.getUserId()));
             }
         }
+
 
         // convert user type name
         for (UsersListAdmin.UserDetail userDetail : usersListAdmin.getItems()) {
@@ -117,6 +132,8 @@ public class UsersService {
                 userDetail.setUserType(AUTH_NAMESPACE_ADMIN_CG);
             } else if (userDetail.getUserType().equals(AUTH_USER)) {
                 userDetail.setUserType(AUTH_USER_CG);
+            } else if(userDetail.getUserType().equals(NULL_REPLACE_TEXT)) {
+                userDetail.setUserType(NULL_REPLACE_TEXT);
             } else {
                 userDetail.setUserType(AUTH_USER_CG);
             }
