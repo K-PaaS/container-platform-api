@@ -7,6 +7,7 @@ import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.secret.Secrets;
+import org.paasta.container.platform.api.users.serviceAccount.ServiceAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -228,18 +229,34 @@ public class UsersService {
         for (Users users : list.getItems()) {
             if (!propertyService.getIgnoreNamespaceList().contains(users.getCpNamespace())) {
                 usersDetails = commonService.convert(users, UsersAdmin.UsersDetails.class);
-                Object obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl().replace("{namespace}", usersDetails.getCpNamespace()).replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class);
+
+                //serviceAccount get
+                Object sa_obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersGetUrl()
+                        .replace("{namespace}", usersDetails.getCpNamespace())
+                        .replace("{name}", users.getServiceAccountName()), HttpMethod.GET, null, Map.class);
+
+                if (!(sa_obj instanceof ResultStatus)) {
+                    // k8s에서 serviceAccount 정보 조회(Get SA from k8s)
+                    ServiceAccount serviceAccount = commonService.setResultObject(sa_obj, ServiceAccount.class);
+                    usersDetails.setServiceAccountUid(serviceAccount.getMetadata().getUid());
+                }
+
+
+                //secret get
+                Object obj = restTemplateService.sendAdmin(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListSecretsGetUrl()
+                        .replace("{namespace}", usersDetails.getCpNamespace())
+                        .replace("{name}", usersDetails.getSaSecret()), HttpMethod.GET, null, Map.class);
 
                 if (!(obj instanceof ResultStatus)) {
                     // k8s에서 secret 정보 조회(Get secret from k8s)
                     Secrets secrets = (Secrets) commonService.setResultModel(commonService.setResultObject(obj, Secrets.class), Constants.RESULT_STATUS_SUCCESS);
-                    usersDetails.setServiceAccountUid(secrets.getMetadata().getUid());
                     usersDetails.setSecrets(UsersAdmin.Secrets.builder()
                             .saSecret(secrets.getMetadata().getName())
                             .secretLabels(secrets.getMetadata().getLabels())
-                            .secretType(secrets.getType()).build());
+                            .secretType(secrets.getType()).build()); }
 
-                }
+
+
                 usersDetailsList.add(usersDetails);
             }
         }
