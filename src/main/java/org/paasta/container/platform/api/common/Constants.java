@@ -254,6 +254,9 @@ public class Constants {
     public static final ResultStatus REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT,
             CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT, null );
 
+    public static final ResultStatus UNABLE_TO_CREATE_RESOURCE_NAME = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_RESOURCE_NAME,
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.NOT_ALLOWED_RESOURCE_NAME, null );
+
     public Constants() {
         throw new IllegalStateException();
     }
