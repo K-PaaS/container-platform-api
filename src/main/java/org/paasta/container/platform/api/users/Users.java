@@ -28,6 +28,7 @@ public class Users {
     public long id;
     public String userId;
     public String password;
+    public String passwordConfirm;
     public String email;
     public String clusterName;
     public String clusterApiUrl;
@@ -62,6 +63,10 @@ public class Users {
 
     public String getPassword() {
         return CommonUtils.procReplaceNullValue(password);
+    }
+
+    public String getPasswordConfirm() {
+        return CommonUtils.procReplaceNullValue(passwordConfirm);
     }
 
     public String getEmail() {
