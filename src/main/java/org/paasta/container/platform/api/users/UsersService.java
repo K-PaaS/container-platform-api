@@ -449,11 +449,16 @@ public class UsersService {
         tempUsers.setUserId(users.getUserId());
         tempUsers.setEmail(users.getEmail());
 
-        if(users.getPassword() != null && !users.getPassword().trim().isEmpty()) {
+         if(users.getPassword().equals(NULL_REPLACE_TEXT)) {
+            //기존 패스워드 유지
+            createUsersForEncode(tempUsers);
+        }
+        else if(users.getPassword() != null && !users.getPassword().trim().isEmpty() && !users.getPassword().equals(NULL_REPLACE_TEXT)) {
+            //신규 패스워드로 변경;
             tempUsers.setPassword(users.getPassword());
+            createUsers(tempUsers);
         }
 
-        createUsers(tempUsers);
 
         List<UsersAdmin.UsersDetails> usersDetails = ((UsersAdmin) getUsersInMultiNamespace(cluster, users.getServiceAccountName(), 0, 0)).getItems();
         List<Users.NamespaceRole> selectValues = users.getSelectValues();
@@ -828,4 +833,17 @@ public class UsersService {
                 .replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
         return (Users) commonService.setResultModel(users, Constants.RESULT_STATUS_SUCCESS);
     }
+
+
+    /**
+     * 사용자 DB 저장(Save Users DB) Encode 용
+     *
+     * @param users the users
+     * @return return is succeeded
+     */
+    public ResultStatus createUsersForEncode(Users users) {
+        String param = "?encode=" + CHECK_Y;
+        return restTemplateService.sendAdmin(TARGET_COMMON_API, "/users" + param, HttpMethod.POST, users, ResultStatus.class);
+    }
+
 }
