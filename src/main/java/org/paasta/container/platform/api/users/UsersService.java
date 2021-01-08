@@ -97,16 +97,17 @@ public class UsersService {
         }
 
 
+        // 네임스페이스 & 롤 바인딩 된 사용자 목록 조회 (클러스터 관리자 OR 일반 사용자)
         String reqUrlParam = "?userType=" + userType + "&searchParam=" + searchName + "&orderBy=" + orderBy + "&order=" + order;
         UsersListAdmin usersListAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER.replace("{cluster:.+}", cluster) + reqUrlParam, HttpMethod.GET, null, UsersListAdmin.class);
-
 
         if (SELECTED_USER.equalsIgnoreCase(userType))  {
             String requesetParam = "?searchParam=" + searchName;
 
-            // get only temp namesapce users
+            // 네임스페이스 & 롤 바인딩 되지 않은 TEMP NAMESPACE 에 속한 사용자 목록 조회
             UsersListAdmin tempUserListAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_CLUSTER_TEMPNAMESPACE.replace("{cluster:.+}", cluster) + requesetParam, HttpMethod.GET, null, UsersListAdmin.class);
 
+            // 네임스페이스 & 롤 바인딩 된 사용자 목록 + TEMP 사용자 목록
             for( UsersListAdmin.UserDetail tempUser : tempUserListAdmin.getItems()) {
                 tempUser.setCpNamespace(NULL_REPLACE_TEXT);
                 tempUser.setRoleSetCode(NULL_REPLACE_TEXT);
@@ -114,17 +115,17 @@ public class UsersService {
                 usersListAdmin.getItems().add(tempUser);
              }
 
-            //find cluster user id
+            //클러스터 관리자 아이디 조회
             List<UsersListAdmin.UserDetail> clusterUserIdList = usersListAdmin.getItems().stream().filter(x->x.getUserType().matches(Constants.AUTH_CLUSTER_ADMIN)).collect(Collectors.toList());
 
-            // remove by cluster user id
+            // 사용자 목록에서 클러스터 관리자 아이디 제거
             for(UsersListAdmin.UserDetail clusterUser : clusterUserIdList) {
                 usersListAdmin.getItems().removeIf( x->x.getUserId().equals(clusterUser.getUserId()));
             }
         }
 
 
-        // convert user type name
+        // 사용자 타입 명 변경
         for (UsersListAdmin.UserDetail userDetail : usersListAdmin.getItems()) {
 
             if (userDetail.getUserType().equals(Constants.AUTH_CLUSTER_ADMIN)) {
@@ -140,7 +141,7 @@ public class UsersService {
             }
         }
 
-        //users list paging
+        // 페이징 적용
         usersListAdmin = commonService.userListProcessing(usersListAdmin, offset, limit, orderBy, order, searchName, UsersListAdmin.class);
 
         return commonService.setResultModel(commonService.setResultObject(usersListAdmin, UsersListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
