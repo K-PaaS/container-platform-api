@@ -65,13 +65,28 @@ public class UsersService {
     /**
      * Users 전체 목록 조회(Get Users list)
      *
+     * @param cluster the cluster
      * @param namespace the namespace
+     * @param userId the userId
      * @return the users list
      */
-    public UsersListAdmin getUsersAll(String namespace) {
+    public UsersListAdmin getUsersAll(String cluster,String namespace, String userId) {
+
+        Users users = getUsers(cluster, namespace, userId);
+
+        if(users == null || !users.getUserType().equals(AUTH_NAMESPACE_ADMIN)) {
+            UsersListAdmin usersListAdmin = new UsersListAdmin();
+            usersListAdmin.setResultCode(RESULT_STATUS_FAIL);
+            usersListAdmin.setResultMessage(CommonStatusCode.FORBIDDEN.getMsg());
+            usersListAdmin.setDetailMessage(CommonStatusCode.FORBIDDEN.getMsg());
+            return usersListAdmin;
+        }
+
         UsersListAdmin rsDb = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST + "?namespace=" + namespace, HttpMethod.GET, null, UsersListAdmin.class);
         return (UsersListAdmin) commonService.setResultModel(commonService.setResultObject(rsDb, UsersListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
+
+
 
 
     /**
@@ -634,7 +649,7 @@ public class UsersService {
      * @return return is succeeded
      */
     public ResultStatus modifyUsersConfig(String cluster, String namespace, List<Users> users) {
-        ResultStatus rsDb = null;
+        ResultStatus rsDb = new ResultStatus();
 
         List<Users> defaultUserList = getUsersListByNamespace(cluster, namespace).getItems();
 

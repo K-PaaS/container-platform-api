@@ -73,13 +73,14 @@ public class UsersController {
                                @RequestParam(required = false, defaultValue = "0") int offset,
                                @RequestParam(required = false, defaultValue = "created") String orderBy,
                                @RequestParam(required = false, defaultValue = "desc") String order,
+                               @ApiIgnore @RequestParam(required = false, name = "userId") String userId,
                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
             return usersService.getUsersAllByCluster(cluster, userType, searchName, limit, offset, orderBy, order);
         }
 
-        return usersService.getUsersAll(namespace);
+        return usersService.getUsersAll(cluster,namespace,userId);
     }
 
     /**

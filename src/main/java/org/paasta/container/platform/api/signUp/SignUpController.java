@@ -85,7 +85,7 @@ public class SignUpController {
         }
 
         // for Admin
-        if(users.getClusterToken() != null) {
+        if(!users.getClusterToken().equals(Constants.NULL_REPLACE_TEXT)) {
             Object obj = stringNullCheck(requestUsers);
             if(obj instanceof ResultStatus) {
                 return (ResultStatus) obj;
