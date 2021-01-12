@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.clusters.clusters.ClustersService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersListAdmin;
 import org.paasta.container.platform.api.users.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +72,14 @@ public class SignUpAdminService {
      */
     public ResultStatus signUpAdminUsers(Users users) {
         ResultStatus rsDb = new ResultStatus();
+
+        // 클러스터 관리자 계정이 이미 등록되어있는지 확인
+        UsersListAdmin clusterAdminCheck = getClusterAdminRegister();
+
+        if(clusterAdminCheck.getItems().size() > 0) {
+            return Constants.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED;
+        }
+
 
         String namespace = users.getCpNamespace();
         String username = users.getUserId();
@@ -146,6 +155,21 @@ public class SignUpAdminService {
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);
+    }
+
+
+
+    /**
+     * 클러스터 관리자 등록여부 조회(Cluster Admin Registration Check)
+     *
+     * @return the users
+     */
+    public UsersListAdmin getClusterAdminRegister() {
+
+        // 클러스터 관리자 등록 여부 조회
+        UsersListAdmin clusterAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_CHECK_CLUSTER_ADMIN_REGISTER, HttpMethod.GET, null, UsersListAdmin.class);
+
+        return clusterAdmin;
     }
 
 }

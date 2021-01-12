@@ -21,6 +21,10 @@ public class Constants {
     public static final String CHECK_Y = "Y";
     public static final String CHECK_N = "N";
 
+    public static final String CHECK_TRUE = "true";
+    public static final String CHECK_FALSE = "false";
+
+
     // for kubernetes cli user
     public static final String CHECK_K8S = "K";
     public static final String TYPE = "type" ;
@@ -109,6 +113,9 @@ public class Constants {
     public static final String URI_COMMON_API_USERS_NAMES =  "/users/names";
     public static final String URI_COMMON_API_USERS_LIST_BY_CLUSTER = "/clusters/{cluster:.+}/users";
     public static final String URI_COMMON_API_USERS_LIST_BY_CLUSTER_TEMPNAMESPACE = "/clusters/{cluster:.+}/users/tempNamespace";
+    public static final String URI_COMMON_API_CHECK_CLUSTER_ADMIN_REGISTER = "/clusterAdminRegisterCheck";
+
+
     public static final String URI_COMMON_API_USER_DETAIL_LOGIN =  "/users/login/{userId:.+}";
     public static final String URI_COMMON_API_USERS_LIST_BY_NAMESPACE = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users";
     public static final String URI_COMMON_API_USERS_NAMES_LIST = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/names";
@@ -257,6 +264,10 @@ public class Constants {
 
     public static final ResultStatus UNABLE_TO_CREATE_RESOURCE_NAME = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_RESOURCE_NAME,
             CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.NOT_ALLOWED_RESOURCE_NAME, null );
+
+    public static final ResultStatus CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE,
+            CommonStatusCode.CONFLICT.getCode(),MessageConstant.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE, null );
+
 
     public Constants() {
         throw new IllegalStateException();

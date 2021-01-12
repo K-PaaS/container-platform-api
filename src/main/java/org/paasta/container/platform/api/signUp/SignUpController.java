@@ -11,16 +11,12 @@ import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.config.NoAuth;
 import org.paasta.container.platform.api.users.Users;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.paasta.container.platform.api.common.CommonUtils.regexMatch;
-import static org.paasta.container.platform.api.common.CommonUtils.stringNullCheck;
+import static org.paasta.container.platform.api.common.CommonUtils.*;
 
 /**
  * Sign Up Controller 클래스
@@ -53,27 +49,23 @@ public class SignUpController {
      * 회원가입(Sign Up)
      *
      * @param requestUsers the requestUsers
+     * @param isAdmin the isAdmin
      * @return the resultStatus
      */
     @ApiOperation(value = "회원가입(Sign Up)", nickname = "signUpUsers")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "requestUsers", value = "요청한 유저", required = true, dataType = "Object", paramType = "body")
+            @ApiImplicitParam(name = "requestUsers", value = "요청한 유저", required = true, dataType = "Object", paramType = "body"),
+            @ApiImplicitParam(name = "isAdmin", value = "관리자 여부 (true/false)", required = true, dataType = "string", paramType = "query")
     })
     @NoAuth
     @PostMapping(value = Constants.URI_SIGN_UP)
-    public ResultStatus signUpUsers(@RequestBody Object requestUsers) {
+    public ResultStatus signUpUsers(@RequestBody Object requestUsers,
+                                    @RequestParam(required = false, name = "isAdmin", defaultValue = "false") String isAdmin) {
+
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> map = objectMapper.convertValue(requestUsers, Map.class);
 
         Users users = objectMapper.convertValue(map, Users.class);
-
-        // input parameter regex
-        if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
-            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                    .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
-                    .httpStatusCode(400)
-                    .detailMessage(regexMatch(users)).build();
-        }
 
 
         // id duplication check
@@ -84,17 +76,33 @@ public class SignUpController {
                     .detailMessage(MessageConstant.DUPLICATE_USER_ID).build();
         }
 
-        // for Admin
-        if(!users.getClusterToken().equals(Constants.NULL_REPLACE_TEXT)) {
-            Object obj = stringNullCheck(requestUsers);
-            if(obj instanceof ResultStatus) {
-                return (ResultStatus) obj;
+
+        // For Cluster Admin
+        if(isAdmin.toLowerCase().equals(Constants.CHECK_TRUE)) {
+
+            // input parameter regex
+            if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatchAdminSignUp(users))) {
+                return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                        .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
+                        .httpStatusCode(400)
+                        .detailMessage(regexMatchAdminSignUp(users)).build();
             }
+
 
             return signUpAdminService.signUpAdminUsers(users);
         }
 
-        return signUpUserService.signUpUsers(users);
+        // For User
+            if(!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
+                return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                        .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
+                        .httpStatusCode(400)
+                        .detailMessage(regexMatch(users)).build();
+            }
+
+            return signUpUserService.signUpUsers(users);
+
+
     }
 
 

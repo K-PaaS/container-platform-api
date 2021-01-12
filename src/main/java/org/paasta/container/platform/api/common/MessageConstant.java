@@ -50,6 +50,8 @@ public class MessageConstant {
     public static final String LOGIN_TOKEN_EXPIRED_MESSAGE = "Access Token has Expired";
     public static final String LOGIN_INVALID_CREDENTIALS_MESSAGE = "Invalid Credentials";
 
+    //sign up
+    public static final String  CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE = "Kubernetes Cluster 관리자 계정이 이미 등록되어있습니다.";
 
 
 
