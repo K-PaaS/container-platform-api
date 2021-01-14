@@ -9,7 +9,9 @@ import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasS
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.signUp.SignUpAdminService;
 import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersListAdmin;
 import org.paasta.container.platform.api.users.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +47,7 @@ public class NamespacesService {
     private final AccessTokenService accessTokenService;
     private final ResourceQuotasService resourceQuotasService;
     private final LimitRangesService limitRangesService;
+    private final SignUpAdminService signUpAdminService;
 
     /**
      * Instantiates a new Namespace service
@@ -59,7 +62,9 @@ public class NamespacesService {
      * @param limitRangesService    the limit ranges service
      */
     @Autowired
-    public NamespacesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, ResourceYamlService resourceYamlService, UsersService usersService, AccessTokenService accessTokenService, ResourceQuotasService resourceQuotasService, LimitRangesService limitRangesService) {
+    public NamespacesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService,
+                             ResourceYamlService resourceYamlService, UsersService usersService, AccessTokenService accessTokenService,
+                             ResourceQuotasService resourceQuotasService, LimitRangesService limitRangesService,SignUpAdminService signUpAdminService ) {
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.propertyService = propertyService;
@@ -68,6 +73,7 @@ public class NamespacesService {
         this.accessTokenService = accessTokenService;
         this.resourceQuotasService = resourceQuotasService;
         this.limitRangesService = limitRangesService;
+        this.signUpAdminService = signUpAdminService;
     }
 
     /**
@@ -262,15 +268,26 @@ public class NamespacesService {
             return Constants.NOT_MATCH_NAMESPACES;
         }
 
-        // Modify ResourceQuotas , LimitRanges
-        modifyResourceQuotas(namespace, initTemplate.getResourceQuotasList());
-        modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
-
         String nsAdminUserId = initTemplate.getNsAdminUserId();
 
         if(nsAdminUserId.trim().isEmpty() || nsAdminUserId == null ) {
             return Constants.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT;
         }
+
+         UsersListAdmin clusterAdminInfo = signUpAdminService.getClusterAdminRegister();
+
+         for(UsersListAdmin.UserDetail clusterAdmin : clusterAdminInfo.getItems()) {
+               if(clusterAdmin.getUserId().equals(nsAdminUserId)) {
+                   if(clusterAdmin.getCpNamespace().equals(namespace)) {
+                       return Constants.UNAPPROACHABLE_USERS;
+                   }
+               }
+        }
+
+        // Modify ResourceQuotas , LimitRanges
+        modifyResourceQuotas(namespace, initTemplate.getResourceQuotasList());
+        modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
+
 
         Users newNsUser = null;
 

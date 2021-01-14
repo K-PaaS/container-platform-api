@@ -532,7 +532,6 @@ public class UsersService {
             updateUser.setUserId(users.getUserId());
             updateUser.setPassword(users.getPassword());
             updateUser.setEmail(users.getEmail());
-            updateUser.setUserType(AUTH_USER);
             rsDb = createUsers(updateUser);
         }
 

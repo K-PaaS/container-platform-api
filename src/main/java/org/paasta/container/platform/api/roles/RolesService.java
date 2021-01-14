@@ -3,8 +3,10 @@ package org.paasta.container.platform.api.roles;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
+import org.paasta.container.platform.api.signUp.SignUpAdminService;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
+import org.paasta.container.platform.api.users.UsersListAdmin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class RolesService {
     private final RestTemplateService restTemplateService;
     private final CommonService commonService;
     private final PropertyService propertyService;
-
+    private final SignUpAdminService signUpAdminService;
     /**
      * Instantiates a new Roles service
      *
@@ -38,10 +40,11 @@ public class RolesService {
      * @param propertyService     the property service
      */
     @Autowired
-    public RolesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService) {
+    public RolesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, SignUpAdminService signUpAdminService) {
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.propertyService = propertyService;
+        this.signUpAdminService = signUpAdminService;
     }
 
     /**
@@ -354,6 +357,16 @@ public class RolesService {
                 }
             }
         }
+
+
+        UsersListAdmin clusterAdminInfo = signUpAdminService.getClusterAdminRegister();
+
+        for(UsersListAdmin.UserDetail clusterAdmin : clusterAdminInfo.getItems()) {
+            if(userId.equals(clusterAdmin.getUserId())) {
+                rolesListAllNamespaces.getItems().removeIf(x -> x.getNamespace().equals(clusterAdmin.getCpNamespace()));
+            }
+        }
+
 
         rolesListAllNamespaces = commonService.resourceListProcessing(rolesListAllNamespaces, offset, limit, orderBy, order, searchName, RolesListAllNamespaces.class);
         return commonService.setResultModel(rolesListAllNamespaces, Constants.RESULT_STATUS_SUCCESS);
