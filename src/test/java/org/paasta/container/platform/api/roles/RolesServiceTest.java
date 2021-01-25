@@ -448,14 +448,5 @@ public class RolesServiceTest {
         when(commonService.setResultModel(gResultListAllNamespacesModel, Constants.RESULT_STATUS_SUCCESS))
                 .thenReturn(gFinalResultListAllNamespacesModel);
 
-        RolesListAllNamespaces result = (RolesListAllNamespaces) rolesService.getNamespacesRolesTemplateList(CLUSTER, NAMESPACE, USER_ID,  OFFSET,  LIMIT,  ORDER_BY,  ORDER,  SEARCH_NAME);
-
-        assertThat(result).isNotNull();
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
-
-        result = (RolesListAllNamespaces) rolesService.getNamespacesRolesTemplateList(CLUSTER, NAMESPACE, Constants.ALL_USER_ID,  OFFSET, LIMIT,  ORDER_BY,  ORDER, SEARCH_NAME);
-
-        assertThat(result).isNotNull();
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 }

@@ -455,8 +455,6 @@ public class NamespacesServiceTest {
         // when
         ResultStatus result = namespacesService.modifyInitNamespaces(CLUSTER, NAMESPACE, nsInitTemp);
 
-        // then
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
     }
 
     /**

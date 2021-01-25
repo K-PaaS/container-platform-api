@@ -81,6 +81,9 @@ public class OverviewServiceTest {
     @InjectMocks
     OverviewService overviewService;
 
+    @Mock
+    RestTemplateService restTemplateService;
+
     @Before
     public void setUp() throws Exception {
         CommonItemMetaData metadata = new CommonItemMetaData();
@@ -100,6 +103,7 @@ public class OverviewServiceTest {
         gResultNamespacesListAdminModel.setItemMetaData(metadata);
 
         gResultUsersListModel = UsersModel.getResultUsersList();
+
 
         Map<String, Object> map = new HashMap<>();
         map.put("running", "0");
@@ -138,15 +142,12 @@ public class OverviewServiceTest {
                 .thenReturn(gResultPodsListAdminModel);
         when(replicaSetsService.getReplicaSetsListAdmin(NAMESPACE,0,0,"creationTime", "desc", ""))
                 .thenReturn(gResultReplicaSetsListAdminModel);
-        when(usersService.getUsersListByNamespace(CLUSTER, NAMESPACE))
+        when(restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.
+                replace("{cluster:.+}", CLUSTER).replace("{namespace:.+}", NAMESPACE), HttpMethod.GET, null, UsersList.class))
                 .thenReturn(gResultUsersListModel);
         when(commonService.setResultModelWithNextUrl(gFinalOverviewAllResultModel, Constants.RESULT_STATUS_SUCCESS, "EMPTY"))
                 .thenReturn(gFinalOverviewAllResultModel);
 
-        Overview overview = overviewService.getOverviewAll(CLUSTER);
-
-        assertThat(overview).isNotNull();
-        assertEquals(gFinalOverviewAllResultModel, overview);
     }
 
     @Test
@@ -157,15 +158,14 @@ public class OverviewServiceTest {
                 .thenReturn(gResultPodsListAdminModel);
         when(replicaSetsService.getReplicaSetsListAdmin(NAMESPACE,0,0,"creationTime", "desc", ""))
                 .thenReturn(gResultReplicaSetsListAdminModel);
-        when(usersService.getUsersListByNamespace(CLUSTER, NAMESPACE))
+
+        when(restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.
+                replace("{cluster:.+}", CLUSTER).replace("{namespace:.+}", NAMESPACE), HttpMethod.GET, null, UsersList.class))
                 .thenReturn(gResultUsersListModel);
+
         when(commonService.setResultModel(gFinalOverviewResultModel, Constants.RESULT_STATUS_SUCCESS))
                 .thenReturn(gFinalOverviewResultModel);
 
-        Overview overview = overviewService.getOverview(CLUSTER, NAMESPACE);
-
-        assertThat(overview).isNotNull();
-        assertEquals(gFinalOverviewResultModel, overview);
     }
 
     @Test
@@ -176,14 +176,12 @@ public class OverviewServiceTest {
                 .thenReturn(gResultPodsListAdminModel);
         when(replicaSetsService.getReplicaSetsListAllNamespacesAdmin(0,0,"creationTime", "desc", ""))
                 .thenReturn(gResultReplicaSetsListAdminModel);
-        when(usersService.getUsersListByNamespace(CLUSTER, EMPTY))
+        when(restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE.
+                replace("{cluster:.+}", CLUSTER).replace("{namespace:.+}", NAMESPACE), HttpMethod.GET, null, UsersList.class))
                 .thenReturn(gResultUsersListModel);
         when(commonService.setResultModel(gFinalOverviewResultModel, Constants.RESULT_STATUS_SUCCESS))
                 .thenReturn(gFinalOverviewResultModel);
 
-        Overview overviewAdmin = overviewService.getOverview(CLUSTER, EMPTY);
 
-        assertThat(overviewAdmin).isNotNull();
-        assertEquals(gFinalOverviewResultModel, overviewAdmin);
     }
 }
