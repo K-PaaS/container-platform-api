@@ -245,6 +245,15 @@ public class UsersController {
     @PostMapping(value = "/clusters/{cluster:.+}/users")
     public ResultStatus registerUsers(@PathVariable(value = "cluster") String cluster,
                                       @RequestBody Users users) {
+
+        // id duplication check
+        if(usersService.duplicatedUserIdCheck(users)) {
+            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
+                    .resultMessage(MessageConstant.DUPLICATE_USER_ID)
+                    .httpStatusCode(409)
+                    .detailMessage(MessageConstant.DUPLICATE_USER_ID).build();
+        }
+
         // input parameter regex
         if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
             return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)

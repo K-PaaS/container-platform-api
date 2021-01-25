@@ -176,4 +176,30 @@ public class JwtUtil {
     }
 
 
+
+    /**
+     * 관리자 사용자 포탈 접속 용
+     * JWT 토큰 생성을 위한 권한 및 브라우저 정보 조회 (Get authority and browser info for generate JWT token for admin access user portal)
+     *
+     * @param userDetails      the user details
+     * @param authRequest      the auth request
+     * @param userListByUserId the users list
+     * @return the string
+     */
+    public String generateTokenForAdminToAccessUserPortal(UserDetails userDetails, AuthenticationRequest authRequest, UsersList userListByUserId) {
+        Map<String, Object> claims = new HashMap<>();
+        String url = null;
+        Collection<? extends GrantedAuthority> roles = userDetails.getAuthorities();
+
+        claims.put("isUser", true);
+
+        claims.put("IP", authRequest.getClientIp());
+        claims.put("Browser", authRequest.getBrowser());
+        for (Users users : userListByUserId.getItems())
+            claims.put("url", users.getClusterApiUrl());
+
+        return doGenerateToken(claims, userDetails.getUsername());
+    }
+
+
 }

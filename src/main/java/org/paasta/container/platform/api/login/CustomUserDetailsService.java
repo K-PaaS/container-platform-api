@@ -87,7 +87,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @param authRequest the auth request
      * @return the object
      */
-    public Object createAuthenticationResponse(AuthenticationRequest authRequest) {
+    public Object createAuthenticationResponse(AuthenticationRequest authRequest, String isAdmin) {
 
         AuthenticationResponse authResponse = new AuthenticationResponse();
 
@@ -106,10 +106,32 @@ public class CustomUserDetailsService implements UserDetailsService {
         // CLUSTER_ADMIN
         if (user_auth.equals(Constants.AUTH_CLUSTER_ADMIN)) {
 
-            Users user = usersService.getUsersDetailsForLogin(userdetails.getUsername(), "true");
+            if(isAdmin.toLowerCase().equals("true")) {
+                Users user = usersService.getUsersDetailsForLogin(userdetails.getUsername(), "true");
 
-            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                    MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, null,  user.getClusterName());
+                authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
+                        MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, null, user.getClusterName());
+
+            }
+
+            else {
+
+                Users user = usersService.getUsersDetailsForLogin(userdetails.getUsername(), "false");
+                token = jwtUtil.generateTokenForAdminToAccessUserPortal(userdetails, authRequest, userListByUserId);
+                //generate loginMetadata & filter default namespace
+                List<loginMetaDataItem> loginMetaData = defaultNamespaceFilter(userItem);
+
+                if (loginMetaData.size() == 0) {
+                    //in-active user
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_FAIL, CommonStatusCode.FORBIDDEN.getCode(), MessageConstant.INVALID_LOGIN_INFO);
+                }
+
+                authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
+                        MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, user.getClusterName());
+
+            }
+
+
         }
         // NAMESPACE_ADMIN, USER
         else {

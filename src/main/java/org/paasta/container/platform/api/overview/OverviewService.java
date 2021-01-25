@@ -5,6 +5,7 @@ import org.paasta.container.platform.api.clusters.namespaces.NamespacesService;
 import org.paasta.container.platform.api.common.CommonService;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
+import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonStatus;
 import org.paasta.container.platform.api.users.UsersList;
@@ -19,6 +20,7 @@ import org.paasta.container.platform.api.workloads.pods.support.PodsStatus;
 import org.paasta.container.platform.api.workloads.replicaSets.ReplicaSetsListAdmin;
 import org.paasta.container.platform.api.workloads.replicaSets.ReplicaSetsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -46,6 +48,7 @@ public class OverviewService {
     private final UsersService usersService;
     private final CommonService commonService;
     private final PropertyService propertyService;
+    private final RestTemplateService restTemplateService;
 
     /**
      * Instantiates a new Overview service
@@ -58,7 +61,9 @@ public class OverviewService {
      * @param propertyService    the property service
      */
     @Autowired
-    public OverviewService(NamespacesService namespacesService, DeploymentsService deploymentsService, PodsService podsService, ReplicaSetsService replicaSetsService, UsersService usersService, CommonService commonService, PropertyService propertyService) {
+    public OverviewService(NamespacesService namespacesService, DeploymentsService deploymentsService,
+                           PodsService podsService, ReplicaSetsService replicaSetsService, UsersService usersService,
+                           CommonService commonService, PropertyService propertyService, RestTemplateService restTemplateService) {
         this.namespacesService = namespacesService;
         this.deploymentsService = deploymentsService;
         this.podsService = podsService;
@@ -66,6 +71,7 @@ public class OverviewService {
         this.usersService = usersService;
         this.commonService = commonService;
         this.propertyService = propertyService;
+        this.restTemplateService = restTemplateService;
     }
 
 
@@ -91,7 +97,7 @@ public class OverviewService {
         ReplicaSetsListAdmin replicaSetsListAll = getReplicaSetsList(null);
 
         // users count
-        UsersList usersList = usersService.getUsersListByNamespace(cluster, propertyService.getDefaultNamespace());
+        UsersList usersList = getUsersListByNamespaceByOverview(cluster, propertyService.getDefaultNamespace());
         int usersCnt = usersList.getItems().size();
 
         // deployments usage
@@ -135,7 +141,7 @@ public class OverviewService {
         ReplicaSetsListAdmin replicaSetsList = getReplicaSetsList(namespace);
 
         // users count
-        UsersList usersList = usersService.getUsersListByNamespace(cluster, namespace);
+        UsersList usersList = getUsersListByNamespaceByOverview(cluster, namespace);
         int usersCnt = usersList.getItems().size();
 
         // deployments usage
@@ -324,4 +330,20 @@ public class OverviewService {
 
         return map;
     }
+
+    /**
+     * 각 Namespace 별 Users 목록 조회(Get Users namespace list)
+     *
+     * @param cluster   the cluster
+     * @param namespace the namespace
+     * @return the users list
+     */
+    public UsersList getUsersListByNamespaceByOverview(String cluster, String namespace) {
+        UsersList usersList =  restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
+                .replace("{cluster:.+}", cluster)
+                .replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersList.class);
+
+        return usersList;
+    }
+
 }

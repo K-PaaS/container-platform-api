@@ -83,6 +83,16 @@ public class UsersService {
         }
 
         UsersListAdmin rsDb = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST + "?namespace=" + namespace, HttpMethod.GET, null, UsersListAdmin.class);
+
+        UsersListAdmin clusterAdminInfo = getClusterAdminRegister();
+
+        for(UsersListAdmin.UserDetail clusterAdmin : clusterAdminInfo.getItems()) {
+            if(clusterAdmin.getCpNamespace().equals(namespace)){
+                rsDb.getItems().removeIf( x->x.getUserId().equals(clusterAdmin.getUserId()));
+            }
+        }
+
+
         return (UsersListAdmin) commonService.setResultModel(commonService.setResultObject(rsDb, UsersListAdmin.class), Constants.RESULT_STATUS_SUCCESS);
     }
 
@@ -185,9 +195,20 @@ public class UsersService {
      * @return the users list
      */
     public UsersList getUsersListByNamespace(String cluster, String namespace) {
-        return restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
+        UsersList usersList =  restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
                 .replace("{cluster:.+}", cluster)
                 .replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersList.class);
+
+
+        UsersListAdmin clusterAdminInfo = getClusterAdminRegister();
+
+        for(UsersListAdmin.UserDetail clusterAdmin : clusterAdminInfo.getItems()) {
+            if(clusterAdmin.getCpNamespace().equals(namespace)){
+                usersList.getItems().removeIf( x->x.getUserId().equals(clusterAdmin.getUserId()));
+            }
+        }
+
+        return usersList;
     }
 
 
@@ -846,6 +867,11 @@ public class UsersService {
         Users users = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_CLUSTER_ADMIN_ROLE_BY_CLUSTER_NAME_USER_ID
                 .replace("{cluster:.+}", cluster)
                 .replace("{userId:.+}", userId), HttpMethod.GET, null, Users.class);
+
+
+        Users tempUser = getUsers(cluster, propertyService.getDefaultNamespace(), userId);
+        users.setEmail(tempUser.getEmail());
+
         return (Users) commonService.setResultModel(users, Constants.RESULT_STATUS_SUCCESS);
     }
 
@@ -859,6 +885,47 @@ public class UsersService {
     public ResultStatus createUsersForEncode(Users users) {
         String param = "?encode=" + CHECK_Y;
         return restTemplateService.sendAdmin(TARGET_COMMON_API, "/users" + param, HttpMethod.POST, users, ResultStatus.class);
+    }
+
+    /**
+     * 클러스터 관리자 등록여부 조회(Cluster Admin Registration Check)
+     *
+     * @return the users
+     */
+    public UsersListAdmin getClusterAdminRegister() {
+
+        // 클러스터 관리자 등록 여부 조회
+        UsersListAdmin clusterAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_CHECK_CLUSTER_ADMIN_REGISTER, HttpMethod.GET, null, UsersListAdmin.class);
+
+        return clusterAdmin;
+    }
+
+
+
+    /**
+     * Users 이름 목록 조회(Get Users names list)
+     *
+     * @return the Map
+     */
+    public Map<String, List<String>> getUsersNameListByDuplicated() {
+        return restTemplateService.send(TARGET_COMMON_API, "/users/names", HttpMethod.GET, null, Map.class);
+    }
+
+    /**
+     * User ID 중복 체크(Duplication check User ID)
+     *
+     * @param users the users
+     * @return the boolean
+     */
+    public Boolean duplicatedUserIdCheck(Users users) {
+        Boolean isDuplicated = false;
+        List<String> list = getUsersNameListByDuplicated().get(Constants.USERS);
+        for (String name:list) {
+            if (name.equals(users.getUserId())) {
+                isDuplicated = true;
+            }
+        }
+        return isDuplicated;
     }
 
 }

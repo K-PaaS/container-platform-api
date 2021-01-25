@@ -60,7 +60,7 @@ class PodsListAdminList {
     }
 
     public String getNodes() {
-        return spec.getNodeName();
+        return CommonUtils.procReplaceNullValue(spec.getNodeName());
     }
 
     public String getPodStatus() {

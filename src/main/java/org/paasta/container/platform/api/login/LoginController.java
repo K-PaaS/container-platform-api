@@ -62,6 +62,6 @@ public class LoginController {
             return resultStatus;
         }
 
-        return userDetailsService.createAuthenticationResponse(authRequest);
+        return userDetailsService.createAuthenticationResponse(authRequest,isAdmin);
     }
 }
