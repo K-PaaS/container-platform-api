@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.exception;
 
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
@@ -34,7 +35,7 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ExceptionHandler({HttpClientErrorException.class})
     @ResponseBody
     public ErrorMessage handleException(HttpClientErrorException ex) {
-        LOGGER.info("HttpClientErrorException >>> " + ex.getStatusText());
+        LOGGER.info("HttpClientErrorException >>> " + CommonUtils.loggerReplace(ex.getStatusText()));
         for (CommonStatusCode code : CommonStatusCode.class.getEnumConstants()) {
             if(code.getCode() == ex.getRawStatusCode()) {
                 return new ErrorMessage(Constants.RESULT_STATUS_FAIL, code.getMsg(), code.getCode(), code.getMsg());
@@ -47,14 +48,14 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ExceptionHandler({ContainerPlatformException.class})
     @ResponseBody
     public ErrorMessage handleException(ContainerPlatformException ex) {
-        LOGGER.info("ContainerPlatformException >>> " + ex.getErrorMessage());
+        LOGGER.info("ContainerPlatformException >>> " + CommonUtils.loggerReplace(ex.getErrorMessage()));
         return new ErrorMessage(ex.getErrorCode(), ex.getErrorMessage(), ex.getStatusCode(), ex.getDetailMessage());
     }
 
     @ExceptionHandler({CpCommonAPIException.class})
     @ResponseBody
     public ErrorMessage handleException(CpCommonAPIException ex) {
-        LOGGER.info("CpCommonAPIException >>> " + ex.getErrorMessage());
+        LOGGER.info("CpCommonAPIException >>> " + CommonUtils.loggerReplace(ex.getErrorMessage()));
         return new ErrorMessage(ex.getErrorCode(), ex.getErrorMessage(), ex.getStatusCode(), ex.getDetailMessage());
     }
 
@@ -65,7 +66,7 @@ public class GlobalExceptionHandler extends RuntimeException {
             return new ErrorMessage(Constants.RESULT_STATUS_FAIL, CommonStatusCode.NOT_FOUND.getMsg(), HttpStatus.NOT_FOUND.value(), CommonStatusCode.NOT_FOUND.getMsg());
         }
 
-        LOGGER.info("Exception >>> {}", ex.getLocalizedMessage());
+        LOGGER.info("Exception >>> {}", CommonUtils.loggerReplace(ex.getLocalizedMessage()));
         return new ErrorMessage(Constants.RESULT_STATUS_FAIL, CommonStatusCode.INTERNAL_SERVER_ERROR.getMsg(), HttpStatus.INTERNAL_SERVER_ERROR.value(), CommonStatusCode.INTERNAL_SERVER_ERROR.getMsg());
     }
 
@@ -90,7 +91,7 @@ public class GlobalExceptionHandler extends RuntimeException {
         for(Iterator var5 = result.getFieldErrors().iterator(); var5.hasNext(); message = message + error.getField()) {
             error = (FieldError)var5.next();
         }
-        LOGGER.info("MethodArgumentNotValidException >>> " + message);
+        LOGGER.info("MethodArgumentNotValidException >>> " + CommonUtils.loggerReplace(message));
 
         return new ErrorMessage(Constants.RESULT_STATUS_FAIL, message);
     }
@@ -98,21 +99,21 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ExceptionHandler({NullPointerException.class})
     @ResponseBody
     public ErrorMessage nullException(NullPointerException ex) {
-        LOGGER.info("NullPointerException >>> " + ex);
+        LOGGER.info("NullPointerException >>> " + CommonUtils.loggerReplace(ex));
         return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR);
     }
 
     @ExceptionHandler({IndexOutOfBoundsException.class})
     @ResponseBody
     public ErrorMessage indexOutOfBoundsException(IndexOutOfBoundsException ex) {
-        LOGGER.info("indexOutOfBoundsException >>> " + ex.getMessage());
+        LOGGER.info("indexOutOfBoundsException >>> " + CommonUtils.loggerReplace(ex.getMessage()));
         return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR);
     }
 
     @ExceptionHandler({ClassCastException.class})
     @ResponseBody
     public ErrorMessage classCastException(ClassCastException ex) {
-        LOGGER.info("ClassCastException >>> " + ex.getMessage());
+        LOGGER.info("ClassCastException >>> " + CommonUtils.loggerReplace(ex.getMessage()));
         return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR);
     }
 }

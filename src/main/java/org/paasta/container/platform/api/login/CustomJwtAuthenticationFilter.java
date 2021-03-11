@@ -1,7 +1,9 @@
 package org.paasta.container.platform.api.login;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.MethodHandler;
+import org.paasta.container.platform.api.common.RequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +49,14 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 
 		try{
 
+			RequestWrapper requestWrapper = new RequestWrapper(request);
+
 			String jwtToken = jwtTokenUtil.extractJwtFromRequest(request);
 
-			String agent = request.getHeader("User-Agent");
-			String clientIp = request.getHeader("HTTP_X_FORWARDED_FOR");
+			String agent = requestWrapper.getHeader("User-Agent");
+			String clientIp = requestWrapper.getHeader("HTTP_X_FORWARDED_FOR");
 			if (null == clientIp || clientIp.length() == 0 || clientIp.toLowerCase().equals("unknown")) {
-				clientIp = request.getHeader("REMOTE_ADDR");
+				clientIp = requestWrapper.getHeader("REMOTE_ADDR");
 			}
 			if (null == clientIp || clientIp.length() == 0 || clientIp.toLowerCase().equals("unknown")) {
 				clientIp = request.getRemoteAddr();
@@ -71,7 +75,7 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 						SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
 					} else {
 						LOGGER.info("The connection information is different.");
-						LOGGER.warn("agent: {} || clientIp: {} || tokenIp {}", agent, clientIp, tokenIp);
+						LOGGER.warn("agent: {} || clientIp: {} || tokenIp {}", CommonUtils.loggerReplace(agent), CommonUtils.loggerReplace(clientIp), CommonUtils.loggerReplace(tokenIp));
 					}
 				}else{
 					UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

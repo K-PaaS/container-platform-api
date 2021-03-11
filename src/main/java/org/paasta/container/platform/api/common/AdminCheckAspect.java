@@ -48,7 +48,7 @@ public class AdminCheckAspect {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<GrantedAuthority> list = (List<GrantedAuthority>) authentication.getAuthorities();
-        LOGGER.info("YOUR AUTHORITY :: {}", list.get(0).getAuthority());
+        LOGGER.info("YOUR AUTHORITY :: {}", CommonUtils.loggerReplace(list.get(0).getAuthority()));
         String authority = list.get(0).getAuthority();
 
         boolean isAdmin = false;

@@ -101,7 +101,7 @@ public class MethodHandler {
 
         requestResource = InspectionUtil.makeResourceName(requestResource);
 
-        LOGGER.info("Creating Request Resource :: " + requestResource);
+        LOGGER.info("Creating Request Resource :: " + CommonUtils.loggerReplace(requestResource));
 
         String[] yamlArray = YamlUtil.splitYaml(yaml);
         boolean isExistResource = false;

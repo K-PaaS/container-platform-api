@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.common.util;
 
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.exception.ContainerPlatformException;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ public class ResourceExecuteManager {
         String methodName = makeServiceMethodName(kind);
 
         //createServices
-        LOGGER.info("method name >>> " + methodName);
+        LOGGER.info("method name >>> " + CommonUtils.loggerReplace(methodName));
 
         String injectBeanName = methodClassName.substring(0,1).toLowerCase() + methodClassName.substring(1);
 

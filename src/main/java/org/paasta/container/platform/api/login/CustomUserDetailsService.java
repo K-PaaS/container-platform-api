@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.login;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.PropertyService;
+import org.paasta.container.platform.api.common.RequestWrapper;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.login.support.loginMetaDataItem;
@@ -64,9 +65,11 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        RequestWrapper requestWrapper = new RequestWrapper(request);
+
         List<SimpleGrantedAuthority> roles = null;
         String isAdmin = null;
-        isAdmin = request.getParameter("isAdmin");
+        isAdmin = requestWrapper.getParameter("isAdmin");
 
         if (isAdmin == null) {
             isAdmin = "false";
