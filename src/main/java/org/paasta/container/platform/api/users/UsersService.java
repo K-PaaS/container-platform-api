@@ -208,6 +208,14 @@ public class UsersService {
             }
         }
 
+        for (Users users : usersList.getItems()) {
+            users.setClusterApiUrl(Constants.NULL_REPLACE_TEXT);
+            users.setClusterToken(Constants.NULL_REPLACE_TEXT);
+            users.setPassword(Constants.NULL_REPLACE_TEXT);
+            users.setSaSecret(Constants.NULL_REPLACE_TEXT);
+            users.setSaToken(Constants.NULL_REPLACE_TEXT);
+        }
+
         return usersList;
     }
 
