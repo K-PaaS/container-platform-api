@@ -236,10 +236,8 @@ public class CommonUtils {
      */
     public static Object[] modifyValue(Object[] obj, int index, Object newObj) {
         ArrayList<Object> list = new ArrayList<>(Arrays.asList(obj));
-        for (int i = 0; i < list.size(); i++) {
-            if (i == index) {
-                list.set(index, newObj);
-            }
+        if (index < list.size()) {
+            list.set(index, newObj);
         }
 
         return list.toArray();
