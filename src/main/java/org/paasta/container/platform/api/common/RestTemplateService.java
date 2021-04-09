@@ -151,11 +151,11 @@ public class RestTemplateService {
             reqEntity = new HttpEntity<>(bodyObject, reqHeaders);
         }
 
-        LOGGER.info("<T> T SEND :: REQUEST: {} BASE-URL: {}, CONTENT-TYPE: {}", httpMethod, reqUrl, reqHeaders.get(CONTENT_TYPE));
+        LOGGER.info("<T> T SEND :: REQUEST: {} BASE-URL: {}, CONTENT-TYPE: {}", CommonUtils.loggerReplace(httpMethod), CommonUtils.loggerReplace(reqUrl), CommonUtils.loggerReplace(reqHeaders.get(CONTENT_TYPE)));
         ResponseEntity<T> resEntity = restTemplate.exchange(baseUrl + reqUrl, httpMethod, reqEntity, responseType);
 
         if (resEntity.getBody() != null) {
-            LOGGER.info("RESPONSE-TYPE: {}", resEntity.getBody().getClass());
+            LOGGER.info("RESPONSE-TYPE: {}", CommonUtils.loggerReplace(resEntity.getBody().getClass()));
         } else {
             LOGGER.error("RESPONSE-TYPE: RESPONSE BODY IS NULL");
         }
@@ -209,14 +209,14 @@ public class RestTemplateService {
             reqEntity = new HttpEntity<>(bodyObject, reqHeaders);
         }
 
-        LOGGER.info("<T> T SEND :: REQUEST: {} BASE-URL: {}, CONTENT-TYPE: {}", httpMethod, reqUrl, reqHeaders.get(CONTENT_TYPE));
+        LOGGER.info("<T> T SEND :: REQUEST: {} BASE-URL: {}, CONTENT-TYPE: {}", CommonUtils.loggerReplace(httpMethod), CommonUtils.loggerReplace(reqUrl), CommonUtils.loggerReplace(reqHeaders.get(CONTENT_TYPE)));
 
         ResponseEntity<T> resEntity = null;
 
         try {
             resEntity = restTemplate.exchange(baseUrl + reqUrl, httpMethod, reqEntity, responseType);
         } catch (HttpStatusCodeException exception) {
-            LOGGER.info("HttpStatusCodeException API Call URL : {}, errorCode : {}, errorMessage : {}", reqUrl, exception.getRawStatusCode(), exception.getMessage());
+            LOGGER.info("HttpStatusCodeException API Call URL : {}, errorCode : {}, errorMessage : {}", CommonUtils.loggerReplace(reqUrl), CommonUtils.loggerReplace(exception.getRawStatusCode()), CommonUtils.loggerReplace(exception.getMessage()));
 
             for (CommonStatusCode code : CommonStatusCode.class.getEnumConstants()) {
                 if(code.getCode() == exception.getRawStatusCode()) {
@@ -226,7 +226,7 @@ public class RestTemplateService {
         }
 
         if (resEntity.getBody() != null) {
-            LOGGER.info("RESPONSE-TYPE: {}", resEntity.getBody().getClass());
+            LOGGER.info("RESPONSE-TYPE: {}", CommonUtils.loggerReplace(resEntity.getBody().getClass()));
             return statusCodeDiscriminate(reqApi, resEntity, httpMethod);
 
         } else {

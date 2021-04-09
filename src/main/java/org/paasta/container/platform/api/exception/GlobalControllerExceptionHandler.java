@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.exception;
 
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler({HttpClientErrorException.class})
     @ResponseBody
     public ErrorMessage handleException(HttpClientErrorException ex) {
-        LOGGER.info("HttpClientErrorException >>> " + ex.getLocalizedMessage());
+        LOGGER.info("HttpClientErrorException >>> " + CommonUtils.loggerReplace(ex.getLocalizedMessage()));
         for (CommonStatusCode code : CommonStatusCode.class.getEnumConstants()) {
             if(code.getCode() == ex.getRawStatusCode()) {
                 return new ErrorMessage(Constants.RESULT_STATUS_FAIL, code.getMsg(), code.getCode(), code.getMsg());

@@ -208,6 +208,14 @@ public class UsersService {
             }
         }
 
+        for (Users users : usersList.getItems()) {
+            users.setClusterApiUrl(Constants.NULL_REPLACE_TEXT);
+            users.setClusterToken(Constants.NULL_REPLACE_TEXT);
+            users.setPassword(Constants.NULL_REPLACE_TEXT);
+            users.setSaSecret(Constants.NULL_REPLACE_TEXT);
+            users.setSaToken(Constants.NULL_REPLACE_TEXT);
+        }
+
         return usersList;
     }
 
@@ -542,7 +550,7 @@ public class UsersService {
             String defaultRole = updateUser.getRoleSetCode();
 
             if (!updateUser.getRoleSetCode().equals(nr.getRole())) {
-                LOGGER.info("Same Namespace >> {}, Default Role >> {}, New Role >> {}", namespace, defaultRole, newRole);
+                LOGGER.info("Same Namespace >> {}, Default Role >> {}, New Role >> {}", CommonUtils.loggerReplace(namespace), CommonUtils.loggerReplace(defaultRole), CommonUtils.loggerReplace(newRole));
                 restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", users.getServiceAccountName() + Constants.NULL_REPLACE_TEXT + defaultRole + "-binding"), HttpMethod.DELETE, null, Object.class, true);
                 resourceYamlService.createRoleBinding(users.getServiceAccountName(), namespace, newRole);
 
@@ -558,7 +566,7 @@ public class UsersService {
 
 
         for (String deleteSa : toBeDelete) {
-            LOGGER.info("Default Namespace's service account delete >> " + deleteSa);
+            LOGGER.info("Default Namespace's service account delete >> " + CommonUtils.loggerReplace(deleteSa));
             Users deleteUser = getUsers(cluster, deleteSa, users.getServiceAccountName());
             deleteUsers(deleteUser);
         }
@@ -569,7 +577,7 @@ public class UsersService {
             String addRole = nr.getRole();
             String sa = users.getServiceAccountName();
 
-            LOGGER.info("New Namespace create >> {}, New Role >> {}", addInNamespace, addRole);
+            LOGGER.info("New Namespace create >> {}, New Role >> {}", CommonUtils.loggerReplace(addInNamespace), CommonUtils.loggerReplace(addRole));
 
             resourceYamlService.createServiceAccount(sa, addInNamespace);
             resourceYamlService.createRoleBinding(sa, addInNamespace, addRole);
@@ -686,7 +694,7 @@ public class UsersService {
 
                 if (value.getServiceAccountName().equals(sa)) {
                     if (!value.getRoleSetCode().equals(role)) {
-                        LOGGER.info("Update >>> sa :: {}, role :: {}", sa, role);
+                        LOGGER.info("Update >>> sa :: {}, role :: {}", CommonUtils.loggerReplace(sa), CommonUtils.loggerReplace(role));
 
                         Users updatedUser = getUsers(cluster, namespace, sa);
 
@@ -705,7 +713,7 @@ public class UsersService {
                     String saName = value.getServiceAccountName();
                     String roleName = value.getRoleSetCode();
 
-                    LOGGER.info("Delete >>> sa :: {}, role :: {}", saName, roleName);
+                    LOGGER.info("Delete >>> sa :: {}, role :: {}", CommonUtils.loggerReplace(saName), CommonUtils.loggerReplace(roleName));
 
                     restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class, true);
                     restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + Constants.NULL_REPLACE_TEXT + roleName + "-binding"), HttpMethod.DELETE, null, Object.class, true);
@@ -721,7 +729,7 @@ public class UsersService {
                     String saName = user.getServiceAccountName();
                     String roleName = user.getRoleSetCode();
 
-                    LOGGER.info("Add >>> sa :: {}, role :: {}", saName, roleName);
+                    LOGGER.info("Add >>> sa :: {}, role :: {}", CommonUtils.loggerReplace(saName), CommonUtils.loggerReplace(roleName));
 
                     UsersList usersList = getUsersDetails(saName);
                     Users newUser = usersList.getItems().get(0);

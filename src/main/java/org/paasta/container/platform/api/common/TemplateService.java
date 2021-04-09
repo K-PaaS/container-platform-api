@@ -30,7 +30,7 @@ public class TemplateService {
     @Autowired
     public TemplateService(Configuration configuration) {
         this.configuration = configuration;
-        LOGGER.info( "Freemarker's Configuration : {}", this.configuration.toString());
+        LOGGER.info( "Freemarker's Configuration : {}", CommonUtils.loggerReplace(this.configuration.toString()));
     }
 
 

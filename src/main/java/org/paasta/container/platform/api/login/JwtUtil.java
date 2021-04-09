@@ -3,6 +3,7 @@ package org.paasta.container.platform.api.login;
 import io.jsonwebtoken.*;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.MessageConstant;
+import org.paasta.container.platform.api.common.RequestWrapper;
 import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
 import org.springframework.beans.factory.annotation.Value;
@@ -168,7 +169,9 @@ public class JwtUtil {
      * @return the string
      */
     public String extractJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+        RequestWrapper requestWrapper = new RequestWrapper(request);
+
+        String bearerToken = requestWrapper.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7, bearerToken.length());
         }

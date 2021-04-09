@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.common.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
@@ -101,12 +102,12 @@ public class InspectionUtil {
 
         // 해당 Resource의 method 이름
         Method method = propertyService.getClass().getDeclaredMethod(methodName);
-        LOGGER.info("Method Name >>> " + methodName);
+        LOGGER.info("Method Name >>> " + CommonUtils.loggerReplace(methodName));
 
         // 동적 K8s API Endpoint
         Object recursiveObj = method.invoke(propertyService);
         String finalUrl = recursiveObj.toString();
-        LOGGER.info("K8s API Endpoint >>> " + finalUrl);
+        LOGGER.info("K8s API Endpoint >>> " + CommonUtils.loggerReplace(finalUrl));
 
         return finalUrl;
     }
