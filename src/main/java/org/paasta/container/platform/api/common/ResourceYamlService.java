@@ -219,4 +219,28 @@ public class ResourceYamlService {
 
     }
 
+
+
+
+    /**
+     * ftl 파일로 ClusterRole Binding 생성(Create ClusterRole Binding)
+     *
+     * @param username
+     * @param namespace
+     * @return
+     */
+    public ResultStatus createClusterRoleBinding(String username, String namespace) {
+        Map map = new HashMap();
+        String roleBindingYaml;
+
+        map.put("userName", username);
+        map.put("spaceName", namespace);
+
+        roleBindingYaml = templateService.convert("create_clusterRoleBinding.ftl", map);
+
+        Object rbResult = restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsCreateUrl(), HttpMethod.POST, roleBindingYaml, Object.class, true);
+
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rbResult, ResultStatus.class),
+                Constants.RESULT_STATUS_SUCCESS, null);
+    }
 }

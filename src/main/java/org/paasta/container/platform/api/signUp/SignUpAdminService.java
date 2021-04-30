@@ -111,7 +111,7 @@ public class SignUpAdminService {
                     return saResult;
                 }
 
-                ResultStatus rbResult = resourceYamlService.createRoleBinding(username, namespace, null);
+                ResultStatus rbResult = resourceYamlService.createClusterRoleBinding(username, namespace);
                 if(Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
                     LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
                     restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", username), HttpMethod.DELETE, null, Object.class, true);
