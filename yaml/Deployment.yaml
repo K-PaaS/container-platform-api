@@ -23,7 +23,7 @@ spec:
         - containerPort: 3333
         env:
         - name: K8S_IP
-          value: "10.100.2.41" 
+          value: "${K8S_URL}" 
         - name: CLUSTER_NAME
           value: "cp-cluster"
         - name: CONTAINER_PLATFORM_COMMON_API_URL
