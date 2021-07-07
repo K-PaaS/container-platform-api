@@ -2,8 +2,9 @@ pipeline {
 	environment {
 		IMAGE_NAME = "container-platform-api"
 		REGISTRY_HARBOR_CREDENTIAL = 'harbor-credential'
-        REGISTRY_HARBOR_URL = "{HARBOR_URL}"
+        REGISTRY_HARBOR_URL = "${HARBOR_URL}"
         PROJECT_NAME = "container-platform"
+        K8S_URL = "${K8S_URL}"
 	}
 	agent any
 	stages {
