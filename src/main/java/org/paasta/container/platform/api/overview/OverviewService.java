@@ -8,6 +8,7 @@ import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonStatus;
+import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
 import org.paasta.container.platform.api.users.UsersService;
 import org.paasta.container.platform.api.workloads.deployments.DeploymentsListAdmin;
@@ -26,7 +27,9 @@ import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Overview Service 클래스
@@ -97,8 +100,7 @@ public class OverviewService {
         ReplicaSetsListAdmin replicaSetsListAll = getReplicaSetsList(null);
 
         // users count
-        UsersList usersList = getUsersListByNamespaceByOverview(cluster, propertyService.getDefaultNamespace());
-        int usersCnt = usersList.getItems().size();
+        int usersCnt =  getUsersListByNamespaceByOverview(cluster, propertyService.getDefaultNamespace());
 
         // deployments usage
         Map<String, Object> deploymentsUsage = getDeploymentsUsage(deploymentsListAll);
@@ -141,8 +143,7 @@ public class OverviewService {
         ReplicaSetsListAdmin replicaSetsList = getReplicaSetsList(namespace);
 
         // users count
-        UsersList usersList = getUsersListByNamespaceByOverview(cluster, namespace);
-        int usersCnt = usersList.getItems().size();
+        int usersCnt = getUsersListByNamespaceByOverview(cluster, namespace);
 
         // deployments usage
         Map<String, Object> deploymentsUsage = getDeploymentsUsage(deploymentsList);
@@ -338,12 +339,15 @@ public class OverviewService {
      * @param namespace the namespace
      * @return the users list
      */
-    public UsersList getUsersListByNamespaceByOverview(String cluster, String namespace) {
+    public Integer getUsersListByNamespaceByOverview(String cluster, String namespace) {
         UsersList usersList =  restTemplateService.send(Constants.TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_LIST_BY_NAMESPACE
                 .replace("{cluster:.+}", cluster)
                 .replace("{namespace:.+}", namespace), HttpMethod.GET, null, UsersList.class);
 
-        return usersList;
+        List<String> overviewUserList = usersList.getItems().stream().map(Users::getUserId).collect(Collectors.toList());
+        overviewUserList = overviewUserList.stream().distinct().collect(Collectors.toList());
+
+        return overviewUserList.size();
     }
 
 }

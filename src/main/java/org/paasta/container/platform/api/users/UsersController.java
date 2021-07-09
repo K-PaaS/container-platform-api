@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.paasta.container.platform.api.common.CommonUtils.regexMatch;
-import static org.paasta.container.platform.api.common.CommonUtils.regexMatchByAdmin;
 
 /**
  * User Controller 클래스
@@ -47,8 +46,6 @@ public class UsersController {
      * @param searchName the searchName
      * @param limit      the limit
      * @param offset     the offset
-     * @param orderBy    the orderBy
-     * @param order      the order
      * @param isAdmin    the isAdmin
      * @return the users list
      */
@@ -60,9 +57,7 @@ public class UsersController {
             @ApiImplicitParam(name = "searchName", value = "리소스 명 검색", required = false, dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "limit", value = "한 페이지에 가져올 리소스 최대 수", required = false, dataType = "int", paramType = "query"),
             @ApiImplicitParam(name = "offset", value = "목록 시작지점, 기본값 0", required = false, dataType = "int", paramType = "query"),
-            @ApiImplicitParam(name = "orderBy", value = "정렬 기준, 기본값 creationTime(생성날짜)", required = false, dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "order", value = "정렬 순서, 기본값 desc(내림차순)", required = false, dataType = "string", paramType = "query"),
-
+            @ApiImplicitParam(name = "isActive", value = "유저 활성화 유무", required = false, dataType = "string", paramType = "query"),
     })
     @GetMapping(value = "/clusters/{cluster:.+}/users")
     public Object getUsersList(@PathVariable(value = "cluster") String cluster,
@@ -71,13 +66,15 @@ public class UsersController {
                                @RequestParam(required = false, defaultValue = "") String searchName,
                                @RequestParam(required = false, defaultValue = "0") int limit,
                                @RequestParam(required = false, defaultValue = "0") int offset,
-                               @RequestParam(required = false, defaultValue = "created") String orderBy,
-                               @RequestParam(required = false, defaultValue = "desc") String order,
+                               @RequestParam(required = false, defaultValue = "true") String isActive,
                                @ApiIgnore @RequestParam(required = false, name = "userId") String userId,
                                @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (isAdmin) {
-            return usersService.getUsersAllByCluster(cluster, userType, searchName, limit, offset, orderBy, order);
+            if(userType.equalsIgnoreCase(Constants.SELECTED_ADMINISTRATOR)) {
+              return usersService.getClusterAdminAllByCluster(searchName);
+            }
+            return usersService.getUsersAllByCluster(cluster,isActive,searchName,limit, offset);
         }
 
         return usersService.getUsersAll(cluster,namespace,userId);
@@ -151,7 +148,7 @@ public class UsersController {
 
 
     /**
-     * 각 Namespace 별 Users 상세 조회(Get Users namespace detail)
+     * Users 상세 조회(Get Users detail)
      *
      * @param cluster   the cluster
      * @param namespace the namespace
@@ -196,12 +193,23 @@ public class UsersController {
     @GetMapping(value = "/clusters/{cluster:.+}/users/{userId:.+}")
     public Object getUsers(@PathVariable(value = "cluster") String cluster,
                            @PathVariable(value = "userId") String userId,
+                           @RequestParam(required = false, defaultValue = Constants.SELECTED_USER) String userType,
                            @RequestParam(required = false, defaultValue = "0") int limit,
                            @RequestParam(required = false, defaultValue = "0") int offset,
                            @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) throws Exception {
 
         if (isAdmin) {
-            return usersService.getUsersInMultiNamespace(cluster, userId, limit, offset);
+
+            if(userType.equalsIgnoreCase(Constants.SELECTED_ADMINISTRATOR)) {
+                //관리자인 경우
+                userType = Constants.AUTH_CLUSTER_ADMIN;
+            }
+            else {
+                //사용자인 경우
+                userType  = Constants.AUTH_USER;
+            }
+
+            return usersService.getUsersInMultiNamespace(cluster, userId, userType, limit, offset);
         }
 
         return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
@@ -228,46 +236,6 @@ public class UsersController {
     }
 
 
-    /**
-     * Users 생성 (Create Users)
-     * (Admin Portal)
-     * 복수개의 Namespace 에 속할 수 있음
-     *
-     * @param cluster the cluster
-     * @param users   the users
-     * @return return is succeeded
-     */
-    @ApiOperation(value = "Users 생성 (Create Users)", nickname = "registerUsers")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "cluster", value = "클러스터 명", required = true, dataType = "string", paramType = "path"),
-            @ApiImplicitParam(name = "users", value = "유저", required = true, dataType = "Users", paramType = "body")
-    })
-    @PostMapping(value = "/clusters/{cluster:.+}/users")
-    public ResultStatus registerUsers(@PathVariable(value = "cluster") String cluster,
-                                      @RequestBody Users users) {
-
-        // id duplication check
-        if(usersService.duplicatedUserIdCheck(users)) {
-            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                    .resultMessage(MessageConstant.DUPLICATE_USER_ID)
-                    .httpStatusCode(409)
-                    .detailMessage(MessageConstant.DUPLICATE_USER_ID).build();
-        }
-
-        // input parameter regex
-        if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
-            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                    .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
-                    .httpStatusCode(400)
-                    .detailMessage(regexMatch(users)).build();
-        }
-
-        if(users.getSelectValues().size() == 0) {
-            return Constants.MANDATORY_NAMESPACE_AND_ROLE;
-        }
-
-        return usersService.registerUsers(users);
-    }
 
     /**
      * Users 수정(Update Users)
@@ -292,21 +260,7 @@ public class UsersController {
 
         // For Admin
         if (isAdmin) {
-            if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatchByAdmin(users))) {
-                return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                        .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
-                        .httpStatusCode(400)
-                        .detailMessage(regexMatchByAdmin(users)).build();
-            }
-
             return usersService.modifyUsersAdmin(cluster, userId, users);
-        }
-
-        if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
-            return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                    .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
-                    .httpStatusCode(400)
-                    .detailMessage(regexMatch(users)).build();
         }
 
 
@@ -413,5 +367,6 @@ public class UsersController {
                                                              @PathVariable(value = "namespace") String namespace) {
         return usersService.getUsersNameListByNamespaceAdmin(cluster, namespace);
     }
+
 
 }

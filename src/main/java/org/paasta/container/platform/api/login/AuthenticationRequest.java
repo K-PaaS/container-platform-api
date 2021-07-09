@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class AuthenticationRequest {
 
     private String userId;
-    private String password;
+    private String userAuthId;
     private String browser;
     private String clientIp;
 

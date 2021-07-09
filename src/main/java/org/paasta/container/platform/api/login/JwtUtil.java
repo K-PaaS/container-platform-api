@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.login;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.MessageConstant;
 import org.paasta.container.platform.api.common.RequestWrapper;
@@ -8,8 +9,10 @@ import org.paasta.container.platform.api.users.Users;
 import org.paasta.container.platform.api.users.UsersList;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -29,6 +32,7 @@ public class JwtUtil {
 
     private String secret;
     public static int jwtExpirationInMs;
+    public static int refreshExpirationDateInMs;
 
     @Value("${jwt.secret}")
     public void setSecret(String secret) {
@@ -40,6 +44,8 @@ public class JwtUtil {
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
 
+    @Value("${jwt.refreshExpirationDateInMs}")
+    public void setRefreshExpirationDateInMs(int refreshExpirationDateInMs) { this.refreshExpirationDateInMs = refreshExpirationDateInMs; }
 
     /**
      * JWT 토큰 생성을 위한 권한 및 브라우저 정보 조회(Get authority and browser info for generate JWT token)
@@ -96,13 +102,12 @@ public class JwtUtil {
      */
     public boolean validateToken(String authToken) {
         try {
-
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
             throw new BadCredentialsException(MessageConstant.LOGIN_INVALID_CREDENTIALS, ex);
         } catch (ExpiredJwtException ex) {
-            throw new ExpiredJwtException(null, null, MessageConstant.LOGIN_TOKEN_EXPIRED, ex);
+            throw new ExpiredJwtException(ex.getHeader(), ex.getClaims(), MessageConstant.LOGIN_TOKEN_EXPIRED, ex);
         }
     }
 
@@ -204,5 +209,56 @@ public class JwtUtil {
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
+
+
+    /**
+     * Refresh JWT 토큰 생성(Generate Refresh JWT token)
+     *
+     * @param claims  the claims
+     * @param subject the subject
+     * @return the string
+     */
+    public String doGenerateRefreshToken(Map<String, Object> claims, String subject) {
+
+        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationDateInMs))
+                .signWith(SignatureAlgorithm.HS512, secret).compact();
+
+    }
+
+    /**
+     * Refresh JWT 허가(Allow Refresh JWT token)
+     *
+     * @param ex  the ExpiredJwtException
+     * @param request the HttpServletRequest
+     * @return the string
+     */
+    public void allowForRefreshToken(ExpiredJwtException ex, HttpServletRequest request) {
+
+        // create a UsernamePasswordAuthenticationToken with null values.
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+                null, null, null);
+        // After setting the Authentication in the context, we specify
+        // that the current user is authenticated. So it passes the
+        // Spring Security Configurations successfully.
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+        // Set the claims so that in controller we will be using it to create
+        // new JWT
+        request.setAttribute("claims", ex.getClaims());
+    }
+
+    /**
+     * JWT Claims Map 조회 (Get map from JWT token claims)
+     *
+     * @param claims  the DefaultClaims
+     * @return the Map
+     */
+    public Map<String, Object> getMapFromIoJsonwebtokenClaims(DefaultClaims claims) {
+        Map<String, Object> expectedMap = new HashMap<String, Object>();
+        for (Map.Entry<String, Object> entry : claims.entrySet()) {
+            expectedMap.put(entry.getKey(), entry.getValue());
+        }
+        return expectedMap;
+    }
 
 }

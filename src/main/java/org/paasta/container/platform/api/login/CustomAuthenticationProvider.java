@@ -30,19 +30,19 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new InternalAuthenticationServiceException(MessageConstant.ID_PASSWORD_REQUIRED);
         }
 
-        String username = authentication.getPrincipal().toString(); //USER ID
-        String password = authentication.getCredentials().toString(); //USER PASSWORD
+        String userId = authentication.getPrincipal().toString(); //USER ID
+        String userAuthId = authentication.getCredentials().toString(); //USER AUTH ID
 
 
-        if( username == null || username.length() < 1) {
+        if( userId == null || userId.length() < 1) {
             throw new AuthenticationCredentialsNotFoundException(MessageConstant.ID_REQUIRED);
         }
 
-        if( password == null || password.length() < 1) {
-            throw new AuthenticationCredentialsNotFoundException(MessageConstant.PASSWORD_REQUIRED);
+        if( userAuthId == null || userAuthId.length() < 1) {
+            throw new AuthenticationCredentialsNotFoundException(MessageConstant.AUTH_ID_REQUIRED);
         }
 
-        UserDetails loadedUser = customUserDetailsService.loadUserByUsername(username);
+        UserDetails loadedUser = customUserDetailsService.loadUserByUsername(userId);
 
         if (loadedUser == null) {
             throw new InternalAuthenticationServiceException(MessageConstant.INVALID_LOGIN_INFO);
@@ -56,7 +56,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (!loadedUser.isAccountNonExpired()) {
             throw new AccountExpiredException(MessageConstant.UNAVAILABLE_ID);
         }
-        if (!passwordEncoder.matches(password, loadedUser.getPassword())) {
+        if (!userAuthId.equals(loadedUser.getPassword())) {
             throw new BadCredentialsException(MessageConstant.INVALID_LOGIN_INFO);
         }
         if (!loadedUser.isCredentialsNonExpired()) {

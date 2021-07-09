@@ -97,7 +97,13 @@ public class Constants {
     static final String ACCEPT_TYPE_JSON = MediaType.APPLICATION_JSON_VALUE;
 
     public static final String URI_SIGN_UP = "/signUp";
+    public static final String URI_LOGIN = "/login";
     public static final String CLUSTER_ROLE_URI = "users/resources";
+
+
+    public static final String URI_CHECK_REGISTERED_USER = "/check/clusters/{cluster:.+}/namespaces/{namespace:.+}/users/{userId:.+}";
+
+    public static final String[] PERMIT_PATH_LIST = new String[]{ URI_SIGN_UP, URI_LOGIN, URI_CHECK_REGISTERED_USER};
 
     public static final String ENDS_WITH_SES = "ses";
     public static final String ENDS_WITH_S = "s";
@@ -113,7 +119,7 @@ public class Constants {
     public static final String URI_COMMON_API_USERS_NAMES =  "/users/names";
     public static final String URI_COMMON_API_USERS_LIST_BY_CLUSTER = "/clusters/{cluster:.+}/users";
     public static final String URI_COMMON_API_USERS_LIST_BY_CLUSTER_TEMPNAMESPACE = "/clusters/{cluster:.+}/users/tempNamespace";
-    public static final String URI_COMMON_API_CHECK_CLUSTER_ADMIN_REGISTER = "/clusterAdminRegisterCheck";
+
 
 
     public static final String URI_COMMON_API_USER_DETAIL_LOGIN =  "/users/login/{userId:.+}";
@@ -124,6 +130,17 @@ public class Constants {
     public static final String URI_COMMON_API_NAMESPACES_ROLE_BY_CLUSTER_NAME_USER_ID = "/clusters/{cluster:.+}/users/{userId:.+}";
     public static final String URI_COMMON_API_PRIVATE_REGISTRY = "/privateRegistry/{imageName:.+}";
     public static final String URI_COMMON_API_CLUSTER_ADMIN_ROLE_BY_CLUSTER_NAME_USER_ID = "/clusters/{cluster:.+}/users/{userId:.+}/userType";
+
+    public static final String URI_COMMON_API_CLUSTER_ADMIN_SIGNUP = "/cluster/all/admin/signUp";
+    public static final String URI_COMMON_API_USER_SIGNUP = "/cluster/all/user/signUp";
+
+    public static final String URI_COMMON_API_CHECK_CLUSTER_ADMIN_REGISTER = "/clusterAdminRegisterCheck?userId={userId:.+}&userAuthId={userAuthId:.+}";
+    public static final String URI_COMMON_API_CHECK_USER_REGISTER =  "/userRegisterCheck?userId={userId:.+}&userAuthId={userAuthId:.+}";
+
+    public static final String URI_COMMON_API_CLUSTER_ADMIN_INFO = "/cluster/all/admin/info?searchName={searchName:.+}";
+    public static final String URI_COMMON_API_CLUSTER_USER_DETAILS = "/cluster/all/user/details?userId={userId:.+}&userType={userType:.+}";
+    public static final String URI_COMMON_API_NAMESPACE_OR_NOT_CHECK = "/clusters/all/namespaces/{namespace:.+}/adminCheck";
+
 
     // NEXT ACTION MOVEMENT DASHBOARD URI
     public static final String URI_CLUSTER_NODES = "/container-platform/clusters/nodes";
@@ -160,6 +177,7 @@ public class Constants {
 
     public static final String URI_LIMIT_RANGES = "/container-platform";
     public static final String URI_LIMIT_RANGES_DETAIL = "/container-platform/limitRanges/{limitRangeName:.+}";
+
 
 
 
@@ -265,9 +283,28 @@ public class Constants {
     public static final ResultStatus UNABLE_TO_CREATE_RESOURCE_NAME = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_RESOURCE_NAME,
             CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.NOT_ALLOWED_RESOURCE_NAME, null );
 
+    public static final ResultStatus REQUEST_VALUE_IS_MISSING = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUEST_VALUE_IS_MISSING,
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.REQUEST_VALUE_IS_MISSING, null );
+
+    //SIGN UP
+
     public static final ResultStatus CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE,
             CommonStatusCode.CONFLICT.getCode(),MessageConstant.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE, null );
 
+    public static final ResultStatus USER_ALREADY_REGISTERED = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_ALREADY_REGISTERED_MESSAGE,
+            CommonStatusCode.CONFLICT.getCode(),MessageConstant.USER_ALREADY_REGISTERED_MESSAGE, null );
+
+    public static final ResultStatus USERS_REGISTERED_CHECK_FAIL = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USERS_REGISTERED_CHECK_FAIL_MESSAGE,
+            CommonStatusCode.INTERNAL_SERVER_ERROR.getCode() ,MessageConstant.USERS_REGISTERED_CHECK_FAIL_MESSAGE );
+
+    public static final ResultStatus CREATE_USERS_FAIL = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.SIGNUP_USER_CREATION_FAILED,
+            CommonStatusCode.INTERNAL_SERVER_ERROR.getCode() ,MessageConstant.SIGNUP_USER_CREATION_FAILED );
+
+    public static final ResultStatus USER_NOT_REGISTERED_IN_KEYCLOAK = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE,
+            CommonStatusCode.UNAUTHORIZED.getCode(),MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE, null );
+
+    public static final ResultStatus INVALID_USER_SIGN_UP = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_SIGN_UP_INFO_REQUIRED,
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.USER_SIGN_UP_INFO_REQUIRED, null );
 
     public Constants() {
         throw new IllegalStateException();

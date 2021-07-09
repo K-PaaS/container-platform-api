@@ -32,13 +32,15 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          AuthenticationException authException) throws IOException, ServletException {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
         String detailMessage = MessageConstant.LOGIN_TOKEN_FAIL_MESSAGE;
+        String resultMessage = MessageConstant.LOGIN_TOKEN_FAIL;
 
         final Exception exception = (Exception) request.getAttribute("exception");
 
         if (exception != null) {
-
             if (exception.getMessage().equals(MessageConstant.LOGIN_TOKEN_EXPIRED)) {
+                resultMessage = MessageConstant.LOGIN_TOKEN_EXPIRED;
                 detailMessage = MessageConstant.LOGIN_TOKEN_EXPIRED_MESSAGE;
             } else if (exception.getMessage().equals(MessageConstant.LOGIN_INVALID_CREDENTIALS)) {
                 detailMessage = MessageConstant.LOGIN_INVALID_CREDENTIALS_MESSAGE;
@@ -47,7 +49,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         }
 
         ResultStatus resultStatus = new ResultStatus
-                (Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_TOKEN_FAIL, CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(), detailMessage);
+                (Constants.RESULT_STATUS_FAIL, resultMessage, CommonStatusCode.UNAUTHORIZED.getCode(), detailMessage);
 
         OutputStream out = response.getOutputStream();
 

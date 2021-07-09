@@ -19,7 +19,7 @@ public class UsersInNamespace {
     private String detailMessage;
 
     private String namespace;
-    private List<UsersInfo> UsersInfo;
+    private List<UsersInfo> items;
 }
 
 @Data

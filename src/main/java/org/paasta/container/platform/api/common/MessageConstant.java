@@ -28,19 +28,23 @@ public class MessageConstant {
     public static final String NAMESPACES_CANNOT_BE_MODIFIED = "리소스 수정이 불가한 Namespace 입니다.";
 
     public static final String CODE_ERROR = "요청 사항에 오류가 발생하였습니다. 관리자에게 문의하세요.";
-    public static final String REQUEST_VALUE_IS_MISSING = "필수 사항이 누락되었습니다.";
+    public static final String REQUEST_VALUE_IS_MISSING = "필수사항이 누락되었습니다.";
 
     //login
     public static final String LOGIN_SUCCESS = "Login Successful.";
-    public static final String LOGIN_FAIL = "Login Failed.";
+    public static final String LOGIN_FAIL = "LOGIN_FAILED";
+    public static final String REFRESH_TOKEN_SUCCESS = "Refresh Token Successful.";
+    public static final String REFRESH_TOKEN_FAIL = "Refresh Token Failed.";
     public static final String NON_EXISTENT_ID = "존재하지 않는 사용자 아이디입니다.";
     public static final String UNAVAILABLE_ID = "해당 사용자 아이디는 사용할 수 없습니다.";
     public static final String INVALID_PASSWORD = "비밀번호가 올바르지 않습니다.";
     public static final String ID_REQUIRED = "사용자 아이디를 입력해주세요.";
     public static final String PASSWORD_REQUIRED = "비밀번호를 입력해주세요.";
+    public static final String AUTH_ID_REQUIRED = "사용자 인증 아이디를 입력해주세요.";
     public static final String ID_PASSWORD_REQUIRED = "사용자 아이디와 비밀번호를 입력해주세요.";
     public static final String INACTIVE_USER_ACCESS = "승인되지 않은 사용자입니다. 관리자에게 문의하시기 바랍니다.";
     public static final String INVALID_LOGIN_INFO = "로그인 정보가 올바르지 않습니다.";
+    public static final String USER_SIGN_UP_INFO_REQUIRED = "사용자의 아이디 또는 인증 아이디가 올바르지 않습니다.";
 
 
     public static final String LOGIN_TOKEN_FAIL ="TOKEN_FAILED";
@@ -49,11 +53,14 @@ public class MessageConstant {
     public static final String LOGIN_TOKEN_FAIL_MESSAGE = "Token authentication failed";
     public static final String LOGIN_TOKEN_EXPIRED_MESSAGE = "Access Token has Expired";
     public static final String LOGIN_INVALID_CREDENTIALS_MESSAGE = "Invalid Credentials";
-
+    public static final String LOGIN_INACTIVE_USER = "INACTIVE_USER";
+    public static final String SIGNUP_USER_CREATION_FAILED = "SIGNUP_USER_CREATION_FAILED";
+    public static final String USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE = "USER_NOT_REGISTERED_IN_KEYCLOAK";
+    public static final String USERS_REGISTERED_CHECK_FAIL_MESSAGE ="USERS_REGISTERED_CHECK_FAIL";
+    public static final String USER_NOT_MAPPED_TO_THE_NAMESPACE_MESSAGE = "USER_NOT_MAPPED_TO_THE_NAMESPACE";
     //sign up
-    public static final String  CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE = "Kubernetes Cluster 관리자 계정이 이미 등록되어있습니다.";
-
-
+    public static final String  CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE = "CLUSTER_ADMIN_ALREADY_REGISTERED";
+    public static final String  USER_ALREADY_REGISTERED_MESSAGE = "USER_ALREADY_REGISTERED";
 
     // paging
     public static final String LIMIT_ILLEGALARGUMENT = "limit(한 페이지에 가져올 리소스 최대 수) 는 반드시 0 이상이여아 합니다. limit >=0 ";

@@ -27,6 +27,7 @@ public class Users {
 
     public long id;
     public String userId;
+    public String userAuthId;
     public String password;
     public String passwordConfirm;
     public String email;
@@ -61,7 +62,9 @@ public class Users {
         return CommonUtils.procReplaceNullValue(userId);
     }
 
-    public String getPassword() {
+    public String getUserAuthId() {return CommonUtils.procReplaceNullValue(userAuthId);}
+
+   public String getPassword() {
         return CommonUtils.procReplaceNullValue(password);
     }
 
@@ -128,5 +131,16 @@ public class Users {
                 setRole(Constants.NULL_REPLACE_TEXT);
             }});
         }} : selectValues;
+    }
+
+    @Override
+    public String toString() {
+        return "Users{" +
+                "userId='" + userId + '\'' +
+                "userAuthId='" + userAuthId + '\'' +
+                ", cpNamespace='" + cpNamespace + '\'' +
+                ", roleSetCode='" + roleSetCode + '\'' +
+                ", userType='" + userType + '\'' +
+                '}';
     }
 }

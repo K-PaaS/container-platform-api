@@ -87,13 +87,22 @@ public class CustomJwtAuthenticationFilter extends OncePerRequestFilter {
 				LOGGER.info("Cannot set the Security Context");
 			}
 		} catch (ExpiredJwtException ex) {
-			request.setAttribute("exception", ex);
+
+			String isRefreshToken = request.getHeader("isRefreshToken");
+			String requestURL = request.getRequestURL().toString();
+			// allow for Refresh Token creation if following conditions are true.
+			if (isRefreshToken != null && isRefreshToken.equals("true") && requestURL.contains("refreshtoken")) {
+				jwtTokenUtil.allowForRefreshToken(ex, request);
+			} else
+				request.setAttribute("exception", ex);
 
 		} catch (BadCredentialsException ex) {
 			request.setAttribute("exception", ex);
-
+		} catch (Exception ex) {
+			LOGGER.info(ex.getMessage());
 		}
 		chain.doFilter(request, response);
 	}
+
 
 }

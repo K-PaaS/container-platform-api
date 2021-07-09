@@ -1,6 +1,7 @@
 package org.paasta.container.platform.api.clusters.namespaces;
 
 import lombok.Data;
+import org.paasta.container.platform.api.common.CommonUtils;
 
 import java.util.List;
 
@@ -17,4 +18,12 @@ public class NamespacesInitTemplate {
     private String nsAdminUserId;
     private List<String> resourceQuotasList;
     private List<String> limitRangesList;
+
+    public String getName() {
+        return  CommonUtils.procReplaceNullValue(name);
+    }
+
+    public String getNsAdminUserId() {
+        return CommonUtils.procReplaceNullValue(nsAdminUserId);
+    }
 }

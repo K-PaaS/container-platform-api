@@ -52,10 +52,8 @@ public class UsersAdmin {
         public String cpNamespace;
         public String userType;
         public String roleSetCode;
-        public Secrets secrets;
-
-        @JsonIgnore
         public String saSecret;
+        public Secrets secrets;
 
         public String getServiceAccountUid() {
             return CommonUtils.procReplaceNullValue(serviceAccountUid);

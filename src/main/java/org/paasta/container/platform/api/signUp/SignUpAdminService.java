@@ -6,6 +6,7 @@ import org.paasta.container.platform.api.clusters.clusters.ClustersService;
 import org.paasta.container.platform.api.common.*;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.users.Users;
+import org.paasta.container.platform.api.users.UsersList;
 import org.paasta.container.platform.api.users.UsersListAdmin;
 import org.paasta.container.platform.api.users.UsersService;
 import org.slf4j.Logger;
@@ -14,8 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.paasta.container.platform.api.common.Constants.*;
 
@@ -70,91 +72,58 @@ public class SignUpAdminService {
      * @param users the user
      * @return the resultStatus
      */
-    public ResultStatus signUpAdminUsers(Users users) {
-        ResultStatus rsDb = new ResultStatus();
+    public ResultStatus signUpAdminUsers(Users users, String param) {
 
-        // 클러스터 관리자 계정이 이미 등록되어있는지 확인
-        UsersListAdmin clusterAdminCheck = getClusterAdminRegister();
+        // 1. 해당 계정이 KEYCLOAK에 등록된 사용자인지 확인
+        // CP USER에 클러스터 관리자 계정이 이미 등록되어있는지 확인
+        UsersListAdmin registerClusterAdmin = checkClusterAdminRegister(users);
 
-        if(clusterAdminCheck.getItems().size() > 0) {
+
+        // 2. KEYCLOAK 에 미등록 사용자인 경우, 메세지 리턴 처리
+        if(registerClusterAdmin.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE)) {
+            return USER_NOT_REGISTERED_IN_KEYCLOAK;
+        }
+
+        // 3. CP USER에 클러스터 관리자 계정이 이미 등록된 경우, 메세지 리턴 처리
+        if(registerClusterAdmin.getItems().size() > 0) {
             return Constants.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED;
         }
 
 
-        String namespace = users.getCpNamespace();
-        String username = users.getUserId();
+        // save admin token <- release 설치 시 작업  -  save admin token
+        // save cluster info <- release 설치 시 작업 - clustersService.createClusters
 
-        String defaultNamespace = propertyService.getDefaultNamespace();
 
-        List<String> nsList = new ArrayList<>();
-        nsList.add(namespace);
-        nsList.add(defaultNamespace);
 
-        // save admin token
-        adminTokenService.saveAdminToken(users.getClusterToken());
+        //4. KEYCLOAK에서는 삭제된 계정이지만, CP에 남아있는 동일한 USER ID의 DB 컬럼, K8S SA, ROLEBINDING 삭제 진행
+        UsersList usersList = getUsersListByUserId(users.getUserId());
 
-        for (String reqNamespace : nsList) {
-            if(reqNamespace.equals(namespace)) {
-                // create row spec resource quota, limit range
-                ResultStatus nsResult = resourceYamlService.createNamespace(namespace);
+        List<Users> deleteUsers = usersList.getItems().stream().filter(x-> !x.getUserAuthId().matches(users.getUserAuthId())).collect(Collectors.toList());
 
-                if(Constants.RESULT_STATUS_FAIL.equals(nsResult.getResultCode())) {
-                    return nsResult;
-                }
-
-                resourceYamlService.createDefaultResourceQuota(namespace,null);
-                resourceYamlService.createDefaultLimitRanges(namespace, null);
-
-                ResultStatus saResult = resourceYamlService.createServiceAccount(username, namespace);
-
-                if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
-                    return saResult;
-                }
-
-                ResultStatus rbResult = resourceYamlService.createClusterRoleBinding(username, namespace);
-                if(Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
-                    LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
-                    restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", username), HttpMethod.DELETE, null, Object.class, true);
-                    return rbResult;
-                }
-
-                String adminSaSecretName = restTemplateService.getSecretName(namespace, users.getUserId());
-                users.setCpNamespace(namespace);
-                users.setRoleSetCode(DEFAULT_CLUSTER_ADMIN_ROLE);
-                users.setSaSecret(adminSaSecretName);
-                users.setSaToken(accessTokenService.getSecrets(namespace, adminSaSecretName).getUserAccessToken());
-                users.setUserType(AUTH_CLUSTER_ADMIN);
-                users.setIsActive(CHECK_Y);
-
-            } else {
-                // add temporary namespace
-                ResultStatus saResult = resourceYamlService.createServiceAccount(username, defaultNamespace);
-                if(Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
-                    return saResult;
-                }
-
-                String saSecretName = restTemplateService.getSecretName(defaultNamespace, username);
-                users.setCpNamespace(defaultNamespace);
-                users.setRoleSetCode(NOT_ASSIGNED_ROLE);
-                users.setSaSecret(saSecretName);
-                users.setSaToken(accessTokenService.getSecrets(defaultNamespace, saSecretName).getUserAccessToken());
-                users.setUserType(AUTH_CLUSTER_ADMIN);
-                users.setIsActive(CHECK_N);
-            }
-
-            users.setServiceAccountName(username);
-            rsDb = usersService.createUsers(users);
+        for(Users du: deleteUsers) {
+            usersService.deleteUsers(du);
         }
 
-        clustersService.createClusters(users.getClusterApiUrl(), users.getClusterName(), users.getClusterToken());
+        // 5. CP-USER에 클러스터 관리자 계정 생성
+        users.setCpNamespace(propertyService.getDefaultNamespace());
+        users.setServiceAccountName(users.getUserId());
+        users.setRoleSetCode(DEFAULT_CLUSTER_ADMIN_ROLE);
+        users.setSaSecret(NULL_REPLACE_TEXT);
+        users.setSaToken(NULL_REPLACE_TEXT);
+        users.setUserType(AUTH_CLUSTER_ADMIN);
+        users.setIsActive(CHECK_Y);
+
+
+        // 6. 계정생성 COMMON-API REST SEND
+        ResultStatus rsDb = sendSignUpClusterAdmin(users, param);
 
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
-            LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class, true);
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", "cluster-admin-" + username), HttpMethod.DELETE, null, Object.class, true);
+            LOGGER.info("DATABASE EXECUTE IS FAILED....");
+            return CREATE_USERS_FAIL;
         }
 
-        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_INTRO_OVERVIEW);
+
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "/");
     }
 
 
@@ -164,12 +133,39 @@ public class SignUpAdminService {
      *
      * @return the users
      */
-    public UsersListAdmin getClusterAdminRegister() {
+    public UsersListAdmin checkClusterAdminRegister(Users users) {
 
         // 클러스터 관리자 등록 여부 조회
-        UsersListAdmin clusterAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_CHECK_CLUSTER_ADMIN_REGISTER, HttpMethod.GET, null, UsersListAdmin.class);
+        UsersListAdmin clusterAdmin = restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_CHECK_CLUSTER_ADMIN_REGISTER
+                        .replace("{userId:.+}", users.getUserId())
+                        .replace("{userAuthId:.+}", users.getUserAuthId())
+                , HttpMethod.GET, null, UsersListAdmin.class);
 
         return clusterAdmin;
     }
+
+
+    /**
+     * 클러스터 관리자 회원가입 (Send Cluster Admin Registration)
+     *
+     * @param users the users
+     * @return return is succeeded
+     */
+    public ResultStatus sendSignUpClusterAdmin(Users users, String param) {
+        String paramString = "?param=" + param;
+        return restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_CLUSTER_ADMIN_SIGNUP+ paramString, HttpMethod.POST, users, ResultStatus.class);
+    }
+
+
+    /**
+     * 아이디로 존재하는 USER 계정 조회(Get users by user id)
+     *
+     * @param userId the userId
+     * @return the users detail
+     */
+    public UsersList getUsersListByUserId(String userId) {
+        return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
+    }
+
 
 }

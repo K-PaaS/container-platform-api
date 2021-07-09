@@ -78,7 +78,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Users user = usersService.getUsersDetailsForLogin(userId, isAdmin);
         if (user != null) {
             roles = Arrays.asList(new SimpleGrantedAuthority(user.getUserType()));
-            return new User(user.getUserId(), user.getPassword(), roles);
+            return new User(user.getUserId(), user.getUserAuthId(), roles);
         }
         throw new UsernameNotFoundException(MessageConstant.INVALID_LOGIN_INFO);
     }
@@ -146,7 +146,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             if (loginMetaData.size() == 0) {
                 //in-active user
-                return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_FAIL, CommonStatusCode.FORBIDDEN.getCode(), MessageConstant.INACTIVE_USER_ACCESS);
+                return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_INACTIVE_USER, CommonStatusCode.FORBIDDEN.getCode(), MessageConstant.INACTIVE_USER_ACCESS);
             }
 
             authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),

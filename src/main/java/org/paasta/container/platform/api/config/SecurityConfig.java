@@ -1,5 +1,6 @@
 package org.paasta.container.platform.api.config;
 
+import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.login.CustomAuthenticationProvider;
 import org.paasta.container.platform.api.login.CustomJwtAuthenticationFilter;
 import org.paasta.container.platform.api.login.JwtAuthenticationEntryPoint;
@@ -62,7 +63,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login", "/signUp", "/signUp/admin").permitAll().anyRequest().authenticated()
+                .antMatchers(Constants.PERMIT_PATH_LIST).permitAll().anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().cors().configurationSource(corsConfiguration())

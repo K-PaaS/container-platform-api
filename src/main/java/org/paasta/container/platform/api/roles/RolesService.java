@@ -359,15 +359,6 @@ public class RolesService {
         }
 
 
-        UsersListAdmin clusterAdminInfo = signUpAdminService.getClusterAdminRegister();
-
-        for(UsersListAdmin.UserDetail clusterAdmin : clusterAdminInfo.getItems()) {
-            if(userId.equals(clusterAdmin.getUserId())) {
-                rolesListAllNamespaces.getItems().removeIf(x -> x.getNamespace().equals(clusterAdmin.getCpNamespace()));
-            }
-        }
-
-
         rolesListAllNamespaces = commonService.resourceListProcessing(rolesListAllNamespaces, offset, limit, orderBy, order, searchName, RolesListAllNamespaces.class);
         return commonService.setResultModel(rolesListAllNamespaces, Constants.RESULT_STATUS_SUCCESS);
     }

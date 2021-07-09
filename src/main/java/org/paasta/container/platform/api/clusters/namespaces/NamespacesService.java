@@ -11,7 +11,6 @@ import org.paasta.container.platform.api.common.model.CommonResourcesYaml;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.signUp.SignUpAdminService;
 import org.paasta.container.platform.api.users.Users;
-import org.paasta.container.platform.api.users.UsersListAdmin;
 import org.paasta.container.platform.api.users.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,6 +234,7 @@ public class NamespacesService {
         String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
 
         Users newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
+
         newNsUser.setId(0);
         newNsUser.setCpNamespace(namespace);
         newNsUser.setRoleSetCode(propertyService.getAdminRole());
@@ -243,7 +243,8 @@ public class NamespacesService {
         newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
         newNsUser.setIsActive(CHECK_Y);
 
-        ResultStatus rsDb = usersService.createUsers(usersService.commonSaveClusterInfo(propertyService.getCpClusterName(), newNsUser));
+
+        ResultStatus rsDb = usersService.createUsers(newNsUser);
 
         if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
@@ -274,15 +275,6 @@ public class NamespacesService {
             return Constants.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT;
         }
 
-         UsersListAdmin clusterAdminInfo = signUpAdminService.getClusterAdminRegister();
-
-         for(UsersListAdmin.UserDetail clusterAdmin : clusterAdminInfo.getItems()) {
-               if(clusterAdmin.getUserId().equals(nsAdminUserId)) {
-                   if(clusterAdmin.getCpNamespace().equals(namespace)) {
-                       return Constants.UNAPPROACHABLE_USERS;
-                   }
-               }
-        }
 
         // Modify ResourceQuotas , LimitRanges
         modifyResourceQuotas(namespace, initTemplate.getResourceQuotasList());
@@ -366,7 +358,7 @@ public class NamespacesService {
             newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
             newNsUser.setIsActive(CHECK_Y);
 
-            usersService.createUsers(usersService.commonSaveClusterInfo(propertyService.getCpClusterName(), newNsUser));
+            usersService.createUsers(newNsUser);
 
         }
 
