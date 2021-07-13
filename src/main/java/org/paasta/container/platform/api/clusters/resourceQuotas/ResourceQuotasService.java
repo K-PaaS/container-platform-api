@@ -74,19 +74,24 @@ public class ResourceQuotasService {
             Map<String, String> hards = rq.getStatus().getHard();
             Map<String, String> useds = rq.getStatus().getUsed();
 
-            HashMap<String, Object> convertStatus = new HashMap<>();
-
-            for (String key : hards.keySet()) {
-                ResourceQuotasConvertStatus resourceQuotasConvertStatus = new ResourceQuotasConvertStatus();
-                resourceQuotasConvertStatus.setHard(hards.get(key));
-                resourceQuotasConvertStatus.setUsed(useds.get(key));
-
-                convertStatus.put(key,resourceQuotasConvertStatus );
+            if(hards == null || useds == null) {
+                Map<String, Object> convertStatusMap = new HashMap<>();
+                rq.setResourceQuotasStatus(convertStatusMap);
             }
+            else {
+                HashMap<String, Object> convertStatus = new HashMap<>();
 
-            Map<String, Object> convertStatusMap = new TreeMap<>(convertStatus);
-            rq.setResourceQuotasStatus(convertStatusMap);
+                for (String key : hards.keySet()) {
+                    ResourceQuotasConvertStatus resourceQuotasConvertStatus = new ResourceQuotasConvertStatus();
+                    resourceQuotasConvertStatus.setHard(hards.get(key));
+                    resourceQuotasConvertStatus.setUsed(useds.get(key));
 
+                    convertStatus.put(key, resourceQuotasConvertStatus);
+                }
+
+                Map<String, Object> convertStatusMap = new TreeMap<>(convertStatus);
+                rq.setResourceQuotasStatus(convertStatusMap);
+            }
         }
 
         return (ResourceQuotasList) commonService.setResultModel(resourceQuotasList, Constants.RESULT_STATUS_SUCCESS);
@@ -126,18 +131,24 @@ public class ResourceQuotasService {
             Map<String, String> hards = rq.getStatus().getHard();
             Map<String, String> useds = rq.getStatus().getUsed();
 
-            HashMap<String, Object> convertStatus = new HashMap<>();
-
-            for (String key : hards.keySet()) {
-                ResourceQuotasConvertStatus resourceQuotasConvertStatus = new ResourceQuotasConvertStatus();
-                resourceQuotasConvertStatus.setHard(hards.get(key));
-                resourceQuotasConvertStatus.setUsed(useds.get(key));
-
-                convertStatus.put(key,resourceQuotasConvertStatus );
+            if(hards == null || useds == null) {
+                Map<String, Object> convertStatusMap = new HashMap<>();
+                rq.setConvertStatus(convertStatusMap);
             }
+            else {
+                HashMap<String, Object> convertStatus = new HashMap<>();
 
-            Map<String, Object> convertStatusMap = new TreeMap<>(convertStatus);
-            rq.setConvertStatus(convertStatusMap);
+                for (String key : hards.keySet()) {
+                    ResourceQuotasConvertStatus resourceQuotasConvertStatus = new ResourceQuotasConvertStatus();
+                    resourceQuotasConvertStatus.setHard(hards.get(key));
+                    resourceQuotasConvertStatus.setUsed(useds.get(key));
+
+                    convertStatus.put(key, resourceQuotasConvertStatus);
+                }
+
+                Map<String, Object> convertStatusMap = new TreeMap<>(convertStatus);
+                rq.setConvertStatus(convertStatusMap);
+            }
 
         }
 
@@ -192,15 +203,18 @@ public class ResourceQuotasService {
 
         List<ResourceQuotasStatusItem> items = new ArrayList<>();
 
-        for (String key : hards.keySet()) {
-            ResourceQuotasStatusItem resourceQuotasStatusItem = new ResourceQuotasStatusItem();
-            resourceQuotasStatusItem.setResource(key);
-            resourceQuotasStatusItem.setHard(hards.get(key));
-            resourceQuotasStatusItem.setUsed(useds.get(key));
-
+        //if status (hard, used) is null
+        if(hards == null || useds == null) {
+            ResourceQuotasStatusItem resourceQuotasStatusItem = new ResourceQuotasStatusItem(Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT);
             items.add(resourceQuotasStatusItem);
         }
+        else {
+            for (String key : hards.keySet()) {
+                ResourceQuotasStatusItem resourceQuotasStatusItem = new ResourceQuotasStatusItem(key,hards.get(key), useds.get(key));
+                items.add(resourceQuotasStatusItem);
+            }
 
+        }
         resourceQuotasAdmin.setItems(items);
 
         return commonService.setResultModel(resourceQuotasAdmin, Constants.RESULT_STATUS_SUCCESS);

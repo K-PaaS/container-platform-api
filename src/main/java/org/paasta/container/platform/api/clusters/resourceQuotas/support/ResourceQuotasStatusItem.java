@@ -16,4 +16,9 @@ public class ResourceQuotasStatusItem {
     private String hard;
     private String used;
 
+    public ResourceQuotasStatusItem(String resource, String hard, String used) {
+        this.resource = resource;
+        this.hard = hard;
+        this.used = used;
+    }
 }
