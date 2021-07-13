@@ -199,23 +199,44 @@ public class NamespacesService {
         String namespace = initTemplate.getName();
         String nsAdminUserId = initTemplate.getNsAdminUserId();
 
+        // 1. namespace 생성
         resourceYamlService.createNamespace(namespace);
 
+        // 2. init-role, admin-role 생성
         resourceYamlService.createInitRole(namespace);
         resourceYamlService.createNsAdminRole(namespace);
 
-        ResultStatus saResult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
-
-        if (Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
-            return saResult;
+        // 3. namespace 관리자 sa 생성
+        ResultStatus createSAresult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
+        if (createSAresult.getResultCode().equalsIgnoreCase(RESULT_STATUS_FAIL)) {
+            resourceYamlService.deleteNamespaceYaml(namespace);
+            return createSAresult;
         }
 
-        ResultStatus rbResult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, propertyService.getAdminRole());
+        // 4. namespace 관리자 rb 생성
+        ResultStatus createRBresult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, propertyService.getAdminRole());
+        if (createRBresult.getResultCode().equalsIgnoreCase(RESULT_STATUS_FAIL)) {
+            resourceYamlService.deleteNamespaceYaml(namespace);
+            return createRBresult;
+        }
 
-        if (Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
-            LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId), HttpMethod.DELETE, null, Object.class, true);
-            return rbResult;
+        // 5. namespace 관리자 DB user 생성
+        String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
+        Users newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
+
+        newNsUser.setId(0);
+        newNsUser.setCpNamespace(namespace);
+        newNsUser.setRoleSetCode(propertyService.getAdminRole());
+        newNsUser.setSaSecret(saSecretName);
+        newNsUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
+        newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
+        newNsUser.setIsActive(CHECK_Y);
+
+        ResultStatus createCpUserResult = usersService.createUsers(newNsUser);
+
+        if (createCpUserResult.getResultCode().equalsIgnoreCase(RESULT_STATUS_FAIL)) {
+            resourceYamlService.deleteNamespaceYaml(namespace);
+            return createCpUserResult;
         }
 
 
@@ -231,28 +252,7 @@ public class NamespacesService {
             }
         }
 
-        String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
-
-        Users newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
-
-        newNsUser.setId(0);
-        newNsUser.setCpNamespace(namespace);
-        newNsUser.setRoleSetCode(propertyService.getAdminRole());
-        newNsUser.setSaSecret(saSecretName);
-        newNsUser.setSaToken(accessTokenService.getSecrets(namespace, saSecretName).getUserAccessToken());
-        newNsUser.setUserType(AUTH_NAMESPACE_ADMIN);
-        newNsUser.setIsActive(CHECK_Y);
-
-
-        ResultStatus rsDb = usersService.createUsers(newNsUser);
-
-        if (Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
-            LOGGER.info("DATABASE EXECUTE IS FAILED. K8S SERVICE ACCOUNT, CLUSTER ROLE BINDING WILL BE REMOVED...");
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl().replace("{namespace}", namespace), HttpMethod.DELETE, null, Object.class, true);
-            restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListClusterRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId + Constants.NULL_REPLACE_TEXT + propertyService.getAdminRole() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
-        }
-
-        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE");
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(createCpUserResult, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE");
     }
 
 
@@ -265,24 +265,21 @@ public class NamespacesService {
      * @return return is succeeded
      */
     public ResultStatus modifyInitNamespaces(String cluster, String namespace, NamespacesInitTemplate initTemplate) {
+
+        // 1. namespace 일치 여부 확인
         if (!namespace.equals(initTemplate.getName())) {
             return Constants.NOT_MATCH_NAMESPACES;
         }
 
+        // 2. namespace 관리자 지정 여부 확인
         String nsAdminUserId = initTemplate.getNsAdminUserId();
-
         if(nsAdminUserId.trim().isEmpty() || nsAdminUserId == null ) {
             return Constants.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT;
         }
 
 
-        // Modify ResourceQuotas , LimitRanges
-        modifyResourceQuotas(namespace, initTemplate.getResourceQuotasList());
-        modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
-
-
+        // 3. namespace 관리자 cp-temp-namespace 컬럼 존재 여부 확인
         Users newNsUser = null;
-
         try {
             newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
         }
@@ -293,8 +290,8 @@ public class NamespacesService {
         }
 
 
+        // 4. namespace 관리자 여부 확인
         Users nsAdminUser = null;
-
         try {
             nsAdminUser = usersService.getUsersByNamespaceAndNsAdmin(cluster, namespace);
         }
@@ -303,13 +300,16 @@ public class NamespacesService {
         }
 
 
+        // 5. 현재 namespace 관리자가 존재하지만, 다른 사용자를 관리자로 변경할 경우
+        // 현재 namespace 관리자는 'USER' 권한으로 USER-TYPE 변경
         if (nsAdminUser != null && !nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
             LOGGER.info("THE CURRENT NAMESPACE ADMINISTRATOR EXISTS AND CHANGES TO A NEW NAMESPACE ADMINISTRATOR....");
-            //delete current namespace admin
+            //Changes the current namespace admin user-type to 'USER'
             nsAdminUser.setUserType(AUTH_USER);
             usersService.updateUsers(nsAdminUser);
         }
 
+        // 6. 현재 namespace 관리자 존재하지 않으며, 다른 사용자를 관리자로 변경할 경우
         if (nsAdminUser == null || !nsAdminUser.getUserId().equals(initTemplate.getNsAdminUserId())) {
 
             LOGGER.info("WHEN THE CURRENT NAMESPACE ADMINISTRATOR DOES NOT EXIST OR CHANGES TO A NEW NAMESPACE ADMINISTRATOR.....");
@@ -334,21 +334,23 @@ public class NamespacesService {
             resourceYamlService.createInitRole(namespace);
 
 
-            ResultStatus saResult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
+            // 7. Service Account 생성
+            ResultStatus createSAresult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
 
-            if (Constants.RESULT_STATUS_FAIL.equals(saResult.getResultCode())) {
-                return saResult;
+            if (createSAresult.getResultCode().equalsIgnoreCase(RESULT_STATUS_FAIL)) {
+                return createSAresult;
             }
 
-            ResultStatus rbResult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, propertyService.getAdminRole());
+            // 8. Role-Binding 생성
+            ResultStatus createRBresult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, propertyService.getAdminRole());
 
-            if (Constants.RESULT_STATUS_FAIL.equals(rbResult.getResultCode())) {
-                LOGGER.info("CLUSTER ROLE BINDING EXECUTE IS FAILED. K8S SERVICE ACCOUNT WILL BE REMOVED...");
-                restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", nsAdminUserId), HttpMethod.DELETE, null, Object.class, true);
-                return rbResult;
+            if (createRBresult.getResultCode().equalsIgnoreCase(RESULT_STATUS_FAIL)) {
+                LOGGER.info("ROLE BINDING EXECUTE IS FAILED. K8S SA AND RB WILL BE REMOVED...");
+                resourceYamlService.deleteServiceAccountAndRolebinding(namespace, nsAdminUserId, propertyService.getAdminRole());
+                return createRBresult;
             }
+
             String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
-
 
             newNsUser.setId(0);
             newNsUser.setCpNamespace(namespace);
@@ -361,6 +363,11 @@ public class NamespacesService {
             usersService.createUsers(newNsUser);
 
         }
+
+        // Modify ResourceQuotas , LimitRanges
+        modifyResourceQuotas(namespace, initTemplate.getResourceQuotasList());
+        modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
+
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(Constants.SUCCESS_RESULT_STATUS, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_DETAIL_PAGE");
     }

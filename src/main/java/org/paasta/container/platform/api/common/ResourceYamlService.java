@@ -243,4 +243,34 @@ public class ResourceYamlService {
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rbResult, ResultStatus.class),
                 Constants.RESULT_STATUS_SUCCESS, null);
     }
+
+    /**
+     * ServiceAccount 와 RoleBinding 삭제 (Delete ServiceAccount and Role binding)
+     *
+     * @param username
+     * @param namespace
+     * @return
+     */
+    public void deleteServiceAccountAndRolebinding(String namespace, String username, String roleName) {
+        // 1. SA 삭제
+        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl()
+                .replace("{namespace}", namespace).replace("{name}", username), HttpMethod.DELETE, null, Object.class, true);
+
+        // 2. RB 삭제
+        restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl()
+                .replace("{namespace}", namespace)
+                .replace("{name}", username + Constants.NULL_REPLACE_TEXT + roleName + "-binding"), HttpMethod.DELETE, null, Object.class, true);
+    }
+
+
+    /**
+     * Namespace 삭제 (Delete Namespace)
+     *
+     * @param namespace
+     * @return
+     */
+    public void deleteNamespaceYaml(String namespace) {
+        restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API, propertyService.getCpMasterApiListNamespacesDeleteUrl()
+                .replace("{name}", namespace), HttpMethod.DELETE, null, ResultStatus.class);
+    }
 }
