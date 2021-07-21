@@ -140,6 +140,8 @@ public class Constants {
     public static final String URI_COMMON_API_CLUSTER_ADMIN_INFO = "/cluster/all/admin/info?searchName={searchName:.+}";
     public static final String URI_COMMON_API_CLUSTER_USER_DETAILS = "/cluster/all/user/details?userId={userId:.+}&userType={userType:.+}";
     public static final String URI_COMMON_API_NAMESPACE_OR_NOT_CHECK = "/clusters/all/namespaces/{namespace:.+}/adminCheck";
+    public static final String URI_COMMON_API_DELETE_USER_BY_ID_AND_AUTHID = "/cluster/all/user/delete?userId={userId:.+}&userAuthId={userAuthId:.+}";
+
 
 
     // NEXT ACTION MOVEMENT DASHBOARD URI
@@ -177,7 +179,7 @@ public class Constants {
 
     public static final String URI_LIMIT_RANGES = "/container-platform";
     public static final String URI_LIMIT_RANGES_DETAIL = "/container-platform/limitRanges/{limitRangeName:.+}";
-
+    public static final String URI_SERVICEINSTANCE_DETAIL =  "/serviceInstance/{serviceInstanceId:.+}";
 
 
 
@@ -305,6 +307,9 @@ public class Constants {
 
     public static final ResultStatus INVALID_USER_SIGN_UP = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_SIGN_UP_INFO_REQUIRED,
             CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.USER_SIGN_UP_INFO_REQUIRED, null );
+
+    public static final ResultStatus INVALID_SERVICE_INSTANCE_ID = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_SERVICE_INSTANCE_ID,
+            CommonStatusCode.UNAUTHORIZED.getCode(),MessageConstant.INVALID_SERVICE_INSTANCE_ID, null );
 
     public Constants() {
         throw new IllegalStateException();

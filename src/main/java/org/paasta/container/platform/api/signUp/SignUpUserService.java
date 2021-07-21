@@ -70,32 +70,45 @@ public class SignUpUserService {
      */
     public ResultStatus signUpUsers(Users users) {
 
-        // 1. 해당 계정이 KEYCLOAK, CP USER 에 등록된 계정인지 확인
+        ServiceInstanceList findServiceInstance = new ServiceInstanceList();
+
+        // 1. PaaS-TA 서비스 형태로 제공되는 CP 포털의 서비스 인스턴스 아이디 유효성 검사
+        if(users.getCpProviderType().equalsIgnoreCase(propertyService.getCpProviderAsService())) {
+            if (users.getServiceInstanceId().equalsIgnoreCase(NULL_REPLACE_TEXT)) {
+                return INVALID_SERVICE_INSTANCE_ID;
+            }
+
+            findServiceInstance = getServiceInstanceById(users.getServiceInstanceId());
+            if(findServiceInstance.getItems().size() < 1) {
+                return INVALID_SERVICE_INSTANCE_ID;
+            }
+        }
+
+
+         // 2. 해당 계정이 KEYCLOAK, CP USER 에 등록된 계정인지 확인
         UsersList registerUser = checkRegisterUser(users);
 
-        // 2. KEYCLOAK 에 미등록 사용자인 경우, 메세지 리턴 처리
+         // 3. KEYCLOAK 에 미등록 사용자인 경우, 메세지 리턴 처리
         if(registerUser.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE)) {
             return USER_NOT_REGISTERED_IN_KEYCLOAK;
         }
 
 
-        // 3. CP USER에 등록된 사용자인 경우, 메세지 리턴 처리
+         // 4. CP USER 에 등록된 사용자인 경우, 메세지 리턴 처리
         if(registerUser.getItems().size() > 0) {
             return USER_ALREADY_REGISTERED;
         }
 
 
-        //4. KEYCLOAK에서는 삭제된 계정이지만, CP에 남아있는 동일한 USER ID의 DB 컬럼, K8S SA, ROLEBINDING 삭제 진행
+        // 5. KEYCLOAK 에서는 삭제된 계정이지만, CP에 남아있는 동일한 USER ID의 DB 컬럼, K8S SA, ROLEBINDING 삭제 진행
         UsersList usersList = getUsersListByUserId(users.getUserId());
-
         List<Users> deleteUsers = usersList.getItems().stream().filter(x-> !x.getUserAuthId().matches(users.getUserAuthId())).collect(Collectors.toList());
 
         for(Users du: deleteUsers) {
             usersService.deleteUsers(du);
         }
 
-
-        // 5. CP-USER에 미등록인 사용자 CP-USER 계정 생성
+        // 6. CP-USER 에 미등록인 사용자 CP-USER 계정 생성
         users.setCpNamespace(propertyService.getDefaultNamespace());
         users.setServiceAccountName(users.getUserId());
         users.setRoleSetCode(NOT_ASSIGNED_ROLE);
@@ -103,12 +116,51 @@ public class SignUpUserService {
         users.setSaToken(NULL_REPLACE_TEXT);
         users.setUserType(AUTH_USER);
 
-        // 6. 계정생성 COMMON-API REST SEND
+        // 7. 계정생성 COMMON-API REST SEND
         ResultStatus rsDb = sendSignUpUser(users);
 
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED....");
             return CREATE_USERS_FAIL;
+        }
+
+
+        // 8. PaaS-TA 서비스 형태로 제공되는 CP 포털 사용자의 Namespace & RoleMapping 추가 진행
+        // ServiceInstanceId 에 해당하는 Namespace 에 RoleBinding 필요
+        if(users.getCpProviderType().equalsIgnoreCase(propertyService.getCpProviderAsService())) {
+            try {
+                    // 서비스 인스턴스 상세정보 조회
+                    ServiceInstance serviceInstance = findServiceInstance.getItems().get(0);
+                    String addInNamespace = serviceInstance.getNamespace();
+                    String addSa = users.getServiceAccountName();
+
+                    // 8-1. service account 생성
+                    resourceYamlService.createServiceAccount(addSa, addInNamespace);
+                    // 8-2. paas-ta-container-platform-init-role 롤 바인딩
+                    resourceYamlService.createRoleBinding(addSa, addInNamespace, propertyService.getInitRole());
+                    // 8-3. secret 정보 조회
+                    String saSecretName = restTemplateService.getSecretName(addInNamespace, addSa);
+                    // 8-4. user 생성
+                    users.setId(0);
+                    users.setCpNamespace(addInNamespace);
+                    users.setRoleSetCode(propertyService.getInitRole());
+                    users.setIsActive(CHECK_Y);
+                    users.setSaSecret(saSecretName);
+                    users.setSaToken(accessTokenService.getSecrets(addInNamespace, saSecretName).getUserAccessToken());
+                    users.setUserType(AUTH_USER);
+                    rsDb = usersService.createUsers(users);
+                }
+               catch (Exception e) {
+                // sa, rb, db 생성 중 Exception 발생할 경우, 삭제 처리
+                   ServiceInstance removeServiceInstance = findServiceInstance.getItems().get(0);
+                   String removeNamespace = removeServiceInstance.getNamespace();
+                   String removeSa = users.getServiceAccountName();
+                   resourceYamlService.deleteServiceAccountAndRolebinding(removeNamespace, removeSa, propertyService.getInitRole());
+                   usersService.deleteUsersByUserIdAndUserAuthId(users.getUserId(), users.getUserAuthId());
+
+                   return CREATE_USERS_FAIL;
+               }
+
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "/");
@@ -155,6 +207,17 @@ public class SignUpUserService {
      */
     public UsersList getUsersListByUserId(String userId) {
         return restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS_DETAIL.replace("{userId:.+}", userId), HttpMethod.GET, null, UsersList.class);
+    }
+
+
+    /**
+     * 서비스 인스턴스 정보 조회(Get serviceInstance Info)
+     *
+     * @param serviceInstanceId the serviceInstanceId
+     * @return the serviceInstance
+     */
+    public ServiceInstanceList getServiceInstanceById(String serviceInstanceId) {
+        return restTemplateService.send(TARGET_COMMON_API, Constants.URI_SERVICEINSTANCE_DETAIL.replace("{serviceInstanceId:.+}", serviceInstanceId), HttpMethod.GET, null, ServiceInstanceList.class);
     }
 
 }

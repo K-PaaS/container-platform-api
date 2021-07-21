@@ -344,4 +344,9 @@ public class PropertyService {
     @Value("${cpMaster.api.list.limitRanges.listAllNamespaces}")
     private String cpMasterApiListLimitRangesListAllNamespacesUrl;
 
+    @Value("${cp.provide-as-service}")
+    private String cpProviderAsService;
+
+    @Value("${cp.provide-as-standalone}")
+    private String cpProviderAsStandalone;
 }

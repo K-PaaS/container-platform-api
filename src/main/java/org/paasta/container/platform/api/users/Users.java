@@ -52,6 +52,9 @@ public class Users {
     // user 생성 시 multi namespaces, roles
     private List<NamespaceRole> selectValues;
 
+    private String cpProviderType;
+    private String serviceInstanceId;
+
     @Data
     public static class NamespaceRole {
         private String namespace;
@@ -62,9 +65,11 @@ public class Users {
         return CommonUtils.procReplaceNullValue(userId);
     }
 
-    public String getUserAuthId() {return CommonUtils.procReplaceNullValue(userAuthId);}
+    public String getUserAuthId() {
+        return CommonUtils.procReplaceNullValue(userAuthId);
+    }
 
-   public String getPassword() {
+    public String getPassword() {
         return CommonUtils.procReplaceNullValue(password);
     }
 
@@ -122,6 +127,14 @@ public class Users {
 
     public String getClientIp() {
         return CommonUtils.procReplaceNullValue(clientIp);
+    }
+
+    public String getCpProviderType() {
+        return CommonUtils.procReplaceNullValue(cpProviderType);
+    }
+
+    public String getServiceInstanceId() {
+        return CommonUtils.procReplaceNullValue(serviceInstanceId);
     }
 
     public List<NamespaceRole> getSelectValues() {
