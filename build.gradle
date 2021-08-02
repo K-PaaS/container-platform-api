@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		springBootVersion = '2.3.3.RELEASE'
-		springBootManagementPlugin = '1.0.10.RELEASE'
+		springBootVersion = '2.3.10.RELEASE'
+		springBootManagementPlugin = '1.0.11.RELEASE'
 	}
 	repositories {
 		mavenCentral()
@@ -52,10 +52,9 @@ jar {
 }
 
 dependencies {
-	compile ('org.springframework.boot:spring-boot-starter-security')
+	compile "org.springframework.boot:spring-boot-starter-security"
 	compile "org.springframework.boot:spring-boot-starter-web"
 	compile "org.springframework.boot:spring-boot-starter-aop"
-	compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 	compile "org.apache.httpcomponents:httpclient:${apacheHttpClientVersion}"
 	compile "com.google.code.gson:gson:${gsonVersion}"
 	compileOnly "org.projectlombok:lombok:${lombokVersion}"
