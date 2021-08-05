@@ -137,6 +137,11 @@ public class Users {
         return CommonUtils.procReplaceNullValue(serviceInstanceId);
     }
 
+    public String getUserType() {
+        return CommonUtils.procReplaceNullValue(userType);
+    }
+
+
     public List<NamespaceRole> getSelectValues() {
         return (StringUtils.isEmpty(selectValues)) ? new ArrayList<NamespaceRole>() {{
             add(new Users.NamespaceRole() {{
