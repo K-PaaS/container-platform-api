@@ -738,17 +738,18 @@ public class UsersService {
 
 
     /**
-     * 사용자 아이디와 사용자 인증 아이디를 통한 Users 삭제 (Delete Users by userId and userAuthId)
+     * 사용자 아이디, 사용자 인증 아이디, 네임스페이스를 통한 Users 삭제 (Delete Users by userId, userAuthId and namespace)
      *
      * @param userId the userId
      * @param userAuthId the userAuthId
      * @return the resultStatus
      */
-    public ResultStatus deleteUsersByUserIdAndUserAuthId(String userId, String userAuthId) {
+    public ResultStatus deleteUsersByUserIdAndUserAuthIdAndNamespace(String userId, String userAuthId, String namespace) {
         // DB delete
         ResultStatus rsDb = (ResultStatus) restTemplateService.sendAdmin(TARGET_COMMON_API, Constants.URI_COMMON_API_DELETE_USER_BY_ID_AND_AUTHID
                 .replace("{userId:.+}", userId)
-                .replace("{userAuthId:.+}", userAuthId), HttpMethod.DELETE, null, Object.class);
+                .replace("{userAuthId:.+}", userAuthId)
+                .replace("{namespace:.+}", namespace), HttpMethod.DELETE, null, Object.class);
 
         return rsDb;
     }

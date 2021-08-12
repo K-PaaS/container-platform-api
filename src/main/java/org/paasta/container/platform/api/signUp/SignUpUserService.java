@@ -4,10 +4,8 @@ import org.paasta.container.platform.api.accessInfo.AccessTokenService;
 import org.paasta.container.platform.api.common.*;
 
 import org.paasta.container.platform.api.common.model.ResultStatus;
-import org.paasta.container.platform.api.users.Users;
-import org.paasta.container.platform.api.users.UsersList;
+import org.paasta.container.platform.api.users.*;
 
-import org.paasta.container.platform.api.users.UsersService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,52 +61,39 @@ public class SignUpUserService {
 
 
     /**
-     * 사용자 회원가입(User Sign Up)
+     * 단독배포 타입의 사용자 회원가입(Sign Up Users By Provider As StandAlone)
      *
      * @param users the users
      * @return the resultStatus
      */
-    public ResultStatus signUpUsers(Users users) {
+    public ResultStatus signUpUsersByProviderAsStandAlone(Users users) {
 
-        ServiceInstanceList findServiceInstance = new ServiceInstanceList();
-        String userTypeByService = users.getUserType();
-
-        // 1. PaaS-TA 서비스 형태로 제공되는 CP 포털의 서비스 인스턴스 아이디 유효성 검사
-        if(users.getCpProviderType().equalsIgnoreCase(propertyService.getCpProviderAsService())) {
-            if (users.getServiceInstanceId().equalsIgnoreCase(NULL_REPLACE_TEXT)) {
-                return INVALID_SERVICE_INSTANCE_ID;
-            }
-
-            findServiceInstance = getServiceInstanceById(users.getServiceInstanceId());
-            if(findServiceInstance.getItems().size() < 1) {
-                return INVALID_SERVICE_INSTANCE_ID;
-            }
-        }
-
-         // 2. 해당 계정이 KEYCLOAK, CP USER 에 등록된 계정인지 확인
+        // 1. 해당 계정이 KEYCLOAK, CP USER 에 등록된 계정인지 확인
         UsersList registerUser = checkRegisterUser(users);
 
-         // 3. KEYCLOAK 에 미등록 사용자인 경우, 메세지 리턴 처리
+        // 2. KEYCLOAK 에 미등록 사용자인 경우, 메세지 리턴 처리
         if(registerUser.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE)) {
             return USER_NOT_REGISTERED_IN_KEYCLOAK;
         }
 
 
-         // 4. CP USER 에 등록된 사용자인 경우, 메세지 리턴 처리
+        // 3. CP USER에 등록된 사용자인 경우, 메세지 리턴 처리
         if(registerUser.getItems().size() > 0) {
             return USER_ALREADY_REGISTERED;
         }
 
 
-        // 5. KEYCLOAK 에서는 삭제된 계정이지만, CP에 남아있는 동일한 USER ID의 DB 컬럼, K8S SA, ROLEBINDING 삭제 진행
+        //4. KEYCLOAK에서는 삭제된 계정이지만, CP에 남아있는 동일한 USER ID의 DB 컬럼, K8S SA, ROLEBINDING 삭제 진행
         UsersList usersList = getUsersListByUserId(users.getUserId());
+
         List<Users> deleteUsers = usersList.getItems().stream().filter(x-> !x.getUserAuthId().matches(users.getUserAuthId())).collect(Collectors.toList());
 
         for(Users du: deleteUsers) {
             usersService.deleteUsers(du);
         }
 
-        // 6. CP-USER 에 미등록인 사용자 CP-USER 계정 생성
+
+        // 5. CP-USER에 미등록인 사용자 CP-USER 계정 생성
         users.setCpNamespace(propertyService.getDefaultNamespace());
         users.setServiceAccountName(users.getUserId());
         users.setRoleSetCode(NOT_ASSIGNED_ROLE);
@@ -116,7 +101,7 @@ public class SignUpUserService {
         users.setSaToken(NULL_REPLACE_TEXT);
         users.setUserType(AUTH_USER);
 
-        // 7. 계정생성 COMMON-API REST SEND
+        // 6. 계정생성 COMMON-API REST SEND
         ResultStatus rsDb = sendSignUpUser(users);
 
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
@@ -124,57 +109,131 @@ public class SignUpUserService {
             return CREATE_USERS_FAIL;
         }
 
+        return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "/");
+    }
 
-        // 8. PaaS-TA 서비스 형태로 제공되는 CP 포털 사용자의 Namespace & RoleMapping 추가 진행
-        // ServiceInstanceId 에 해당하는 Namespace 에 RoleBinding 필요
-        if(users.getCpProviderType().equalsIgnoreCase(propertyService.getCpProviderAsService())) {
+
+    /**
+     * 서비스 타입의 사용자 회원가입(Sign Up Users By Provider As Service)
+     *
+     * @param users the users
+     * @return the resultStatus
+     */
+    public ResultStatus signUpUsersByProviderAsService(Users users) {
+
+        ServiceInstanceList findServiceInstance = new ServiceInstanceList();
+        String userTypeByService = users.getUserType();
+        ResultStatus rsDb = new ResultStatus();
+
+        // PaaS-TA 서비스 형태로 제공되는 CP 포털의 사용자 등록
+        // 1. 서비스 인스턴스 아이디 유효성 검사
+            if(users.getServiceInstanceId().equalsIgnoreCase(NULL_REPLACE_TEXT)) {
+                return INVALID_SERVICE_INSTANCE_ID;
+            }
+
+            findServiceInstance = getServiceInstanceById(users.getServiceInstanceId());
+            if(findServiceInstance.getItems().size() < 1) {
+                return INVALID_SERVICE_INSTANCE_ID;
+            }
+
+        // 2. 해당 계정이 KEYCLOAK 에 존재하는 계정인지 확인
+            UsersList registerUser = checkRegisterUser(users);
+
+        // 2-1. KEYCLOAK 미등록 사용자인 경우, 결과 메세지 리턴 처리
+        if(registerUser.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE)) {
+            return USER_NOT_REGISTERED_IN_KEYCLOAK;
+        }
+
+        // 3. 아이디를 통한 사용자 상세 목록 조회
+         UsersList usersListByUserId = getUsersListByUserId(users.getUserId());
+         List<Users> deleteUsers = usersListByUserId.getItems().stream().filter(x-> !x.getUserAuthId().matches(users.getUserAuthId())).collect(Collectors.toList());
+
+         // 3-1. KEYCLOAK 에서 삭제된 계정이지만, CP 에 남아있는 동일한 USER ID 의 USER 데이터, K8S SA, ROLEBINDING 삭제 진행
+         for(Users du: deleteUsers) {
+            usersService.deleteUsers(du);
+        }
+
+        // 4. 현재 사용자와 맵핑되어있는 네임스페이스 목록 추출
+        List<Users> currentUserDetailsList = usersListByUserId.getItems().stream().filter(x-> x.getUserAuthId().matches(users.getUserAuthId())).collect(Collectors.toList());
+        List<String> userNamespaceList = currentUserDetailsList.stream().map(Users::getCpNamespace).collect(Collectors.toList());
+
+        // 4-1. temp-namespace 등록 유무 체크 후 없으면 데이터 생성
+        if(!userNamespaceList.contains(propertyService.getDefaultNamespace())) {
+            users.setCpNamespace(propertyService.getDefaultNamespace());
+            users.setServiceAccountName(users.getUserId());
+            users.setRoleSetCode(NOT_ASSIGNED_ROLE);
+            users.setSaSecret(NULL_REPLACE_TEXT);
+            users.setSaToken(NULL_REPLACE_TEXT);
+            users.setUserType(AUTH_USER);
+
+            rsDb = sendSignUpUser(users);
+
+            if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
+                LOGGER.info("DATABASE EXECUTE IS FAILED....TEMP NAMESPACE USER CREATE FAILED");
+                return CREATE_USERS_FAIL;
+            }
+        }
+
+
+        // 5. 접속하려는 네임스페이스가 이미 사용자와 맵핑 되어있는지 체크 후 없으면 맵핑 진행
+        String spaceName = "paas-" + users.getServiceInstanceId().toLowerCase() + "-caas";
+        if(!userNamespaceList.contains(spaceName)){
             try {
-                    // 서비스 인스턴스 상세정보 조회
-                    ServiceInstance serviceInstance = findServiceInstance.getItems().get(0);
-                    String addInNamespace = serviceInstance.getNamespace();
-                    String addSa = users.getServiceAccountName();
+                ServiceInstance serviceInstance = findServiceInstance.getItems().get(0);
+                String addInNamespace = serviceInstance.getNamespace();
+                String addSa = users.getUserId().toLowerCase();
 
-                    // 8-1. service account 생성
-                    resourceYamlService.createServiceAccount(addSa, addInNamespace);
+                // 5-1. service account 생성
+                resourceYamlService.createServiceAccount(addSa, addInNamespace);
 
-                    // 8-2. role binding 생성
-                    if(userTypeByService.equalsIgnoreCase(AUTH_NAMESPACE_ADMIN)) {
-                        // 네임스페이스 관리자의 경우
-                        resourceYamlService.createRoleBinding(addSa, addInNamespace, propertyService.getAdminRole());
-                        users.setUserType(AUTH_NAMESPACE_ADMIN);
-                        users.setRoleSetCode(propertyService.getAdminRole());
-                    }
-                    else {
-                        // 일반 사용자의 경우
-                        resourceYamlService.createRoleBinding(addSa, addInNamespace, propertyService.getInitRole());
-                        users.setUserType(AUTH_USER);
-                        users.setRoleSetCode(propertyService.getInitRole());
-                    }
-
-                    // 8-3. secret 정보 조회
-                    String saSecretName = restTemplateService.getSecretName(addInNamespace, addSa);
-
-                    // 8-4. user 생성
-                    users.setId(0);
-                    users.setCpNamespace(addInNamespace);
-                    users.setIsActive(CHECK_Y);
-                    users.setSaSecret(saSecretName);
-                    users.setSaToken(accessTokenService.getSecrets(addInNamespace, saSecretName).getUserAccessToken());
-
-                    rsDb = usersService.createUsers(users);
+                // 5-2. role binding 생성
+                if(userTypeByService.equalsIgnoreCase(AUTH_NAMESPACE_ADMIN)) {
+                    // 네임스페이스 관리자의 경우 ADMIN-ROLE 바인딩
+                    resourceYamlService.createRoleBinding(addSa, addInNamespace, propertyService.getAdminRole());
+                    users.setUserType(AUTH_NAMESPACE_ADMIN);
+                    users.setRoleSetCode(propertyService.getAdminRole());
                 }
-               catch (Exception e) {
-                   // sa, rb, db 생성 중 Exception 발생할 경우, 삭제 처리
-                   ServiceInstance removeServiceInstance = findServiceInstance.getItems().get(0);
-                   String removeNamespace = removeServiceInstance.getNamespace();
-                   String removeSa = users.getServiceAccountName();
-                   // sa, rb 삭제
-                   resourceYamlService.deleteServiceAccountAndRolebinding(removeNamespace, removeSa, users.getRoleSetCode());
-                   // cp db 사용자 데이터 삭제
-                   usersService.deleteUsersByUserIdAndUserAuthId(users.getUserId(), users.getUserAuthId());
+                else {
+                    // 일반 사용자의 경우 INIT-ROLE 바인딩
+                    resourceYamlService.createRoleBinding(addSa, addInNamespace, propertyService.getInitRole());
+                    users.setUserType(AUTH_USER);
+                    users.setRoleSetCode(propertyService.getInitRole());
+                }
 
-                   return CREATE_USERS_FAIL;
-               }
+                // 5-3. secret 정보 조회
+                String saSecretName = restTemplateService.getSecretName(addInNamespace, addSa);
+
+                // 5-4. user 생성
+                users.setId(0);
+                users.setCpNamespace(addInNamespace);
+                users.setServiceAccountName(users.getUserId());
+                users.setIsActive(CHECK_Y);
+                users.setSaSecret(saSecretName);
+                users.setSaToken(accessTokenService.getSecrets(addInNamespace, saSecretName).getUserAccessToken());
+
+                rsDb = usersService.createUsers(users);
+
+                if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
+                    LOGGER.info("DATABASE EXECUTE IS FAILED....USER CREATE FAILED");
+                    throw new Exception("USER CREATE FAILED");
+                }
+            }
+            catch (Exception e) {
+                // SA, RB, DB 데이터 생성 중 Exception 발생할 경우 삭제 처리
+                ServiceInstance removeServiceInstance = findServiceInstance.getItems().get(0);
+                String removeNamespace = removeServiceInstance.getNamespace();
+                String removeSa = users.getUserId().toLowerCase();
+                // SA, RB 삭제
+                resourceYamlService.deleteServiceAccountAndRolebinding(removeNamespace, removeSa, users.getRoleSetCode());
+                // 해당 네임스페이스 데이터 삭제
+                usersService.deleteUsersByUserIdAndUserAuthIdAndNamespace(users.getUserId(), users.getUserAuthId(), removeNamespace);
+                // 최초 가입의 사용자인 경우 temp-namespace 삭제
+                if(!userNamespaceList.contains(propertyService.getDefaultNamespace())) {
+                    usersService.deleteUsersByUserIdAndUserAuthIdAndNamespace(users.getUserId(), users.getUserAuthId(), propertyService.getDefaultNamespace());
+                }
+
+                return CREATE_USERS_FAIL;
+            }
 
         }
 

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.PropertyService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.config.NoAuth;
 import org.paasta.container.platform.api.users.Users;
@@ -28,6 +29,7 @@ public class SignUpController {
 
     private final SignUpUserService signUpUserService;
     private final SignUpAdminService signUpAdminService;
+    private final PropertyService propertyService;
 
     /**
      * Instantiates a new SignUp controller
@@ -36,9 +38,10 @@ public class SignUpController {
      * @param signUpAdminService the signUpAdminService service
      */
     @Autowired
-    public SignUpController(SignUpUserService signUpUserService, SignUpAdminService signUpAdminService) {
+    public SignUpController(SignUpUserService signUpUserService, SignUpAdminService signUpAdminService,PropertyService propertyService) {
         this.signUpUserService = signUpUserService;
         this.signUpAdminService = signUpAdminService;
+        this.propertyService = propertyService;
     }
 
 
@@ -74,7 +77,13 @@ public class SignUpController {
             return signUpAdminService.signUpAdminUsers(users, param);
         }
 
-            return signUpUserService.signUpUsers(users);
+        // For User As Service Type
+        if(users.getCpProviderType().equalsIgnoreCase(propertyService.getCpProviderAsService())) {
+           return  signUpUserService.signUpUsersByProviderAsService(users);
+        }
+
+        // For User As StandAlone Type
+          return signUpUserService.signUpUsersByProviderAsStandAlone(users);
     }
 
 
