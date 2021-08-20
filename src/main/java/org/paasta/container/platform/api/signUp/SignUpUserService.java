@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
-
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -158,22 +156,26 @@ public class SignUpUserService {
         List<String> userNamespaceList = currentUserDetailsList.stream().map(Users::getCpNamespace).collect(Collectors.toList());
 
         // 4-1. temp-namespace 등록 유무 체크 후 없으면 데이터 생성
-        if(!userNamespaceList.contains(propertyService.getDefaultNamespace())) {
-            users.setCpNamespace(propertyService.getDefaultNamespace());
-            users.setServiceAccountName(users.getUserId());
-            users.setRoleSetCode(NOT_ASSIGNED_ROLE);
-            users.setSaSecret(NULL_REPLACE_TEXT);
-            users.setSaToken(NULL_REPLACE_TEXT);
-            users.setUserType(AUTH_USER);
+        List<Users> checkTempNamespace = currentUserDetailsList.stream().filter(x-> x.getCpNamespace().matches(propertyService.getDefaultNamespace())).collect(Collectors.toList());
 
-            rsDb = sendSignUpUser(users);
+        if(checkTempNamespace.size() > 0) {
+            if(checkTempNamespace.get(0).getUserType().equals(AUTH_CLUSTER_ADMIN)) {
+                users.setCpNamespace(propertyService.getDefaultNamespace());
+                users.setServiceAccountName(users.getUserId());
+                users.setRoleSetCode(NOT_ASSIGNED_ROLE);
+                users.setSaSecret(NULL_REPLACE_TEXT);
+                users.setSaToken(NULL_REPLACE_TEXT);
+                users.setUserType(AUTH_USER);
 
-            if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
-                LOGGER.info("DATABASE EXECUTE IS FAILED....TEMP NAMESPACE USER CREATE FAILED");
-                return CREATE_USERS_FAIL;
+                LOGGER.info("CREATE USER WITH [USER] TYPE IN TEMP NAMESPACE...");
+                rsDb = sendSignUpUser(users);
+
+                if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
+                    LOGGER.info("DATABASE EXECUTE IS FAILED....TEMP NAMESPACE USER CREATE FAILED");
+                    return CREATE_USERS_FAIL;
+                }
             }
         }
-
 
         // 5. 접속하려는 네임스페이스가 이미 사용자와 맵핑 되어있는지 체크 후 없으면 맵핑 진행
         String spaceName = "paas-" + users.getServiceInstanceId().toLowerCase() + "-caas";
