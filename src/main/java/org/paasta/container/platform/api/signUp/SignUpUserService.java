@@ -157,9 +157,9 @@ public class SignUpUserService {
 
         // 4-1. temp-namespace 등록 유무 체크 후 없으면 데이터 생성
         List<Users> checkTempNamespace = currentUserDetailsList.stream().filter(x-> x.getCpNamespace().matches(propertyService.getDefaultNamespace())).collect(Collectors.toList());
+        checkTempNamespace = checkTempNamespace.stream().filter(x-> x.getUserType().matches(AUTH_USER)).collect(Collectors.toList());
 
-        if(checkTempNamespace.size() > 0) {
-            if(checkTempNamespace.get(0).getUserType().equals(AUTH_CLUSTER_ADMIN)) {
+        if(checkTempNamespace.size() < 1) {
                 users.setCpNamespace(propertyService.getDefaultNamespace());
                 users.setServiceAccountName(users.getUserId());
                 users.setRoleSetCode(NOT_ASSIGNED_ROLE);
@@ -174,7 +174,6 @@ public class SignUpUserService {
                     LOGGER.info("DATABASE EXECUTE IS FAILED....TEMP NAMESPACE USER CREATE FAILED");
                     return CREATE_USERS_FAIL;
                 }
-            }
         }
 
         // 5. 접속하려는 네임스페이스가 이미 사용자와 맵핑 되어있는지 체크 후 없으면 맵핑 진행
