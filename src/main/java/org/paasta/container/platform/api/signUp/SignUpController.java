@@ -72,6 +72,9 @@ public class SignUpController {
             return Constants.INVALID_USER_SIGN_UP;
         }
 
+        // Converts a userId to lowercase letters
+        users.setUserId(users.getUserId().toLowerCase());
+
         // For Cluster Admin
         if(isAdmin.toLowerCase().equals(Constants.CHECK_TRUE)) {
             return signUpAdminService.signUpAdminUsers(users, param);
