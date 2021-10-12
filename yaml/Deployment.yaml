@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: api
-        image: $REGISTRY_HARBOR_URL/container-platform-new-dev/container-platform-api:$BUILD_NUMBER
+        image: $REGISTRY_HARBOR_URL/container-platform-new-dev/container-platform-api:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 2333
