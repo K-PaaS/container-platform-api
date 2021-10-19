@@ -49,4 +49,8 @@ public class StorageClassesAdmin {
     public String getCreationTimestamp() {
         return metadata.getCreationTimestamp();
     }
+
+    public Object getParameters() {
+        return CommonUtils.procReplaceNullValue(this.parameters);
+    }
 }

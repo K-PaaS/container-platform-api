@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.Data;
 
+import org.paasta.container.platform.api.common.CommonUtils;
 import org.paasta.container.platform.api.common.model.CommonItemMetaData;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
 import org.paasta.container.platform.api.common.model.CommonSpec;
@@ -50,5 +51,9 @@ class StorageClassesListAdminItem {
 
     public String getCreationTimestamp() {
         return metadata.getCreationTimestamp();
+    }
+
+    public Object getParameters() {
+        return CommonUtils.procReplaceNullValue(this.parameters);
     }
 }
