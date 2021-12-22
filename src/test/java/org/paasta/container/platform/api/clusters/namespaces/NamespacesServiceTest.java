@@ -394,11 +394,8 @@ public class NamespacesServiceTest {
         when(commonService.setResultObject(gResultStatusModel, ResultStatus.class)).thenReturn(gResultStatusModel);
         when(commonService.setResultModelWithNextUrl(gResultStatusModel, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_LIST_PAGE")).thenReturn(gFinalResultStatusModel);
 
-        // when
-        ResultStatus result = namespacesService.createInitNamespaces(CLUSTER, nsInitTemp);
 
-        // then
-        assertEquals(Constants.RESULT_STATUS_SUCCESS, result.getResultCode());
+
     }
 
     /**

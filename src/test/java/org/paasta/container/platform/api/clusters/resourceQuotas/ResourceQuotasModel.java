@@ -6,7 +6,6 @@ import org.paasta.container.platform.api.clusters.resourceQuotas.support.Resourc
 import org.paasta.container.platform.api.clusters.resourceQuotas.support.ResourceQuotasStatusItem;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.model.CommonMetaData;
-import org.paasta.container.platform.api.common.model.CommonSpec;
 import org.paasta.container.platform.api.common.model.CommonStatusCode;
 
 import java.util.ArrayList;
@@ -17,9 +16,9 @@ import java.util.Map;
 /**
  * ResourceQuotas Model 클래스
  *
- * @author hrjin
+ * @author kjhoon
  * @version 1.0
- * @since 2020.11.20
+ * @since 2021.11.20
  **/
 public class ResourceQuotasModel {
     private static final String NAMESPACE = "cp-namespace";
@@ -80,15 +79,8 @@ public class ResourceQuotasModel {
     public static List<ResourceQuotasStatusItem> getResourceQuotasStatusItemList() {
         List<ResourceQuotasStatusItem> itemList = new ArrayList<>();
 
-        ResourceQuotasStatusItem item1 = new ResourceQuotasStatusItem();
-        item1.setResource("limits.cpu");
-        item1.setHard("8");
-        item1.setUsed("0");
-
-        ResourceQuotasStatusItem item2 = new ResourceQuotasStatusItem();
-        item2.setResource("limits.memory");
-        item2.setHard("12Gi");
-        item2.setUsed("0");
+        ResourceQuotasStatusItem item1 = new ResourceQuotasStatusItem("limits.cpu", "8", "0");
+        ResourceQuotasStatusItem item2 = new ResourceQuotasStatusItem("limits.memory", "12Gi","0" );
 
         itemList.add(item1);
         itemList.add(item2);
