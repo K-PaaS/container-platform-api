@@ -61,7 +61,7 @@ public class LoginController {
                     authRequest.getUserId(), authRequest.getUserAuthId()));
         } catch (Exception e) {
 
-            ResultStatus resultStatus = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_FAIL,
+            ResultStatus resultStatus = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_FAIL.getMsg(),
                     CommonStatusCode.UNAUTHORIZED.getCode(), e.getMessage());
 
             return resultStatus;
@@ -86,13 +86,13 @@ public class LoginController {
             Map<String, Object> expectedMap = jwtTokenUtil.getMapFromIoJsonwebtokenClaims(claims);
             String token = jwtTokenUtil.doGenerateRefreshToken(expectedMap, expectedMap.get("sub").toString());
 
-           authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.REFRESH_TOKEN_SUCCESS, CommonStatusCode.OK.getCode(),
-                    MessageConstant.REFRESH_TOKEN_SUCCESS, Constants.URI_INTRO_OVERVIEW, Constants.NULL_REPLACE_TEXT, token, null, Constants.NULL_REPLACE_TEXT);
+           authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.REFRESH_TOKEN_SUCCESS.getMsg(), CommonStatusCode.OK.getCode(),
+                    MessageConstant.REFRESH_TOKEN_SUCCESS.getMsg(), Constants.URI_INTRO_OVERVIEW, Constants.NULL_REPLACE_TEXT, token, null, Constants.NULL_REPLACE_TEXT);
         }
 
         catch (Exception e){
-            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_FAIL, MessageConstant.REFRESH_TOKEN_FAIL, CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(),
-                    MessageConstant.REFRESH_TOKEN_FAIL, Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT, null, Constants.NULL_REPLACE_TEXT);
+            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_FAIL, MessageConstant.REFRESH_TOKEN_FAIL.getMsg(), CommonStatusCode.INTERNAL_SERVER_ERROR.getCode(),
+                    MessageConstant.REFRESH_TOKEN_FAIL.getMsg(), Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT, Constants.NULL_REPLACE_TEXT, null, Constants.NULL_REPLACE_TEXT);
         }
 
 

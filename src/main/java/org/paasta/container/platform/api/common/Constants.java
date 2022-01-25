@@ -232,6 +232,9 @@ public class Constants {
     public static final String PARAM_QUERY_FIRST ="?" ;
     public static final String PARAM_QUERY_AND = "&";
 
+    public static final String U_LANG_KO = "ko";
+    public static final String U_LANG_ENG = "eng";
+
     /** 서비스 클래스의 Package */
     public static final String SERVICE_PACKAGE = "org.paasta.container.platform.api.";
 
@@ -267,49 +270,49 @@ public class Constants {
     public static final ResultStatus NOT_FOUND_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_FAIL,
             CommonStatusCode.NOT_FOUND.getMsg(), CommonStatusCode.NOT_FOUND.getCode(),CommonStatusCode.NOT_FOUND.getMsg());
 
-    public static final ResultStatus NOT_MATCH_NAMESPACES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_NAMESPACES,
+    public static final ResultStatus NOT_MATCH_NAMESPACES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_MATCH_NAMESPACES.getMsg(),
             CommonStatusCode.BAD_REQUEST.getCode(),CommonStatusCode.BAD_REQUEST.getMsg(), null );
 
-    public static final ResultStatus DO_NOT_DELETE_DEFAULT_RESOURCES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES,
-            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES, null );
+    public static final ResultStatus DO_NOT_DELETE_DEFAULT_RESOURCES = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES.getMsg(),
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.DO_NOT_DELETE_DEFAULT_RESOURCES.getMsg(), null );
 
-    public static final ResultStatus MANDATORY_NAMESPACE_AND_ROLE = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.MANDATORY_NAMESPACE_AND_ROLE,
-            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.MANDATORY_NAMESPACE_AND_ROLE, null );
+    public static final ResultStatus MANDATORY_NAMESPACE_AND_ROLE = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.MANDATORY_NAMESPACE_AND_ROLE.getMsg(),
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.MANDATORY_NAMESPACE_AND_ROLE.getMsg(), null );
 
-    public static final ResultStatus UNAPPROACHABLE_USERS = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.UNAPPROACHABLE_USERS,
-            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.UNAPPROACHABLE_USERS, null );
+    public static final ResultStatus UNAPPROACHABLE_USERS = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.UNAPPROACHABLE_USERS.getMsg(),
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.UNAPPROACHABLE_USERS.getMsg(), null );
 
-    public static final ResultStatus REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT,
-            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT, null );
+    public static final ResultStatus REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT.getMsg(),
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT.getMsg(), null );
 
-    public static final ResultStatus UNABLE_TO_CREATE_RESOURCE_NAME = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_RESOURCE_NAME,
-            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.NOT_ALLOWED_RESOURCE_NAME, null );
+    public static final ResultStatus UNABLE_TO_CREATE_RESOURCE_NAME = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_RESOURCE_NAME.getMsg(),
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.NOT_ALLOWED_RESOURCE_NAME.getMsg(), null );
 
-    public static final ResultStatus REQUEST_VALUE_IS_MISSING = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUEST_VALUE_IS_MISSING,
-            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.REQUEST_VALUE_IS_MISSING, null );
+    public static final ResultStatus REQUEST_VALUE_IS_MISSING = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUEST_VALUE_IS_MISSING.getMsg(),
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.REQUEST_VALUE_IS_MISSING.getMsg(), null );
 
     //SIGN UP
 
-    public static final ResultStatus CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE,
-            CommonStatusCode.CONFLICT.getCode(),MessageConstant.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE, null );
+    public static final ResultStatus CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE.getMsg(),
+            CommonStatusCode.CONFLICT.getCode(),MessageConstant.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED_MESSAGE.getMsg(), null );
 
-    public static final ResultStatus USER_ALREADY_REGISTERED = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_ALREADY_REGISTERED_MESSAGE,
-            CommonStatusCode.CONFLICT.getCode(),MessageConstant.USER_ALREADY_REGISTERED_MESSAGE, null );
+    public static final ResultStatus USER_ALREADY_REGISTERED = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_ALREADY_REGISTERED_MESSAGE.getMsg(),
+            CommonStatusCode.CONFLICT.getCode(),MessageConstant.USER_ALREADY_REGISTERED_MESSAGE.getMsg(), null );
 
-    public static final ResultStatus USERS_REGISTERED_CHECK_FAIL = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USERS_REGISTERED_CHECK_FAIL_MESSAGE,
-            CommonStatusCode.INTERNAL_SERVER_ERROR.getCode() ,MessageConstant.USERS_REGISTERED_CHECK_FAIL_MESSAGE );
+    public static final ResultStatus USERS_REGISTERED_CHECK_FAIL = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USERS_REGISTERED_CHECK_FAIL_MESSAGE.getMsg(),
+            CommonStatusCode.INTERNAL_SERVER_ERROR.getCode() ,MessageConstant.USERS_REGISTERED_CHECK_FAIL_MESSAGE.getMsg() );
 
-    public static final ResultStatus CREATE_USERS_FAIL = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.SIGNUP_USER_CREATION_FAILED,
-            CommonStatusCode.INTERNAL_SERVER_ERROR.getCode() ,MessageConstant.SIGNUP_USER_CREATION_FAILED );
+    public static final ResultStatus CREATE_USERS_FAIL = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.SIGNUP_USER_CREATION_FAILED.getMsg(),
+            CommonStatusCode.INTERNAL_SERVER_ERROR.getCode() ,MessageConstant.SIGNUP_USER_CREATION_FAILED.getMsg());
 
-    public static final ResultStatus USER_NOT_REGISTERED_IN_KEYCLOAK = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE,
-            CommonStatusCode.UNAUTHORIZED.getCode(),MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE, null );
+    public static final ResultStatus USER_NOT_REGISTERED_IN_KEYCLOAK = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE.getMsg(),
+            CommonStatusCode.UNAUTHORIZED.getCode(),MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE.getMsg(), null );
 
-    public static final ResultStatus INVALID_USER_SIGN_UP = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_SIGN_UP_INFO_REQUIRED,
-            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.USER_SIGN_UP_INFO_REQUIRED, null );
+    public static final ResultStatus INVALID_USER_SIGN_UP = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.USER_SIGN_UP_INFO_REQUIRED.getMsg(),
+            CommonStatusCode.BAD_REQUEST.getCode(),MessageConstant.USER_SIGN_UP_INFO_REQUIRED.getMsg(), null );
 
-    public static final ResultStatus INVALID_SERVICE_INSTANCE_ID = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_SERVICE_INSTANCE_ID,
-            CommonStatusCode.UNAUTHORIZED.getCode(),MessageConstant.INVALID_SERVICE_INSTANCE_ID, null );
+    public static final ResultStatus INVALID_SERVICE_INSTANCE_ID = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_SERVICE_INSTANCE_ID.getMsg(),
+            CommonStatusCode.UNAUTHORIZED.getCode(),MessageConstant.INVALID_SERVICE_INSTANCE_ID.getMsg(), null );
 
     public Constants() {
         throw new IllegalStateException();

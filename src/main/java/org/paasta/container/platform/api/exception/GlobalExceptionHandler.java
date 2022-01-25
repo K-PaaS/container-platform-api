@@ -76,7 +76,7 @@ public class GlobalExceptionHandler extends RuntimeException {
 
         String message = "Required request body is missing";
         if(ex.getMessage().contains(message)){
-            return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUEST_VALUE_IS_MISSING, HttpStatus.UNPROCESSABLE_ENTITY.value(), MessageConstant.REQUEST_VALUE_IS_MISSING);
+            return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.REQUEST_VALUE_IS_MISSING.getMsg(), HttpStatus.UNPROCESSABLE_ENTITY.value(), MessageConstant.REQUEST_VALUE_IS_MISSING.getMsg());
         }
         return new ErrorMessage(Constants.RESULT_STATUS_FAIL, ex.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY.value(), ex.getLocalizedMessage());
     }
@@ -85,7 +85,7 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ResponseBody
     public ErrorMessage handleException(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
-        String message = MessageConstant.REQUEST_VALUE_IS_MISSING + " : ";
+        String message = MessageConstant.REQUEST_VALUE_IS_MISSING.getMsg() + " : ";
 
         FieldError error;
         for(Iterator var5 = result.getFieldErrors().iterator(); var5.hasNext(); message = message + error.getField()) {
@@ -100,20 +100,20 @@ public class GlobalExceptionHandler extends RuntimeException {
     @ResponseBody
     public ErrorMessage nullException(NullPointerException ex) {
         LOGGER.info("NullPointerException >>> " + CommonUtils.loggerReplace(ex));
-        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR);
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR.getMsg());
     }
 
     @ExceptionHandler({IndexOutOfBoundsException.class})
     @ResponseBody
     public ErrorMessage indexOutOfBoundsException(IndexOutOfBoundsException ex) {
         LOGGER.info("indexOutOfBoundsException >>> " + CommonUtils.loggerReplace(ex.getMessage()));
-        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR);
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR.getMsg());
     }
 
     @ExceptionHandler({ClassCastException.class})
     @ResponseBody
     public ErrorMessage classCastException(ClassCastException ex) {
         LOGGER.info("ClassCastException >>> " + CommonUtils.loggerReplace(ex.getMessage()));
-        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR);
+        return new ErrorMessage(Constants.RESULT_STATUS_FAIL, MessageConstant.CODE_ERROR.getMsg());
     }
 }

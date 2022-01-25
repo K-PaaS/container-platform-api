@@ -105,9 +105,9 @@ public class JwtUtil {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException ex) {
-            throw new BadCredentialsException(MessageConstant.LOGIN_INVALID_CREDENTIALS, ex);
+            throw new BadCredentialsException(MessageConstant.LOGIN_INVALID_CREDENTIALS.getMsg(), ex);
         } catch (ExpiredJwtException ex) {
-            throw new ExpiredJwtException(ex.getHeader(), ex.getClaims(), MessageConstant.LOGIN_TOKEN_EXPIRED, ex);
+            throw new ExpiredJwtException(ex.getHeader(), ex.getClaims(), MessageConstant.LOGIN_TOKEN_EXPIRED.getMsg(), ex);
         }
     }
 

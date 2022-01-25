@@ -78,9 +78,9 @@ public class CommonUtils {
         if (checkParamList.size() > 0) {
             return ResultStatus.builder()
                 .resultCode(Constants.RESULT_STATUS_FAIL)
-                .resultMessage(MessageConstant.REGISTER_FAIL)
+                .resultMessage(MessageConstant.REGISTER_FAIL.getMsg())
                 .httpStatusCode(400)
-                .detailMessage(MessageConstant.REGISTER_FAIL + " " + checkParamList.toString() + " 항목을 다시 확인해주세요.").build();
+                .detailMessage(MessageConstant.REGISTER_FAIL.getMsg() + " " + checkParamList.toString() + " 항목을 다시 확인해주세요.").build();
         }
 
         return objectMapper.convertValue(map, Users.class);

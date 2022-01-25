@@ -80,7 +80,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             roles = Arrays.asList(new SimpleGrantedAuthority(user.getUserType()));
             return new User(user.getUserId(), user.getUserAuthId(), roles);
         }
-        throw new UsernameNotFoundException(MessageConstant.INVALID_LOGIN_INFO);
+        throw new UsernameNotFoundException(MessageConstant.INVALID_LOGIN_INFO.getMsg());
     }
 
 
@@ -112,8 +112,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             if(isAdmin.toLowerCase().equals("true")) {
                 Users user = usersService.getUsersDetailsForLogin(userdetails.getUsername(), "true");
 
-                authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                        MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, null, user.getClusterName());
+                authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS.getMsg(), CommonStatusCode.OK.getCode(),
+                        MessageConstant.LOGIN_SUCCESS.getMsg(), Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, null, user.getClusterName());
 
             }
 
@@ -126,11 +126,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
                 if (loginMetaData.size() == 0) {
                     //in-active user
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_FAIL, CommonStatusCode.FORBIDDEN.getCode(), MessageConstant.INVALID_LOGIN_INFO);
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_FAIL.getMsg(), CommonStatusCode.FORBIDDEN.getCode(), MessageConstant.INVALID_LOGIN_INFO.getMsg());
                 }
 
-                authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                        MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, user.getClusterName());
+                authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS.getMsg(), CommonStatusCode.OK.getCode(),
+                        MessageConstant.LOGIN_SUCCESS.getMsg(), Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, user.getClusterName());
 
             }
 
@@ -146,11 +146,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             if (loginMetaData.size() == 0) {
                 //in-active user
-                return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_INACTIVE_USER, CommonStatusCode.FORBIDDEN.getCode(), MessageConstant.INACTIVE_USER_ACCESS);
+                return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.LOGIN_INACTIVE_USER.getMsg(), CommonStatusCode.FORBIDDEN.getCode(), MessageConstant.INACTIVE_USER_ACCESS.getMsg());
             }
 
-            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS, CommonStatusCode.OK.getCode(),
-                    MessageConstant.LOGIN_SUCCESS, Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, user.getClusterName());
+            authResponse = new AuthenticationResponse(Constants.RESULT_STATUS_SUCCESS, MessageConstant.LOGIN_SUCCESS.getMsg(), CommonStatusCode.OK.getCode(),
+                    MessageConstant.LOGIN_SUCCESS.getMsg(), Constants.URI_INTRO_OVERVIEW, userdetails.getUsername(), token, loginMetaData, user.getClusterName());
 
         }
 

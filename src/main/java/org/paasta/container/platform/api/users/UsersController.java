@@ -295,7 +295,7 @@ public class UsersController {
         // input parameter regex
         if (!Constants.RESULT_STATUS_SUCCESS.equals(regexMatch(users))) {
             return ResultStatus.builder().resultCode(Constants.RESULT_STATUS_FAIL)
-                    .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE)
+                    .resultMessage(MessageConstant.RE_CONFIRM_INPUT_VALUE.getMsg())
                     .httpStatusCode(400)
                     .detailMessage(regexMatch(users)).build();
         }

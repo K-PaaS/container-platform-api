@@ -5,14 +5,17 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.CodeSignature;
+import org.paasta.container.platform.api.login.CustomUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,8 +34,10 @@ public class AdminCheckAspect {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandler.class);
     private static final String IS_ADMIN = "isAdmin";
+    private static final String U_LANG_KEY = "uLang";
 
-
+    @Autowired
+    private HttpServletRequest request;
     /**
      * API URL 호출 시 로그인한 사용자 정보로 admin/user 판별 (check that login user is admin or user)
      *
@@ -46,10 +51,9 @@ public class AdminCheckAspect {
     @Around("execution(* org.paasta.container.platform.api..*Controller.*(..))" + "&& !@annotation(org.paasta.container.platform.api.config.NoAuth)")
     public Object isAdminAspect(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] parameterValues = Arrays.asList(joinPoint.getArgs()).toArray();
+        String uLang = "kr";
 
-        UserDetails usersDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         List<GrantedAuthority> list = (List<GrantedAuthority>) authentication.getAuthorities();
         LOGGER.info("YOUR AUTHORITY :: {}", CommonUtils.loggerReplace(list.get(0).getAuthority()));
         String authority = list.get(0).getAuthority();
@@ -71,6 +75,19 @@ public class AdminCheckAspect {
 
             index++;
         }
+
+        //language
+        RequestWrapper requestWrapper = new RequestWrapper(request);
+        if(requestWrapper.getHeader(U_LANG_KEY) != null) {
+            uLang = requestWrapper.getHeader(U_LANG_KEY).toLowerCase();
+        }
+        if(!uLang.equals(Constants.U_LANG_ENG)) {
+            uLang = Constants.U_LANG_KO;
+        }
+
+        CustomUserDetails customUserDetails = new CustomUserDetails(uLang);
+        authentication.setDetails(customUserDetails);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         parameterValues = CommonUtils.modifyValue(parameterValues, index, isAdmin);
         return joinPoint.proceed(parameterValues);

@@ -328,14 +328,14 @@ public class CommonService {
 
 
         if (limit < 0) {
-            throw new IllegalArgumentException(MessageConstant.LIMIT_ILLEGALARGUMENT);
+            throw new IllegalArgumentException(MessageConstant.LIMIT_ILLEGALARGUMENT.getMsg());
         }
         if (offset < 0) {
-            throw new IllegalArgumentException(MessageConstant.OFFSET_ILLEGALARGUMENT);
+            throw new IllegalArgumentException(MessageConstant.OFFSET_ILLEGALARGUMENT.getMsg());
         }
 
         if (offset > 0 && limit == 0) {
-            throw new IllegalArgumentException(MessageConstant.OFFSET_REQUIRES_LIMIT_ILLEGALARGUMENT);
+            throw new IllegalArgumentException(MessageConstant.OFFSET_REQUIRES_LIMIT_ILLEGALARGUMENT.getMsg());
         }
 
 

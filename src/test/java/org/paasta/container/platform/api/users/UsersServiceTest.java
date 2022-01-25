@@ -619,7 +619,7 @@ public class UsersServiceTest {
         when(restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_CLUSTER_USER_DETAILS
                         .replace("{userId:.+}", USER_ID).replace("{userType:.+}", USER_TYPE_AUTH_USER),
                 HttpMethod.GET, null, UsersAdmin.class)).thenReturn(usersAdmin);
-        usersAdmin.setResultMessage(MessageConstant.USER_NOT_MAPPED_TO_THE_NAMESPACE_MESSAGE);
+        usersAdmin.setResultMessage(MessageConstant.USER_NOT_MAPPED_TO_THE_NAMESPACE_MESSAGE.getMsg());
         UsersAdmin usersAdmin = (UsersAdmin) usersService.getUsersInMultiNamespace(CLUSTER, USER_ID, USER_TYPE_AUTH_USER, LIMIT, OFFSET);
     }
 

@@ -87,7 +87,7 @@ public class MethodHandler {
         }
 
         if(namespace.toLowerCase().equals(Constants.ALL_NAMESPACES)) {
-           return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NAMESPACES_CANNOT_BE_CREATED, CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NAMESPACES_CANNOT_BE_CREATED);
+           return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NAMESPACES_CANNOT_BE_CREATED.getMsg(), CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NAMESPACES_CANNOT_BE_CREATED.getMsg());
         }
 
         String requestResource;
@@ -119,13 +119,13 @@ public class MethodHandler {
 
             if (StringUtils.isNotEmpty(createYamlResourceName) && StringUtils.isNotEmpty(createYamlResourceNamespace)) {
                 if (createYamlResourceName.startsWith("kube") || createYamlResourceNamespace.startsWith("kube")) {
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW);
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW.getMsg(), CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW.getMsg());
                 } else {
                     break;
                 }
             } else if (StringUtils.isNotEmpty(createYamlResourceName) && StringUtils.isEmpty(createYamlResourceNamespace)) {
                 if (createYamlResourceName.startsWith("kube")) {
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW);
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW.getMsg(), CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW.getMsg());
                 } else {
                     break;
                 }
@@ -141,7 +141,7 @@ public class MethodHandler {
             if (YamlKind.equals(Constants.RESOURCE_POD)) {
                 for (String na : NOT_ALLOWED_POD_NAME_LIST) {
                     if (createYamlResourceName.equals(na)) {
-                        return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_POD_NAME, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.NOT_ALLOWED_POD_NAME);
+                        return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_POD_NAME.getMsg(), CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.NOT_ALLOWED_POD_NAME.getMsg());
                     }
                 }
             } else {
@@ -161,7 +161,7 @@ public class MethodHandler {
                 } else {
                     LOGGER.info("the namespace of the provided object does not match the namespace sent on the request':::::::::error");
                     return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.name(),
-                            CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NOT_MATCH_NAMESPACES);
+                            CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NOT_MATCH_NAMESPACES.getMsg());
                 }
             } else {
                 break;
@@ -181,8 +181,8 @@ public class MethodHandler {
         }
 
         if (!isExistResource) {
-            return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_EXIST_RESOURCE, CommonStatusCode.BAD_REQUEST.getCode(),
-                    requestResource + MessageConstant.NOT_EXIST);
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_EXIST_RESOURCE.getMsg(), CommonStatusCode.BAD_REQUEST.getCode(),
+                    requestResource + MessageConstant.NOT_EXIST.getMsg());
         }
 
         for (String temp : yamlArray) {
@@ -192,7 +192,7 @@ public class MethodHandler {
             if(!isAdmin){
                 if(propertyService.getAdminResource().contains(resourceKind)) {
                     return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.name(),
-                            CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.INCLUDE_INACCESSIBLE_RESOURCES);
+                            CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.INCLUDE_INACCESSIBLE_RESOURCES.getMsg());
                 }
             }
 
@@ -274,13 +274,13 @@ public class MethodHandler {
 
             if (StringUtils.isNotEmpty(updateYamlResourceName) && StringUtils.isNotEmpty(updateYamlResourceNamespace)) {
                 if (updateYamlResourceName.startsWith("kube") || updateYamlResourceNamespace.startsWith("kube")) {
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW);
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW.getMsg(), CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW.getMsg());
                 } else {
                     break;
                 }
             } else if (StringUtils.isNotEmpty(updateYamlResourceName) && StringUtils.isEmpty(updateYamlResourceNamespace)) {
                 if (updateYamlResourceName.startsWith("kube")) {
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW);
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.PREFIX_KUBE_NOT_ALLOW.getMsg(), CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.PREFIX_KUBE_NOT_ALLOW.getMsg());
                 } else {
                     break;
                 }
@@ -296,7 +296,7 @@ public class MethodHandler {
             if (YamlKind.equals(Constants.RESOURCE_POD)) {
                 for (String na : NOT_ALLOWED_POD_NAME_LIST) {
                     if (createYamlResourceName.equals(na)) {
-                        return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_POD_NAME, CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.NOT_ALLOWED_POD_NAME);
+                        return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_ALLOWED_POD_NAME.getMsg(), CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.NOT_ALLOWED_POD_NAME.getMsg());
                     }
                 }
             } else {
@@ -315,7 +315,7 @@ public class MethodHandler {
                     break;
                 } else {
                     LOGGER.info("the namespace of the provided object does not match the namespace sent on the request':::::::::error");
-                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.name(), CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NOT_MATCH_NAMESPACES);
+                    return new ResultStatus(Constants.RESULT_STATUS_FAIL, CommonStatusCode.BAD_REQUEST.name(), CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NOT_MATCH_NAMESPACES.getMsg());
                 }
             } else {
                 break;
@@ -326,12 +326,12 @@ public class MethodHandler {
         String updateYamlResourceName = YamlUtil.parsingYaml(yaml, METADATA_KEY);
 
         if (!requestResource.equals(resourceKind) ) {
-            return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_EXIST_RESOURCE, CommonStatusCode.BAD_REQUEST.getCode(), requestResource + MessageConstant.NOT_EXIST);
+            return new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.NOT_EXIST_RESOURCE.getMsg(), CommonStatusCode.BAD_REQUEST.getCode(), requestResource + MessageConstant.NOT_EXIST.getMsg());
         }
 
         if (!resourceName.equals(updateYamlResourceName)) {
             return new ResultStatus(Constants.RESULT_STATUS_FAIL,
-                    MessageConstant.NOT_ALLOWED_RESOURCE_NAME, CommonStatusCode.BAD_REQUEST.getCode(), resourceName + MessageConstant.RESOURCE_NAMED + requestResource + MessageConstant.NOT_UPDATE_YAML);
+                    MessageConstant.NOT_ALLOWED_RESOURCE_NAME.getMsg(), CommonStatusCode.BAD_REQUEST.getCode(), resourceName + MessageConstant.RESOURCE_NAMED.getMsg() + requestResource + MessageConstant.NOT_UPDATE_YAML.getMsg());
         }
 
         resourceKind = YamlUtil.parsingYaml(yaml, KIND_KEY);

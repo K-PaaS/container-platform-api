@@ -176,7 +176,7 @@ public class UsersService {
                     .replace("{userId:.+}", userId)
                     .replace("{userType:.+}", userType), HttpMethod.GET, null, UsersAdmin.class);
 
-            if(usersAdmin.getResultMessage().equalsIgnoreCase(MessageConstant.USER_NOT_MAPPED_TO_THE_NAMESPACE_MESSAGE)) {
+            if(usersAdmin.getResultMessage().equalsIgnoreCase(MessageConstant.USER_NOT_MAPPED_TO_THE_NAMESPACE_MESSAGE.getMsg())) {
                 List<UsersAdmin.UsersDetails> items = new ArrayList<>();
                 usersAdmin.setItems(items);
                 return commonService.setResultModel(commonService.setResultObject(usersAdmin, UsersAdmin.class), Constants.RESULT_STATUS_SUCCESS);

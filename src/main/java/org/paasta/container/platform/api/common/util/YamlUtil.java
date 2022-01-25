@@ -39,7 +39,7 @@ public class YamlUtil {
             }
             
         } catch (ClassCastException e) {
-            throw new ContainerPlatformException(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_YAML_FORMAT , CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.INVALID_YAML_FORMAT);
+            throw new ContainerPlatformException(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_YAML_FORMAT.getMsg() , CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.INVALID_YAML_FORMAT.getMsg());
         }
 
         return value;
@@ -64,7 +64,7 @@ public class YamlUtil {
             }
 
         } catch (ClassCastException e) {
-            throw new ContainerPlatformException(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_YAML_FORMAT,  CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.INVALID_YAML_FORMAT);
+            throw new ContainerPlatformException(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_YAML_FORMAT.getMsg(),  CommonStatusCode.UNPROCESSABLE_ENTITY.getCode(), MessageConstant.INVALID_YAML_FORMAT.getMsg());
         }
 
         return value;

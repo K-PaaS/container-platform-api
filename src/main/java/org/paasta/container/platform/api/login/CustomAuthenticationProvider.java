@@ -27,7 +27,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         if (authentication == null) {
-            throw new InternalAuthenticationServiceException(MessageConstant.ID_PASSWORD_REQUIRED);
+            throw new InternalAuthenticationServiceException(MessageConstant.ID_PASSWORD_REQUIRED.getMsg());
         }
 
         String userId = authentication.getPrincipal().toString(); //USER ID
@@ -35,32 +35,32 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 
         if( userId == null || userId.length() < 1) {
-            throw new AuthenticationCredentialsNotFoundException(MessageConstant.ID_REQUIRED);
+            throw new AuthenticationCredentialsNotFoundException(MessageConstant.ID_REQUIRED.getMsg());
         }
 
         if( userAuthId == null || userAuthId.length() < 1) {
-            throw new AuthenticationCredentialsNotFoundException(MessageConstant.AUTH_ID_REQUIRED);
+            throw new AuthenticationCredentialsNotFoundException(MessageConstant.AUTH_ID_REQUIRED.getMsg());
         }
 
         UserDetails loadedUser = customUserDetailsService.loadUserByUsername(userId);
 
         if (loadedUser == null) {
-            throw new InternalAuthenticationServiceException(MessageConstant.INVALID_LOGIN_INFO);
+            throw new InternalAuthenticationServiceException(MessageConstant.INVALID_LOGIN_INFO.getMsg());
         }
         if (!loadedUser.isAccountNonLocked()) {
-            throw new LockedException(MessageConstant.UNAVAILABLE_ID);
+            throw new LockedException(MessageConstant.UNAVAILABLE_ID.getMsg());
         }
         if (!loadedUser.isEnabled()) {
-            throw new DisabledException(MessageConstant.UNAVAILABLE_ID);
+            throw new DisabledException(MessageConstant.UNAVAILABLE_ID.getMsg());
         }
         if (!loadedUser.isAccountNonExpired()) {
-            throw new AccountExpiredException(MessageConstant.UNAVAILABLE_ID);
+            throw new AccountExpiredException(MessageConstant.UNAVAILABLE_ID.getMsg());
         }
         if (!userAuthId.equals(loadedUser.getPassword())) {
-            throw new BadCredentialsException(MessageConstant.INVALID_LOGIN_INFO);
+            throw new BadCredentialsException(MessageConstant.INVALID_LOGIN_INFO.getMsg());
         }
         if (!loadedUser.isCredentialsNonExpired()) {
-            throw new CredentialsExpiredException(MessageConstant.UNAVAILABLE_ID);
+            throw new CredentialsExpiredException(MessageConstant.UNAVAILABLE_ID.getMsg());
         }
         UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(loadedUser, null, loadedUser.getAuthorities());
         result.setDetails(authentication.getDetails());
