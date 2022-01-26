@@ -39,7 +39,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         final Exception exception = (Exception) request.getAttribute("exception");
 
         if (exception != null) {
-            if (exception.getMessage().equals(MessageConstant.LOGIN_TOKEN_EXPIRED)) {
+            if (exception.getMessage().equals(MessageConstant.LOGIN_TOKEN_EXPIRED.getMsg())) {
                 resultMessage = MessageConstant.LOGIN_TOKEN_EXPIRED.getMsg();
                 detailMessage = MessageConstant.LOGIN_TOKEN_EXPIRED_MESSAGE.getMsg();
             } else if (exception.getMessage().equals(MessageConstant.LOGIN_INVALID_CREDENTIALS.getMsg())) {

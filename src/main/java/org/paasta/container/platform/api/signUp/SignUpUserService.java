@@ -70,7 +70,7 @@ public class SignUpUserService {
         UsersList registerUser = checkRegisterUser(users);
 
         // 2. KEYCLOAK 에 미등록 사용자인 경우, 메세지 리턴 처리
-        if(registerUser.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE)) {
+        if(registerUser.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE.getMsg())) {
             return USER_NOT_REGISTERED_IN_KEYCLOAK;
         }
 
@@ -138,7 +138,7 @@ public class SignUpUserService {
             UsersList registerUser = checkRegisterUser(users);
 
         // 2-1. KEYCLOAK 미등록 사용자인 경우, 결과 메세지 리턴 처리
-        if(registerUser.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE)) {
+        if(registerUser.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE.getMsg())) {
             return USER_NOT_REGISTERED_IN_KEYCLOAK;
         }
 

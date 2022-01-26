@@ -51,7 +51,7 @@ public class AdminCheckAspect {
     @Around("execution(* org.paasta.container.platform.api..*Controller.*(..))" + "&& !@annotation(org.paasta.container.platform.api.config.NoAuth)")
     public Object isAdminAspect(ProceedingJoinPoint joinPoint) throws Throwable {
         Object[] parameterValues = Arrays.asList(joinPoint.getArgs()).toArray();
-        String uLang = "kr";
+        String uLang = Constants.U_LANG_KO;
 
         UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         List<GrantedAuthority> list = (List<GrantedAuthority>) authentication.getAuthorities();
@@ -78,11 +78,15 @@ public class AdminCheckAspect {
 
         //language
         RequestWrapper requestWrapper = new RequestWrapper(request);
-        if(requestWrapper.getHeader(U_LANG_KEY) != null) {
+
+        try {
             uLang = requestWrapper.getHeader(U_LANG_KEY).toLowerCase();
+            if(!uLang.equals(Constants.U_LANG_ENG)) {
+                uLang = Constants.U_LANG_KO;
+            }
         }
-        if(!uLang.equals(Constants.U_LANG_ENG)) {
-            uLang = Constants.U_LANG_KO;
+        catch (Exception e) {
+            uLang = Constants.U_LANG_ENG;
         }
 
         CustomUserDetails customUserDetails = new CustomUserDetails(uLang);

@@ -80,7 +80,7 @@ public class SignUpAdminService {
 
 
         // 2. KEYCLOAK 에 미등록 사용자인 경우, 메세지 리턴 처리
-        if(registerClusterAdmin.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE)) {
+        if(registerClusterAdmin.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE.getMsg())) {
             return USER_NOT_REGISTERED_IN_KEYCLOAK;
         }
 
