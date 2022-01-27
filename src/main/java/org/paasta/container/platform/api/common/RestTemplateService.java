@@ -337,7 +337,7 @@ public class RestTemplateService {
         AdminToken adminToken = this.send(TARGET_COMMON_API, reqUrl, HttpMethod.GET, null, AdminToken.class);
 
         if(Constants.RESULT_STATUS_FAIL.equals(adminToken.getResultCode())) {
-            throw new CpCommonAPIException(adminToken.getResultCode(), CommonStatusCode.NOT_FOUND.getMsg(), adminToken.getStatusCode(), adminToken.getResultMessage());
+            throw new CpCommonAPIException(adminToken.getResultCode(), CommonStatusCode.NOT_FOUND.getMsg(), adminToken.getStatusCode(), CommonStatusCode.NOT_FOUND.getMsg());
         }
 
         return adminToken;
@@ -349,7 +349,7 @@ public class RestTemplateService {
         Users users = this.send(TARGET_COMMON_API, reqUrl, HttpMethod.GET, null, Users.class);
 
         if(Constants.RESULT_STATUS_FAIL.equals(users.getResultCode())) {
-            throw new CpCommonAPIException(users.getResultCode(), CommonStatusCode.NOT_FOUND.getMsg(), 0, users.getResultMessage());
+            throw new CpCommonAPIException(users.getResultCode(), CommonStatusCode.NOT_FOUND.getMsg(), 0, CommonStatusCode.NOT_FOUND.getMsg());
         }
 
         return users;
