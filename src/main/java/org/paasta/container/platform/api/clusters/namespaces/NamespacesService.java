@@ -47,6 +47,7 @@ public class NamespacesService {
     private final ResourceQuotasService resourceQuotasService;
     private final LimitRangesService limitRangesService;
     private final SignUpAdminService signUpAdminService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new Namespace service
@@ -63,7 +64,7 @@ public class NamespacesService {
     @Autowired
     public NamespacesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService,
                              ResourceYamlService resourceYamlService, UsersService usersService, AccessTokenService accessTokenService,
-                             ResourceQuotasService resourceQuotasService, LimitRangesService limitRangesService,SignUpAdminService signUpAdminService ) {
+                             ResourceQuotasService resourceQuotasService, LimitRangesService limitRangesService,SignUpAdminService signUpAdminService, ResultStatusService resultStatusService) {
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.propertyService = propertyService;
@@ -73,6 +74,7 @@ public class NamespacesService {
         this.resourceQuotasService = resourceQuotasService;
         this.limitRangesService = limitRangesService;
         this.signUpAdminService = signUpAdminService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -268,13 +270,13 @@ public class NamespacesService {
 
         // 1. namespace 일치 여부 확인
         if (!namespace.equals(initTemplate.getName())) {
-            return Constants.NOT_MATCH_NAMESPACES;
+            return resultStatusService.NOT_MATCH_NAMESPACES();
         }
 
         // 2. namespace 관리자 지정 여부 확인
         String nsAdminUserId = initTemplate.getNsAdminUserId();
         if(nsAdminUserId.trim().isEmpty() || nsAdminUserId == null ) {
-            return Constants.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT;
+            return resultStatusService.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT();
         }
 
 
@@ -285,7 +287,7 @@ public class NamespacesService {
         }
         catch(NullPointerException e){
             LOGGER.info("THERE ARE NO USERS IN THE TEMP NAMESPACE.....");
-            return Constants.UNAPPROACHABLE_USERS;
+            return resultStatusService.UNAPPROACHABLE_USERS();
 
         }
 
@@ -369,7 +371,7 @@ public class NamespacesService {
         modifyLimitRanges(namespace, initTemplate.getLimitRangesList());
 
 
-        return (ResultStatus) commonService.setResultModelWithNextUrl(Constants.SUCCESS_RESULT_STATUS, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_DETAIL_PAGE");
+        return (ResultStatus) commonService.setResultModelWithNextUrl(resultStatusService.SUCCESS_RESULT_STATUS(), Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_DETAIL_PAGE");
     }
 
 

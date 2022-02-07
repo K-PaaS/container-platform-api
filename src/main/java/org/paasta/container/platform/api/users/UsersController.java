@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.MessageConstant;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,10 +32,12 @@ public class UsersController {
     private String defaultNamespace;
 
     private final UsersService usersService;
+    private final ResultStatusService resultStatusService;
 
     @Autowired
-    public UsersController(UsersService usersService) {
+    public UsersController(UsersService usersService, ResultStatusService resultStatusService) {
         this.usersService = usersService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -212,7 +215,7 @@ public class UsersController {
             return usersService.getUsersInMultiNamespace(cluster, userId, userType, limit, offset);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -304,7 +307,7 @@ public class UsersController {
             return usersService.modifyUsers(userId, users);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 

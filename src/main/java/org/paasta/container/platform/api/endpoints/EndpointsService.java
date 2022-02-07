@@ -5,17 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.paasta.container.platform.api.common.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 import org.paasta.container.platform.api.clusters.nodes.NodesAdmin;
 import org.paasta.container.platform.api.clusters.nodes.NodesService;
-import org.paasta.container.platform.api.common.CommonService;
-import org.paasta.container.platform.api.common.CommonUtils;
-import org.paasta.container.platform.api.common.Constants;
-import org.paasta.container.platform.api.common.PropertyService;
-import org.paasta.container.platform.api.common.RestTemplateService;
 import org.paasta.container.platform.api.common.model.CommonCondition;
 import org.paasta.container.platform.api.endpoints.support.EndPointsDetailsItemAdmin;
 import org.paasta.container.platform.api.endpoints.support.EndpointAddress;
@@ -36,6 +32,7 @@ public class EndpointsService {
     private final CommonService commonService;
     private final PropertyService propertyService;
     private final NodesService nodesService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new Endpoints service
@@ -45,11 +42,12 @@ public class EndpointsService {
      * @param propertyService     the property service
      */
     @Autowired
-    public EndpointsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, NodesService nodesService) {
+    public EndpointsService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, NodesService nodesService, ResultStatusService resultStatusService) {
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.propertyService = propertyService;
         this.nodesService = nodesService;
+        this.resultStatusService = resultStatusService;
     }
 
 
@@ -98,7 +96,7 @@ public class EndpointsService {
         EndpointsAdmin endpointsAdmin = commonService.setResultObject(responseMap, EndpointsAdmin.class);
 
         if (endpointsAdmin.getSubsets() == null) {
-            return Constants.NOT_FOUND_RESULT_STATUS;
+            return resultStatusService.NOT_FOUND_RESULT_STATUS();
         }
 
         endpointsAdmin = endpointsAdminProcessing(endpointsAdmin);

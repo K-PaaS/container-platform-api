@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
 import org.paasta.container.platform.api.common.PropertyService;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.config.NoAuth;
 import org.paasta.container.platform.api.users.Users;
@@ -30,6 +31,7 @@ public class SignUpController {
     private final SignUpUserService signUpUserService;
     private final SignUpAdminService signUpAdminService;
     private final PropertyService propertyService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new SignUp controller
@@ -38,10 +40,11 @@ public class SignUpController {
      * @param signUpAdminService the signUpAdminService service
      */
     @Autowired
-    public SignUpController(SignUpUserService signUpUserService, SignUpAdminService signUpAdminService,PropertyService propertyService) {
+    public SignUpController(SignUpUserService signUpUserService, SignUpAdminService signUpAdminService,PropertyService propertyService, ResultStatusService resultStatusService) {
         this.signUpUserService = signUpUserService;
         this.signUpAdminService = signUpAdminService;
         this.propertyService = propertyService;
+        this.resultStatusService = resultStatusService;
     }
 
 
@@ -69,7 +72,7 @@ public class SignUpController {
         Users users = objectMapper.convertValue(map, Users.class);
 
         if(users.getUserId().equalsIgnoreCase(Constants.NULL_REPLACE_TEXT) || users.getUserAuthId().equalsIgnoreCase(Constants.NULL_REPLACE_TEXT)) {
-            return Constants.INVALID_USER_SIGN_UP;
+            return resultStatusService.INVALID_USER_SIGN_UP();
         }
 
         // Converts a userId to lowercase letters

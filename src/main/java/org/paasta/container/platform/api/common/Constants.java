@@ -1,9 +1,6 @@
 package org.paasta.container.platform.api.common;
 
-import org.paasta.container.platform.api.common.model.CommonStatusCode;
-import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.http.MediaType;
-
 import java.util.*;
 
 /**
@@ -258,6 +255,7 @@ public class Constants {
 
     });
 
+    /*
     public static final ResultStatus SUCCESS_RESULT_STATUS = new ResultStatus(Constants.RESULT_STATUS_SUCCESS, CommonStatusCode.OK.getMsg(),
             CommonStatusCode.OK.getCode(),CommonStatusCode.OK.getMsg(), null );
 
@@ -313,6 +311,7 @@ public class Constants {
 
     public static final ResultStatus INVALID_SERVICE_INSTANCE_ID = new ResultStatus(Constants.RESULT_STATUS_FAIL, MessageConstant.INVALID_SERVICE_INSTANCE_ID.getMsg(),
             CommonStatusCode.UNAUTHORIZED.getCode(),MessageConstant.INVALID_SERVICE_INSTANCE_ID.getMsg(), null );
+            */
 
     public Constants() {
         throw new IllegalStateException();

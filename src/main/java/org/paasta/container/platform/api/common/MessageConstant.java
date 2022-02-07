@@ -20,7 +20,7 @@ public enum MessageConstant {
     NOT_EXIST(" 리소스 kind 가 존재하지 않습니다.","Resource kind does not exist."),
     NOT_UPDATE_YAML(" 에 대한 수정 yaml 형식이 아닙니다."," is not in yaml format for edit."),
     RESOURCE_NAMED(" 이름을 가진 리소스","Resources with names"),
-    INCLUDE_INACCESSIBLE_RESOURCES("User 권한으로 생성이 불가한 리소스가 포함되어있습니다.","User permissions contain resources that cannot be created."),
+    INCLUDE_INACCESSIBLE_RESOURCES("User 권한으로 생성이 불가한 리소스가 포함되어있습니다.","Resources that cannot be created with User permissions are included."),
     INVALID_YAML_FORMAT("잘못된 YAML 형식입니다.","Invalid YAML format."),
     DO_NOT_DELETE_DEFAULT_RESOURCES("해당 리소스는 삭제할 수 없습니다.","You cannot delete that resource."),
     MANDATORY_NAMESPACE_AND_ROLE("Namespace와 Role 선택은 필수입니다.","Namespace and Role selection is mandatory."),

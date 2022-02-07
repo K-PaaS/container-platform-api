@@ -41,6 +41,7 @@ public class SignUpAdminService {
     private final ResourceYamlService resourceYamlService;
     private final AdminTokenService adminTokenService;
     private final ClustersService clustersService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new SignUpAdminService service
@@ -54,7 +55,8 @@ public class SignUpAdminService {
      * @param clustersService the clusters service
      */
     @Autowired
-    public SignUpAdminService(PropertyService propertyService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService, AdminTokenService adminTokenService, ClustersService clustersService) {
+    public SignUpAdminService(PropertyService propertyService, RestTemplateService restTemplateService, CommonService commonService, AccessTokenService accessTokenService,
+                              UsersService usersService, ResourceYamlService resourceYamlService, AdminTokenService adminTokenService, ClustersService clustersService, ResultStatusService resultStatusService) {
         this.propertyService = propertyService;
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
@@ -63,6 +65,7 @@ public class SignUpAdminService {
         this.resourceYamlService = resourceYamlService;
         this.adminTokenService = adminTokenService;
         this.clustersService = clustersService;
+        this.resultStatusService = resultStatusService;
     }
 
 
@@ -81,12 +84,12 @@ public class SignUpAdminService {
 
         // 2. KEYCLOAK 에 미등록 사용자인 경우, 메세지 리턴 처리
         if(registerClusterAdmin.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE.getMsg())) {
-            return USER_NOT_REGISTERED_IN_KEYCLOAK;
+            return resultStatusService.USER_NOT_REGISTERED_IN_KEYCLOAK();
         }
 
         // 3. CP USER에 클러스터 관리자 계정이 이미 등록된 경우, 메세지 리턴 처리
         if(registerClusterAdmin.getItems().size() > 0) {
-            return Constants.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED;
+            return resultStatusService.CLUSTER_ADMINISTRATOR_IS_ALREADY_REGISTERED();
         }
 
 
@@ -119,7 +122,7 @@ public class SignUpAdminService {
 
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED....");
-            return CREATE_USERS_FAIL;
+            return resultStatusService.CREATE_USERS_FAIL();
         }
 
 

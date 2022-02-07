@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.customServices;
 
 import io.swagger.annotations.*;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 public class CustomServicesController {
 
     private final CustomServicesService customServicesService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new CustomServices controller
@@ -30,8 +32,9 @@ public class CustomServicesController {
      * @param customServicesService the customServices service
      */
     @Autowired
-    public CustomServicesController(CustomServicesService customServicesService) {
+    public CustomServicesController(CustomServicesService customServicesService, ResultStatusService resultStatusService) {
         this.customServicesService = customServicesService;
+        this.resultStatusService = resultStatusService;
     }
 
 
@@ -72,7 +75,7 @@ public class CustomServicesController {
             if (isAdmin) {
                 return customServicesService.getCustomServicesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
             } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+                return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
             }
         }
 

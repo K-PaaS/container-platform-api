@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.roles;
 
 import io.swagger.annotations.*;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 
@@ -25,6 +26,7 @@ import java.util.HashMap;
 public class RolesController {
 
     private final RolesService rolesService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new Roles controller
@@ -32,8 +34,9 @@ public class RolesController {
      * @param rolesService the roles service
      */
     @Autowired
-    public RolesController(RolesService rolesService) {
+    public RolesController(RolesService rolesService, ResultStatusService resultStatusService) {
         this.rolesService = rolesService;
+        this.resultStatusService = resultStatusService;
     }
 
 
@@ -74,7 +77,7 @@ public class RolesController {
             if (isAdmin) {
                 return rolesService.getRolesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
             } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+                return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
             }
         }
 
@@ -174,7 +177,7 @@ public class RolesController {
             return rolesService.createRoles(namespace, yaml, true);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -203,7 +206,7 @@ public class RolesController {
             return rolesService.deleteRoles(namespace, resourceName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -235,7 +238,7 @@ public class RolesController {
             return rolesService.updateRoles(namespace, resourceName, yaml);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 }

@@ -5,7 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,9 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/persistentVolumes")
 public class PersistentVolumesController {
+
     private final PersistentVolumesService persistentVolumesService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new PersistentVolumes controller
@@ -33,8 +35,9 @@ public class PersistentVolumesController {
      * @param persistentVolumesService the persistentVolumes service
      */
     @Autowired
-    public PersistentVolumesController(PersistentVolumesService persistentVolumesService) {
+    public PersistentVolumesController(PersistentVolumesService persistentVolumesService, ResultStatusService resultStatusService) {
         this.persistentVolumesService = persistentVolumesService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -73,7 +76,7 @@ public class PersistentVolumesController {
         if (isAdmin) {
             return persistentVolumesService.getPersistentVolumesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
 
     }
 
@@ -99,7 +102,7 @@ public class PersistentVolumesController {
         if (isAdmin) {
             return persistentVolumesService.getPersistentVolumesAdmin(namespace, resourceName);
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -123,7 +126,7 @@ public class PersistentVolumesController {
         if (isAdmin) {
             return persistentVolumesService.getPersistentVolumesAdminYaml(resourceName, new HashMap<>());
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -156,7 +159,7 @@ public class PersistentVolumesController {
             return persistentVolumesService.createPersistentVolumes(namespace, yaml, true);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -184,7 +187,7 @@ public class PersistentVolumesController {
             return persistentVolumesService.deletePersistentVolumes(namespace, resourceName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -215,6 +218,6 @@ public class PersistentVolumesController {
             return persistentVolumesService.updatePersistentVolumes(resourceName, yaml);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 }

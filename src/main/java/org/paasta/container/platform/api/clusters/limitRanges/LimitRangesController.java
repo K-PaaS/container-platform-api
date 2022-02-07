@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 public class LimitRangesController {
 
     private final LimitRangesService limitRangesService;
+    private final ResultStatusService resultStatusService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LimitRangesController.class);
 
@@ -37,8 +39,9 @@ public class LimitRangesController {
      * @param limitRangesService the limitRanges service
      */
     @Autowired
-    public LimitRangesController(LimitRangesService limitRangesService) {
+    public LimitRangesController(LimitRangesService limitRangesService, ResultStatusService resultStatusService) {
         this.limitRangesService = limitRangesService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -78,7 +81,7 @@ public class LimitRangesController {
             if (isAdmin) {
                 return limitRangesService.getLimitRangesListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
             } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+                return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
             }
         }
 
@@ -114,7 +117,7 @@ public class LimitRangesController {
         if (isAdmin) {
             return limitRangesService.getLimitRangesAdmin(namespace, resourceName);
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -140,7 +143,7 @@ public class LimitRangesController {
         if (isAdmin) {
             return limitRangesService.getLimitRangesAdminYaml(namespace, resourceName, new HashMap<>());
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -174,7 +177,7 @@ public class LimitRangesController {
             return limitRangesService.createLimitRanges(namespace, yaml, true);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -202,7 +205,7 @@ public class LimitRangesController {
             return limitRangesService.deleteLimitRanges(namespace, resourceName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -234,7 +237,7 @@ public class LimitRangesController {
             return limitRangesService.updateLimitRanges(namespace, resourceName, yaml);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 

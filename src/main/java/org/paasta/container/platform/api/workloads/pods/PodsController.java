@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 @RequestMapping(value = "/clusters/{cluster:.+}/namespaces/{namespace:.+}/pods")
 public class PodsController {
     private final PodsService podsService;
+    private final ResultStatusService resultStatusService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PodsController.class);
 
@@ -36,8 +38,9 @@ public class PodsController {
      * @param podsService the pods service
      */
     @Autowired
-    public PodsController(PodsService podsService) {
+    public PodsController(PodsService podsService, ResultStatusService resultStatusService) {
         this.podsService = podsService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -78,7 +81,7 @@ public class PodsController {
             if (isAdmin) {
                 return podsService.getPodsListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
             } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+                return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
             }
         }
 

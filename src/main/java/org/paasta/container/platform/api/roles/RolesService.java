@@ -32,6 +32,7 @@ public class RolesService {
     private final CommonService commonService;
     private final PropertyService propertyService;
     private final SignUpAdminService signUpAdminService;
+    private final ResultStatusService resultStatusService;
     /**
      * Instantiates a new Roles service
      *
@@ -40,11 +41,12 @@ public class RolesService {
      * @param propertyService     the property service
      */
     @Autowired
-    public RolesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, SignUpAdminService signUpAdminService) {
+    public RolesService(RestTemplateService restTemplateService, CommonService commonService, PropertyService propertyService, SignUpAdminService signUpAdminService, ResultStatusService resultStatusService) {
         this.restTemplateService = restTemplateService;
         this.commonService = commonService;
         this.propertyService = propertyService;
         this.signUpAdminService = signUpAdminService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -161,7 +163,7 @@ public class RolesService {
      */
     public ResultStatus deleteRoles(String namespace, String resourceName) {
         if(propertyService.getRolesList().contains(resourceName)) {
-            return Constants.DO_NOT_DELETE_DEFAULT_RESOURCES;
+            return resultStatusService.DO_NOT_DELETE_DEFAULT_RESOURCES();
         }
 
         ResultStatus resultStatus = restTemplateService.sendAdmin(Constants.TARGET_CP_MASTER_API,

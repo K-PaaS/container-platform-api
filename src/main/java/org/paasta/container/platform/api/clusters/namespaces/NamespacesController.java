@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 public class NamespacesController {
 
     private final NamespacesService namespacesService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new Namespaces controller
@@ -32,8 +34,10 @@ public class NamespacesController {
      * @param namespacesService the namespaces service
      */
     @Autowired
-    public NamespacesController(NamespacesService namespacesService) {
+    public NamespacesController(NamespacesService namespacesService, ResultStatusService resultStatusService
+    ) {
         this.namespacesService = namespacesService;
+        this.resultStatusService = resultStatusService;
     }
 
 
@@ -70,7 +74,7 @@ public class NamespacesController {
             return namespacesService.getNamespacesListAdmin(offset, limit, orderBy, order, searchName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -119,7 +123,7 @@ public class NamespacesController {
             return namespacesService.getNamespacesAdminYaml(namespace, new HashMap<>());
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -143,7 +147,7 @@ public class NamespacesController {
         if (isAdmin) {
             return namespacesService.deleteNamespaces(cluster, namespace);
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -166,17 +170,17 @@ public class NamespacesController {
                                        @ApiIgnore @RequestParam(required = false, name = "isAdmin") boolean isAdmin) {
 
         if (initTemplate.getName().equals(Constants.NULL_REPLACE_TEXT) || initTemplate.getNsAdminUserId().equals(Constants.NULL_REPLACE_TEXT)) {
-            return Constants.REQUEST_VALUE_IS_MISSING;
+            return resultStatusService.REQUEST_VALUE_IS_MISSING();
         }
 
         if (initTemplate.getName().toLowerCase().equals(Constants.ALL_NAMESPACES))
-            return Constants.UNABLE_TO_CREATE_RESOURCE_NAME;
+            return resultStatusService.UNABLE_TO_CREATE_RESOURCE_NAME();
 
         if (isAdmin) {
             return namespacesService.createInitNamespaces(cluster, initTemplate);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -202,14 +206,14 @@ public class NamespacesController {
                                              @RequestBody NamespacesInitTemplate initTemplate) {
 
         if (initTemplate.getName().equals(Constants.NULL_REPLACE_TEXT) || initTemplate.getNsAdminUserId().equals(Constants.NULL_REPLACE_TEXT)) {
-            return Constants.REQUEST_VALUE_IS_MISSING;
+            return resultStatusService.REQUEST_VALUE_IS_MISSING();
         }
 
         if (isAdmin) {
             return namespacesService.modifyInitNamespaces(cluster, namespace, initTemplate);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -231,6 +235,6 @@ public class NamespacesController {
             return namespacesService.getNamespacesListForSelectbox();
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 }

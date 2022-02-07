@@ -103,6 +103,9 @@ public class NamespacesServiceTest {
     @Mock
     NamespacesService namespacesServiceMock;
 
+    @Mock
+    ResultStatusService resultStatusService;
+
     @InjectMocks
     NamespacesService namespacesService;
 
@@ -447,7 +450,7 @@ public class NamespacesServiceTest {
         newNsUser.setIsActive(Constants.CHECK_Y);
         when(usersService.commonSaveClusterInfo(CLUSTER, newNsUser)).thenReturn(newNsUser);
         when(usersService.createUsers(newNsUser)).thenReturn(gFinalResultStatusModel);
-        when(commonService.setResultModelWithNextUrl(Constants.SUCCESS_RESULT_STATUS, Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_DETAIL_PAGE")).thenReturn(gFinalResultStatusModel);
+        when(commonService.setResultModelWithNextUrl(resultStatusService.SUCCESS_RESULT_STATUS(), Constants.RESULT_STATUS_SUCCESS, "YOUR_NAMESPACES_DETAIL_PAGE")).thenReturn(gFinalResultStatusModel);
 
         // when
         ResultStatus result = namespacesService.modifyInitNamespaces(CLUSTER, NAMESPACE, nsInitTemp);

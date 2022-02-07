@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 public class DeploymentsController {
 
     private final DeploymentsService deploymentsService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new Deployments controller
@@ -33,8 +35,9 @@ public class DeploymentsController {
      * @param deploymentsService the deployments service
      */
     @Autowired
-    public DeploymentsController(DeploymentsService deploymentsService) {
+    public DeploymentsController(DeploymentsService deploymentsService, ResultStatusService resultStatusService) {
         this.deploymentsService = deploymentsService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -74,7 +77,7 @@ public class DeploymentsController {
             if (isAdmin) {
                 return deploymentsService.getDeploymentsListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
             } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+                return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
             }
         }
 

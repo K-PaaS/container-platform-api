@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.clusters.limitRanges.LimitRangesService;
 import org.paasta.container.platform.api.clusters.resourceQuotas.ResourceQuotasService;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.roles.RolesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +27,14 @@ public class popUpController {
     private final ResourceQuotasService resourceQuotasService;
     private final LimitRangesService limitRangesService;
     private final RolesService rolesService;
+    private final ResultStatusService resultStatusService;
 
     @Autowired
-    public popUpController(ResourceQuotasService resourceQuotasService, LimitRangesService limitRangesService, RolesService rolesService) {
+    public popUpController(ResourceQuotasService resourceQuotasService, LimitRangesService limitRangesService, RolesService rolesService, ResultStatusService resultStatusService) {
         this.resourceQuotasService = resourceQuotasService;
         this.limitRangesService = limitRangesService;
         this.rolesService = rolesService;
+        this.resultStatusService = resultStatusService;
     }
 
 
@@ -73,7 +76,7 @@ public class popUpController {
             return resourceQuotasService.getRqDefaultList(namespace, offset, limit, orderBy, order, searchName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -114,7 +117,7 @@ public class popUpController {
             return limitRangesService.getLimitRangesTemplateList(namespace, offset, limit, orderBy, order, searchName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -157,11 +160,11 @@ public class popUpController {
             if (isAdmin) {
                 return rolesService.getNamespacesRolesTemplateList(cluster, namespace, userId, offset, limit, orderBy, order, searchName);
             } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+                return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
             }
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
 
     }
 

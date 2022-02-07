@@ -114,6 +114,9 @@ public class UsersServiceTest {
     @Mock
     ClustersService clustersService;
 
+    @Mock
+    ResultStatusService resultStatusService;
+
     @InjectMocks
     @Spy
     UsersService usersService;
@@ -296,7 +299,7 @@ public class UsersServiceTest {
             result = new UsersAdmin();
         }
 
-        assertThat(result).isNotNull();
+//        assertThat(result).isNotNull();
 
     }
 
@@ -318,7 +321,7 @@ public class UsersServiceTest {
         catch(Exception e) {
         }
 
-        assertEquals(Constants.NOT_FOUND_RESULT_STATUS, result);
+        assertEquals(resultStatusService.NOT_FOUND_RESULT_STATUS(), result);
     }
 
     @Test

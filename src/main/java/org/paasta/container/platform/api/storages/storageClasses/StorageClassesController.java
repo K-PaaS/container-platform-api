@@ -4,7 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,7 @@ import java.util.HashMap;
 @RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/storageClasses")
 public class StorageClassesController {
     private StorageClassesService storageClassesService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new StorageClasses controller
@@ -32,8 +33,9 @@ public class StorageClassesController {
      * @param storageClassesService the storageClasses service
      */
     @Autowired
-    public StorageClassesController(StorageClassesService storageClassesService) {
+    public StorageClassesController(StorageClassesService storageClassesService, ResultStatusService resultStatusService) {
         this.storageClassesService = storageClassesService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -72,7 +74,7 @@ public class StorageClassesController {
         if (isAdmin) {
             return storageClassesService.getStorageClassesListAdmin(namespace, offset, limit, orderBy, order, searchName);
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -98,7 +100,7 @@ public class StorageClassesController {
             return storageClassesService.getStorageClassesAdmin(namespace, resourceName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -119,7 +121,7 @@ public class StorageClassesController {
         if (isAdmin) {
             return storageClassesService.getStorageClassesAdminYaml(resourceName, new HashMap<>());
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -152,7 +154,7 @@ public class StorageClassesController {
             return storageClassesService.createStorageClasses(namespace, yaml, true);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -180,7 +182,7 @@ public class StorageClassesController {
             return storageClassesService.deleteStorageClasses(namespace, resourceName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -211,6 +213,6 @@ public class StorageClassesController {
             return storageClassesService.updateStorageClasses(resourceName, yaml);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 }

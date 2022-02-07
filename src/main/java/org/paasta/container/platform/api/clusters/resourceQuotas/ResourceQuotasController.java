@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 @RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/resourceQuotas")
 public class ResourceQuotasController {
     private final ResourceQuotasService resourceQuotasService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a ResourceQuotas Controller
@@ -33,8 +35,9 @@ public class ResourceQuotasController {
      * @param resourceQuotasService the resourceQuotas Service
      */
     @Autowired
-    public ResourceQuotasController(ResourceQuotasService resourceQuotasService) {
+    public ResourceQuotasController(ResourceQuotasService resourceQuotasService, ResultStatusService resultStatusService) {
         this.resourceQuotasService = resourceQuotasService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -74,7 +77,7 @@ public class ResourceQuotasController {
             if (isAdmin) {
                 return resourceQuotasService.getResourceQuotasListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
             } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+                return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
             }
         }
 
@@ -137,7 +140,7 @@ public class ResourceQuotasController {
         if (isAdmin) {
             return resourceQuotasService.getResourceQuotasAdminYaml(namespace, resourceName, new HashMap<>());
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -169,7 +172,7 @@ public class ResourceQuotasController {
 
             return resourceQuotasService.createResourceQuotas(namespace, yaml, true);
         }
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -197,7 +200,7 @@ public class ResourceQuotasController {
             return resourceQuotasService.deleteResourceQuotas(namespace, resourceName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
     /**
@@ -227,7 +230,7 @@ public class ResourceQuotasController {
             return resourceQuotasService.updateResourceQuotas(namespace, resourceName, yaml);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 
@@ -269,7 +272,7 @@ public class ResourceQuotasController {
             return resourceQuotasService.getRqDefaultList(namespace, offset, limit, orderBy, order, searchName);
         }
 
-        return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+        return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
     }
 
 

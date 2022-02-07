@@ -36,6 +36,7 @@ public class SignUpUserService {
     private final AccessTokenService accessTokenService;
     private final UsersService usersService;
     private final ResourceYamlService resourceYamlService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new SignUpUserService service
@@ -48,13 +49,15 @@ public class SignUpUserService {
      * @param resourceYamlService the resource yaml service
      */
     @Autowired
-    public SignUpUserService(CommonService commonService, PropertyService propertyService, RestTemplateService restTemplateService, AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService) {
+    public SignUpUserService(CommonService commonService, PropertyService propertyService, RestTemplateService restTemplateService,
+                             AccessTokenService accessTokenService, UsersService usersService, ResourceYamlService resourceYamlService, ResultStatusService resultStatusService) {
         this.commonService = commonService;
         this.propertyService = propertyService;
         this.restTemplateService = restTemplateService;
         this.accessTokenService = accessTokenService;
         this.usersService = usersService;
         this.resourceYamlService = resourceYamlService;
+        this.resultStatusService = resultStatusService;
     }
 
 
@@ -71,13 +74,13 @@ public class SignUpUserService {
 
         // 2. KEYCLOAK 에 미등록 사용자인 경우, 메세지 리턴 처리
         if(registerUser.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE.getMsg())) {
-            return USER_NOT_REGISTERED_IN_KEYCLOAK;
+            return resultStatusService.USER_NOT_REGISTERED_IN_KEYCLOAK();
         }
 
 
         // 3. CP USER에 등록된 사용자인 경우, 메세지 리턴 처리
         if(registerUser.getItems().size() > 0) {
-            return USER_ALREADY_REGISTERED;
+            return resultStatusService.USER_ALREADY_REGISTERED();
         }
 
 
@@ -104,7 +107,7 @@ public class SignUpUserService {
 
         if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
             LOGGER.info("DATABASE EXECUTE IS FAILED....");
-            return CREATE_USERS_FAIL;
+            return resultStatusService.CREATE_USERS_FAIL();
         }
 
         return (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, "/");
@@ -126,12 +129,12 @@ public class SignUpUserService {
         // PaaS-TA 서비스 형태로 제공되는 CP 포털의 사용자 등록
         // 1. 서비스 인스턴스 아이디 유효성 검사
             if(users.getServiceInstanceId().equalsIgnoreCase(NULL_REPLACE_TEXT)) {
-                return INVALID_SERVICE_INSTANCE_ID;
+                return resultStatusService.INVALID_SERVICE_INSTANCE_ID();
             }
 
             findServiceInstance = getServiceInstanceById(users.getServiceInstanceId());
             if(findServiceInstance.getItems().size() < 1) {
-                return INVALID_SERVICE_INSTANCE_ID;
+                return resultStatusService.INVALID_SERVICE_INSTANCE_ID();
             }
 
         // 2. 해당 계정이 KEYCLOAK 에 존재하는 계정인지 확인
@@ -139,7 +142,7 @@ public class SignUpUserService {
 
         // 2-1. KEYCLOAK 미등록 사용자인 경우, 결과 메세지 리턴 처리
         if(registerUser.getResultMessage().equals(MessageConstant.USER_NOT_REGISTERED_IN_KEYCLOAK_MESSAGE.getMsg())) {
-            return USER_NOT_REGISTERED_IN_KEYCLOAK;
+            return resultStatusService.USER_NOT_REGISTERED_IN_KEYCLOAK();
         }
 
         // 3. 아이디를 통한 사용자 상세 목록 조회
@@ -172,7 +175,7 @@ public class SignUpUserService {
 
                 if(Constants.RESULT_STATUS_FAIL.equals(rsDb.getResultCode())) {
                     LOGGER.info("DATABASE EXECUTE IS FAILED....TEMP NAMESPACE USER CREATE FAILED");
-                    return CREATE_USERS_FAIL;
+                    return resultStatusService.CREATE_USERS_FAIL();
                 }
         }
 
@@ -233,7 +236,7 @@ public class SignUpUserService {
                     usersService.deleteUsersByUserIdAndUserAuthIdAndNamespace(users.getUserId(), users.getUserAuthId(), propertyService.getDefaultNamespace());
                 }
 
-                return CREATE_USERS_FAIL;
+                return resultStatusService.CREATE_USERS_FAIL();
             }
 
         }

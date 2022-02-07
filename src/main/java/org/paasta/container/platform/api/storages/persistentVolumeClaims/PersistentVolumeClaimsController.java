@@ -2,6 +2,7 @@ package org.paasta.container.platform.api.storages.persistentVolumeClaims;
 
 import io.swagger.annotations.*;
 import org.paasta.container.platform.api.common.Constants;
+import org.paasta.container.platform.api.common.ResultStatusService;
 import org.paasta.container.platform.api.common.model.ResultStatus;
 import org.paasta.container.platform.api.common.util.ResourceExecuteManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,9 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/clusters/{cluster:.+}/namespaces/{namespace:.+}/persistentVolumeClaims")
 public class PersistentVolumeClaimsController {
+
     private final PersistentVolumeClaimsService persistentVolumeClaimsService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new PersistentVolumeClaims controller
@@ -29,8 +32,9 @@ public class PersistentVolumeClaimsController {
      * @param persistentVolumeClaimsService the persistentVolumeClaims service
      */
     @Autowired
-    public PersistentVolumeClaimsController(PersistentVolumeClaimsService persistentVolumeClaimsService) {
+    public PersistentVolumeClaimsController(PersistentVolumeClaimsService persistentVolumeClaimsService, ResultStatusService resultStatusService) {
         this.persistentVolumeClaimsService = persistentVolumeClaimsService;
+        this.resultStatusService = resultStatusService;
     }
 
     /**
@@ -70,7 +74,7 @@ public class PersistentVolumeClaimsController {
             if (isAdmin) {
                 return persistentVolumeClaimsService.getPersistentVolumeClaimsListAllNamespacesAdmin(offset, limit, orderBy, order, searchName);
             } else {
-                return Constants.FORBIDDEN_ACCESS_RESULT_STATUS;
+                return resultStatusService.FORBIDDEN_ACCESS_RESULT_STATUS();
             }
         }
 

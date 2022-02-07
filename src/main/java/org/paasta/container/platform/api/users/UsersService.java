@@ -41,6 +41,7 @@ public class UsersService {
     private final ResourceYamlService resourceYamlService;
     private final AccessTokenService accessTokenService;
     private final ClustersService clustersService;
+    private final ResultStatusService resultStatusService;
 
     /**
      * Instantiates a new Users service
@@ -53,13 +54,15 @@ public class UsersService {
      * @param clustersService     the clusters service
      */
     @Autowired
-    public UsersService(RestTemplateService restTemplateService, PropertyService propertyService, CommonService commonService, ResourceYamlService resourceYamlService, AccessTokenService accessTokenService, ClustersService clustersService) {
+    public UsersService(RestTemplateService restTemplateService, PropertyService propertyService, CommonService commonService, ResourceYamlService resourceYamlService,
+                        AccessTokenService accessTokenService, ClustersService clustersService, ResultStatusService resultStatusService) {
         this.restTemplateService = restTemplateService;
         this.propertyService = propertyService;
         this.commonService = commonService;
         this.resourceYamlService = resourceYamlService;
         this.accessTokenService = accessTokenService;
         this.clustersService = clustersService;
+        this.resultStatusService = resultStatusService;
     }
 
 
@@ -213,7 +216,7 @@ public class UsersService {
         }
 
         } catch (Exception e) {
-            return Constants.NOT_FOUND_RESULT_STATUS;
+            return resultStatusService.NOT_FOUND_RESULT_STATUS();
         }
 
         usersAdmin = commonService.userListProcessing(usersAdmin, offset, limit, "", "", "", UsersAdmin.class);
@@ -477,7 +480,7 @@ public class UsersService {
 
         for(Users user : users.getItems()) {
             if (user.getUserType().equals(AUTH_CLUSTER_ADMIN)) {
-                return DO_NOT_DELETE_DEFAULT_RESOURCES;
+                return resultStatusService.DO_NOT_DELETE_DEFAULT_RESOURCES();
             }
         }
 
