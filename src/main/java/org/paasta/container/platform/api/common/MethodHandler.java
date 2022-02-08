@@ -331,7 +331,7 @@ public class MethodHandler {
 
         if (!resourceName.equals(updateYamlResourceName)) {
             return new ResultStatus(Constants.RESULT_STATUS_FAIL,
-                    MessageConstant.NOT_ALLOWED_RESOURCE_NAME.getMsg(), CommonStatusCode.BAD_REQUEST.getCode(), resourceName + MessageConstant.RESOURCE_NAMED.getMsg() + requestResource + MessageConstant.NOT_UPDATE_YAML.getMsg());
+                    MessageConstant.NOT_ALLOWED_RESOURCE_NAME.getMsg(), CommonStatusCode.BAD_REQUEST.getCode(), MessageConstant.NOT_UPDATE_YAML_FORMAT_THIS_RESOURCE.getMsg());
         }
 
         resourceKind = YamlUtil.parsingYaml(yaml, KIND_KEY);
