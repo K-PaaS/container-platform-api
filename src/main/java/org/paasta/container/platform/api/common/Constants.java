@@ -230,7 +230,9 @@ public class Constants {
     public static final String PARAM_QUERY_AND = "&";
 
     public static final String U_LANG_KO = "ko";
+    public static final String U_LANG_KO_START_WITH = "ko_";
     public static final String U_LANG_ENG = "en";
+
 
     /** 서비스 클래스의 Package */
     public static final String SERVICE_PACKAGE = "org.paasta.container.platform.api.";

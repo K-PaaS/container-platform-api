@@ -81,8 +81,14 @@ public class AdminCheckAspect {
 
         try {
             uLang = requestWrapper.getHeader(U_LANG_KEY).toLowerCase();
-            if(!uLang.equals(Constants.U_LANG_ENG)) {
+            if(uLang.equalsIgnoreCase(Constants.U_LANG_KO)) {
                 uLang = Constants.U_LANG_KO;
+            }
+            else if(uLang.startsWith(Constants.U_LANG_KO_START_WITH)) {
+                uLang = Constants.U_LANG_KO;
+            }
+            else {
+                uLang = Constants.U_LANG_ENG;
             }
         }
         catch (Exception e) {
