@@ -199,7 +199,18 @@ public class NamespacesService {
      */
     public ResultStatus createInitNamespaces(String cluster, NamespacesInitTemplate initTemplate) {
         String namespace = initTemplate.getName();
-        String nsAdminUserId = initTemplate.getNsAdminUserId();
+        String userId = initTemplate.getNsAdminUserId();
+
+
+        Users newNsUser = null;
+        try {
+            newNsUser =  usersService.getUsers(cluster, propertyService.getDefaultNamespace(), userId);
+        }
+        catch(Exception e){
+            return resultStatusService.UNAPPROACHABLE_USERS();
+        }
+
+        String nsAdminUserSA = newNsUser.getServiceAccountName();
 
         // 1. namespace 생성
         resourceYamlService.createNamespace(namespace);
@@ -209,22 +220,21 @@ public class NamespacesService {
         resourceYamlService.createNsAdminRole(namespace);
 
         // 3. namespace 관리자 sa 생성
-        ResultStatus createSAresult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
+        ResultStatus createSAresult = resourceYamlService.createServiceAccount(nsAdminUserSA, namespace);
         if (createSAresult.getResultCode().equalsIgnoreCase(RESULT_STATUS_FAIL)) {
             resourceYamlService.deleteNamespaceYaml(namespace);
             return createSAresult;
         }
 
         // 4. namespace 관리자 rb 생성
-        ResultStatus createRBresult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, propertyService.getAdminRole());
+        ResultStatus createRBresult = resourceYamlService.createRoleBinding(nsAdminUserSA, namespace, propertyService.getAdminRole());
         if (createRBresult.getResultCode().equalsIgnoreCase(RESULT_STATUS_FAIL)) {
             resourceYamlService.deleteNamespaceYaml(namespace);
             return createRBresult;
         }
 
         // 5. namespace 관리자 DB user 생성
-        String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
-        Users newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
+        String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserSA);
 
         newNsUser.setId(0);
         newNsUser.setCpNamespace(namespace);
@@ -274,8 +284,8 @@ public class NamespacesService {
         }
 
         // 2. namespace 관리자 지정 여부 확인
-        String nsAdminUserId = initTemplate.getNsAdminUserId();
-        if(nsAdminUserId.trim().isEmpty() || nsAdminUserId == null ) {
+        String updateNsAdminUserId = initTemplate.getNsAdminUserId();
+        if(updateNsAdminUserId.trim().isEmpty() || updateNsAdminUserId == null ) {
             return resultStatusService.REQUIRES_NAMESPACE_ADMINISTRATOR_ASSIGNMENT();
         }
 
@@ -283,7 +293,7 @@ public class NamespacesService {
         // 3. namespace 관리자 cp-temp-namespace 컬럼 존재 여부 확인
         Users newNsUser = null;
         try {
-            newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), nsAdminUserId);
+            newNsUser = usersService.getUsers(cluster, propertyService.getDefaultNamespace(), updateNsAdminUserId);
         }
         catch(NullPointerException e){
             LOGGER.info("THERE ARE NO USERS IN THE TEMP NAMESPACE.....");
@@ -301,6 +311,9 @@ public class NamespacesService {
             LOGGER.info("NAMESPACE ADMINISTRATOR DOES NOT EXIST...");
         }
 
+
+
+         String updateNsAdminUserSA = newNsUser.getServiceAccountName();
 
         // 5. 현재 namespace 관리자가 존재하지만, 다른 사용자를 관리자로 변경할 경우
         // 현재 namespace 관리자는 'USER' 권한으로 USER-TYPE 변경
@@ -320,7 +333,7 @@ public class NamespacesService {
             Users newNamespaceAdmin = null;
             try {
                 // Verify that the new namespace admin is the current namespace member
-                newNamespaceAdmin = usersService.getUsers(cluster, namespace, nsAdminUserId);
+                newNamespaceAdmin = usersService.getUsers(cluster, namespace, updateNsAdminUserId);
             } catch (NullPointerException e) {
                 LOGGER.info("THE NEW NAMESPACE ADMINISTRATOR IS NOT A CURRENT NAMESPACE MEMBER.....");
             }
@@ -337,22 +350,22 @@ public class NamespacesService {
 
 
             // 7. Service Account 생성
-            ResultStatus createSAresult = resourceYamlService.createServiceAccount(nsAdminUserId, namespace);
+            ResultStatus createSAresult = resourceYamlService.createServiceAccount(updateNsAdminUserSA, namespace);
 
             if (createSAresult.getResultCode().equalsIgnoreCase(RESULT_STATUS_FAIL)) {
                 return createSAresult;
             }
 
             // 8. Role-Binding 생성
-            ResultStatus createRBresult = resourceYamlService.createRoleBinding(nsAdminUserId, namespace, propertyService.getAdminRole());
+            ResultStatus createRBresult = resourceYamlService.createRoleBinding(updateNsAdminUserSA, namespace, propertyService.getAdminRole());
 
             if (createRBresult.getResultCode().equalsIgnoreCase(RESULT_STATUS_FAIL)) {
                 LOGGER.info("ROLE BINDING EXECUTE IS FAILED. K8S SA AND RB WILL BE REMOVED...");
-                resourceYamlService.deleteServiceAccountAndRolebinding(namespace, nsAdminUserId, propertyService.getAdminRole());
+                resourceYamlService.deleteServiceAccountAndRolebinding(namespace, updateNsAdminUserSA, propertyService.getAdminRole());
                 return createRBresult;
             }
 
-            String saSecretName = restTemplateService.getSecretName(namespace, nsAdminUserId);
+            String saSecretName = restTemplateService.getSecretName(namespace, updateNsAdminUserSA);
 
             newNsUser.setId(0);
             newNsUser.setCpNamespace(namespace);

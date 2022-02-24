@@ -371,7 +371,7 @@ public class UsersService {
         }
 
         for (Users.NamespaceRole nr : asIsNamespaces) {
-            Users updateUser = getUsers(cluster, nr.getNamespace(), users.getServiceAccountName());
+            Users updateUser = getUsers(cluster, nr.getNamespace(), users.getUserId());
             String namespace = nr.getNamespace();
             String newRole = nr.getRole();
             String defaultRole = updateUser.getRoleSetCode();
@@ -392,7 +392,7 @@ public class UsersService {
 
         for (String deleteSa : toBeDelete) {
             LOGGER.info("Default Namespace's service account delete >> " + CommonUtils.loggerReplace(deleteSa));
-            Users deleteUser = getUsers(cluster, deleteSa, users.getServiceAccountName());
+            Users deleteUser = getUsers(cluster, deleteSa, users.getUserId());
             deleteUsers(deleteUser);
         }
 
@@ -421,7 +421,7 @@ public class UsersService {
             rsDb = createUsers(newUser);
         }
 
-        ResultStatus finalRs = (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS_DETAIL.replace("{userId:.+}", users.getServiceAccountName()));
+        ResultStatus finalRs = (ResultStatus) commonService.setResultModelWithNextUrl(commonService.setResultObject(rsDb, ResultStatus.class), Constants.RESULT_STATUS_SUCCESS, Constants.URI_USERS_DETAIL.replace("{userId:.+}", users.getUserId()));
         if(Constants.RESULT_STATUS_SUCCESS.equals(finalRs.getResultCode())) {
             finalRs.setResultMessage(CommonStatusCode.OK.getMsg());
             finalRs.setHttpStatusCode(CommonStatusCode.OK.getCode());
@@ -516,12 +516,13 @@ public class UsersService {
             for (Users u : users) {
                 String sa = u.getServiceAccountName();
                 String role = u.getRoleSetCode();
+                String userId = u.getUserId();
 
                 if (value.getServiceAccountName().equals(sa)) {
                     if (!value.getRoleSetCode().equals(role)) {
                         LOGGER.info("Update >>> sa :: {}, role :: {}", CommonUtils.loggerReplace(sa), CommonUtils.loggerReplace(role));
 
-                        Users updatedUser = getUsers(cluster, namespace, sa);
+                        Users updatedUser = getUsers(cluster, namespace, userId);
 
                         // remove default roleBinding, add new roleBinding
                         restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", sa + Constants.NULL_REPLACE_TEXT + value.getRoleSetCode() + "-binding"), HttpMethod.DELETE, null, Object.class, true);
@@ -537,13 +538,14 @@ public class UsersService {
                 if (s.equals(value.getServiceAccountName())) {
                     String saName = value.getServiceAccountName();
                     String roleName = value.getRoleSetCode();
+                    String userId = value.getUserId();
 
                     LOGGER.info("Delete >>> sa :: {}, role :: {}", CommonUtils.loggerReplace(saName), CommonUtils.loggerReplace(roleName));
 
                     restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListUsersDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName), HttpMethod.DELETE, null, Object.class, true);
                     restTemplateService.sendYaml(TARGET_CP_MASTER_API, propertyService.getCpMasterApiListRoleBindingsDeleteUrl().replace("{namespace}", namespace).replace("{name}", saName + Constants.NULL_REPLACE_TEXT + roleName + "-binding"), HttpMethod.DELETE, null, Object.class, true);
 
-                    rsDb = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{cluster:.+}", cluster).replace("{namespace:.+}", namespace).replace("{userId:.+}", saName), HttpMethod.DELETE, null, ResultStatus.class);
+                    rsDb = restTemplateService.send(TARGET_COMMON_API, Constants.URI_COMMON_API_USERS.replace("{cluster:.+}", cluster).replace("{namespace:.+}", namespace).replace("{userId:.+}", userId), HttpMethod.DELETE, null, ResultStatus.class);
                 }
             }
         }
@@ -553,10 +555,11 @@ public class UsersService {
                 if (s.equals(user.getServiceAccountName())) {
                     String saName = user.getServiceAccountName();
                     String roleName = user.getRoleSetCode();
+                    String userId = user.getUserId();
 
                     LOGGER.info("Add >>> sa :: {}, role :: {}", CommonUtils.loggerReplace(saName), CommonUtils.loggerReplace(roleName));
 
-                    UsersList usersList = getUsersDetails(saName);
+                    UsersList usersList = getUsersDetails(userId);
                     Users newUser = usersList.getItems().get(0);
 
                     resourceYamlService.createServiceAccount(saName, namespace);

@@ -96,7 +96,7 @@ public class SignUpUserService {
 
         // 5. CP-USER에 미등록인 사용자 CP-USER 계정 생성
         users.setCpNamespace(propertyService.getDefaultNamespace());
-        users.setServiceAccountName(users.getUserId());
+        users.setServiceAccountName(users.getUserAuthId());
         users.setRoleSetCode(NOT_ASSIGNED_ROLE);
         users.setSaSecret(NULL_REPLACE_TEXT);
         users.setSaToken(NULL_REPLACE_TEXT);
@@ -164,7 +164,7 @@ public class SignUpUserService {
 
         if(checkTempNamespace.size() < 1) {
                 users.setCpNamespace(propertyService.getDefaultNamespace());
-                users.setServiceAccountName(users.getUserId());
+                users.setServiceAccountName(users.getUserAuthId());
                 users.setRoleSetCode(NOT_ASSIGNED_ROLE);
                 users.setSaSecret(NULL_REPLACE_TEXT);
                 users.setSaToken(NULL_REPLACE_TEXT);
@@ -185,7 +185,7 @@ public class SignUpUserService {
             try {
                 ServiceInstance serviceInstance = findServiceInstance.getItems().get(0);
                 String addInNamespace = serviceInstance.getNamespace();
-                String addSa = users.getUserId().toLowerCase();
+                String addSa = users.getUserAuthId();
 
                 // 5-1. service account 생성
                 resourceYamlService.createServiceAccount(addSa, addInNamespace);
@@ -210,7 +210,7 @@ public class SignUpUserService {
                 // 5-4. user 생성
                 users.setId(0);
                 users.setCpNamespace(addInNamespace);
-                users.setServiceAccountName(users.getUserId());
+                users.setServiceAccountName(users.getUserAuthId());
                 users.setIsActive(CHECK_Y);
                 users.setSaSecret(saSecretName);
                 users.setSaToken(accessTokenService.getSecrets(addInNamespace, saSecretName).getUserAccessToken());
@@ -226,7 +226,7 @@ public class SignUpUserService {
                 // SA, RB, DB 데이터 생성 중 Exception 발생할 경우 삭제 처리
                 ServiceInstance removeServiceInstance = findServiceInstance.getItems().get(0);
                 String removeNamespace = removeServiceInstance.getNamespace();
-                String removeSa = users.getUserId().toLowerCase();
+                String removeSa = users.getUserAuthId();
                 // SA, RB 삭제
                 resourceYamlService.deleteServiceAccountAndRolebinding(removeNamespace, removeSa, users.getRoleSetCode());
                 // 해당 네임스페이스 데이터 삭제

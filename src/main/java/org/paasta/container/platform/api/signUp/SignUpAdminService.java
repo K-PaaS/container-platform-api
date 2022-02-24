@@ -109,7 +109,7 @@ public class SignUpAdminService {
 
         // 5. CP-USER에 클러스터 관리자 계정 생성
         users.setCpNamespace(propertyService.getDefaultNamespace());
-        users.setServiceAccountName(users.getUserId());
+        users.setServiceAccountName(users.getUserAuthId());
         users.setRoleSetCode(DEFAULT_CLUSTER_ADMIN_ROLE);
         users.setSaSecret(NULL_REPLACE_TEXT);
         users.setSaToken(NULL_REPLACE_TEXT);
