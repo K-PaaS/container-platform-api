@@ -47,6 +47,8 @@ ext {
 	jsonpathVersion = '2.4.0'
 }
 
+ext['tomcat.version'] = '9.0.63'
+
 jar {
 	archivesBaseName = 'paas-ta-container-platform-api'
 }
