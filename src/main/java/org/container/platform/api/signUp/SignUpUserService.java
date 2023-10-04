@@ -126,7 +126,7 @@ public class SignUpUserService {
         String userTypeByService = users.getUserType();
         ResultStatus rsDb = new ResultStatus();
 
-        // PaaS-TA 서비스 형태로 제공되는 CP 포털의 사용자 등록
+        // K-PaaS 서비스 형태로 제공되는 CP 포털의 사용자 등록
         // 1. 서비스 인스턴스 아이디 유효성 검사
             if(users.getServiceInstanceId().equalsIgnoreCase(NULL_REPLACE_TEXT)) {
                 return resultStatusService.INVALID_SERVICE_INSTANCE_ID();
