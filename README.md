@@ -23,7 +23,7 @@ $ gradle build
 
 
 ## 문서
-- 컨테이너 플랫폼 활용에 대한 정보는 [PaaS-TA 컨테이너 플랫폼](https://github.com/PaaS-TA/paas-ta-container-platform)을 참조하십시오.
+- 컨테이너 플랫폼 활용에 대한 정보는 [PaaS-TA 컨테이너 플랫폼](https://github.com/PaaS-TA/container-platform)을 참조하십시오.
 
 
 ## 개발 환경

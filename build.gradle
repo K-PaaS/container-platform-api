@@ -22,7 +22,7 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
 
-group = 'org.paasta.container.platform.api'
+group = 'org.container.platform.api'
 sourceCompatibility = '1.8'
 
 
@@ -50,7 +50,7 @@ ext {
 ext['tomcat.version'] = '9.0.63'
 
 jar {
-	archivesBaseName = 'paas-ta-container-platform-api'
+	archivesBaseName = 'container-platform-api'
 }
 
 dependencies {
